@@ -1,14 +1,8 @@
 # Title (Replace `<Title>` with a descriptive title for the pull request)
 
-Fixes # (issue)
-
-## Description
-
-Replace this with a summary of the change. Please also include relevant motivation and context.
+Fixes # (issue) Replace this with a summary of the change. Please also include relevant motivation and context.
 
 ## Type of change
-
-Please select the option that best describes the changes made:
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
