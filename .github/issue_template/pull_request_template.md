@@ -1,5 +1,3 @@
-# Title (Replace `<Title>` with a descriptive title for the pull request)
-
 Fixes # (issue) Replace this with a summary of the change. Please also include relevant motivation and context.
 
 ### Type of change
