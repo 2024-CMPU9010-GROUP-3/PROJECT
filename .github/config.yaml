@@ -1,0 +1,4 @@
+pulls:
+  - name: "PR Template"
+    description: "This is a PR template"
+    file: ".github/pull_request_template/pr_template.md"
