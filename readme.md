@@ -23,15 +23,13 @@ This repository is for the Group 3 project for the TU Dublin ASD/DS masters cour
 
 The project is divided into several parts:
 
-1. `.github`: (stub)
+1. `Backend`: (stub)
 
-2. `Backend`: (stub)
+2. `Distribution`: (stub)
 
-3. `Distribution`: (stub)
+3. `Documentation`: (stub)
 
-4. `Documentation`: (stub)
-
-5. `Frontend`: (stub)
+4. `Frontend`: (stub)
 
 The file structure is as follows:
 
