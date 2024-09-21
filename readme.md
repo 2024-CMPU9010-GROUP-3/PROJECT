@@ -13,11 +13,11 @@ _Repository for Group 3 of the TU Dublin ASD/DS masters Group Project_
 
 </div>
 
-# What is this repository for?
+# ❓ What is this repository for?
 
 This repository is for the Group 3 project for the TU Dublin ASD/DS masters course. (stub)
 
-# What is the file structure?
+# 📂 Repository Structure
 
 The project is divided into several parts:
 
@@ -42,6 +42,6 @@ The file structure is as follows:
 └── 📁 Frontend
 ```
 
-# How to use this repository?
+# ⚙️ Using the repository
 
 (stub)
