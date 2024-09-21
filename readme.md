@@ -1,7 +1,6 @@
 <div align="center">
 
-![logo-circle](https://github.com/user-attachments/assets/c147b766-d1bd-4cf7-b4e9-fa49705c89b1)
-
+<img src="https://github.com/user-attachments/assets/c147b766-d1bd-4cf7-b4e9-fa49705c89b1" align="center" width="144px" height="144px"/>
 
 # Group 3 Project Repository
 
