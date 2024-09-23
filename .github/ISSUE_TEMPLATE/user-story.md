@@ -2,8 +2,9 @@
 name: User Story
 about: Template for creating user stories
 title: "[USER STORY] <Short descriptive title>"
-labels: user story
-assignees: ""
+labels: documentation
+assignees: ''
+
 ---
 
 ### **User Story**
