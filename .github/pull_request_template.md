@@ -1,12 +1,10 @@
-# Replace with a descriptive title for the pull request
-
-## Description
+### Description
 
 Replace this with a summary of the change. Please also include relevant motivation and context.
 
 Fixes # (issue)
 
-## Type of change
+### Type of change
 
 Please select the option that best describes the changes made:
 
@@ -15,6 +13,6 @@ Please select the option that best describes the changes made:
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] Documentation update
 
-## Changes
+### Changes
 
 Replace this with a list of changes made in the pull request.
