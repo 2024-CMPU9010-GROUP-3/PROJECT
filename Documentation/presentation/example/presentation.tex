@@ -1,0 +1,184 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{ragged2e}
+
+\title{Introduction to Cloud Computing}
+\author{Saul Burgess: C19349793}
+\date{\today}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+    \frametitle{Welcome to Cloud Computing}
+    \justifying{
+        Cloud computing is changing how we interact with the digital world.
+        This technology enables businesses to access computing
+        resources as needed, as a utility, rather than owning and
+        maintaining physical infrastructure. It has reshaped conventional IT
+        infrastructure and the way software is delivered.
+    }
+    \vspace{10pt} % Adds vertical space between the text and the image
+
+    Today, we'll discuss:
+    \begin{itemize}
+        \item{What cloud computing actually is}
+        \item{Its key benefits and features}
+        \item{Different models of cloud services}
+        \item{Real{-}world applications impacting our daily lives}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Defining Cloud Computing}
+    \justifying{ % Ensures the text is justified
+        Cloud computing transforms how we access computing resources, delivering them over the Internet. Key services include:
+    }
+    \vspace{10pt} % Adds vertical space between the text and the image
+
+    \begin{itemize}
+        \item\textbf{Servers:} On{-}demand virtual servers
+        \item\textbf{Storage:} Flexible, scalable data storage as needed.
+        \item\textbf{Networking:} Simplified setups managed by providers.
+        \item\textbf{Software:} Software as a Service (SaaS) for various applications.
+        \item\textbf{Analytics:} Complex data analysis without large hardware investments.
+    \end{itemize}
+
+    \vspace{10pt} % Adds vertical space between the text and the image
+
+    These services allow for rapid scaling and innovation, reducing costs by eliminating the need for physical infrastructure. Users only pay for what they use, achieving cost efficiency through economies of scale.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Features of Cloud Computing}
+    \justifying{ % Ensures the text is justified
+        Cloud computing enhances traditional IT with several key features:
+    }
+    \begin{itemize}
+        \item\textbf{Scalability}: Adjust resources as needed without major investments.
+        \item\textbf{Accessibility}: Access services and data globally via the internet.
+        \item\textbf{Cost{-}efficiency}: Only pay for the resources you use, reducing overhead.
+        \item\textbf{Performance}: Access high{-}performance resources on{-}demand, with no need for ongoing hardware maintenance.
+    \end{itemize}
+
+    \vspace{10pt}
+
+    These advantages make cloud computing an efficient, adaptable, and robust solution for both businesses and individuals.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Types of Cloud Deployments}
+    \justifying{ % Ensures the text is justified
+        Cloud environments vary by deployment type, each catering to different needs:
+    }
+    \vspace{10pt}
+    \begin{itemize}
+        \item\textbf{Public Cloud}: Operated by third{-}party providers, it offers cost{-}effective, scalable solutions. Best for businesses that prioritize ease of use and cost over tight security controls.
+        \item\textbf{Private Cloud}: Provides exclusive resources for one organization, enhancing security and control. Ideal for industries with strict regulatory compliance needs.
+        \item\textbf{Hybrid Cloud}: Integrates public and private clouds to balance flexibility and security. Suitable for businesses needing scalability while keeping critical data private.
+    \end{itemize}
+    \vspace{10pt}
+    Each model delivers distinct levels of control and flexibility, helping organizations find the optimal fit for their operations.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Virtualization}
+    \justifying{ % Ensures the text is justified
+        Virtualization allows multiple virtual environments to run on a single physical hardware system. It enhances efficiency and flexibility:
+    }
+    \vspace{10pt}
+
+    \begin{itemize}
+        \item\textbf{Resource Optimization}: Maximizes hardware use by hosting multiple virtual machines (VMs) on a single server, reducing physical space and energy costs.
+        \item\textbf{Isolation}: Ensures operational security as each VM functions independently, issues in one VM do not impact others.
+        \item\textbf{Scalability}: Facilitates scaling of resources, allowing VMs to be resized or migrated to meet demand without hardware changes.
+        \item\textbf{Disaster Recovery}: Speeds up recovery processes, making it easier to backup and replicate VMs, thus bolstering continuity strategies.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{What are Containers?}
+    \justifying{ % Ensures the text is justified
+        Containers offer a streamlined form of virtualization, isolating applications to enhance portability and efficiency. They share the host OS kernel, unlike traditional virtual machines that virtualize the entire OS, leading to:
+    }
+    \vspace{10pt}
+    \begin{itemize}
+        \item\textbf{Efficiency}: Less resource{-}intensive, sharing the host's OS kernel.
+        \item\textbf{Portability}: Ensures consistent operation across different computing environments.
+        \item\textbf{Speed}: Rapid startup and scalability, ideal for dynamic applications.
+        \item\textbf{Isolation}: Each container runs independently, improving reliability.
+    \end{itemize}
+    \vspace{10pt}
+    Containers simplify deployment and are essential for modern software development.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Service Models of the Cloud}
+    \justifying{ % Ensures the text is justified
+        Cloud computing is structured into different service models, each designed to cater to specific business needs. These models simplify IT operations and allow organizations to focus on their core competencies rather than IT infrastructure:
+    }
+    \vspace{10pt}
+    \begin{itemize}
+        \item{Infrastructure as a Service (IaaS)}
+        \item{Platform as a Service (PaaS)}
+        \item{Software as a Service (SaaS)}
+    \end{itemize}
+    \vspace{10pt}
+    The following slides will detail each model and its primary benefits.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Infrastructure as a Service (IaaS)}
+    \justifying{
+        IaaS provides virtualized computing resources via the Internet. It's the most flexible cloud service model, offering complete control over hardware resources (servers, storage, and networking):
+    }
+    \vspace{10pt}
+    \begin{itemize}
+        \item\textbf{Flexibility}: Adjust resource levels based on real{-}time demand.
+        \item\textbf{Cost{-}Efficiency}: Pay only for resources you use, without investing in physical hardware.
+        \item\textbf{Control}: Maintain full control over the virtualized infrastructure.
+    \end{itemize}
+    \vspace{10pt}
+    Ideal for businesses that need customizable and scalable IT solutions without the capital expenditure of maintaining physical hardware.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Platform as a Service (PaaS)}
+    \justifying{
+        PaaS provides a development environment to users, encompassing both hardware and software tools accessible via the Internet. It simplifies many challenges of software development:
+    }
+    \vspace{10pt}
+    \begin{itemize}
+        \item\textbf{Simplicity}: Manage applications without the complexity of maintaining hardware and software layers.
+        \item\textbf{Efficiency}: Streamline development with preconfigured features and tools.
+        \item\textbf{Integration}: Easily integrate various services and databases.
+    \end{itemize}
+    \vspace{10pt}
+    PaaS is perfect for developers looking to build applications without dealing with environment setup or maintenance.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Software as a Service (SaaS)}
+    \justifying{
+        SaaS delivers software applications on a subscription basis, making it the most user{-}friendly cloud service model. Benefits include:
+    }
+    \vspace{10pt}
+    \begin{itemize}
+        \item\textbf{Accessibility}: Access applications from anywhere using the Internet.
+        \item\textbf{Maintenance{-}Free}: No need to update software or manage infrastructure.
+        \item\textbf{Scalability}: Services are easily scalable to accommodate growing user numbers.
+    \end{itemize}
+    \vspace{10pt}
+    SaaS is ideal for businesses that want quick, reliable access to software without the hassle of installation, maintenance, or ongoing operations.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Thank You!}
+    \centering{Thank you for your attention!\\[10pt]} % Adds a bit of vertical space
+\end{frame}
+
+
+\end{document}

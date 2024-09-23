@@ -1,0 +1,310 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{embedfile}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue]{hyperref}
+\usepackage{ragged2e}
+\usepackage{bookmark}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{biblatex} %Imports biblatex package
+\addbibresource{sources.bib} %Import the bibliography file
+
+% Metadata
+\title{Assignment Title}
+\author{Your Name \\ Student ID}
+\date{\today}
+
+% To create a separate title page and a table of contents
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+	\centering{
+
+		\vspace{1cm}
+		\includegraphics[width=0.4\textwidth]{TU_Dublin_Logo.svg.png} % Example image
+
+		\vspace*{1cm}
+		\LARGE\textbf{Systems Architecture}
+
+		\vspace*{1cm}
+		\LARGE\textbf{Assignment 2}
+
+		\vspace*{1cm}
+		\large\textbf{TU059}
+
+		\vspace*{1cm}
+		\large\textbf{Saul Burgess: C19349793}
+
+		\vspace*{1cm}
+		\large{School of Computer Science \\ Technological University, Dublin}
+
+		\vspace*{1cm}
+		{\large\today}
+	}
+\end{titlepage}
+
+{\tableofcontents}
+{\newpage}
+
+\section{Presentation}
+
+\embedfile{./docs/presentation.pdf}
+\subsection{Embedded Files}
+\begin{center}
+	\embedfile{./docs/presentation.pdf}
+	\href{run:./presentation.pdf}{presentation.pdf}
+
+	\vspace*{1cm}
+
+	\embedfile{./SYSARCH_AS2.mp4}
+	\href{run:./SYSARCH_AS2.mp4}{video\_of\_presentation.mp4}
+\end{center}
+
+\subsection{Azure Blob Storage Files}
+\begin{center}
+	\href{https://c19349793test.blob.core.windows.net/assignment-share/presentation.pdf}{presentation.pdf}
+
+	\vspace*{1cm}
+
+	\href{https://c19349793test.blob.core.windows.net/assignment-share/SYSARCH_AS2.mp4}{video\_of\_presentation.mp4}
+
+	\vspace*{1cm}
+
+	\href{https://c19349793test.blob.core.windows.net/assignment-share/SYSARCH2_SaulBurgess.pdf}{SYSARCH2\_SaulBurgess.pdf}
+
+\end{center}
+{\newpage}
+
+
+\section{Identity Management Technologies for TU Dublin}
+This review provides an overview of Identity Management (IDM) systems, which are
+designed to make ensure that the right individuals have access to the
+appropriate technology resources within an organization(In this case, TU
+Dublin). IDM systems achieve this through a combination of technologies that
+manage user identities, their authentication, authorization, and the roles they
+are assigned within and without network.\cite{loginradius2023} The focus here is
+on cloud-based IDM solutions, addressing the inherent considerations that TU
+Dublin must consider when implementing these systems.
+\vspace*{0.5cm}
+
+\subsection{Cloud-Based Identity Management}
+With the increasing adoption of cloud computing, identity management solutions
+have migrated from on-premises installations to cloud-based models. These
+solutions, known as Identity-as-a-Service, offer advantages such as
+scalability and accessibility. However, they also introduce their own risks,
+particularly related to data security.\cite{secureauth2023}
+\vspace*{0.5cm}
+
+\subsection{Challenges and Risks}
+Some examples of risks associated with cloud-based IDM include:
+\begin{description}[leftmargin=!,labelwidth=0pt,itemindent=0pt]
+	\item[] \textbf{Data Security:} Storing sensitive identity data on external
+	      servers increases vulnerability to breaches.\cite{ahmadi2024cloud}
+	\item[] \textbf{Privacy Concerns:} Managing personal data across borders
+	      raises concerns under various privacy laws and regulations, such as
+	      GDPR.\cite{gdpr-info}
+	\item[] \textbf{Dependency on Service Providers:} Reliance on third-party
+	      providers can lead to issues of control and
+	      availability.\cite{secureauth2023}
+\end{description}
+\vspace*{0.5cm}
+
+\subsection{Ethical Considerations}
+The ethical implications of deploying IDM in the cloud could include:
+\begin{description}[leftmargin=!,labelwidth=0pt,itemindent=0pt]
+	\item[] \textbf{Data Sovereignty:} The location where data is stored can
+	      conflict with national laws, for example GDPR prevents data transfer
+	      outside the EU.\cite{gdpr-info}
+	\item[] \textbf{User Consent and Transparency:} Users must be informed about
+	      how their data is being used and by whom, this is not always possible
+	      in the cloud.\cite{ahmadi2024cloud}
+\end{description}
+{\newpage}
+
+\subsection{Identity Management at TU Dublin}
+For TU Dublin, implementing IDM technologies must align with institutional goals
+and regulatory compliance. Especially given TU Dublin is within the EU. Some
+strategies might include:
+\begin{description}[leftmargin=!,labelwidth=0pt,itemindent=0pt]
+	\item[*] Ensuring clear data governance policies that comply with EU data
+	      protection standards.
+	\item[*] Regularly auditing and reviewing access controls and adherence to
+	      ethical guidelines.
+	\item[*] Selecting IDaaS providers with robust security certifications.
+\end{description}
+\vspace*{0.5cm}
+
+\subsection{Conclusion}
+As TU Dublin considers expanding its cloud infrastructure, utalising IDM
+solutions is vital for guarding digital identities and maintaining trust between
+students and IT administration. Addressing the associated risks and ethical
+concerns is a necessity for the successful deployment of these technologies.
+	{\newpage}
+
+
+\section{Comparative Analysis of Cloud-Based Identity Management Solutions}
+This section offers a comparative analysis of cloud-based identity management
+offerings, specifically DUO, Microsoft, and Tenfold. We explore how these
+services utilize Cloud Service Oriented Architecture (hereby SOA) and assess
+their impacts on privacy and security within education.\\ \\
+Cloud-based identity management systems are a necessity for securing access to
+educational resources. They allow institutions to manage digital identities ,
+ensuring that users have appropriate access rights based on their roles. These
+systems are particularly important in educational settings, where a variety of
+users require access to different resources.\cite{loginradius2023}
+
+\subsection{Cloud Service Oriented Architecture (SOA)}
+SOA in cloud services provides a flexible and reusable framework that
+facilitates integration and scalability. Each of the considered systems—DUO,
+Microsoft, and Tenfold—employs SOA principles to offer services that can be
+customized for specific entity needs, be it business or otherwise.\cite{aws_soa}
+
+\subsection{DUO Security}
+DUO Security uses a multi-factor authentication model that integrates with many
+services, including VPNs and cloud applications. This makes it a versatile
+solution for educational institutions with diverse needs.\cite{duo_docs}
+
+\subsection{Microsoft Azure Active Directory}
+Microsoft's solution emphasizes interoperability with Microsoft apps, including
+Office 365 and Azure. This makes it an attractive option for institutions
+already using Microsoft services. However, it may not be as flexible for those
+using other platforms. \textit{Note, it is now called Entra ID, not Active
+	Directory}\cite{microsoft_entra}
+
+\subsection{Tenfold Security}
+Tenfold offers a comprehensive identity management solution that integrates with
+a wide range of services. It supports LDAP and SAML, making it a versatile
+option for institutions with diverse IT environments. However, it may be more
+complex to set up than other solutions. \textit{DUO does support LDAP, but not
+	as well as Tenfold}\cite{tenfold_docs}
+{\newpage}
+
+\subsection{Comparative Analysis}
+The below table is based on the features of the three systems, DUO, Microsoft,
+and Tenfold. Not user experience, or data, but rather the tools that each system
+offers.\\
+
+\begin{table}[h]
+	\centering
+	\begin{tabular}{@{}lccc@{}}
+		\toprule
+		Feature         & DUO      & Microsoft & Tenfold  \\ \midrule
+		Ease of Use     & High     & Moderate  & Moderate \\
+		Scalability     & Moderate & High      & High     \\
+		Customizability & Low      & High      & Moderate \\
+		Security        & High     & Very High & High     \\
+		\bottomrule
+	\end{tabular}
+	\caption{Comparative features of identity management systems}
+	\label{tab:comparison}
+\end{table}
+
+\subsection{Considerations}
+Identity management systems in educational settings raise significant concerns.
+Students, and education at large, has a high burden of privacy and security.
+Ethically, the management of student and faculty identities must respect user
+consent and minimize data collection to necessary levels. Privacy is paramount,
+with a need to comply with laws such as GDPR \cite{gdpr-info} in Europe and
+FERPA\cite{usdoe_ferpa} in the US. Security, while ensuring data protection, must also prevent
+unauthorized access, a critical aspect given the sensitivity of educational
+data.
+
+\subsection{Impact on Education}
+These systems can streamline access to educational resources, but must be
+implemented with caution to avoid complicating access to educational resources.
+Educators and IT administrators must work together to ensure these tools are
+used efficiently, and not overused.
+
+\subsection{Conclusion}
+Cloud-based identity management systems, when implemented within the framework
+of SOA, provide robust, scalable, and flexible solutions that can enhance the
+security of educational institutions. However, careful considertaion must be to
+the implications of implementing these systems.
+
+	{\newpage}
+
+\section{Summary and Reflection: Optimization of ELT Process}
+This section provides a summary and reflection on the research article titled
+\begin{center}
+	\textit{ "Extract-Load-Transform (ELT) Process Runtime Analysis and
+		Optimization by Aleksei E. Zvonarev and colleagues." }\cite{zvonarev2023elt}
+\end{center}
+The study explores methods to enhance the efficiency of the ELT process in data
+handling operations.
+
+\subsection{What is ELT?}
+Extract-Load-Transform is a data processing methodology that is designed
+to fetch data from various sources and load it directly into a data warehouse or
+repository without prior transformation. This approach contrasts with the more
+traditional Extract-Transform-Load (ETL) process, where data is transformed
+prior to being loaded into the data warehouse. The main advantage of ELT is its
+ability to leverage the processing power of modern data warehouses, allowing for
+the transformation of data to be handled more efficiently.
+
+\subsection{Summary}
+The article presents an approach for optimizing the transformation phase of the
+ELT process. Recognizing that traditional sequential execution of data
+transformation can be time-consuming, the authors propose and compare two
+algorithms for optimization: a basic parallelization approach and an enhanced
+version that further parallelizes dependent procedure blocks.
+\\ \\
+Through experimentation, it was determine that the enhanced parallelization
+algorithm considerably reduces the execution time compared to the basic
+parallelization and traditional sequential approaches.
+
+\subsection{Reflection}
+The significance of the study lies in its potential application in various
+real-world scenarios where there is large volumes of data. This article provides
+valuable insights for entities looking to improve their data warehousing
+performance, underscoring the shift from conventional methods to more efficient
+and scalable solutions.
+\\ \\
+Furthermore, the research exemplifies a growing trend towards integrating
+various technologies to solve complex problems in the field of data analytics.
+The findings may encourage further research into the application of similar
+methodologies across different database management systems, potentially leading
+to more universally applicable optimization techniques.
+
+	{\newpage}
+
+\section{Reflection on Azure}
+This section reflects on my experience in setting up hyperlink accessible files
+on Azure.
+
+\vspace*{0.5cm}
+
+\subsection{Process Overview}
+I started by creating an Azure Storage Account through the Azure Portal. The
+guided setup was intuitive and well-documented, making the initial steps easy. I
+then created a Blob Container,  I opted for "Blob" access to allow public
+accessibility to the files.
+
+\vspace*{0.5cm}
+
+\subsection{Challenges Encountered}
+Despite the straightforward setup, I faced several challenges:
+\begin{description}[leftmargin=!,labelwidth=0pt,itemindent=0pt]
+	\item[] \textbf{Understanding Access Levels}: Choosing between "Container"
+	      and "Blob" access levels was a bit confusing at first. I had to do
+	      additional research.
+	\item[] \textbf{URL Accessibility}: Initially, some of the hyperlinks to the
+	      files were not accessible. After some investigation, I found that
+	      the issue was due to incorrect Blob properties. Correcting these properties
+	      fixed the hyperlink issues.
+\end{description}
+
+\vspace*{0.5cm}
+
+\subsection{Learning Outcomes}
+This task helped me learn about the capabilities of Azure Blob Storage,
+particularly its potential for integration with other Azure services. I also
+gained a better understanding of the importance of access levels in cloud
+storage and the need for proper configuration to ensure data security and
+accessibility.
+
+	{\newpage}
+\printbibliography{}
+\end{document}
