@@ -29,6 +29,16 @@
 % Section 1
 \section{Introduction}
 
+% Problem desc Slide
+\begin{frame}{Problem description}  % Slide title
+    \begin{description}
+        \item[1:] To help enhance the efficiency of urban planning for public authorities by providing detailed insight into available amenities
+        \item[2:] Amenities include and are not limited to parking spaces (formal and informal), bike sheds, accessible ramps, bike lanes, etc
+        \item[3:] This enhancement will be achieved through the development of a prototype Single Page Application (SPA) that integrates computer vision with publicly available mapping datasets 
+        \item[4:] The area of interest will be Dublin city 
+    \end{description}
+\end{frame}
+
 % Use cases & users Slide
 \begin{frame}{Use cases and Users}
     \item We will be focusing on parking amenities.
@@ -110,6 +120,16 @@
 \end{frame}
 
 
+\subsection{Design and build}
+% Design & build Slide 5
+\begin{frame}{Design and Build} We will focus on the parking amenity first, and proceed in 3 phases:
+    \begin{itemize}
+        \item{\textbf{1. Model training} - }Training and developing a convolutional neural network (CNN) to distinguish street-level parking spaces from aerial images.
+        \item{\textbf{2. Map creation} - } Developing a user-friendly mapping interface that allows users to choose a particular location and view the availability of street-level parking in the vicinity of that location.
+        \item{\textbf{3. Integrating data sources} - } Integrating additional information sources to include formal parking spaces (under and aboveground, etc)
+    \end{itemize}
+\end{frame}
+
 % Design & build: Phase 1 Slide 6
 \begin{frame}{Design and Build: Phase 1 - Model training}
     \begin{itemize}
@@ -119,6 +139,23 @@
     \end{itemize}
 \end{frame}
 
+% Design & build: Phase 2 Slide 7
+\begin{frame}{Design and Build: Phase 2 - Map creation}
+    \begin{itemize}
+        \item{\textbf{1. Interactive map development} - } Utilizing GIS software and web development frameworks- an interactive map will be created. Users will be able to choose any spot on the map to query the back-end for parking information in a vicinity of the area.
+        \item{\textbf{2. Integration with ML model} - } The map interface will communicate with the back-end server where the CNN operates. When a user selects a location, the corresponding aerial image will be processed by the CNN to highlight available parking spaces.
+        \item{\textbf{3. Front + Back-end integration} - }The SPA’s front-end will be developed using React, while the back-end will utilize Node.js to handle API requests, process data, and return results to the user interface.
+    \end{itemize}
+\end{frame}
+
+% Design & build: Phase 3 Slide 8
+\begin{frame}{Design and Build: Phase 3 - Integrating data sources}
+    \begin{itemize}
+        \item{\textbf{1. Data integration} - }Data concerning underground parking facilities will be sourced from municipal records and other relevant databases. This information will be fused with the aerial image analysis to offer a holistic view of parking availability.
+        \item{\textbf{2. System enhancement} - }Data fusion techniques will be employed to ensure seamless integration of information sources.
+        \item{\textbf{3. UI expansion} - }The existing SPA interface will be enhanced to display not just street-level but also underground parking options, allowing users to make more informed decisions based on a comprehensive visualization.
+    \end{itemize}
+\end{frame}
 
 
 \end{document}
