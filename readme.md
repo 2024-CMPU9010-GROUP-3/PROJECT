@@ -42,6 +42,11 @@ The file structure is as follows:
 └── 📁 Frontend
 ```
 
-# ⚙️ Using the repository
+# ⚙️ Using the development containers
 
-(stub)
+This repository is set up to use dev containers for development. To use them, you will need:
+
+- to have [docker](https://www.docker.com/) installed on your machine
+- to have the [dev container extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) installed in VS Code
+
+Once installed, open the command pallet with `Ctrl+Shift+P` and type `Dev Containers: Open Folder in Container`. Then select the desired folder.
