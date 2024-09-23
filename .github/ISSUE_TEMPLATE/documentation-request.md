@@ -3,7 +3,8 @@ name: Documentation Request
 about: Request or suggest new documentation or updates to existing documentation
 title: "[DOCS REQUEST] <Title of the documentation request>"
 labels: documentation
-assignees: ""
+assignees: ''
+
 ---
 
 ### **What documentation needs to be added/updated?**
