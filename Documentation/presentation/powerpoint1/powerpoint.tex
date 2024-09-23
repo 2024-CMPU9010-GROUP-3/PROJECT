@@ -41,24 +41,27 @@
 
 % Use cases & users Slide
 \begin{frame}{Use cases and Users}
-    \item We will be focusing on parking amenities.
-    \item{Potential users and their associated use cases}
     \begin{itemize}
-        \item{\textbf{1. Civil servants}} - for urban planning purposes such as:
+        \item We will be focusing on parking amenities.
+        \item Potential users and their associated use cases:
         \begin{itemize}
-            \item ensuring parking spaces adhere to local zoning regulations
-            \item assessing the demand/supply for parking in various areas of a city
-            \item overseeing existing parking amenities, conditions and pricing
-            \item considering environmental and traffic impact when planning to build new spaces
-        \end{itemize} 
-        \item{\textbf{2. Private Individuals}} - for personal use in the following scenarios:
-        \begin{itemize}
-            \item viewing real-time parking availability given their current location or a specified destination within a defined radius
-            \item  seeing the cost of available parking spots  nearby allowing users to compare and choose the best option
-            \item viewing available parking based on special filters, such as handicap-accessible parking, electric vehicle charging stations, etc...
-        \end{itemize} 
+            \item \textbf{1. Civil servants} - for urban planning purposes such as:
+            \begin{itemize}
+                \item ensuring parking spaces adhere to local zoning regulations
+                \item assessing the demand/supply for parking in various areas of a city
+                \item overseeing existing parking amenities, conditions, and pricing
+                \item considering environmental and traffic impact when planning to build new spaces
+            \end{itemize}
+            \item \textbf{2. Private Individuals} - for personal use in the following scenarios:
+            \begin{itemize}
+                \item viewing real-time parking availability given their current location or a specified destination within a defined radius
+                \item seeing the cost of available parking spots nearby allowing users to compare and choose the best option
+                \item viewing available parking based on special filters, such as handicap-accessible parking, electric vehicle charging stations, etc.
+            \end{itemize}
+        \end{itemize}
     \end{itemize}
 \end{frame}
+
 
 % Section 2
 \section{Main Content}
@@ -144,7 +147,7 @@
     \begin{itemize}
         \item{\textbf{1. Interactive map development} - } Utilizing GIS software and web development frameworks- an interactive map will be created. Users will be able to choose any spot on the map to query the back-end for parking information in a vicinity of the area.
         \item{\textbf{2. Integration with ML model} - } The map interface will communicate with the back-end server where the CNN operates. When a user selects a location, the corresponding aerial image will be processed by the CNN to highlight available parking spaces.
-        \item{\textbf{3. Front + Back-end integration} - }The SPA’s front-end will be developed using React, while the back-end will utilize Node.js to handle API requests, process data, and return results to the user interface.
+        \item{\textbf{3. Front + Back-end integration} - }The SPA’s front-end will be developed using Next.js, while the back-end will utilize Go to handle API requests, process data, and return results to the user interface.
     \end{itemize}
 \end{frame}
 
