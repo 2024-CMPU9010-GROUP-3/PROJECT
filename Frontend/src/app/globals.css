@@ -76,3 +76,10 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Example CSS to ensure button is visible */
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
