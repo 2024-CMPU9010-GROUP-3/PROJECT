@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@react-google-maps/api": "^2.19.3",
+    "next": "^14.2.13"
+  },
+  "devDependencies": {
+    "@types/node": "^22.6.1",
+    "@types/react": "^18.3.8"
+  }
+}
