@@ -26,36 +26,91 @@
 \centering
 \begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
     \hline
-    \textbf{Project Title:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Name\vspace{0.3cm}} \\
+    \textbf{Project Title:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Utilizing Computer Vision for Service Location Determination\vspace{0.3cm}} \\
     \hline
-    \textbf{Project Summary:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 300 words. \vspace{0.3cm}
-
-    A clear description of the overall vision for your project.
+    \textbf{Project Summary:} & \parbox{0.65\textwidth}{\vspace{0.3cm}\textbf{ What are you doing? }\vspace{0.3cm}
+    \\The aim of this project is to create a Single Page Application (SPA) to aid urban design decisions by providing detailed insight into available amenities which include and are not limited to parking spaces both street-level and underground, bike sheds, accessible ramps, bike lanes, etc.\\
+    The SPA will integrate computer vision with publicly available mapping datasets.
+    \\
+    \\
+    \vspace{0.3cm}\textbf{Why are you doing it?} \vspace{0.3cm}
+    \\To help enhance the efficiency of urban planning for public authorities by providing detailed insight into available amenities.
+    \\
+    \\
+    \vspace{0.3cm}\textbf{Who will use it?} \vspace{0.3cm}
+    \\The main users of our application are civil servants and private individuals.
+    \\
+    \\
+    \vspace{0.3cm}\textbf{How will they use it? (Example use case)}\vspace{0.3cm}
+    \\Civil servants will use the app  for urban planning purposes such as in the following use cases:
     \begin{itemize}[label=\textbullet]
-        \item What are you doing?
-        \item Why are you doing it?
-        \item Who will use it?
-        \item How will they use it? (Example use case)
-    \end{itemize}} \\
-    \hline
-    \textbf{Project Development:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 300 words. \vspace{0.3cm}
-
-    A description of your first minimal viable product (MVP) including what you will learn from deploying this and what you would measure in order to learn it.
-    \begin{itemize}[label=\textbullet]
-        \item How will you build your system? (System diagram)
-        \begin{itemize}[label=\textbullet]
-            \item Front-end: User interface components
-            \item Back-end: Technical components
-            \item Data sources: What data will you use and how will you access it?
+            \item to ensure parking spaces adhere to local zoning regulations
+            \item to assess the demand/supply for parking in various areas of a city
+            \item to oversee existing parking amenities, conditions and pricing
+            \item to consider environmental and traffic impact when planning to build new spaces
         \end{itemize}
-    \end{itemize}
-    You must use a specified methodology (e.g., SCRUM)} \\
-   \hline
-   \textbf{Evaluation:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 200 words. \vspace{0.3cm}
+    \\Private individuals will use the app in the following use cases:
     \begin{itemize}[label=\textbullet]
-        \item How will you evaluate your system? (Initial ideas)
-        \item How will the evaluation inform your future development?
+            \item to view real-time parking availability given their current location or a specified destination within a defined radius
+            \item to see the cost of available parking spots nearby allowing them to compare and choose the best option
+            \item to view available parking based on special filters, such as handicap-accessible parking, electric vehicle charging stations, etc...
     \end{itemize}} \\
+    \hline
+\end{tabular}    
+\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+    \hline
+    \textbf{Project Development:} & \parbox{0.65\textwidth}
+    {\vspace{0.3cm}The project development will be done following the SCRUM methodology.\vspace{0.3cm}
+    \\
+    The first minimal viable product (MVP) will include the following components :
+    \begin{itemize}[label=\textbullet]
+        \item 
+        \item
+        \item 
+    \end{itemize}
+    
+    \vspace{0.3cm}\textbf{What will you learn from deploying the first MVP and what would you measure in order to learn it.}\vspace{0.3cm}
+    \\
+    text
+    \\
+    \\
+    \vspace{0.3cm}\textbf{How will you build your system ? (System diagram)}\vspace{0.3cm}
+    \\
+    diagram 1
+    \\
+    \\
+    \vspace{0.3cm}\textbf{Front-end: User interface components}\vspace{0.3cm}
+    \\
+    diagram
+    \\
+    \\
+    \vspace{0.3cm}\textbf{ Back-end: Technical components}\vspace{0.3cm}
+    \\
+    diagram
+    \\
+    \\
+    \vspace{0.3cm}\textbf{Data sources : What data will you use and how will you access it?}\vspace{0.3cm}
+    \\
+    We will use satellite data obtained using the Google Static Maps API. Training, testing and validation datasets will be collected and manually annotated to train and evaluate our ML model. For each Data will be collected on the fly based on the location and radius provided by the user.
+    \\}
+    \\
+   \hline
+\end{tabular}
+
+\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+    \hline
+   \textbf{Evaluation:} & \parbox{0.65\textwidth}{\vspace{0.3cm}\textbf{How will you evaluate your system? (Initial ideas)} \vspace{0.3cm}
+   To evaluate our system we will get in touch with a group of users who will be given access to our application for testing and feedback purposes. Moreover, our application will undergo functionality and performance testing to ensure the requirements are met.
+   \\
+   To evaluate the Machine Learning model, we will use a separate validation dataset ensuring it performs well in different urban settings. Furthermore several performance metrics (accuracy, precision, recall) will be used to assess the model.
+   \\
+   \\
+   \vspace{0.3cm}\textbf{ How will the evaluation inform your future development?}\vspace{0.3cm}
+   \\
+   User feedback will help the development of additional features suggested by the users and identifying potential bugs and issues.
+   \\
+   \\
+    } \\
    \hline
 \end{tabular}
 
