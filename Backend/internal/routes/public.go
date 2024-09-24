@@ -1,6 +1,8 @@
 package routes
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type publicRoute struct{}
 

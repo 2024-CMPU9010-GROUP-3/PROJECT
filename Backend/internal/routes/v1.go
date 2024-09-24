@@ -1,6 +1,8 @@
 package routes
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type v1Route struct{}
 
