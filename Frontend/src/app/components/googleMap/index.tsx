@@ -1,12 +1,12 @@
 import dynamic from 'next/dynamic';
 
 
-// Dynamically import the map to prevent SSR issues
+
 const GoogleMap = dynamic(() => import('./GoogleMap'), {
   ssr: false
 });
 
-const Home = () => {
+const GoogleMapPage = () => {
   return (
     <div>
       <h1>Google Map Integration</h1>
@@ -15,4 +15,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default GoogleMapPage;
