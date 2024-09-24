@@ -9,9 +9,9 @@
 
 \begin{document}
 
-% Add the logo at the top (change the path to the correct one if you're including a logo)
+% Add the logo and title at the top
 \begin{center}
-    \includegraphics[width=3cm]{tud logo header.png}\\ % Replace 'logo.png' with your logo file
+    \includegraphics[width=3cm]{tud logo header.png}\\
     \vspace{0.3cm}
     {\Large \textbf{MSc in Computer Science - Team Project}}\\
     \vspace{0.2cm}
@@ -19,15 +19,15 @@
     \vspace{1cm}
 \end{center}
 
-% Create the table for Project Title and Summary
-\begin{tabular}{|p{5cm}|p{11cm}|}
+% Center the first table and adjust column widths
+\centering
+\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
     \hline
-    \textbf{Project Title:} & \\[2cm] % Empty space for title
+    \textbf{Project Title:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Name\vspace{0.3cm}} \\
     \hline
-    \textbf{Project Summary:} & \parbox{11cm}{\vspace{1cm}Approximately 300 words. \vspace{0.3cm}
+    \textbf{Project Summary:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 300 words. \vspace{0.3cm}
 
     A clear description of the overall vision for your project.
-     % Add bullet points with custom symbols
     \begin{itemize}[label=\textbullet]
         \item What are you doing?
         \item Why are you doing it?
@@ -35,23 +35,20 @@
         \item How will they use it? (Example use case)
     \end{itemize}} \\
     \hline
-    \textbf{Project Developement:} & \parbox{11cm}{\vspace{1cm}Approximately 300 words. \vspace{0.3cm}
+    \textbf{Project Development:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 300 words. \vspace{0.3cm}
 
-    A description of your first minimal viable product (MVP) including what you will learn from deploying this and what you would measure in order to learn it. (Even if you are not taking a lean approach to managing your project you should be able to articulate an MVP.)
-     % Add bullet points with custom symbols
+    A description of your first minimal viable product (MVP) including what you will learn from deploying this and what you would measure in order to learn it.
     \begin{itemize}[label=\textbullet]
         \item How will you build your system? (System diagram)
         \begin{itemize}[label=\textbullet]
             \item Front-end: User interface components
             \item Back-end: Technical components
             \item Data sources: What data will you use and how will you access it?
-
         \end{itemize}
     \end{itemize}
     You must use a specified methodology (e.g., SCRUM)} \\
    \hline
-   \textbf{Evaluation:} & \parbox{11cm}{\vspace{1cm}Approximately 200 words. \vspace{0.3cm}
-     % Add bullet points with custom symbols
+   \textbf{Evaluation:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 200 words. \vspace{0.3cm}
     \begin{itemize}[label=\textbullet]
         \item How will you evaluate your system? (Initial ideas)
         \item How will the evaluation inform your future development?
@@ -61,46 +58,49 @@
 
 \vspace{0.5cm}
 
-\begin{tabular}{|p{5cm}|p{11cm}|}
+% Center the second table and adjust column widths
+\centering
+\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
     \hline
-    \textbf{Project Management:} & \parbox{11cm}{\vspace{1cm}Approximately 200 words. \vspace{0.3cm}
+    \textbf{Project Management:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 200 words. \vspace{0.3cm}
     \begin{itemize}[label=\textbullet]
         \item How will you run the project?
         \item What deadlines will you set?
         \item What is success?
     \end{itemize}
-    You must use a Project Management tool (e.g.,Github/Zenhub)} \\
+    You must use a Project Management tool (e.g., Github / Zenhub)} \\
     \hline
-    \textbf{Team name} & \parbox{11cm}{\vspace{1cm} Team members\vspace{0.3cm}
+    \textbf{Team name} & \parbox{0.65\textwidth}{\vspace{0.3cm} Team members\vspace{0.3cm}
     \begin{itemize}[label=\textbullet]
-        \item Name, Student Number, Contact Number
-        \item Name, Student Number, Contact Number
-        \item Name, Student Number, Contact Number
-        \item Name, Student Number, Contact Number
-        \item Name, Student Number, Contact Number
-        \item Name, Student Number, Contact Number
+        \item Jessica Fornetti, D23124588, Contact Number
+        \item Anais Blenet, D22127697, Contact Number
+        \item Saul Burgess, C19349793, Contact Number
+        \item Kaustubh Trivedi, D23124940, Contact Number
+        \item Yuanshuo Du, D22125495, Contact Number
+        \item Andreas Kraus, D23125112, Contact Number
     \end{itemize}} \\
     \hline
-    \textbf{Team Meetings:} & \parbox{11cm}{\vspace{1cm}Approximately 200 words. \vspace{0.3cm}
-
+    \textbf{Team Meetings:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 200 words. \vspace{0.3cm}
+    \\
     Discuss issues like:
-    
     \begin{itemize}[label=\textbullet]
         \item Does everyone have to attend all meetings?
         \item How often will there be meetings?
         \item Are there topics that are out-of-bounds?
         \item Online or face-to-face?
-        \item Decision making (Majority rule/Unanimous/Expertise wins)?
-        \item How will turn taking happen?
+        \item Decision making (Majority rule / Unanimous / Expertise wins)?
+        \item How will turn-taking happen?
     \end{itemize}} \\
    \hline
 \end{tabular}
-\begin{tabular}{|p{5cm}|p{11cm}|}
-    \hline
-   \textbf{Team Conflict:} & \parbox{11cm}{\vspace{1cm}Approximately 150 words. \vspace{0.3cm}
 
+% Center the third table and adjust column widths
+\centering
+\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+    \hline
+   \textbf{Team Conflict:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Approximately 150 words. \vspace{0.3cm}
+   \\
     Discuss issues like:
-    
     \begin{itemize}[label=\textbullet]
         \item How do you deal with habits of individual members?
         \item How do you deal with unresolved issues?
@@ -110,6 +110,5 @@
     \end{itemize}} \\
    \hline
 \end{tabular}
-
 
 \end{document}
