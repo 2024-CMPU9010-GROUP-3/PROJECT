@@ -1,4 +1,4 @@
-name: Build Backend Docker Image
+name: Backend Tests
 
 on:
   pull_request:
