@@ -39,8 +39,8 @@ func pointsPrivate() *http.ServeMux {
 	router := http.NewServeMux()
 	pointsHandler := &handlers.PointsHandler{}
 	router.HandleFunc("POST /", pointsHandler.HandlePost)
-	router.HandleFunc("PUT /", pointsHandler.HandlePut)
-	router.HandleFunc("DELETE /", pointsHandler.HandleDelete)
+	router.HandleFunc("PUT /{id}", pointsHandler.HandlePut)
+	router.HandleFunc("DELETE /{id}", pointsHandler.HandleDelete)
 
 	return router
 }
@@ -58,10 +58,10 @@ func auth() *http.ServeMux {
 	router := http.NewServeMux()
 	authHandler := &handlers.AuthHandler{}
 
-	router.HandleFunc("GET /User", authHandler.HandleGet)
+	router.HandleFunc("GET /User/{id}", authHandler.HandleGet)
 	router.HandleFunc("POST /User", authHandler.HandlePost)
-	router.HandleFunc("PUT /User", authHandler.HandlePut)
-	router.HandleFunc("DELETE /User", authHandler.HandleDelete)
+	router.HandleFunc("PUT /User/{id}", authHandler.HandlePut)
+	router.HandleFunc("DELETE /User/{id}", authHandler.HandleDelete)
 	router.HandleFunc("POST /User/login", authHandler.HandleLogin)
 
 	return router
