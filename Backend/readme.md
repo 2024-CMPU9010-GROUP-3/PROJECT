@@ -1,5 +1,7 @@
 # Backend
 
+This is a commit to test our GitHub actions implementation.
+
 This is a backend written in Go using the net/http package of the standard library. The server is equipped with a middleware that will log the URL, status code and response time of any request to std out.
 
 ## Usage
