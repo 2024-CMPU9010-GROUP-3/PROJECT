@@ -2,7 +2,7 @@ name: Build Backend Docker Image
 
 on:
   pull_request:
-    branches:
+    paths:
       - "backend/**"
 
 jobs:
