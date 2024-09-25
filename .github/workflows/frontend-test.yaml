@@ -1,9 +1,9 @@
-name: Backend Tests
+name: Frontend Tests
 
 on:
   pull_request:
     paths:
-      - "Backend/**"
+      - "Frontend/**"
 
 jobs:
   lint-check:
@@ -13,16 +13,18 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          go-version: stable
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: Frontend
+        run: npm install
 
       - name: Lint the code
-        uses: golangci/golangci-lint-action@v6
-        with:
-          working-directory: Backend
-          version: v1.60
+        working-directory: Frontend
+        run: npm run lint
 
   build-check:
     needs: lint-check
@@ -37,4 +39,4 @@ jobs:
 
       - name: Build Docker image for arm64 and amd64
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t backend-test-image ./Backend
+          docker buildx build --platform linux/amd64,linux/arm64 -t backend-test-image ./Frontend

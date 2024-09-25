@@ -1,10 +1,10 @@
-name: Check Branch Name
+name: Branch Checks
 
 on:
   pull_request:
 
 jobs:
-  check-branch-name:
+  validate-name:
     runs-on: ubuntu-latest
 
     steps:
@@ -13,7 +13,7 @@ jobs:
 
       - name: Get branch name
         id: get_branch_name
-        run: echo "##[set-output name=branch;]${GITHUB_HEAD_REF}"
+        run: echo "branch=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
 
       - name: Validate branch name
         run: |
