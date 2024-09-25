@@ -6,13 +6,29 @@ on:
       - "Backend/**"
 
 jobs:
-  build-check:
+  lint-check:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
 
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Lint the code
+        uses: golangci/golangci-lint-action@v6
+        with:
+          working-directory: Backend
+          version: v1.60
+
+  build-check:
+    needs: lint-check
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
