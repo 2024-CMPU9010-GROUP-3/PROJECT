@@ -3,9 +3,8 @@
 \usepackage{array}    % For table management
 \usepackage{geometry} % To set page margins
 \usepackage{enumitem} % To customize bullet points
-\usepackage{booktabs}
-\usepackage{tabularx}
-
+\usepackage{booktabs} % For table rules
+\usepackage{tabularx} % For tables that auto-adjust column width
 
 % Set the margins
 \geometry{top=2cm, bottom=2cm, left=2.5cm, right=2.5cm}
@@ -14,151 +13,157 @@
 
 % Add the logo and title at the top
 \begin{center}
-    \includegraphics[width=3cm]{tud logo header.png}\\
+    \includegraphics[width=3cm]{TUDublin_Colour_RGB.png}\\
     \vspace{0.3cm}
     {\Large \textbf{MSc in Computer Science - Team Project}}\\
     \vspace{0.2cm}
-    {\large \textbf{Project Plan}}
+    {\large \textbf{Project Plan}}\\
     \vspace{1cm}
 \end{center}
 
 % Center the first table and adjust column widths
-\centering
-\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
-    \hline
-    \textbf{Project Title:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Utilizing Computer Vision for Service Location Determination\vspace{0.3cm}} \\
-    \hline
-    \textbf{Project Summary:} & \parbox{0.65\textwidth}{\vspace{0.3cm}\textbf{ What are you doing? }\vspace{0.3cm}
-    \\The aim of this project is to create a Single Page Application (SPA) to aid urban design decisions by providing detailed insight into available amenities which include and are not limited to parking spaces both street-level and underground, bike sheds, accessible ramps, bike lanes, etc.\\
-    The SPA will integrate computer vision with publicly available mapping datasets.
-    \\
-    \\
-    \vspace{0.3cm}\textbf{Why are you doing it?} \vspace{0.3cm}
-    \\To help enhance the efficiency of urban planning for public authorities by providing detailed insight into available amenities.
-    \\
-    \\
-    \vspace{0.3cm}\textbf{Who will use it? And how will they use it? (Example use case)} \vspace{0.3cm}
-    \\The main users of our application are civil servants and private individuals.
-    \\
-    \\Civil servants will use the app  for urban planning purposes such as in the following use cases:
-    \begin{itemize}[label=\textbullet]
-            \item to ensure parking spaces adhere to local zoning regulations
-            \item to assess the demand/supply for parking in various areas of a city
-            \item to oversee existing parking amenities, conditions and pricing
-            \item to consider environmental and traffic impact when planning to build new spaces
+\begin{center}
+    \begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+        \hline
+        \textbf{Project Title:} & \parbox{0.65\textwidth}{\vspace{0.3cm}Utilizing Computer Vision for Service Location Determination\vspace{0.3cm}} \\ 
+        \hline
+        \textbf{Project Summary:} & \parbox{0.65\textwidth}{\vspace{0.3cm} \textbf{What are you doing?} \vspace{0.3cm}\\ The aim of this project is to create a Single Page Application (SPA) to aid urban design decisions by providing detailed insight into available amenities which include and are not limited to parking spaces both street-level and underground, bike sheds, accessible ramps, bike lanes, etc.\\ The SPA will integrate computer vision with publicly available mapping datasets.\\
+        \vspace{0.3cm} \textbf{Why are you doing it?} \vspace{0.3cm}\\ To help enhance the efficiency of urban planning for public authorities by providing detailed insight into available amenities.\\
+        \vspace{0.3cm} \textbf{Who will use it? And how will they use it?} \vspace{0.3cm}\\ The main users of our application are civil servants and private individuals. \textbf{Note, this is not a complete list and only an example.}\\ \\
+        Civil servants will use the app for urban planning purposes such as in the following use cases:
+        \begin{itemize}[label=\textbullet]
+            \item To ensure parking spaces adhere to local zoning regulations
+            \item To assess the demand/supply for parking in various areas of a city
+            \item To oversee existing parking amenities, conditions, and pricing
+            \item To consider environmental and traffic impact when planning to build new spaces
         \end{itemize}
-    \\Private individuals will use the app in the following use cases:
-    \begin{itemize}[label=\textbullet]
-            \item to view real-time parking availability given their current location or a specified destination within a defined radius
-            \item to see the cost of available parking spots nearby allowing them to compare and choose the best option
-            \item to view available parking based on special filters, such as handicap-accessible parking, electric vehicle charging stations, etc...
-    \end{itemize}} \\
-    \hline
-\end{tabular}    
-\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
-    \hline
-    \textbf{Project Development:} & \parbox{0.65\textwidth}
-    {\vspace{0.3cm}The project development will be done following the SCRUM methodology.\vspace{0.3cm}
-    \\
-    The first minimal viable product (MVP) will include the following components :
-    \begin{itemize}[label=\textbullet]
-        \item 
-        \item
-        \item 
-    \end{itemize}
-    
-    \vspace{0.3cm}\textbf{What will you learn from deploying the first MVP and what would you measure in order to learn it.}\vspace{0.3cm}
-    \\
-    text
-    \\
-    \\
-    \vspace{0.3cm}\textbf{How will you build your system ? (System diagram)}\vspace{0.3cm}
-    \\
-    diagram 1
-    \\
-    \\
-    \vspace{0.3cm}\textbf{Front-end: User interface components}\vspace{0.3cm}
-    \\
-    diagram
-    \\
-    \\
-    \vspace{0.3cm}\textbf{ Back-end: Technical components}\vspace{0.3cm}
-    \\
-    diagram
-    \\
-    \\
-    \vspace{0.3cm}\textbf{Data sources : What data will you use and how will you access it?}\vspace{0.3cm}
-    \\
-    We will use satellite data obtained using the Google Static Maps API. Training, testing and validation datasets will be collected and manually annotated to train and evaluate our ML model. For each user request, data will be collected on the fly based on the location and radius provided by the user.
-    \\}
-    \\
-   \hline
-\end{tabular}
-
-\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
-    \hline
-   \textbf{Evaluation:} & \parbox{0.65\textwidth}{\vspace{0.3cm}\textbf{How will you evaluate your system? (Initial ideas)} \vspace{0.3cm}
-   To evaluate our system we will get in touch with a group of users who will be given access to our application for testing and feedback purposes. Moreover, our application will undergo functionality and performance testing to ensure it meets the required standard.
-   \\
-   To evaluate the Machine Learning model, we will use a separate validation dataset ensuring it performs well in different urban settings. Furthermore several performance metrics (accuracy, precision, recall) will be used to assess the model.
-   \\
-   \\
-   \vspace{0.3cm}\textbf{ How will the evaluation inform your future development?}\vspace{0.3cm}
-   \\
-   User feedback will help the development of additional features suggested by the users and identifying potential bugs and issues.
-   \\
-   \\
-    } \\
-   \hline
-\end{tabular}
+        \vspace{0.3cm}
+        Private individuals will use the app in the following use cases:
+        \begin{itemize}[label=\textbullet]
+            \item To view real-time parking availability given their current location or a specified destination within a defined radius
+            \item To see the cost of available parking spots nearby, allowing them to compare and choose the best option
+            \item To view available parking based on special filters, such as handicap-accessible parking, electric vehicle charging stations, etc.
+        \end{itemize}
+        \vspace{0.3cm}} \\ 
+        \hline
+    \end{tabular}
+\end{center}
 
 \vspace{0.5cm}
+% Center the second table and adjust column widths
+\begin{center}
+    \begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+        \hline
+        \textbf{Project Dev:} & \parbox{0.65\textwidth}
+        {\vspace{0.3cm}The project development will be done following the SCRUM methodology.\vspace{0.3cm}
+        \\ The first minimal viable product (MVP) will include the following components:
+        \begin{itemize}[label=\textbullet]
+            \item Front-end interface with map visualization
+            \item Back-end server integration for real-time data retrieval
+            \item Machine learning model for computer vision parking spot detection
+        \end{itemize}
+        
+        \vspace{0.3cm}\textbf{What will you learn from deploying the first MVP and what would you measure in order to learn it?}\vspace{0.3cm}
+        \\ From the first MVP deployment, we aim to assess the performance of the computer vision model, user interface usability, and overall system responsiveness. We will measure user engagement, system response time, and model accuracy in identifying amenities.
+        \\ \\
+        \vspace{0.3cm}\textbf{How will you build your system?}\vspace{0.3cm}
+        \\ A system diagram is present in the addendum section at the end of the document.
+        \\ \\
+        \vspace{0.3cm}\textbf{Front-end: User interface components}\vspace{0.3cm}
+        \\ The front-end will display a dashboard containing on-street parking information and other amenities. It will also allow users to request an area to scan, or view previously scanned areas.
+        \\ \\
+        \vspace{0.3cm}\textbf{Back-end: Technical components}\vspace{0.3cm}
+        \\ The back-end will manage the collection of real-time data from APIs and provide the processed information to the front-end.
+        \\ \\
+        \vspace{0.3cm}\textbf{Data sources: What data will you use and how will you access it?}\vspace{0.3cm}
+        \\ We will use satellite data obtained using public Static Maps API(s). Training, testing, and validation datasets will be collected and manually annotated to train and evaluate our ML model. For each user request, data will be collected on the fly based on the location and radius provided by the user.
+        \vspace{0.3cm}} \\ 
+        \hline
+    \end{tabular}
+\end{center}
 
-\centering
-\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
-    \hline
-    \textbf{Project Management:} & \parbox{0.65\textwidth}{\vspace{0.3cm}
-    We are using Github and their built-in project management tool. We are also adopting an Agile approach where we'll be working on completing milestones every week. First week's milestone is to get a front-end demo and a basic back-end working.\\ \\
-    Deadlines will include project initialization, first mock-up, dataset creation, model development and training, testing phase and final submission. \\ \\
-    Success in this project is good teamwork all throughout and delivering a good quality working product we are all satisfied with.
-    \vspace{0.3cm}} \\
-    \hline
-\end{tabular}
+\vspace{0.5cm}
+\begin{center}
+    \begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+        \hline
+        \textbf{Evaluation:} & \parbox{0.65\textwidth}{\vspace{0.3cm}\textbf{How will you evaluate your system? (Initial ideas)} \vspace{0.3cm}
+        To evaluate our system, we will engage a group of users to test the application and provide feedback. Additionally, functionality and performance testing will be conducted to ensure the application meets the required standards.
+        \\ To evaluate the Machine Learning model, a separate validation dataset will be used. Performance metrics such as accuracy, precision, and recall will assess the model’s success in various urban settings.
+        \\ \\
+        \vspace{0.3cm}\textbf{How will the evaluation inform your future development?}\vspace{0.3cm}
+        \\ User feedback will guide the development of additional features, help identify potential bugs, and inform further system improvements.
+        \vspace{0.3cm}} \\ 
+        \hline
+    \end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+\begin{center}
+    \begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+        \hline
+        \textbf{Management:} & \parbox{0.65\textwidth}{\vspace{0.3cm}
+        We are using GitHub and its built-in project management tools. We are also adopting an Agile approach, aiming to complete milestones each week. The first week's milestone is to get a front-end demo and basic back-end functionality.
+        \\ \\ Deadlines will include project initialization, first mock-up, dataset creation, model development and training, testing phase, and final submission. \\ \\ Success in this project will be achieved through good teamwork, consistently meeting deadlines, and delivering a high-quality working product.
+        \vspace{0.3cm}} \\ 
+        \hline
+    \end{tabular}
+\end{center}
 
 \newpage
-\section{Team information}
-\textbf{Team Name:} \textbf{GROUP 3}
+
+\section{Team Information}
+\textbf{Team Name:} GROUP 3
 \vspace{0.2cm}
 \begin{table}[h]
     \centering
     \begin{tabularx}{\textwidth}{@{}p{4cm} p{4cm} p{5cm}@{}}
-        \toprule Student Name & Student Number & Email \\
+        \toprule 
+        Student Name & Student Number & Email \\ 
         \midrule
-            Jessica Fornetti & D23124588 & D23124588@mytudublin.ie \\ \\
-            Anais Blenet & D22127697 & D22127697@mytudublin.ie \\ \\
-            Saul Burgess & C19349793 & C19349793@mytudublin.ie \\ \\
-            Kaustubh Trivedi & D23124940 & D23124940@mytudublin.ie \\ \\
-            Yuanshuo Du & D22125495 & D22125495@mytudublin.ie \\ \\
-            Andreas Kraus & D23125112 & D23125112@mytudublin.ie \\ 
+        Jessica Fornetti & D23124588 & D23124588@mytudublin.ie \\ 
+        Anais Blenet & D22127697 & D22127697@mytudublin.ie \\ 
+        Saul Burgess & C19349793 & C19349793@mytudublin.ie \\ 
+        Kaustubh Trivedi & D23124940 & D23124940@mytudublin.ie \\ 
+        Yuanshuo Du & D22125495 & D22125495@mytudublin.ie \\ 
+        Andreas Kraus & D23125112 & D23125112@mytudublin.ie \\ 
         \bottomrule 
     \end{tabularx}
 \end{table}
 
-\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
-    \hline
-    \textbf{Team Meetings:} & \parbox{0.65\textwidth}
-    {\vspace{0.3cm}
-    We have decided to meet everyday online at 12pm, to check in for the day, discuss previous day and current day tasks. \\ These online meetings last around 30 minutes and everyone is usually in attendance except of Kaustubh who works night shifts. Saul keeps minutes of each meetings and updates Kaustubh subsequently. \\ \\ We have also decided to meet in person on Fridays after the presentation. \\ \\ Decision-making so far is unanimous, we'll incorporate experience and majority rule as time progresses and depending on the issue at hand. We are currently working in pairs, so ideally we'll have one person in their area of expertise paired up with another, and roles will change depending on the success of the pair working or the need for people to switch to different tasks. \vspace{0.3cm}} \\
-    \hline
-\end{tabular}
+\vspace{0.5cm}
 
-% Center the third table and adjust column widths
-\centering
-\vspace{0.2cm}
-\begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
-    \hline
-   \textbf{Team Conflict:} & \parbox{0.65\textwidth}{\vspace{0.3cm}The big keyword here is communication. We are set up on a discord server with multiple breakout rooms and we are constantly updating each other on what we are doing/not doing/able to do/unable. This will help avoid conflict often caused by miscommunication. \\ \\ In the event of conflict, one of us will act as mediator to oversee the issue and talk it out. Issues shall not be left unresolved. \\ \\ Ultimate veto power seems excessive. \vspace{0.3cm}} \\
-   \hline
-\end{tabular}
+% Center the team meetings table
+\begin{center}
+    \begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+        \hline
+        \textbf{Team Meetings:} & \parbox{0.65\textwidth}
+        {\vspace{0.3cm} We meet online every day at 12 PM to check in for the day, discuss tasks, and review progress. These meetings last around 30 minutes, with everyone attending except Kaustubh, who works night shifts. Saul keeps minutes of each meeting and updates Kaustubh afterward. \\ \\ We also meet in person on Fridays after the presentation. Decisions are unanimous for now, with majority rule to be considered as needed. We work in pairs, with roles changing depending on task success and team needs.
+        \vspace{0.3cm}} \\ 
+        \hline
+    \end{tabular}
+\end{center}
+
+% Center the team conflict table
+\begin{center}
+    \begin{tabular}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+        \hline
+        \textbf{Team Conflict:} & \parbox{0.65\textwidth}{\vspace{0.3cm} The key to avoiding conflict is communication. We use a Discord server with breakout rooms and constant updates. If conflicts arise, a team member will mediate to resolve the issue through discussion. No issues will be left unresolved.
+        \vspace{0.3cm}} \\ 
+        \hline
+    \end{tabular}
+\end{center}
+
+% Adds an adendum page for the system diagram
+\newpage
+\section*{Addendum}
+
+\begin{center}
+    \vspace{5cm} % Adjust this to control vertical positioning on the page
+    \textbf{System Diagram:} \\
+    \vspace{0.5cm}
+    \includegraphics[width=16cm]{System Diagram (vertical).png}
+\end{center}
+
+\vfill % Pushes the content to the middle of the page, keeping the rest empty
 
 \end{document}
