@@ -9,7 +9,7 @@
     ],
     "shutdownAction": "stopCompose",
     "workspaceFolder": "/workspace",
-    "postCreateCommand": "tlmgr update --self && tlmgr install beamer ragged2e booktabs enumitem biblatex",
+    "postCreateCommand": "",
     "customizations": {
         "vscode": {
             "extensions": [
