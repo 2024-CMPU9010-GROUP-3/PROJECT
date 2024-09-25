@@ -8,11 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rmdir /s /q .next"
-
   },
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/react-slot": "^1.1.0",
+    "@react-google-maps/api": "^2.19.3",
     "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
