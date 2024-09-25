@@ -5,15 +5,11 @@ import (
 	"net/http"
 
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/middleware"
+	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/routes"
 )
 
-func handleRequest(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("World!"))
-}
-
 func main() {
-	router := http.NewServeMux()
-	router.HandleFunc("/hello", handleRequest)
+	router := routes.Router()
 
 	middlewares := middleware.CreateMiddlewareStack(
 		middleware.Logging,
