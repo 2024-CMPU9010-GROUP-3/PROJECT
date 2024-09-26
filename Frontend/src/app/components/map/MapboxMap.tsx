@@ -5,8 +5,11 @@ import React, { useState } from "react";
 import Map, { Marker } from "react-map-gl";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
+import { FaLocationDot } from "react-icons/fa6";
 import DeckGL from "@deck.gl/react";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { MapClickEvent } from "@/lib/interfaces/types";
+import { Coordinates } from "@/lib/interfaces/types";
 
 import {
   lightingEffect,
@@ -16,11 +19,6 @@ import {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   colorRange,
 } from "@/lib/mapconfig";
-
-interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
 
 const LocationAggregatorMap = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -52,24 +50,36 @@ const LocationAggregatorMap = () => {
   //   });
   // };
 
+  // Handle map click event
+  const handleMapClick = (event: unknown) => {
+    const mapClickEvent = event as MapClickEvent; // Type assertion
+    if (mapClickEvent.coordinate) {
+      const [longitude, latitude] = mapClickEvent.coordinate;
+      setCoordinates({ latitude, longitude });
+      console.log(`Map clicked at longitude: ${longitude}, latitude: ${latitude}`);
+    }
+  };
+
   return (
     <div>
       <DeckGL
         effects={[lightingEffect]}
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
+        onClick={handleMapClick}
       >
         <Map
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           mapStyle="mapbox://styles/mapbox/streets-v8"
           antialias={true}
         >
-          {/* <Marker
-            coordinates={[coordinates?.longitude, coordinates?.longitude]}
+          <Marker
+            longitude={coordinates?.longitude}
+            latitude={coordinates?.latitude}
             anchor="bottom"
           >
-            <img src="path_to_marker_image" alt="User Location" />
-          </Marker> */}
+            <FaLocationDot size={50} color="FFA15A"/>
+          </Marker>
         </Map>
       </DeckGL>
     </div>
