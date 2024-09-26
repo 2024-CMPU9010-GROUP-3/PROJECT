@@ -53,7 +53,7 @@ The server will then be reachable on `localhost:8080`
 - **Response:** JSON (User details)
 - **Description:** This route returns the user details object for the given UserId
 
-#### `POST` `/v1/public/auth/User`
+#### `POST` `/v1/public/auth/User/`
 
 - **Access:** public
 - **Path Parameters:** None

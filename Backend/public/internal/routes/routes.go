@@ -41,7 +41,7 @@ func auth() *http.ServeMux {
 	authHandler := &handlers.AuthHandler{}
 
 	router.HandleFunc("GET /User/{id}", authHandler.HandleGet)
-	router.HandleFunc("POST /User", authHandler.HandlePost)
+	router.HandleFunc("POST /User/", authHandler.HandlePost)
 	router.HandleFunc("PUT /User/{id}", authHandler.HandlePut)
 	router.HandleFunc("DELETE /User/{id}", authHandler.HandleDelete)
 	router.HandleFunc("POST /User/login", authHandler.HandleLogin)
