@@ -18,7 +18,6 @@ import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
-
 type SliderProps = React.ComponentProps<typeof Slider>;
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
@@ -61,7 +60,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     if (mapClickEvent.coordinate) {
       const [longitude, latitude] = mapClickEvent.coordinate;
       setCoordinates({ latitude, longitude });
-      console.log(`Map clicked at longitude: ${longitude}, latitude: ${latitude}`);
+      console.log(
+        `Map clicked at longitude: ${longitude}, latitude: ${latitude}`
+      );
     }
   };
 
@@ -79,11 +80,14 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           antialias={true}
         >
           <Marker
+            className={`p-10 border-2 border-[#8CCBF7]`}
             longitude={coordinates?.longitude}
             latitude={coordinates?.latitude}
             anchor="bottom"
           >
-            <FaLocationDot size={50} color="FFA15A" />
+            <div>
+              <FaLocationDot size={50} color="FFA15A" />
+            </div>
           </Marker>
         </Map>
       </DeckGL>
