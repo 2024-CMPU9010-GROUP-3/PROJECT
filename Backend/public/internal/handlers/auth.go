@@ -12,29 +12,34 @@ type AuthHandler struct{}
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	data := util.Placeholder("GET User")
 	w.Header().Set(contentType, applicationJson)
-	json.NewEncoder(w).Encode(data)
+	err := json.NewEncoder(w).Encode(data)
+	util.CheckResponseError(err, w)
 }
 
 func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	data := util.Placeholder("POST User")
 	w.Header().Set(contentType, applicationJson)
-	json.NewEncoder(w).Encode(data)
+	err := json.NewEncoder(w).Encode(data)
+	util.CheckResponseError(err, w)
 }
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	data := util.Placeholder("PUT User")
 	w.Header().Set(contentType, applicationJson)
-	json.NewEncoder(w).Encode(data)
+	err := json.NewEncoder(w).Encode(data)
+	util.CheckResponseError(err, w)
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	data := util.Placeholder("DELETE User")
 	w.Header().Set(contentType, applicationJson)
-	json.NewEncoder(w).Encode(data)
+	err := json.NewEncoder(w).Encode(data)
+	util.CheckResponseError(err, w)
 }
 
 func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	data := util.Placeholder("POST User/Login")
 	w.Header().Set(contentType, applicationJson)
-	json.NewEncoder(w).Encode(data)
+	err := json.NewEncoder(w).Encode(data)
+	util.CheckResponseError(err, w)
 }

@@ -21,5 +21,8 @@ func main() {
 	}
 
 	log.Println("Listening on port 8080")
-	server.ListenAndServe()
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Printf("Server: %v/n", err)
+	}
 }
