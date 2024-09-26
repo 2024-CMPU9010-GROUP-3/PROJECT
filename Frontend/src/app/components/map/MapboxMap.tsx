@@ -11,44 +11,49 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { MapClickEvent } from "@/lib/interfaces/types";
 import { Coordinates } from "@/lib/interfaces/types";
 
-import {
-  lightingEffect,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  material,
-  INITIAL_VIEW_STATE,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  colorRange,
-} from "@/lib/mapconfig";
+import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
+import { FloatingDock } from "@/components/ui/floating-dock";
+import { IconHome } from "@tabler/icons-react";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
-const LocationAggregatorMap = () => {
+
+type SliderProps = React.ComponentProps<typeof Slider>;
+
+const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
     longitude: 0,
   });
-  // const getCurrentLocation: Promise<Coordinates> = () => {
-  //   return new Promise((resolve, reject) => {
-  //     // Check if geolocation is supported
-  //     if (!navigator.geolocation) {
-  //       reject(new Error("Geolocation is not supported by this browser."));
-  //       return;
-  //     }
 
-  //     // Use the Geolocation API to get the user's position
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position: GeolocationPosition) => {
-  //         const coordinates: Coordinates = {
-  //           latitude: position.coords.latitude,
-  //           longitude: position.coords.longitude,
-  //         };
-  //         resolve(coordinates);
-  //       },
-  //       (error: GeolocationPositionError) => {
-  //         reject(error);
-  //       }
-  //     );
-  //   });
-  // };
+  const [sliderValue, setSliderValue] = useState<number>(0);
+
+  const links = [
+    {
+      title: "Home",
+      icon: (
+        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "#",
+    },
+
+    {
+      title: "Home",
+      icon: (
+        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "#",
+    },
+    {
+      title: "Home",
+      icon: (
+        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "#",
+    },
+  ];
 
   // Handle map click event
   const handleMapClick = (event: unknown) => {
@@ -78,10 +83,43 @@ const LocationAggregatorMap = () => {
             latitude={coordinates?.latitude}
             anchor="bottom"
           >
-            <FaLocationDot size={50} color="FFA15A"/>
+            <FaLocationDot size={50} color="FFA15A" />
           </Marker>
         </Map>
       </DeckGL>
+      <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
+        <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
+          <div className="px-2 py-4 space-y-2">
+            <div className="space-y-1">
+              <label>Distance</label>
+              <Slider
+                onValueChange={(value) => setSliderValue(value[0])}
+                defaultValue={[0]}
+                max={100}
+                step={1}
+                className={cn("w-[60%]", className)}
+                {...props}
+              />
+            </div>
+            <div className="">
+              <span className="p-1">{sliderValue}</span>
+            </div>
+            <div className="flex justify-center gap-5">
+              <div className="w-2/4">
+                <label>Long</label>
+                <Input />
+              </div>
+              <div className="w-2/4">
+                <label>Lat</label>
+                <Input />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute bg-transparent bottom-10 right-20 scale-105 z-20">
+        <FloatingDock items={links} desktopClassName="bg-transparent " />
+      </div>
     </div>
   );
 };
