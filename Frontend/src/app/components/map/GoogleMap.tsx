@@ -1,6 +1,5 @@
 // components/GoogleMap.tsx
 import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
-import { useState } from "react";
 
 type LatLng = {
   lat: number;
@@ -18,10 +17,12 @@ const center: LatLng = {
 };
 
 function MapComponent() {
-  const [currentLocation, setCurrentLocation] = useState<LatLng>(center);
+  const currentLocation: LatLng = center;
 
   return (
-    <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}>
+    <LoadScript
+      googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string}
+    >
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={currentLocation}
