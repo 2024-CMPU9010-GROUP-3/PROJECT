@@ -1,6 +1,6 @@
-# Backend
+# Public Backend
 
-This is a backend written in Go using the net/http package of the standard library. The server is equipped with a middleware that will log the URL, status code and response time of any request to std out.
+This is the public backend of our application. It is written in Go using the net/http package of the standard library. The server is equipped with a middleware that will log the URL, status code and response time of any request to std out.
 
 ## Usage
 
@@ -12,16 +12,16 @@ Requirements:
 
 - Docker or Docker-compliant container runtime
 
-Navigate to the `PROJECT/Backend` and build the Docker image:
+Navigate to the `PROJECT/Backend/public` and build the Docker image:
 
 ```
-docker build -t cmpu9010-backend .
+docker build -t cmpu9010-backend-public .
 ```
 
 Then run the container with the following command:
 
 ```
-docker run -p 8080:8080 cmpu9010-backend
+docker run -p 8080:8080 cmpu9010-backend-public
 ```
 
 The server will then be reachable on `localhost:8080`
@@ -32,7 +32,7 @@ Requirements:
 
 - Golang >= 1.23.1
 
-Navigate to `PROJECT/Backend` and run this command:
+Navigate to `PROJECT/Backend/public` and run this command:
 
 ```
 go run cmd/main/main.go
@@ -90,33 +90,6 @@ The server will then be reachable on `localhost:8080`
 - **Description:** This route allows a user to login with a username and password. If authentication succeeds, returns a bearer token for authentication.
 
 ### Points
-
-#### `POST` `/v1/private/points`
-
-- **Access:** private
-- **Path Parameters:** None
-- **Query Parameters:** None
-- **Accepts:** Point details
-- **Response:** JSON (PointId)
-- **Description:** This route creates a new point in the database and returns its id
-
-#### `PUT` `/v1/private/points/{id}`
-
-- **Access:** private
-- **Path Parameters:** PointId
-- **Query Parameters:** None
-- **Accepts:** Point details
-- **Response:** None
-- **Description:** This route updates an existing point's details
-
-#### `DELETE` `/v1/private/points/{id}`
-
-- **Access:** private
-- **Path Parameters:** PointId
-- **Query Parameters:** None
-- **Accepts:** None
-- **Response:** None
-- **Description:** This route deletes a point from the database
 
 #### `GET` `/v1/public/points/byRadius?long={}&lat={}&radius={}`
 
