@@ -16,10 +16,13 @@ func main() {
 	)
 
 	server := http.Server{
-		Addr:    ":8080",
+		Addr:    ":8081",
 		Handler: middlewares(router),
 	}
 
-	log.Println("Listening on port 8080")
-	server.ListenAndServe()
+	log.Println("Listening on port 8081")
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Printf("Server: %v/n", err)
+	}
 }

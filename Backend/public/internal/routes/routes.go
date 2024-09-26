@@ -16,32 +16,14 @@ func Router() *http.ServeMux {
 
 func v1() *http.ServeMux {
 	router := http.NewServeMux()
-	router.Handle("/private/", http.StripPrefix("/private", private()))
 	router.Handle("/public/", http.StripPrefix("/public", public()))
 	return router
-}
-
-func private() *http.ServeMux {
-	router := http.NewServeMux()
-	router.Handle("/points/", http.StripPrefix("/points", pointsPrivate()))
-	return router
-
 }
 
 func public() *http.ServeMux {
 	router := http.NewServeMux()
 	router.Handle("/points/", http.StripPrefix("/points", pointsPublic()))
 	router.Handle("/auth/", http.StripPrefix("/auth", auth()))
-	return router
-}
-
-func pointsPrivate() *http.ServeMux {
-	router := http.NewServeMux()
-	pointsHandler := &handlers.PointsHandler{}
-	router.HandleFunc("POST /", pointsHandler.HandlePost)
-	router.HandleFunc("PUT /{id}", pointsHandler.HandlePut)
-	router.HandleFunc("DELETE /{id}", pointsHandler.HandleDelete)
-
 	return router
 }
 
@@ -59,7 +41,7 @@ func auth() *http.ServeMux {
 	authHandler := &handlers.AuthHandler{}
 
 	router.HandleFunc("GET /User/{id}", authHandler.HandleGet)
-	router.HandleFunc("POST /User", authHandler.HandlePost)
+	router.HandleFunc("POST /User/", authHandler.HandlePost)
 	router.HandleFunc("PUT /User/{id}", authHandler.HandlePut)
 	router.HandleFunc("DELETE /User/{id}", authHandler.HandleDelete)
 	router.HandleFunc("POST /User/login", authHandler.HandleLogin)
