@@ -1,56 +1,45 @@
 "use client";
 
 import React, { useState } from "react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import Map, { Marker } from "react-map-gl";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { HexagonLayer } from "@deck.gl/aggregation-layers";
+import Map from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import "mapbox-gl/dist/mapbox-gl.css";
 
-import {
-  lightingEffect,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  material,
-  INITIAL_VIEW_STATE,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  colorRange,
-} from "@/lib/mapconfig";
+import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
+import { FloatingDock } from "@/components/ui/floating-dock";
+import { IconHome } from "@tabler/icons-react";
+import { Slider } from "@/components/ui/slider";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
-interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
+type SliderProps = React.ComponentProps<typeof Slider>;
 
-const LocationAggregatorMap = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [coordinates, setCoordinates] = useState<Coordinates>({
-    latitude: 0,
-    longitude: 0,
-  });
-  // const getCurrentLocation: Promise<Coordinates> = () => {
-  //   return new Promise((resolve, reject) => {
-  //     // Check if geolocation is supported
-  //     if (!navigator.geolocation) {
-  //       reject(new Error("Geolocation is not supported by this browser."));
-  //       return;
-  //     }
+const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
+  const [sliderValue, setSliderValue] = useState<number>(0);
+  const links = [
+    {
+      title: "Home",
+      icon: (
+        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "#",
+    },
 
-  //     // Use the Geolocation API to get the user's position
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position: GeolocationPosition) => {
-  //         const coordinates: Coordinates = {
-  //           latitude: position.coords.latitude,
-  //           longitude: position.coords.longitude,
-  //         };
-  //         resolve(coordinates);
-  //       },
-  //       (error: GeolocationPositionError) => {
-  //         reject(error);
-  //       }
-  //     );
-  //   });
-  // };
+    {
+      title: "Home",
+      icon: (
+        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "#",
+    },
+    {
+      title: "Home",
+      icon: (
+        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+      ),
+      href: "#",
+    },
+  ];
 
   return (
     <div>
@@ -63,15 +52,41 @@ const LocationAggregatorMap = () => {
           mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
           mapStyle="mapbox://styles/mapbox/streets-v8"
           antialias={true}
-        >
-          {/* <Marker
-            coordinates={[coordinates?.longitude, coordinates?.longitude]}
-            anchor="bottom"
-          >
-            <img src="path_to_marker_image" alt="User Location" />
-          </Marker> */}
-        </Map>
+        ></Map>
       </DeckGL>
+      <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
+        <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
+          <div className="px-2 py-4 space-y-2">
+            <div className="space-y-1">
+              <label>Distance</label>
+              <Slider
+                onValueChange={(value) => setSliderValue(value[0])}
+                defaultValue={[0]}
+                max={100}
+                step={1}
+                className={cn("w-[60%]", className)}
+                {...props}
+              />
+            </div>
+            <div className="">
+              <span className="p-1">{sliderValue}</span>
+            </div>
+            <div className="flex justify-center gap-5">
+              <div className="w-2/4">
+                <label>Long</label>
+                <Input />
+              </div>
+              <div className="w-2/4">
+                <label>Lat</label>
+                <Input />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute bg-transparent bottom-10 right-20 scale-105 z-20">
+        <FloatingDock items={links} desktopClassName="bg-transparent " />
+      </div>
     </div>
   );
 };
