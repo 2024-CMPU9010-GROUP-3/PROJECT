@@ -1,27 +1,24 @@
 "use client";
 
-import { GoogleMap as GoogleMapComponent } from '@react-google-maps/api';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { useEffect } from 'react';
 
-// Dynamically import dynamic map components to prevent SSR issues
-const GoogleMap = dynamic(() => import('../../components/map/GoogleMap'), {
-  ssr: false
-});
+// Dynamically import the Map component to prevent SSR issues with mapbox-gl
+const MapBox = dynamic(() => import('../../components/map/mapBox').then(mod => mod.default), { ssr: false });
 
 const HomePage = () => {
   const router = useRouter();
 
-  const handleButtonClick = () => {
-    router.push('/googleMap');
-  };
+
 
   return (
     <div>
       <h1>Hello Project!!!  test</h1>
-      <h2>Google Map Integration</h2>
-      <GoogleMap />
+      
+      <h1>Dublin Map</h1>
+      <MapBox />
+
     </div>
   );
 };
