@@ -58,7 +58,7 @@ Navigate to `PROJECT/Backend` and run this command:
 go run -tags private cmd/main/main.go
 ```
 
-The server will then be reachable on `localhost:8081`
+The server will then be reachable on `localhost:8080`
 
 #### Run Public Backend
 
@@ -72,4 +72,8 @@ Navigate to `PROJECT/Backend` and run this command:
 go run -tags public cmd/main/main.go
 ```
 
-The server will then be reachable on `localhost:8081`
+The server will then be reachable on `localhost:8080`
+
+### Command Line Arguments
+
+- `-p <Port Number>` or `-port <Port Number>` sets the port number the server will listen on - default: `8080`
