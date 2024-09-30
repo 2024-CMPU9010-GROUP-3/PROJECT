@@ -48,6 +48,6 @@ jobs:
         run: |
           docker buildx build --platform linux/amd64,linux/arm64 \
             -t ghcr.io/2024-cmpu9010-group-3/frontend:latest \
-            -t ghcr.io/2024-cmpu9010-group-3/frontend:${{ github.env.get_version.version }} \
+            -t ghcr.io/2024-cmpu9010-group-3/frontend:${{ env.VERSION }} \
             --push \
             ./Frontend
