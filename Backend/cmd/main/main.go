@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	router := routes.Router()
+	router := routes.Router
 
 	middlewares := middleware.CreateMiddlewareStack(
 		middleware.Logging,
