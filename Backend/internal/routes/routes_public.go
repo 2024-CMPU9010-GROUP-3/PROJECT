@@ -1,4 +1,7 @@
+//go:build public
+
 // This will need refactoring in the future, but it is sufficient for the amount of routes we have at the moment
+
 package routes
 
 import (
@@ -7,17 +10,8 @@ import (
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/handlers"
 )
 
-func Router() *http.ServeMux {
-	router := http.NewServeMux()
-
-	router.Handle("/v1/", http.StripPrefix("/v1", v1()))
-	return router
-}
-
-func v1() *http.ServeMux {
-	router := http.NewServeMux()
-	router.Handle("/public/", http.StripPrefix("/public", public()))
-	return router
+func init() {
+	AddRoute(route{"/public/", public()})
 }
 
 func public() *http.ServeMux {
