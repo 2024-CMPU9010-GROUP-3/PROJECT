@@ -1,3 +1,5 @@
+//go:build public
+
 // This will need refactoring in the future, but it is sufficient for the amount of routes we have at the moment
 
 package routes
