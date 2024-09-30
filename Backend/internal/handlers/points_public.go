@@ -1,3 +1,5 @@
+//go:build public
+
 package handlers
 
 import (
@@ -6,8 +8,6 @@ import (
 
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util"
 )
-
-type PointsHandler struct{}
 
 func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request) {
 	data := util.Placeholder("GET ByRadius")

@@ -1,3 +1,5 @@
+//go:build public
+
 package handlers
 
 import (
@@ -6,8 +8,6 @@ import (
 
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util"
 )
-
-type AuthHandler struct{}
 
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	data := util.Placeholder("GET User")

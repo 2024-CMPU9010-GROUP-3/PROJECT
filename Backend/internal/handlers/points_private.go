@@ -1,3 +1,5 @@
+//go:build private
+
 package handlers
 
 import (
@@ -6,7 +8,6 @@ import (
 
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util"
 )
-
 
 func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	data := util.Placeholder("POST points")
