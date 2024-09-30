@@ -4,6 +4,11 @@ This is the backend of our application. It has two configurations (private and p
 
 The backend is written in Go using the net/http package of the standard library. The server is equipped with a middleware that will log the URL, status code and response time of any request to std out.
 
+## Routes
+
+- [Public Routes](./routes-public.md)
+- [Private Routes](./routes-private.md)
+
 ## Usage
 
 There are two options to run the backend, either locally or using Docker.
