@@ -1,0 +1,25 @@
+name: Branch Checks
+
+on:
+  pull_request:
+
+jobs:
+  validate-name:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Get branch name
+        id: get_branch_name
+        run: echo "branch=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
+
+      - name: Validate branch name
+        run: |
+          BRANCH_NAME="${{ steps.get_branch_name.outputs.branch }}"
+          if [[ ! "$BRANCH_NAME" =~ ^(backend/|frontend/|documentation/|distribution/|misc/) ]]; then
+            echo "Branch name '$BRANCH_NAME' is not valid. Rename the branch to match the pattern 'backend/', 'frontend/', 'documentation/', 'distribution/', or 'misc/'."
+            exit 1
+          fi
+        shell: bash
