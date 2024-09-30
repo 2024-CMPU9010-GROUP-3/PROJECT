@@ -1,6 +1,8 @@
 # Backend
 
-This is the private backend of our application, which will only be used by internal services such as our machine learning containers. It is written in Go using the net/http package of the standard library. The server is equipped with a middleware that will log the URL, status code and response time of any request to std out.
+This is the backend of our application. It has two configurations (private and public) which are defined using build tags at compile time. The private backend will only be used by internal services such as our machine learning containers. The public backend provides the endpoints used by the frontend when deployed.
+
+The backend is written in Go using the net/http package of the standard library. The server is equipped with a middleware that will log the URL, status code and response time of any request to std out.
 
 ## Usage
 
@@ -14,59 +16,60 @@ Requirements:
 
 Navigate to the `PROJECT/Backend` and build the Docker image:
 
+#### Build Private Backend
+
 ```
-docker build -t cmpu9010-backend-private .
+docker build -f Dockerfile.private -t cmpu9010-backend-private .
 ```
 
 Then run the container with the following command:
 
 ```
-docker run -p 8081:8081 cmpu9010-backend-private
+docker run -p 8081:8080 cmpu9010-backend-private
 ```
 
 The server will then be reachable on `localhost:8081`
 
+#### Build Public Backend
+
+```
+docker build -f Dockerfile.public -t cmpu9010-backend-public .
+```
+
+Then run the container with the following command:
+
+```
+docker run -p 8080:8080 cmpu9010-backend-public
+```
+
+The server will then be reachable on `localhost:8080`
+
 ### Run Locally
+
+#### Run Private Backend
 
 Requirements:
 
 - Golang >= 1.23.1
 
-Navigate to `PROJECT/Backend/private` and run this command:
+Navigate to `PROJECT/Backend` and run this command:
 
 ```
-go run cmd/main/main.go
+go run -tags private cmd/main/main.go
 ```
 
 The server will then be reachable on `localhost:8081`
 
-## Routes
+#### Run Public Backend
 
-### Points
+Requirements:
 
-#### `POST` `/v1/private/points`
+- Golang >= 1.23.1
 
-- **Access:** private
-- **Path Parameters:** None
-- **Query Parameters:** None
-- **Accepts:** Point details
-- **Response:** JSON (PointId)
-- **Description:** This route creates a new point in the database and returns its id
+Navigate to `PROJECT/Backend` and run this command:
 
-#### `PUT` `/v1/private/points/{id}`
+```
+go run -tags public cmd/main/main.go
+```
 
-- **Access:** private
-- **Path Parameters:** PointId
-- **Query Parameters:** None
-- **Accepts:** Point details
-- **Response:** None
-- **Description:** This route updates an existing point's details
-
-#### `DELETE` `/v1/private/points/{id}`
-
-- **Access:** private
-- **Path Parameters:** PointId
-- **Query Parameters:** None
-- **Accepts:** None
-- **Response:** None
-- **Description:** This route deletes a point from the database
+The server will then be reachable on `localhost:8081`
