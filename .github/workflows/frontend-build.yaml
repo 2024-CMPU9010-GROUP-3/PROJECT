@@ -47,7 +47,7 @@ jobs:
       - name: Push Docker image to GitHub Container Registry
         run: |
           docker buildx build --platform linux/amd64,linux/arm64 \
-            -t ghcr.io/${{ github.repository_owner }}/frontend:latest \
-            -t ghcr.io/${{ github.repository_owner }}/frontend:${{ github.env.get_version.version }} \
+            -t ghcr.io/2024-cmpu9010-group-3/frontend:latest \
+            -t ghcr.io/2024-cmpu9010-group-3/frontend:${{ github.env.get_version.version }} \
             --push \
             ./Frontend
