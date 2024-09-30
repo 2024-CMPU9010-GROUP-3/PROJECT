@@ -1,7 +1,9 @@
-name: Frontend Tests
+name: Frontend Build
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "Frontend/**"
   workflow_dispatch:
