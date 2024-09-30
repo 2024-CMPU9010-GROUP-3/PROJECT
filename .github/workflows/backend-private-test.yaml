@@ -3,7 +3,7 @@ name: Private Backend Tests
 on:
   pull_request:
     paths:
-      - "Backend/private/**"
+      - "Backend/**"
 
 jobs:
   lint-check:
@@ -21,8 +21,9 @@ jobs:
       - name: Lint the code
         uses: golangci/golangci-lint-action@v6
         with:
-          working-directory: Backend/private
+          working-directory: Backend
           version: v1.60
+          args: --build-tags private
 
   build-check:
     needs: lint-check
@@ -40,4 +41,4 @@ jobs:
 
       - name: Build Docker image for arm64 and amd64
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t backend-private-test-image ./Backend/private
+          docker buildx build --platform linux/amd64,linux/arm64 -t backend-private-test-image -f ./Backend/Dockerfile.private ./Backend
