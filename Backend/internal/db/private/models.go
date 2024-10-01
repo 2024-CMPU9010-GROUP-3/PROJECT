@@ -58,23 +58,23 @@ func (ns NullPointType) Value() (driver.Value, error) {
 
 type Login struct {
 	ID           pgtype.UUID `json:"id"`
-	Username     pgtype.Text `json:"username"`
-	Email        pgtype.Text `json:"email"`
-	Passwordhash pgtype.Text `json:"passwordhash"`
+	Username     string      `json:"username"`
+	Email        string      `json:"email"`
+	Passwordhash string      `json:"passwordhash"`
 }
 
 type Point struct {
 	ID      int64         `json:"id"`
 	Longlat postgis.Point `json:"longlat"`
-	Type    NullPointType `json:"type"`
+	Type    PointType     `json:"type"`
 	Details []byte        `json:"details"`
 }
 
 type UserDetail struct {
 	ID             pgtype.UUID      `json:"id"`
 	Registerdate   pgtype.Timestamp `json:"registerdate"`
-	Firstname      pgtype.Text      `json:"firstname"`
-	Lastname       pgtype.Text      `json:"lastname"`
+	Firstname      string           `json:"firstname"`
+	Lastname       string           `json:"lastname"`
 	Profilepicture pgtype.Text      `json:"profilepicture"`
 	Lastloggedin   pgtype.Timestamp `json:"lastloggedin"`
 }

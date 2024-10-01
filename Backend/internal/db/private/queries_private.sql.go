@@ -23,7 +23,7 @@ INSERT INTO points (
 
 type CreatePointParams struct {
 	Longlat postgis.Point `json:"longlat"`
-	Type    NullPointType `json:"type"`
+	Type    PointType     `json:"type"`
 	Details []byte        `json:"details"`
 }
 
@@ -72,7 +72,7 @@ WHERE Id = $1
 type UpdatePointParams struct {
 	ID      int64         `json:"id"`
 	Longlat postgis.Point `json:"longlat"`
-	Type    NullPointType `json:"type"`
+	Type    PointType     `json:"type"`
 	Details []byte        `json:"details"`
 }
 

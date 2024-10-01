@@ -35,7 +35,7 @@ type GetPointByRadiusParams struct {
 type GetPointByRadiusRow struct {
 	ID      int64         `json:"id"`
 	Longlat postgis.Point `json:"longlat"`
-	Type    NullPointType `json:"type"`
+	Type    PointType     `json:"type"`
 }
 
 func (q *Queries) GetPointByRadius(ctx context.Context, arg GetPointByRadiusParams) (GetPointByRadiusRow, error) {
