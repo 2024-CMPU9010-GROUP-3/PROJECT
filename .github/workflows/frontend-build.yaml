@@ -1,0 +1,53 @@
+name: Frontend Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Frontend/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Login to GitHub Container Registry"
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        working-directory: Frontend
+        run: npm install
+
+      - name: Extract package version
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' Frontend/package.json)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Push Docker image to GitHub Container Registry
+        run: |
+          docker buildx build --platform linux/amd64,linux/arm64 \
+            -t ghcr.io/2024-cmpu9010-group-3/frontend:latest \
+            -t ghcr.io/2024-cmpu9010-group-3/frontend:${{ env.VERSION }} \
+            --push \
+            ./Frontend
