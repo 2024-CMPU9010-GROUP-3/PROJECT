@@ -21,7 +21,6 @@ import { Input } from "@/components/ui/input";
 type SliderProps = React.ComponentProps<typeof Slider>;
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
     longitude: 0,
