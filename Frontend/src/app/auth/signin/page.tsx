@@ -8,7 +8,7 @@ import { UserAuthForm } from "@/app/components/form/user-auth-form"
 
 export const metadata: Metadata = {
   title: "Authentication",
-  description: "Authentication forms built using the components.",
+  description: "Sign in to Magpie system",
 }
 
 export default function AuthenticationPage() {
@@ -16,14 +16,14 @@ export default function AuthenticationPage() {
     <>
       <div className="md:hidden">
         <Image
-          src="/examples/authentication-light.png"
+          src="/images/authentication-light.png"
           width={1280}
           height={843}
           alt="Authentication"
           className="block dark:hidden"
         />
         <Image
-          src="/examples/authentication-dark.png"
+          src="/images/authentication-dark.png"
           width={1280}
           height={843}
           alt="Authentication"
@@ -60,11 +60,9 @@ export default function AuthenticationPage() {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;This library has saved me countless hours of work and
-                helped me deliver stunning designs to my clients faster than
-                ever before.&rdquo;
+                &ldquo;This system has saved me countless hours and helped me deliver better service to my clients faster than ever before.&rdquo;
               </p>
-              <footer className="text-sm">Sofia Davis</footer>
+              <footer className="text-sm">John Doe</footer>
             </blockquote>
           </div>
         </div>
