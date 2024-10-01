@@ -14,9 +14,6 @@ const HomePage = () => {
 
   return (
     <div>
-      <h1>Hello Project!!! test</h1>
-      <h2>Google Map Integration</h2>
-      {/* <GoogleMap /> */}
       <LocationAggregatorMap />
     </div>
   );

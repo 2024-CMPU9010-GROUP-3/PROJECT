@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Map, { Marker } from "react-map-gl";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -27,7 +27,52 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     longitude: 0,
   });
 
+  const [markerSquareSize, setMarkerSquareSize] = useState<number>(0);
+  const [currentPositionCords, setCurrentPositionCords] = useState<Coordinates>(
+    { latitude: 0, longitude: 0 }
+  );
   const [sliderValue, setSliderValue] = useState<number>(0);
+
+  useEffect(() => {
+    setMarkerSquareSize(sliderValue * 100);
+  }, [sliderValue]);
+
+  useEffect(() => {
+    console.log("Marker Square Size>>>>", markerSquareSize);
+    console.log(markerSquareSize);
+  }, [markerSquareSize]);
+
+  const options = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0,
+  };
+
+  function success(pos: GeolocationPosition) {
+    const crd = pos.coords;
+
+    console.log("Your current position is:");
+    console.log(`Latitude : ${crd.latitude}`);
+    console.log(`Longitude: ${crd.longitude}`);
+    setCurrentPositionCords({
+      latitude: crd.latitude,
+      longitude: crd.longitude,
+    });
+    console.log(`More or less ${crd.accuracy} meters.`);
+  }
+
+  function error(err: unknown) {
+    const geolocationError = err as GeolocationPositionError;
+    console.warn(
+      `ERROR(${geolocationError.code}): ${geolocationError.message}`
+    );
+  }
+
+  // Get current position
+  useEffect(() => {
+    navigator.geolocation.getCurrentPosition(success, error, options);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const links = [
     {
@@ -87,6 +132,14 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           >
             <div>
               <FaLocationDot size={50} color="FFA15A" />
+            </div>
+          </Marker>
+          <Marker
+            latitude={currentPositionCords?.latitude}
+            longitude={currentPositionCords?.longitude}
+          >
+            <div>
+              <FaLocationDot size={35} color="blue" />
             </div>
           </Marker>
         </Map>
