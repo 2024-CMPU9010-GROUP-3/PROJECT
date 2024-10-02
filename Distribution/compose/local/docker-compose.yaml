@@ -1,0 +1,40 @@
+name: PROJECT
+
+version: "1.0"
+
+services:
+  private-service:
+    build:
+      context: ../../../Backend
+      dockerfile: Dockerfile.private
+    container_name: private-service
+    ports:
+      - "8081:8080"
+    networks:
+      - app-network
+
+  public-service:
+    build:
+      context: ../../../Backend
+      dockerfile: Dockerfile.public
+    container_name: public-service
+    ports:
+      - "8082:8080"
+    networks:
+      - app-network
+
+  frontend-service:
+    build:
+      context: ../../../Frontend
+    container_name: frontend-service
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN={MAPBOX_ACCESS_TOKEN}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
