@@ -7,10 +7,13 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/handlers"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/middleware"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/routes"
 	"github.com/jackc/pgx/v5"
 	"github.com/joho/godotenv"
+	"github.com/twpayne/go-geos"
+	pgxgeos "github.com/twpayne/pgx-geos"
 )
 
 const defaultPort = "8080"
@@ -50,6 +53,14 @@ func main() {
 		log.Println("Successfully connected to database")
 	}
 	defer conn.Close(ctx)
+
+	err = pgxgeos.Register(ctx, conn, geos.NewContext())
+	if err != nil {
+		log.Fatalf("Could not register geo datatype: %v\n", err)
+		os.Exit(1)
+	}
+
+	handlers.RegisterDatabaseConnection(&ctx, conn)
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%v", port),
