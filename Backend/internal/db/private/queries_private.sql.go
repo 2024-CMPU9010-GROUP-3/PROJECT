@@ -10,7 +10,7 @@ package db
 import (
 	"context"
 
-	"github.com/cridenour/go-postgis"
+	geos "github.com/twpayne/go-geos"
 )
 
 const createPoint = `-- name: CreatePoint :one
@@ -22,9 +22,9 @@ INSERT INTO points (
 `
 
 type CreatePointParams struct {
-	Longlat postgis.Point `json:"longlat"`
-	Type    PointType     `json:"type"`
-	Details []byte        `json:"details"`
+	Longlat *geos.Geom `json:"longlat"`
+	Type    PointType  `json:"type"`
+	Details []byte     `json:"details"`
 }
 
 func (q *Queries) CreatePoint(ctx context.Context, arg CreatePointParams) (int64, error) {
@@ -44,23 +44,6 @@ func (q *Queries) DeletePoint(ctx context.Context, id int64) error {
 	return err
 }
 
-const getPoint = `-- name: GetPoint :one
-SELECT id, longlat, type, details FROM points
-WHERE id = $1 LIMIT 1
-`
-
-func (q *Queries) GetPoint(ctx context.Context, id int64) (Point, error) {
-	row := q.db.QueryRow(ctx, getPoint, id)
-	var i Point
-	err := row.Scan(
-		&i.ID,
-		&i.Longlat,
-		&i.Type,
-		&i.Details,
-	)
-	return i, err
-}
-
 const updatePoint = `-- name: UpdatePoint :exec
 UPDATE points
 SET LongLat = $2,
@@ -70,10 +53,10 @@ WHERE Id = $1
 `
 
 type UpdatePointParams struct {
-	ID      int64         `json:"id"`
-	Longlat postgis.Point `json:"longlat"`
-	Type    PointType     `json:"type"`
-	Details []byte        `json:"details"`
+	ID      int64      `json:"id"`
+	Longlat *geos.Geom `json:"longlat"`
+	Type    PointType  `json:"type"`
+	Details []byte     `json:"details"`
 }
 
 func (q *Queries) UpdatePoint(ctx context.Context, arg UpdatePointParams) error {

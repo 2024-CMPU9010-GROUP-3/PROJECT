@@ -1,7 +1,3 @@
--- name: GetPoint :one
-SELECT * FROM points
-WHERE id = $1 LIMIT 1;
-
 -- name: CreatePoint :one
 INSERT INTO points (
   LongLat, Type, Details

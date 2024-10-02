@@ -10,8 +10,8 @@ import (
 	"database/sql/driver"
 	"fmt"
 
-	"github.com/cridenour/go-postgis"
 	"github.com/jackc/pgx/v5/pgtype"
+	geos "github.com/twpayne/go-geos"
 )
 
 type PointType string
@@ -64,10 +64,10 @@ type Login struct {
 }
 
 type Point struct {
-	ID      int64         `json:"id"`
-	Longlat postgis.Point `json:"longlat"`
-	Type    PointType     `json:"type"`
-	Details []byte        `json:"details"`
+	ID      int64      `json:"id"`
+	Longlat *geos.Geom `json:"longlat"`
+	Type    PointType  `json:"type"`
+	Details []byte     `json:"details"`
 }
 
 type UserDetail struct {

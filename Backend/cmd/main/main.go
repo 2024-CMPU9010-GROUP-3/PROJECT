@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
+	
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/middleware"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/routes"
 )
@@ -33,6 +33,6 @@ func main() {
 	log.Printf("Listening on port %v\n", port)
 	err := server.ListenAndServe()
 	if err != nil {
-		log.Printf("Server: %v/n", err)
+		log.Printf("Server: %v\n", err)
 	}
 }

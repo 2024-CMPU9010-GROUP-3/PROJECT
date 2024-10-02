@@ -10,43 +10,11 @@ package db
 import (
 	"context"
 
-	"github.com/cridenour/go-postgis"
-	"github.com/jackc/pgx/v5/pgtype"
+	geos "github.com/twpayne/go-geos"
 )
-
-const getPointByRadius = `-- name: GetPointByRadius :one
-SELECT Id, LongLat, Type FROM points
-WHERE ST_Contains(
-  ST_MakeEnvelope(
-    ST_X($1::GEOMETRY) - $2::DECIMAL,
-    ST_Y($1::GEOMETRY) - $2::DECIMAL,
-    ST_X($1::GEOMETRY) + $2::DECIMAL,
-    ST_Y($1::GEOMETRY) + $2::DECIMAL,
-    ST_SRID($1::GEOMETRY)
-  ), points.LongLat
-)
-`
-
-type GetPointByRadiusParams struct {
-	Column1 postgis.Point  `json:"column_1"`
-	Column2 pgtype.Numeric `json:"column_2"`
-}
-
-type GetPointByRadiusRow struct {
-	ID      int64         `json:"id"`
-	Longlat postgis.Point `json:"longlat"`
-	Type    PointType     `json:"type"`
-}
-
-func (q *Queries) GetPointByRadius(ctx context.Context, arg GetPointByRadiusParams) (GetPointByRadiusRow, error) {
-	row := q.db.QueryRow(ctx, getPointByRadius, arg.Column1, arg.Column2)
-	var i GetPointByRadiusRow
-	err := row.Scan(&i.ID, &i.Longlat, &i.Type)
-	return i, err
-}
 
 const getPointDetails = `-- name: GetPointDetails :one
-SELECT Details FROM points
+SELECT Details::jsonb FROM points
 WHERE id = $1 LIMIT 1
 `
 
@@ -55,4 +23,47 @@ func (q *Queries) GetPointDetails(ctx context.Context, id int64) ([]byte, error)
 	var details []byte
 	err := row.Scan(&details)
 	return details, err
+}
+
+const getPointsInEnvelope = `-- name: GetPointsInEnvelope :many
+SELECT Id, LongLat::geometry, Type FROM points
+WHERE ST_Intersects(ST_MakeEnvelope($1::float, $2::float, $3::float, $4::float, 4326), points.LongLat)
+`
+
+type GetPointsInEnvelopeParams struct {
+	X1 float64 `json:"x1"`
+	Y1 float64 `json:"y1"`
+	X2 float64 `json:"x2"`
+	Y2 float64 `json:"y2"`
+}
+
+type GetPointsInEnvelopeRow struct {
+	ID      int64      `json:"id"`
+	Longlat *geos.Geom `json:"longlat"`
+	Type    PointType  `json:"type"`
+}
+
+func (q *Queries) GetPointsInEnvelope(ctx context.Context, arg GetPointsInEnvelopeParams) ([]GetPointsInEnvelopeRow, error) {
+	rows, err := q.db.Query(ctx, getPointsInEnvelope,
+		arg.X1,
+		arg.Y1,
+		arg.X2,
+		arg.Y2,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetPointsInEnvelopeRow
+	for rows.Next() {
+		var i GetPointsInEnvelopeRow
+		if err := rows.Scan(&i.ID, &i.Longlat, &i.Type); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

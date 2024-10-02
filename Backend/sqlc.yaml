@@ -12,7 +12,11 @@ sql:
       emit_json_tags: true
       overrides:
         - db_type: "geometry"
-          go_type: "github.com/cridenour/go-postgis.Point"
+          go_type: 
+            import: "github.com/twpayne/go-geos"
+            package: "geos"
+            pointer: true
+            type: "Geom"
 - schema: "sql/schema.sql"
   queries: "sql/queries_public.sql"
   engine: "postgresql"
@@ -25,4 +29,8 @@ sql:
       emit_json_tags: true
       overrides:
         - db_type: "geometry"
-          go_type: "github.com/cridenour/go-postgis.Point"
+          go_type: 
+            import: "github.com/twpayne/go-geos"
+            package: "geos"
+            pointer: true
+            type: "Geom"
