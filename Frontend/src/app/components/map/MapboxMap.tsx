@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import Map, { Marker } from "react-map-gl";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { HexagonLayer } from "@deck.gl/aggregation-layers";
 import { FaLocationDot } from "react-icons/fa6";
 import DeckGL from "@deck.gl/react";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -21,6 +18,8 @@ import { Input } from "@/components/ui/input";
 type SliderProps = React.ComponentProps<typeof Slider>;
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
+  const [mapBoxApiKey, setMapBoxApiKey] = useState<string>('');
+
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
     longitude: 0,
@@ -40,6 +39,16 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     console.log("Marker Square Size>>>>", markerSquareSize);
     console.log(markerSquareSize);
   }, [markerSquareSize]);
+
+  useEffect(() => {
+    // Fetch Mapbox API key from the server
+    const fetchMapboxKey = async () => {
+      const response = await fetch('/api/mapbox-token');
+      const data = await response.json();
+      setMapBoxApiKey(data.mapBoxApiKey);
+    };
+    fetchMapboxKey();
+  }, []);
 
   const options = {
     enableHighAccuracy: true,
@@ -70,8 +79,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   // Get current position
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(success, error, options);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  });
 
   const links = [
     {
@@ -81,7 +89,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       ),
       href: "#",
     },
-
     {
       title: "Home",
       icon: (
@@ -112,37 +119,41 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   return (
     <div>
-      <DeckGL
-        effects={[lightingEffect]}
-        initialViewState={INITIAL_VIEW_STATE}
-        controller={true}
-        onClick={handleMapClick}
-      >
-        <Map
-          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-          mapStyle="mapbox://styles/mapbox/streets-v8"
-          antialias={true}
+      {mapBoxApiKey ? (
+        <DeckGL
+          effects={[lightingEffect]}
+          initialViewState={INITIAL_VIEW_STATE}
+          controller={true}
+          onClick={handleMapClick}
         >
-          <Marker
-            className={`p-10 border-2 border-[#8CCBF7]`}
-            longitude={coordinates?.longitude}
-            latitude={coordinates?.latitude}
-            anchor="bottom"
+          <Map
+            mapboxAccessToken={mapBoxApiKey}
+            mapStyle="mapbox://styles/mapbox/streets-v8"
+            antialias={true}
           >
-            <div>
-              <FaLocationDot size={50} color="FFA15A" />
-            </div>
-          </Marker>
-          <Marker
-            latitude={currentPositionCords?.latitude}
-            longitude={currentPositionCords?.longitude}
-          >
-            <div>
-              <FaLocationDot size={35} color="blue" />
-            </div>
-          </Marker>
-        </Map>
-      </DeckGL>
+            <Marker
+              className={`p-10 border-2 border-[#8CCBF7]`}
+              longitude={coordinates?.longitude}
+              latitude={coordinates?.latitude}
+              anchor="bottom"
+            >
+              <div>
+                <FaLocationDot size={50} color="FFA15A" />
+              </div>
+            </Marker>
+            <Marker
+              latitude={currentPositionCords?.latitude}
+              longitude={currentPositionCords?.longitude}
+            >
+              <div>
+                <FaLocationDot size={35} color="blue" />
+              </div>
+            </Marker>
+          </Map>
+        </DeckGL>
+      ) : (
+        <div>Loading...</div>
+      )}
       <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
         <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
           <div className="px-2 py-4 space-y-2">
