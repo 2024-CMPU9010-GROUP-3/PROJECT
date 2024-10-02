@@ -20,6 +20,8 @@ jobs:
 
       - name: Install dependencies
         run: go get .
+        with:
+            working-directory: Backend
 
       - name: Lint the code
         uses: golangci/golangci-lint-action@v6
