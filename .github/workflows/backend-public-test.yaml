@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: ConorMacBride/install-package@v1
+        with:
+          apt: libgeos-dev
+
       - name: Checkout the repository
         uses: actions/checkout@v4
 
@@ -17,10 +21,6 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: stable
-
-      - name: Install dependencies
-        working-directory: Backend
-        run: go get .
 
       - name: Lint the code
         uses: golangci/golangci-lint-action@v6
