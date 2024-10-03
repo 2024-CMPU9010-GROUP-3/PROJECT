@@ -9,7 +9,12 @@ import { Input } from "@/components/ui/registry/input"
 import { Label } from "@/components/ui/registry/label"
 import { useRouter } from 'next/compat/router';
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
+  username?: string;
+  password?: string;
+  confirmPassword?: string;
+  email?: string; 
+}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -50,8 +55,10 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       return;
     }
 
+    console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL); // 添加此行以调试
+
     try {
-      const response = await fetch('/v1/public/auth/User/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +68,11 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
 
       if (response.ok) {
         // Handle successful registration
-        router.push('/dashboard')
+        if (router) {
+          router.push('/dashboard')
+        } else {
+          console.error('Router not found')
+        }
       } else {
         // Handle errors
         console.error('Registration failed')
