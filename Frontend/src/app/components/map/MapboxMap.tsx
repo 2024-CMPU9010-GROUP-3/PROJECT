@@ -14,11 +14,12 @@ import { IconHome } from "@tabler/icons-react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Grid } from "react-loader-spinner";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
-  const [mapBoxApiKey, setMapBoxApiKey] = useState<string>('');
+  const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
 
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
@@ -43,7 +44,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   useEffect(() => {
     // Fetch Mapbox API key from the server
     const fetchMapboxKey = async () => {
-      const response = await fetch('/api/mapbox-token');
+      const response = await fetch("/api/mapbox-token");
       const data = await response.json();
       setMapBoxApiKey(data.mapBoxApiKey);
     };
@@ -152,7 +153,18 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </Map>
         </DeckGL>
       ) : (
-        <div>Loading...</div>
+        <div className="absolute top-1/2 right-1/2">
+          <Grid
+            visible={true}
+            height="80"
+            width="80"
+            color="#ffa15a"
+            ariaLabel="grid-loading"
+            radius="12.5"
+            wrapperStyle={{}}
+            wrapperClass="grid-wrapper"
+          />
+        </div>
       )}
       <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
         <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
