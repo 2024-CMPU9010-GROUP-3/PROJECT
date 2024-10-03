@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Map, { Marker } from "react-map-gl";
 import { FaLocationDot } from "react-icons/fa6";
 import DeckGL from "@deck.gl/react";
@@ -9,16 +9,24 @@ import { MapClickEvent } from "@/lib/interfaces/types";
 import { Coordinates } from "@/lib/interfaces/types";
 
 import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
-import { FloatingDock } from "@/components/ui/floating-dock";
-import { IconHome } from "@tabler/icons-react";
+// import { FloatingDock } from "@/components/ui/floating-dock";
+// import { IconHome } from "@tabler/icons-react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import { Grid } from "react-loader-spinner";
+import { Badge } from "@/components/ui/badge";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
+type TListOfPlaces = {
+  name: string;
+  spaces: number;
+  address: string;
+};
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
-  const [mapBoxApiKey, setMapBoxApiKey] = useState<string>('');
+  const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
+  const [isMarkerVisible, setIsMarkerVisible] = useState<boolean>(false);
 
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
@@ -43,7 +51,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   useEffect(() => {
     // Fetch Mapbox API key from the server
     const fetchMapboxKey = async () => {
-      const response = await fetch('/api/mapbox-token');
+      const response = await fetch("/api/mapbox-token");
       const data = await response.json();
       setMapBoxApiKey(data.mapBoxApiKey);
     };
@@ -79,31 +87,86 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   // Get current position
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(success, error, options);
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const links = [
+  const listOfPlaces: TListOfPlaces[] = [
     {
-      title: "Home",
-      icon: (
-        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-      ),
-      href: "#",
+      name: "Arnots Car Park",
+      spaces: 10,
+      address: "Best Car Parks Ltd Arnotts 12 Henry Street Dublin D01 C3Y9",
     },
     {
-      title: "Home",
-      icon: (
-        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-      ),
-      href: "#",
+      name: "Jervis Street Car Park",
+      spaces: 90,
+      address:
+        "Jervis Shopping Centre, Jervis St, North City, Dublin 1, D01 X868",
     },
     {
-      title: "Home",
-      icon: (
-        <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-      ),
-      href: "#",
+      name: "Ilac Shopping Centre Car Park",
+      spaces: 50,
+      address: "Ilac Centre, Parnell St, North City, Dublin 1, D01 W861",
+    },
+    {
+      name: "Park Rite Drury Street Car Park",
+      spaces: 72,
+      address: "Drury St, Dublin 2, D02 V586",
+    },
+    {
+      name: "Q-Park The Spire",
+      spaces: 35,
+      address: "Irish Life Mall, Abbey St Lwr, North City, Dublin 1, D01 E9X0",
+    },
+    {
+      name: "St Stephen's Green Car Park",
+      spaces: 48,
+      address: "St Stephen's Green Shopping Centre, Dublin 2, D02 XY88",
+    },
+    {
+      name: "Trinity Street Car Park",
+      spaces: 35,
+      address: "Trinity St, Dublin 2, D02 R274",
+    },
+    {
+      name: "Park Rite IFSC Car Park",
+      spaces: 56,
+      address: "IFSC, Commons St, North Dock, Dublin 1, D01 DA06",
+    },
+    {
+      name: "Thomas Street Car Park",
+      spaces: 49,
+      address: "Thomas St, Dublin 8, D08 K6Y9",
+    },
+    {
+      name: "Park Rite Parnell Street Car Park",
+      spaces: 34,
+      address: "Parnell St, Rotunda, Dublin 1, D01 EK28",
     },
   ];
+
+  // const links = [
+  //   {
+  //     title: "Home",
+  //     icon: (
+  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+  //     ),
+  //     href: "#",
+  //   },
+  //   {
+  //     title: "Home",
+  //     icon: (
+  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+  //     ),
+  //     href: "#",
+  //   },
+  //   {
+  //     title: "Home",
+  //     icon: (
+  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
+  //     ),
+  //     href: "#",
+  //   },
+  // ];
 
   // Handle map click event
   const handleMapClick = (event: unknown) => {
@@ -111,9 +174,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     if (mapClickEvent.coordinate) {
       const [longitude, latitude] = mapClickEvent.coordinate;
       setCoordinates({ latitude, longitude });
-      console.log(
-        `Map clicked at longitude: ${longitude}, latitude: ${latitude}`
-      );
+      setIsMarkerVisible(true);
     }
   };
 
@@ -135,7 +196,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               className={`p-10 border-2 border-[#8CCBF7]`}
               longitude={coordinates?.longitude}
               latitude={coordinates?.latitude}
-              anchor="bottom"
+              anchor="center"
             >
               <div>
                 <FaLocationDot size={50} color="FFA15A" />
@@ -152,7 +213,43 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </Map>
         </DeckGL>
       ) : (
-        <div>Loading...</div>
+        <div className="absolute top-1/2 right-1/2">
+          <Grid
+            visible={true}
+            height="80"
+            width="80"
+            color="#ffa15a"
+            ariaLabel="grid-loading"
+            radius="12.5"
+            wrapperStyle={{}}
+            wrapperClass="grid-wrapper"
+          />
+        </div>
+      )}
+      {isMarkerVisible && (
+        <div className="absolute right-24 top-1/3 bg-white p-5 rounded-xl max-h-[400px] max-w-[450px] overflow-scroll">
+          <div>
+            <div className="text-2xl font-bold mb-5">Dublin Car Park</div>
+            <div className="space-y-4">
+              {listOfPlaces?.map((place, index) => (
+                <Fragment key={index}>
+                  <div className="p-2 border-2 border-gray-200 rounded-xl">
+                    <div className="flex align-middle justify-between my-2">
+                      <div className="text-xl font-medium">{place?.name}</div>
+                      <Badge
+                        variant="secondary"
+                        className="text-sm rounded-full"
+                      >
+                        {place?.spaces} spaces
+                      </Badge>
+                    </div>
+                    <div>Address: {place?.address}</div>
+                  </div>
+                </Fragment>
+              ))}
+            </div>
+          </div>
+        </div>
       )}
       <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
         <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
@@ -184,9 +281,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </div>
         </div>
       </div>
-      <div className="absolute bg-transparent bottom-10 right-20 scale-105 z-20">
+      {/* <div className="absolute bg-transparent bottom-10 right-20 scale-105 z-20">
         <FloatingDock items={links} desktopClassName="bg-transparent " />
-      </div>
+      </div> */}
     </div>
   );
 };
