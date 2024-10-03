@@ -133,10 +133,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             antialias={true}
           >
             <Marker
-              className={`m-10 border-2 border-[#8CCBF7]`}
+              className={`p-10 border-2 border-[#8CCBF7]`}
               longitude={coordinates?.longitude}
               latitude={coordinates?.latitude}
-              anchor="bottom"
+              anchor="center"
             >
               <div>
                 <FaLocationDot size={50} color="FFA15A" />
