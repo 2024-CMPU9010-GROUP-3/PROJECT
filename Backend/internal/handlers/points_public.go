@@ -38,7 +38,14 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 
 	points, err := dbQueries.GetPointsInEnvelope(*dbCtx, db.GetPointsInEnvelopeParams{X1: x1, Y1: y1, X2: x2, Y2: y2})
 	if err != nil {
-		log.Printf("Could not get points from database: %v\n", err)
+		if errors.Is(err, pgx.ErrNoRows) {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		} else {
+			log.Printf("Could not get points from database, unknown error: %+v\n", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 	w.Header().Set(contentType, applicationJson)
 	err = json.NewEncoder(w).Encode(wrappers.FromRowList(points))

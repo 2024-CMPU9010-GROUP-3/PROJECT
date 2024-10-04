@@ -19,7 +19,7 @@ func FromRow(p db.GetPointsInEnvelopeRow) PointWrapper {
 }
 
 func FromRowList(rows []db.GetPointsInEnvelopeRow) []PointWrapper {
-	var pointWrappers []PointWrapper
+	pointWrappers := []PointWrapper{}
 	for _, r := range rows {
 		pointWrappers = append(pointWrappers, FromRow(r))
 	}
