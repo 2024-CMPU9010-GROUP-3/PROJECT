@@ -1,0 +1,113 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{ragged2e}
+
+\title[Weekly Presentation]{Weekly Presentation: Utilizing Computer Vision for
+Service Location Determination}
+\subtitle{Group 3}
+\author{Jessica Fornetti, Anais Blenet, Saul Burgess, Kaustubh Trivedi, Yuanshuo Du, Andreas Kraus}
+\institute{TU Dublin}
+\date{3rd of October, 2024}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+    \frametitle{Welcome}
+    \vspace{10pt} % Adds vertical space between the text and the image
+    
+    \begin{itemize}
+        \item{Introduction}
+        \item{Progress Report}
+        \item{Demo of a similar System}
+        \item{Demo of our System}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Introduction}
+    \vspace{10pt} % Adds vertical space between the text and the image
+
+    \justifying{
+        \begin{figure}
+            \centering{}
+            \includegraphics[width=0.45\textwidth]{logo-circle.png}
+            \label{fig:news_story}
+        \end{figure}
+        \begin{Center}
+            \textbf{Magpie} \\
+            \textit{Services at a glance}
+        \end{Center}
+    }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Introduction}
+    \vspace{10pt} % Adds vertical space between the text and the image
+    \begin{figure}
+        \centering{}
+        \includegraphics[width=1.0\textwidth]{news_screenshot.png}
+        \caption{News story}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Progress report}
+    \begin{itemize}
+        \item\textbf{Frontend:} backend API integration
+        \item\textbf{Backend:} database connection
+        \item\textbf{Machine Learning:} research, dataset generation script, image collection, started labelling
+        \item\textbf{Distribution:} Kubernetes deployment and public builds
+
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Similar System Demo: Parkopedia}
+    In this demo, we will discuss:
+    \begin{itemize}
+        \item{What problem does Parkopedia solve?}
+        \item{How is it differnt from our system?}
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Similar System Demo: Research project}
+    Deep Learning-based Parking Occupancy Detection (ResNet, VGG-16):
+    \begin{itemize}
+        \item{Method: Utilized deep learning models (YOLOv4, DeepSORT) combined with TensorFlow for detecting parking spaces.}
+        \item{Accuracy: Achieved 99 accuracy in identifying free parking spaces using self-labeled data.}
+        \item{Impact: Demonstrated superior ability to handle environmental factors such as shadows and obstacles.}
+    \end{itemize}
+    Satellite Parking Occupancy Detection:
+    \begin{itemize}
+        \item{Method: Applied 0.5m resolution satellite images for occupancy detection using thresholding.}
+        \item{Benefits: Faster and more scalable than machine learning models, with minimal data requirements.}
+        \item{Accuracy: F1 score improved from 0.82 to 0.85 after filtering out tree-obstructed spots.}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{System Demo}
+    In this demo, we will discuss:
+    \begin{itemize}
+        \item{An overview of the Interface}
+        \item{An overview of the information the system will provide}
+        \item{Demonstration of it's hosting environment}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Thank You!}
+    \centering{Thank you for your attention!\\[10pt]} % Adds a bit of vertical space
+\end{frame}
+
+
+\end{document}
