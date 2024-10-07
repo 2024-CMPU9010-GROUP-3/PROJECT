@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/private"
-	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util"
 	geos "github.com/twpayne/go-geos/geometry"
 )
 
@@ -113,14 +112,32 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Printf("Executed update query on databse for point id: %+v\n", pointId)
-	
+
 	w.WriteHeader(http.StatusOK)
 }
 
 func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
-	data := util.Placeholder("DELETE points")
-	w.Header().Set(contentType, applicationJson)
-	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(data)
-	util.CheckResponseError(err, w)
+
+	pointIdPathParam := r.PathValue("id")
+	pointId, err := strconv.ParseInt(pointIdPathParam, 10, 64)
+
+	// bad request if id can't be parsed to int
+	if err != nil {
+		log.Printf("Invalid path parameter: %v\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	dbQueries := db.New(dbConn)
+
+	err = dbQueries.DeletePoint(*dbCtx, pointId)
+	if err != nil {
+		log.Printf("Could not delete point from database: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Executed delete query on databse for point id: %+v\n", pointId)
+
+	w.WriteHeader(http.StatusNoContent)
 }
