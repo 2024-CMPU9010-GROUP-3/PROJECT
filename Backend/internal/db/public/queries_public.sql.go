@@ -10,6 +10,7 @@ package db
 import (
 	"context"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	geos "github.com/twpayne/go-geos"
 )
 
@@ -66,4 +67,25 @@ func (q *Queries) GetPointsInEnvelope(ctx context.Context, arg GetPointsInEnvelo
 		return nil, err
 	}
 	return items, nil
+}
+
+const getUserDetails = `-- name: GetUserDetails :one
+SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn
+FROM user_details
+WHERE Id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetUserDetails(ctx context.Context, id pgtype.UUID) (UserDetail, error) {
+	row := q.db.QueryRow(ctx, getUserDetails, id)
+	var i UserDetail
+	err := row.Scan(
+		&i.ID,
+		&i.Registerdate,
+		&i.Firstname,
+		&i.Lastname,
+		&i.Profilepicture,
+		&i.Lastloggedin,
+	)
+	return i, err
 }
