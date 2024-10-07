@@ -10,6 +10,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/twpayne/go-geos v0.18.1 // indirect
 	github.com/twpayne/pgx-geos v0.0.3 // indirect
-	golang.org/x/crypto v0.27.0 // indirect
-	golang.org/x/text v0.18.0 // indirect
+	golang.org/x/crypto v0.28.0 // indirect
+	golang.org/x/text v0.19.0 // indirect
 )

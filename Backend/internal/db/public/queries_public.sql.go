@@ -14,6 +14,54 @@ import (
 	geos "github.com/twpayne/go-geos"
 )
 
+const createUser = `-- name: CreateUser :one
+INSERT INTO logins (
+  Username, Email, PasswordHash
+) VALUES (
+  $1, $2, $3
+) RETURNING Id
+`
+
+type CreateUserParams struct {
+	Username     string `json:"username"`
+	Email        string `json:"email"`
+	Passwordhash string `json:"passwordhash"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, createUser, arg.Username, arg.Email, arg.Passwordhash)
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
+const createUserDetails = `-- name: CreateUserDetails :one
+INSERT INTO user_details (
+  Id, FirstName, LastName, ProfilePicture
+) VALUES (
+  $1, $2, $3, $4
+) RETURNING Id
+`
+
+type CreateUserDetailsParams struct {
+	ID             pgtype.UUID `json:"id"`
+	Firstname      string      `json:"firstname"`
+	Lastname       string      `json:"lastname"`
+	Profilepicture pgtype.Text `json:"profilepicture"`
+}
+
+func (q *Queries) CreateUserDetails(ctx context.Context, arg CreateUserDetailsParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, createUserDetails,
+		arg.ID,
+		arg.Firstname,
+		arg.Lastname,
+		arg.Profilepicture,
+	)
+	var id pgtype.UUID
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getPointDetails = `-- name: GetPointDetails :one
 SELECT Details::jsonb FROM points
 WHERE id = $1 LIMIT 1

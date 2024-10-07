@@ -11,3 +11,17 @@ SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn
 FROM user_details
 WHERE Id = $1
 LIMIT 1;
+
+-- name: CreateUser :one
+INSERT INTO logins (
+  Username, Email, PasswordHash
+) VALUES (
+  $1, $2, $3
+) RETURNING Id;
+
+-- name: CreateUserDetails :one
+INSERT INTO user_details (
+  Id, FirstName, LastName, ProfilePicture
+) VALUES (
+  $1, $2, $3, $4
+) RETURNING Id;

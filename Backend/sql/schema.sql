@@ -9,8 +9,8 @@ CREATE TABLE points (
 
 CREATE TABLE logins (
   Id UUID PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
-  Username VARCHAR(64) NOT NULL,
-  Email VARCHAR(64) NOT NULL,
+  Username VARCHAR(64) UNIQUE NOT NULL,
+  Email VARCHAR(64) UNIQUE NOT NULL,
   PasswordHash CHAR(72) NOT NULL
 );
 
