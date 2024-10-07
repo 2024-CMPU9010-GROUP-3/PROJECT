@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/private"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util"
@@ -57,11 +58,63 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
-	data := util.Placeholder("PUT points")
-	w.Header().Set(contentType, applicationJson)
+
+	// careful: if an ID was given that doesn't exist, no changes are made to the database
+	// there is currently no mechanism that notifies the frontend if any actual changes were made
+
+	pointIdPathParam := r.PathValue("id")
+	pointId, err := strconv.ParseInt(pointIdPathParam, 10, 64)
+
+	// bad request if id can't be parsed to int
+	if err != nil {
+		log.Printf("Invalid path parameter: %v\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	dbQueries := db.New(dbConn)
+
+	var point PointWrapper
+	err = json.NewDecoder(r.Body).Decode(&point)
+	if err != nil {
+		log.Printf("Could not decode request body: %v\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(point.Type) == 0 {
+		log.Println("Field \"Type\" cannot be empty")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	encodedJson, err := json.Marshal(point.Details)
+	if err != nil {
+		log.Printf("Could not encode point details: %v\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	updatePointParams := db.UpdatePointParams{
+		ID:      pointId,
+		Longlat: point.Longlat.Geom,
+		Type:    db.PointType(point.Type),
+		Details: encodedJson,
+	}
+
+	log.Printf("Decoded point: %+v\n", point)
+	log.Printf("Create point params: %+v\n", updatePointParams)
+
+	err = dbQueries.UpdatePoint(*dbCtx, updatePointParams)
+	if err != nil {
+		log.Printf("Could not update point in database: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	log.Printf("Executed update query on databse for point id: %+v\n", pointId)
+	
 	w.WriteHeader(http.StatusOK)
-	err := json.NewEncoder(w).Encode(data)
-	util.CheckResponseError(err, w)
 }
 
 func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
