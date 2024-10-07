@@ -86,5 +86,4 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 
 	w.Header().Set(contentType, applicationJson)
 	err = json.NewEncoder(w).Encode(decodedDetails)
-	util.CheckResponseError(err, w)
 }
