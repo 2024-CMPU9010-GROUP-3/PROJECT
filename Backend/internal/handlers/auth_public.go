@@ -191,10 +191,22 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
-	data := util.Placeholder("DELETE User")
-	w.Header().Set(contentType, applicationJson)
-	err := json.NewEncoder(w).Encode(data)
-	util.CheckResponseError(err, w)
+	var userId pgtype.UUID
+	userIdPathParam := r.PathValue("id")
+	err := userId.Scan(userIdPathParam)
+	// bad request if parameter is not valid uuid
+	if err != nil {
+		log.Printf("Invalid path parameter: %v\n", userIdPathParam)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = db.New(dbConn).DeleteUser(*dbCtx, userId)
+	if err != nil {
+		log.Printf("Could not delete user from database: %+v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {

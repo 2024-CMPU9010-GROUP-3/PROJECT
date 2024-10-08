@@ -62,6 +62,15 @@ func (q *Queries) CreateUserDetails(ctx context.Context, arg CreateUserDetailsPa
 	return id, err
 }
 
+const deleteUser = `-- name: DeleteUser :exec
+DELETE FROM logins WHERE Id = $1
+`
+
+func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteUser, id)
+	return err
+}
+
 const getLogin = `-- name: GetLogin :one
 SELECT Id, Username, Email, PasswordHash
 FROM logins

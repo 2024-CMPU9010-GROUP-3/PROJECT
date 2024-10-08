@@ -47,3 +47,6 @@ SET
   LastName = COALESCE(NULLIF(@LastName::VARCHAR(64), ''), LastName),
   ProfilePicture = COALESCE(NULLIF(@ProfilePicture::VARCHAR(512), ''), ProfilePicture)
 WHERE Id = $1;
+
+-- name: DeleteUser :exec
+DELETE FROM logins WHERE Id = $1;
