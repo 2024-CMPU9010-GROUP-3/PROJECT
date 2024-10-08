@@ -71,15 +71,53 @@ func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
-const getLogin = `-- name: GetLogin :one
+const getLoginByEmail = `-- name: GetLoginByEmail :one
+SELECT Id, Username, Email, PasswordHash
+FROM logins
+WHERE Email = $1
+LIMIT 1
+`
+
+func (q *Queries) GetLoginByEmail(ctx context.Context, email string) (Login, error) {
+	row := q.db.QueryRow(ctx, getLoginByEmail, email)
+	var i Login
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Passwordhash,
+	)
+	return i, err
+}
+
+const getLoginById = `-- name: GetLoginById :one
 SELECT Id, Username, Email, PasswordHash
 FROM logins
 WHERE Id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetLogin(ctx context.Context, id pgtype.UUID) (Login, error) {
-	row := q.db.QueryRow(ctx, getLogin, id)
+func (q *Queries) GetLoginById(ctx context.Context, id pgtype.UUID) (Login, error) {
+	row := q.db.QueryRow(ctx, getLoginById, id)
+	var i Login
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Passwordhash,
+	)
+	return i, err
+}
+
+const getLoginByUsername = `-- name: GetLoginByUsername :one
+SELECT Id, Username, Email, PasswordHash
+FROM logins
+WHERE Username = $1
+LIMIT 1
+`
+
+func (q *Queries) GetLoginByUsername(ctx context.Context, username string) (Login, error) {
+	row := q.db.QueryRow(ctx, getLoginByUsername, username)
 	var i Login
 	err := row.Scan(
 		&i.ID,
@@ -164,6 +202,17 @@ func (q *Queries) GetUserDetails(ctx context.Context, id pgtype.UUID) (UserDetai
 		&i.Lastloggedin,
 	)
 	return i, err
+}
+
+const updateLastLogin = `-- name: UpdateLastLogin :exec
+UPDATE user_details
+SET LastLoggedIn = (NOW() AT TIME ZONE 'utc')
+WHERE Id = $1
+`
+
+func (q *Queries) UpdateLastLogin(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, updateLastLogin, id)
+	return err
 }
 
 const updateLogin = `-- name: UpdateLogin :exec

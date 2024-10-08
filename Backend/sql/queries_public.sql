@@ -6,10 +6,22 @@ WHERE ST_Intersects(ST_MakeEnvelope(@x1::float, @y1::float, @x2::float, @y2::flo
 SELECT Details::jsonb FROM points
 WHERE id = $1 LIMIT 1;
 
--- name: GetLogin :one
+-- name: GetLoginById :one
 SELECT Id, Username, Email, PasswordHash
 FROM logins
 WHERE Id = $1
+LIMIT 1;
+
+-- name: GetLoginByUsername :one
+SELECT Id, Username, Email, PasswordHash
+FROM logins
+WHERE Username = $1
+LIMIT 1;
+
+-- name: GetLoginByEmail :one
+SELECT Id, Username, Email, PasswordHash
+FROM logins
+WHERE Email = $1
 LIMIT 1;
 
 -- name: GetUserDetails :one
@@ -31,6 +43,11 @@ INSERT INTO user_details (
 ) VALUES (
   $1, $2, $3, $4
 ) RETURNING Id;
+
+-- name: UpdateLastLogin :exec
+UPDATE user_details
+SET LastLoggedIn = (NOW() AT TIME ZONE 'utc')
+WHERE Id = $1;
 
 -- name: UpdateLogin :exec
 UPDATE logins
