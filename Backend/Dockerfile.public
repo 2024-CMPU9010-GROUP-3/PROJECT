@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY go.mod ./
 
-RUN go mod download && go get github.com/twpayne/go-geos
+RUN  apt-get update && apt-get -y install libgeos-dev && apt-get clean
+RUN  go mod download && go get github.com/twpayne/go-geos 
 
 COPY . .
 
