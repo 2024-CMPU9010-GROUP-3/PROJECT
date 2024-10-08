@@ -6,9 +6,6 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-const contentType = "Content-Type"
-const applicationJson = "application/json"
-
 type PointsHandler struct{}
 type AuthHandler struct{}
 

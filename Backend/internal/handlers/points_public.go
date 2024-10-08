@@ -47,7 +47,6 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 			return
 		}
 	}
-	w.Header().Set(contentType, applicationJson)
 	err = json.NewEncoder(w).Encode(wrappers.FromRowList(points))
 	util.CheckResponseError(err, w)
 }
@@ -84,6 +83,5 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	w.Header().Set(contentType, applicationJson)
 	err = json.NewEncoder(w).Encode(decodedDetails)
 }

@@ -70,7 +70,6 @@ func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	w.Header().Set(contentType, applicationJson)
 	err = json.NewEncoder(w).Encode(userDetails)
 	if err != nil {
 		log.Printf("Could not send user details as response: %+v\n", err)
@@ -135,7 +134,6 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	idDto := userIdDto{UserId: userId}
 
-	w.Header().Set(contentType, applicationJson)
 	err = json.NewEncoder(w).Encode(idDto)
 	if err != nil {
 		log.Printf("Could not send user id as response: %+v\n", err)
