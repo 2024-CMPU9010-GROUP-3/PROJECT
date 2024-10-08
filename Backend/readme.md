@@ -83,7 +83,9 @@ The server will then be reachable on `localhost:8080`
 
 The server is configured through environment variables. This can be achieved by providing a `.env` file, the content of which will be automatically loaded into the environment at runtime. The following enviroment variables are used by the server.
 
-| Variable Name | Description                        | Default | Optional |
-|---------------|------------------------------------|---------|----------|
-| MAGPIE_DB_URL | A valid PostgreSQL connection URL  | -       | No       |
-| MAGPIE_PORT   | The port the server will listen on | 8080    | Yes      |
+| Variable Name     | Description                                            | Default | Optional |
+| ----------------- | ------------------------------------------------------ | ------- | -------- |
+| MAGPIE_DB_URL     | A valid PostgreSQL connection URL                      | -       | No       |
+| MAGPIE_PORT       | The port the server will listen on                     | 8080    | Yes      |
+| MAGPIE_JWT_SECRET | The secret used to generate JWTs for authentication    | -       | No       |
+| MAGPIE_JWT_EXPIRY | The expiry time for JWTs (must be in hours or minutes) | 24h     | Yes      |
