@@ -25,7 +25,7 @@ func pointsPublic() *http.ServeMux {
 	router := http.NewServeMux()
 	pointsHandler := &handlers.PointsHandler{}
 	router.HandleFunc("GET /byRadius", pointsHandler.HandleGetByRadius)
-	router.HandleFunc("GET /pointDetails", pointsHandler.HandleGetPointDetails)
+	router.HandleFunc("GET /{id}", pointsHandler.HandleGetPointDetails)
 
 	return router
 }

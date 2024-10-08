@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY go.mod ./
 
-RUN go mod download
+RUN  apt-get update && apt-get -y install libgeos-dev && apt-get clean && go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -tags private -o /app/bin/main ./cmd/main
+RUN CGO_ENABLED=1 GOOS=linux go build -tags private -o /app/bin/main ./cmd/main
 
 FROM build-stage AS test-stage
 RUN go test -v ./...
