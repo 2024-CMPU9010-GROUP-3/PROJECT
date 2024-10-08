@@ -20,6 +20,7 @@ import (
 const secretEnv = "MAGPIE_JWT_SECRET"
 const expiryEnv = "MAGPIE_JWT_EXPIRY"
 
+// these dtos need to be refactored into their own package in the future
 type createUserDto struct {
 	Username       string `json:"username"`
 	Email          string `json:"email"`
@@ -36,7 +37,11 @@ type userLoginDto struct {
 }
 
 type bearerTokenDto struct {
-	BearerToken string `json:"bearerToken"`
+	BearerToken string `json:"bearertoken"`
+}
+
+type userIdDto struct {
+	UserId pgtype.UUID `json:"userid"`
 }
 
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +72,11 @@ func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set(contentType, applicationJson)
 	err = json.NewEncoder(w).Encode(userDetails)
+	if err != nil {
+		log.Printf("Could not send user details as response: %+v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
@@ -123,8 +133,15 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	idDto := userIdDto{UserId: userId}
+
 	w.Header().Set(contentType, applicationJson)
-	err = json.NewEncoder(w).Encode(userId)
+	err = json.NewEncoder(w).Encode(idDto)
+	if err != nil {
+		log.Printf("Could not send user id as response: %+v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
