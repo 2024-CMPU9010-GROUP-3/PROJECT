@@ -62,6 +62,25 @@ func (q *Queries) CreateUserDetails(ctx context.Context, arg CreateUserDetailsPa
 	return id, err
 }
 
+const getLogin = `-- name: GetLogin :one
+SELECT Id, Username, Email, PasswordHash
+FROM logins
+WHERE Id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetLogin(ctx context.Context, id pgtype.UUID) (Login, error) {
+	row := q.db.QueryRow(ctx, getLogin, id)
+	var i Login
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Passwordhash,
+	)
+	return i, err
+}
+
 const getPointDetails = `-- name: GetPointDetails :one
 SELECT Details::jsonb FROM points
 WHERE id = $1 LIMIT 1
@@ -136,4 +155,56 @@ func (q *Queries) GetUserDetails(ctx context.Context, id pgtype.UUID) (UserDetai
 		&i.Lastloggedin,
 	)
 	return i, err
+}
+
+const updateLogin = `-- name: UpdateLogin :exec
+UPDATE logins
+SET 
+  Username = COALESCE($2, Username),
+  Email = COALESCE($3, Email),
+  PasswordHash = COALESCE(NULLIF($4::VARCHAR(72), ''), PasswordHash)
+WHERE Id = $1
+`
+
+type UpdateLoginParams struct {
+	ID           pgtype.UUID `json:"id"`
+	Username     string      `json:"username"`
+	Email        string      `json:"email"`
+	Passwordhash string      `json:"passwordhash"`
+}
+
+func (q *Queries) UpdateLogin(ctx context.Context, arg UpdateLoginParams) error {
+	_, err := q.db.Exec(ctx, updateLogin,
+		arg.ID,
+		arg.Username,
+		arg.Email,
+		arg.Passwordhash,
+	)
+	return err
+}
+
+const updateUserDetails = `-- name: UpdateUserDetails :exec
+UPDATE user_details
+SET
+  FirstName = COALESCE(NULLIF($2::VARCHAR(64), ''), FirstName),
+  LastName = COALESCE(NULLIF($3::VARCHAR(64), ''), LastName),
+  ProfilePicture = COALESCE(NULLIF($4::VARCHAR(512), ''), ProfilePicture)
+WHERE Id = $1
+`
+
+type UpdateUserDetailsParams struct {
+	ID             pgtype.UUID `json:"id"`
+	Firstname      string      `json:"firstname"`
+	Lastname       string      `json:"lastname"`
+	Profilepicture string      `json:"profilepicture"`
+}
+
+func (q *Queries) UpdateUserDetails(ctx context.Context, arg UpdateUserDetailsParams) error {
+	_, err := q.db.Exec(ctx, updateUserDetails,
+		arg.ID,
+		arg.Firstname,
+		arg.Lastname,
+		arg.Profilepicture,
+	)
+	return err
 }

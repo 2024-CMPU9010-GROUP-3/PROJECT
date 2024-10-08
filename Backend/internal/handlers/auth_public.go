@@ -16,11 +16,12 @@ import (
 )
 
 type createUserDto struct {
-	Username  string `json:"username"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	Username       string `json:"username"`
+	Email          string `json:"email"`
+	Password       string `json:"password"`
+	FirstName      string `json:"firstname"`
+	LastName       string `json:"lastname"`
+	ProfilePicture string `json:"profilepicture"`
 }
 
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
@@ -112,10 +113,81 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
-	data := util.Placeholder("PUT User")
-	w.Header().Set(contentType, applicationJson)
-	err := json.NewEncoder(w).Encode(data)
-	util.CheckResponseError(err, w)
+	var userId pgtype.UUID
+	var userDto createUserDto
+
+	userIdPathParam := r.PathValue("id")
+
+	err := userId.Scan(userIdPathParam)
+
+	// bad request if parameter is not valid uuid
+	if err != nil {
+		log.Printf("Invalid path parameter: %v\n", userIdPathParam)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewDecoder(r.Body).Decode(&userDto)
+	if err != nil {
+		log.Printf("Could not decode request body: %v\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	var passwordHash []byte
+
+	if len(userDto.Password) != 0 {
+		passwordHash, err = bcrypt.GenerateFromPassword([]byte(userDto.Password), 12)
+		if err != nil {
+			log.Printf("Could not hash password: %v\n", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+
+	updateLoginParams := db.UpdateLoginParams{
+		ID: userId, 
+		Username: userDto.Username, 
+		Email: userDto.Email, 
+		Passwordhash: string(passwordHash),
+	}
+
+	updateUserDetailsParams := db.UpdateUserDetailsParams{
+		ID: userId, 
+		Firstname: userDto.FirstName, 
+		Lastname: userDto.LastName, 
+		Profilepicture: userDto.ProfilePicture,
+	}
+
+	log.Printf("update login params: %+v\n", updateLoginParams)
+	log.Printf("update user details params: %+v\n", updateUserDetailsParams)
+	tx, err := dbConn.Begin(*dbCtx)
+	if err != nil {
+		log.Printf("Could not begin database transaction: %v\n", err)
+	}
+	defer tx.Rollback(*dbCtx)
+
+	err = db.New(dbConn).WithTx(tx).UpdateLogin(*dbCtx, updateLoginParams)
+	if err != nil {
+		log.Printf("Could not update login: %+v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = db.New(dbConn).WithTx(tx).UpdateUserDetails(*dbCtx, updateUserDetailsParams)
+	if err != nil {
+		log.Printf("Could not update user details: %+v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// only commit the transaction once both the user and the user details have been created successfully
+	err = tx.Commit(*dbCtx)
+	if err != nil {
+		log.Printf("Could not commit changes to database: %+v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
