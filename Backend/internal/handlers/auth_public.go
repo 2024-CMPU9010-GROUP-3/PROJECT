@@ -105,7 +105,10 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Could not begin database transaction: %v\n", err)
 	}
-	defer tx.Rollback(*dbCtx)
+	defer func(){
+		// potential error from rollback is not fatal, ignoring for now
+		_ = tx.Rollback(*dbCtx)
+	}()
 
 	// converting the hash to a string here is not ideal, but sqlc interprets char(72) as a string so here we are
 	createUserParams := db.CreateUserParams{Username: userDto.Username, Email: userDto.Email, Passwordhash: string(passwordHash)}
@@ -195,7 +198,10 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Could not begin database transaction: %v\n", err)
 	}
-	defer tx.Rollback(*dbCtx)
+	defer func(){
+		// potential error from rollback is not fatal, ignoring for now
+		_ = tx.Rollback(*dbCtx)
+	}()
 
 	err = db.New(dbConn).WithTx(tx).UpdateLogin(*dbCtx, updateLoginParams)
 	if err != nil {

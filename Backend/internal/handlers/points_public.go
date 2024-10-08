@@ -84,4 +84,9 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 	}
 
 	err = json.NewEncoder(w).Encode(decodedDetails)
+	if err != nil {
+		log.Printf("Could not send bearer token as response: %+v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
