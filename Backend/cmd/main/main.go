@@ -33,8 +33,20 @@ func main() {
 
 	dbUrl := os.Getenv(dbUrlEnv)
 	if len(dbUrl) == 0 {
-		log.Fatalf("ERROR: Database URL needs to be specified in %s environment variable\n", dbUrlEnv)
-		os.Exit(1)
+		// Try to build the connection string from individual components in case we are running in Kubernetes
+		log.Printf("Could not find connection string in environment variables, trying to build from components")
+		dbUser := os.Getenv("LOGIN")
+		dbPassword := os.Getenv("PASSWORD")
+		dbHost := os.Getenv("HOST")
+		dbName := os.Getenv("DATABASE_NAME")
+
+		if len(dbUser) == 0 || len(dbPassword) == 0 || len(dbHost) == 0 || len(dbName) == 0 {
+			log.Fatal("Database connection parameters are missing in environment variables")
+			os.Exit(1)
+		}
+
+		dbUrl = fmt.Sprintf("postgresql://%s:%s@%s/%s", dbUser, dbPassword, dbHost, dbName)
+		log.Printf("%s\n", dbUrl)
 	}
 
 	router := routes.Router
