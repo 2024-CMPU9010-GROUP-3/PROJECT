@@ -12,6 +12,7 @@ The backend is written in Go using the net/http package of the standard library.
 ## Dependencies
 
 The backend has the following dependencies that need to be present on the system at build-time:
+
 - [GEOS](https://libgeos.org/) (`libgeos-dev` on apt, `geos` on Homebrew)
 
 **Note:** The installation of dependencies is only necessary for running the backend locally. When building/running a Docker image, the dependencies will be installed automatically during the multi-stage build process.
@@ -92,7 +93,9 @@ The server is configured through environment variables. This can be achieved by 
 
 | Variable Name     | Description                                            | Default | Optional |
 | ----------------- | ------------------------------------------------------ | ------- | -------- |
-| MAGPIE_DB_URL     | A valid PostgreSQL connection URL                      | -       | No       |
+| MAGPIE_DB_URL     | A valid PostgreSQL connection URL                      | -       | No\*     |
 | MAGPIE_PORT       | The port the server will listen on                     | 8080    | Yes      |
 | MAGPIE_JWT_SECRET | The secret used to generate JWTs for authentication    | -       | No       |
 | MAGPIE_JWT_EXPIRY | The expiry time for JWTs (must be in hours or minutes) | 24h     | Yes      |
+
+\* `MAGPIE_DB_URL` can be omitted if the connection information is instead given as separate environment variables (`LOGIN`, `PASSWORD`, `HOST` and `DATABASE_NAME`). This is useful for deployments using Kubernetes. If both `MAGPIE_DB_URL` and the separate environment variables are set, only `MAGPIE_DB_URL` will be used to establish a connection.
