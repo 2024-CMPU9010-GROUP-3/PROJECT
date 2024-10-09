@@ -1,6 +1,8 @@
 ### Instructions
 I did this in VS code, the code is to be run in the terminal 
 
+0. Add images and labels to the proper folders
+
 1. Clone the Yolov5 GitHub repo
 git clone https://github.com/ultralytics/yolov5.git  
 
