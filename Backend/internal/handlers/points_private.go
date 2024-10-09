@@ -9,19 +9,21 @@ import (
 	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/private"
-	geos "github.com/twpayne/go-geos/geometry"
+	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/encoding/geojson"
+	// geos "github.com/twpayne/go-geom"
 )
 
-type PointWrapper struct {
-	Longlat *geos.Geometry `json:"longlat"`
-	Type    string         `json:"type"`
-	Details any            `json:"details"` // potentially unsafe, but we need to accept any json object here
+type PointDto struct {
+	Longlat geojson.Geometry `json:"longlat"`
+	Type    string           `json:"type"`
+	Details any              `json:"details"` // potentially unsafe, but we need to accept any json object here
 }
 
 func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	dbQueries := db.New(dbConn)
 
-	var point PointWrapper
+	var point PointDto
 	err := json.NewDecoder(r.Body).Decode(&point)
 	if err != nil {
 		log.Printf("Could not decode request body: %v\n", err)
@@ -36,14 +38,25 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	geometry, err := point.Longlat.Decode()
+	if err != nil {
+		log.Printf("Could not decode geojson from request: %+v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	pt, ok := geometry.(*geom.Point)
+	if !ok {
+		log.Printf("Could not convert geometry to point")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	createPointParams := db.CreatePointParams{
-		Longlat: point.Longlat.Geom,
+		Longlat: pt,
 		Type:    db.PointType(point.Type),
 		Details: encodedJson,
 	}
-
-	log.Printf("Decoded point: %+v\n", point)
-	log.Printf("Create point params: %+v\n", createPointParams)
 
 	count, err := dbQueries.CreatePoint(*dbCtx, createPointParams)
 	if err != nil {
@@ -73,7 +86,7 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 
 	dbQueries := db.New(dbConn)
 
-	var point PointWrapper
+	var point PointDto
 	err = json.NewDecoder(r.Body).Decode(&point)
 	if err != nil {
 		log.Printf("Could not decode request body: %v\n", err)
@@ -94,15 +107,26 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	geometry, err := point.Longlat.Decode()
+	if err != nil {
+		log.Printf("Could not decode geojson from request: %+v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	pt, ok := geometry.(*geom.Point)
+	if !ok {
+		log.Printf("Could not convert geometry to point")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	updatePointParams := db.UpdatePointParams{
 		ID:      pointId,
-		Longlat: point.Longlat.Geom,
+		Longlat: pt,
 		Type:    db.PointType(point.Type),
 		Details: encodedJson,
 	}
-
-	log.Printf("Decoded point: %+v\n", point)
-	log.Printf("Create point params: %+v\n", updatePointParams)
 
 	err = dbQueries.UpdatePoint(*dbCtx, updatePointParams)
 	if err != nil {
