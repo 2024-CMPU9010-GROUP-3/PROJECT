@@ -11,11 +11,17 @@ import (
 
 	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/public"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util"
-	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/wrappers"
 	"github.com/jackc/pgx/v5"
+	"github.com/twpayne/go-geom/encoding/geojson"
 )
 
 const floatPrecision = 32
+
+type pointDto struct {
+	Id      int64
+	Longlat geojson.Geometry
+	Type    db.PointType
+}
 
 func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request) {
 	// parameters long, lat, radius are required
@@ -47,7 +53,22 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 			return
 		}
 	}
-	err = json.NewEncoder(w).Encode(wrappers.FromRowList(points))
+
+	pointDtos := []pointDto{}
+
+	for _, p := range points {
+		longlat, err := geojson.Encode(p.Longlat)
+		if err != nil {
+			log.Printf("Could not encode point: %+v\n", err)
+		} else {
+			pointDtos = append(pointDtos, pointDto{
+				p.ID,
+				*longlat,
+				p.Type,
+			})
+		}
+	}
+	err = json.NewEncoder(w).Encode(pointDtos)
 	util.CheckResponseError(err, w)
 }
 

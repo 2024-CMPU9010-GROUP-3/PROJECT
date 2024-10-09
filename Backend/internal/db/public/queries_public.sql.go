@@ -11,7 +11,7 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	geos "github.com/twpayne/go-geos"
+	go_geom "github.com/twpayne/go-geom"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -153,9 +153,9 @@ type GetPointsInEnvelopeParams struct {
 }
 
 type GetPointsInEnvelopeRow struct {
-	ID      int64      `json:"id"`
-	Longlat *geos.Geom `json:"longlat"`
-	Type    PointType  `json:"type"`
+	ID      int64          `json:"id"`
+	Longlat *go_geom.Point `json:"longlat"`
+	Type    PointType      `json:"type"`
 }
 
 func (q *Queries) GetPointsInEnvelope(ctx context.Context, arg GetPointsInEnvelopeParams) ([]GetPointsInEnvelopeRow, error) {

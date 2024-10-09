@@ -10,10 +10,12 @@ import (
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/handlers"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/middleware"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/routes"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
-	"github.com/twpayne/go-geos"
-	pgxgeos "github.com/twpayne/pgx-geos"
+
+	// geos "github.com/twpayne/go-geom"
+	pgxgeom "github.com/twpayne/pgx-geom"
 )
 
 const defaultPort = "8080"
@@ -57,28 +59,35 @@ func main() {
 
 	ctx := context.Background()
 
-	conn, err := pgxpool.New(ctx, dbUrl)
+	poolConfig, err := pgxpool.ParseConfig(dbUrl)
+	if err != nil {
+		log.Fatalf("Could not parse pool config: %+v\n", err)
+		os.Exit(1)
+	}
+
+	poolConfig.AfterConnect = func(ctx context.Context, c *pgx.Conn) error {
+		log.Printf("After connect called\n")
+		err = pgxgeom.Register(ctx, c)
+		if err != nil {
+			log.Fatalf("Could not register geo datatype: %v\n", err)
+		} else {
+			log.Printf("Registered geom data types on database connection")
+		}
+		return err
+	}
+
+	dbPool, err := pgxpool.NewWithConfig(ctx, poolConfig)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v\n", err)
 		os.Exit(1)
 	} else {
 		log.Println("Successfully connected to database")
 	}
-	defer conn.Close()
+	defer dbPool.Close()
 
-	connFromPool, err := conn.Acquire(ctx)
-	if err != nil {
-		log.Fatalf("Could not acquire connection from connection pool: %+v", err)
-		os.Exit(1)
-	}
+	// err = pgxgeos.Register(ctx, connFromPool.Conn(), geos.)
 
-	err = pgxgeos.Register(ctx, connFromPool.Conn(), geos.NewContext())
-	if err != nil {
-		log.Fatalf("Could not register geo datatype: %v\n", err)
-		os.Exit(1)
-	}
-
-	handlers.RegisterDatabaseConnection(&ctx, conn)
+	handlers.RegisterDatabaseConnection(&ctx, dbPool)
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%v", port),
