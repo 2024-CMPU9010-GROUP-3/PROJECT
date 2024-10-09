@@ -9,14 +9,6 @@ The backend is written in Go using the net/http package of the standard library.
 - [Public Routes](./routes-public.md)
 - [Private Routes](./routes-private.md)
 
-## Dependencies
-
-The backend has the following dependencies that need to be present on the system at build-time:
-
-- [GEOS](https://libgeos.org/) (`libgeos-dev` on apt, `geos` on Homebrew)
-
-**Note:** The installation of dependencies is only necessary for running the backend locally. When building/running a Docker image, the dependencies will be installed automatically during the multi-stage build process.
-
 ## Usage
 
 There are two options to run the backend, either locally or using Docker.
