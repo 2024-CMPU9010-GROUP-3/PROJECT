@@ -104,10 +104,14 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	tx, err := dbConn.Begin(*dbCtx)
 	if err != nil {
 		log.Printf("Could not begin database transaction: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	defer func(){
 		// potential error from rollback is not fatal, ignoring for now
-		_ = tx.Rollback(*dbCtx)
+		if tx != nil {
+			_ = tx.Rollback(*dbCtx)
+		}
 	}()
 
 	// converting the hash to a string here is not ideal, but sqlc interprets char(72) as a string so here we are
@@ -197,10 +201,14 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	tx, err := dbConn.Begin(*dbCtx)
 	if err != nil {
 		log.Printf("Could not begin database transaction: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 	defer func(){
 		// potential error from rollback is not fatal, ignoring for now
-		_ = tx.Rollback(*dbCtx)
+		if tx != nil {
+			_ = tx.Rollback(*dbCtx)
+		}
 	}()
 
 	err = db.New(dbConn).WithTx(tx).UpdateLogin(*dbCtx, updateLoginParams)
