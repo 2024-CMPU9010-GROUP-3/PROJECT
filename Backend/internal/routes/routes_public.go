@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/handlers"
+	"github.com/go-openapi/runtime/middleware"
 )
 
 func init() {
@@ -18,6 +19,12 @@ func public() *http.ServeMux {
 	router := http.NewServeMux()
 	router.Handle("/points/", http.StripPrefix("/points", pointsPublic()))
 	router.Handle("/auth/", http.StripPrefix("/auth", auth()))
+
+	opts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
+	sh := middleware.SwaggerUI(opts, nil)
+	router.Handle("/docs", sh)
+	router.HandleFunc("/swagger.yaml", swaggerSpec)
+
 	return router
 }
 
@@ -41,4 +48,13 @@ func auth() *http.ServeMux {
 	router.HandleFunc("POST /User/login", authHandler.HandleLogin)
 
 	return router
+}
+
+func swaggerDocs() http.Handler {
+	// Implement the handler for serving Swagger documentation
+	return http.FileServer(http.Dir("./"))
+}
+
+func swaggerSpec(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./swagger.yaml")
 }

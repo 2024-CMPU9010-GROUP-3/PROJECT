@@ -1,3 +1,19 @@
+// Product API:
+// version: 0.1
+// title: Product API
+// Schemes: http, https
+// BasePath: /api/v1
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// SecurityDefinitions:
+// Bearer:
+//   type: apiKey
+//   name: Authorization
+//   in: header
+// swagger:meta
+
 package main
 
 import (

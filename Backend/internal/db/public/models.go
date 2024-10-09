@@ -56,25 +56,76 @@ func (ns NullPointType) Value() (driver.Value, error) {
 	return string(ns.PointType), nil
 }
 
+// Login represents a user's login credentials.
+// swagger:model Login
 type Login struct {
-	ID           pgtype.UUID `json:"id"`
-	Username     string      `json:"username"`
-	Email        string      `json:"email"`
-	Passwordhash string      `json:"passwordhash"`
+    // ID of the login session
+    // in: string
+    ID pgtype.UUID `json:"id"`
+
+    // Username for login
+    // required: true
+    // in: string
+    Username string `json:"username"`
+
+    // Email associated with the login
+    // required: true
+    // in: string
+    Email string `json:"email"`
+
+    // Hashed password for security
+    // required: true
+    // in: string
+    Passwordhash string `json:"passwordhash"`
 }
 
+// Point represents a geographical point.
+// swagger:model Point
 type Point struct {
-	ID      int64          `json:"id"`
-	Longlat *go_geom.Point `json:"longlat"`
-	Type    PointType      `json:"type"`
-	Details []byte         `json:"details"`
+    // ID of the point
+    // in: int64
+    ID int64 `json:"id"`
+
+    // Longitude and latitude coordinates
+    // in: object
+    Longlat *go_geom.Point `json:"longlat"`
+
+    // Type of point (e.g., landmark, checkpoint)
+    // required: true
+    // in: string
+    Type PointType `json:"type"`
+
+    // Additional details about the point
+    // in: byte
+    Details []byte `json:"details"`
 }
 
+// UserDetail contains detailed information about a user.
+// swagger:model UserDetail
 type UserDetail struct {
-	ID             pgtype.UUID      `json:"id"`
-	Registerdate   pgtype.Timestamp `json:"registerdate"`
-	Firstname      string           `json:"firstname"`
-	Lastname       string           `json:"lastname"`
-	Profilepicture pgtype.Text      `json:"profilepicture"`
-	Lastloggedin   pgtype.Timestamp `json:"lastloggedin"`
+    // Unique ID of the user
+    // in: string
+    ID pgtype.UUID `json:"id"`
+
+    // The date and time the user registered
+    // in: string
+    Registerdate pgtype.Timestamp `json:"registerdate"`
+
+    // First name of the user
+    // required: true
+    // in: string
+    Firstname string `json:"firstname"`
+
+    // Last name of the user
+    // required: true
+    // in: string
+    Lastname string `json:"lastname"`
+
+    // Profile picture URL or path
+    // in: string
+    Profilepicture pgtype.Text `json:"profilepicture"`
+
+    // Last time the user logged in
+    // in: string
+    Lastloggedin pgtype.Timestamp `json:"lastloggedin"`
 }
