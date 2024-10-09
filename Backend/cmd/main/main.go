@@ -10,7 +10,7 @@ import (
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/handlers"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/middleware"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/routes"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	"github.com/twpayne/go-geos"
 	pgxgeos "github.com/twpayne/pgx-geos"
@@ -45,16 +45,22 @@ func main() {
 
 	ctx := context.Background()
 
-	conn, err := pgx.Connect(ctx, dbUrl)
+	conn, err := pgxpool.New(ctx, dbUrl)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v\n", err)
 		os.Exit(1)
 	} else {
 		log.Println("Successfully connected to database")
 	}
-	defer conn.Close(ctx)
+	defer conn.Close()
 
-	err = pgxgeos.Register(ctx, conn, geos.NewContext())
+	connFromPool, err := conn.Acquire(ctx)
+	if err != nil {
+		log.Fatalf("Could not acquire connection from connection pool: %+v", err)
+		os.Exit(1)
+	}
+
+	err = pgxgeos.Register(ctx, connFromPool.Conn(), geos.NewContext())
 	if err != nil {
 		log.Fatalf("Could not register geo datatype: %v\n", err)
 		os.Exit(1)
