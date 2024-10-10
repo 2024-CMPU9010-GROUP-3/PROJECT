@@ -14,11 +14,12 @@ pip install -r requirements.txt
 python detect.py --weights yolov5s.pt --source data/images
 
 4. fine tune model by training & validating on our images
-python train.py --img 640 --batch 16 --epochs 100 --data data.yaml --weights yolov5s.pt --cache
+you can play around with the parameters in hyp.yaml and the number of epochs
+python train.py --img 640 --batch 16 --epochs 10 --data data.yaml --weights C:\{YOUR FILE PATH}\yolov5\runs\train\exp\weights\best.pt --hyp hyp.yaml --cache
 
 5. view results of the runs in runs/train/exp directory
 
 6. test the model on the test images to label the rest
-python detect.py --weights runs/train/exp/weights/best.pt --img 640 --conf 0.25 --source data/images/test
+python detect.py --weights runs/train/exp8/weights/best.pt --img 640 --conf 0.25 --source C:\{YOUR FILE PATH}\dataset_ann\images\test
 
 
