@@ -85,7 +85,7 @@ export default function SignupPage() {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;Where data meets design, and every street tells a story—shaping cities through the lens of innovation, one space at a time.".&rdquo;
+                &ldquo;Where data meets design, and every street tells a story—shaping cities through the lens of innovation, one space at a time.&rdquo;
               </p>
               <footer className="text-sm">Magpie</footer>
             </blockquote>
