@@ -69,9 +69,9 @@ export default function LoginPage() {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;This library has saved me countless hours of work and helped me deliver stunning designs to my clients faster than ever before.&rdquo;
+                &ldquo;In the heart of the city’s flow, we map the unseen, weaving data and vision to guide tomorrow’s planners toward a more connected world.&rdquo;
               </p>
-              <footer className="text-sm">Sofia Davis</footer>
+              <footer className="text-sm">Magpie</footer>
             </blockquote>
           </div>
         </div>
