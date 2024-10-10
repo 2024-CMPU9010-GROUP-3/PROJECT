@@ -1,7 +1,5 @@
 name: PROJECT
 
-version: "3.8"
-
 services:
   private-service:
     image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.1.0
