@@ -19,7 +19,7 @@ spec:
         app: public-backend
     spec:
       containers:
-        - name: flood
+        - name: public-backend
           image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.2.1@sha256:3a4080ff6453daa23bab68dc54e19b5f4ceb9e27c5155bd12be1a92482012dcb
           resources: {}
           ports:
