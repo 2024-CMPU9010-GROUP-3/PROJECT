@@ -19,7 +19,7 @@ spec:
         app: frontend
     spec:
       containers:
-        - name: flood
+        - name: frontend
           image: ghcr.io/2024-cmpu9010-group-3/frontend:0.1.0@sha256:fc0a5476f7e3797c788e4b3f1994f8576cf9b469e0019a09c77b57050895a24b
           resources: {}
           ports:
