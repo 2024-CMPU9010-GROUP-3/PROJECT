@@ -1,4 +1,4 @@
-name: PROJECT
+version: '3.8'
 
 services:
   private-service:
