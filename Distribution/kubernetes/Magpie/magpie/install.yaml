@@ -9,11 +9,11 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: magpie
-  path: "./kubernetes/magpie/magpie/app"
+  path: "./Distribution/kubernetes/magpie/magpie/app"
   prune: true
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: 2024-cmpu9010-group-3
   decryption:
     provider: sops
     secretRef:
