@@ -16,7 +16,7 @@ Both backends need a single PostgreSQL database with the PostGIS extension to be
 docker run --name some-postgis -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgis/postgis
 ```
 
-- Initialise the database with the SQL scripts in `/Backend/sql/schema.sql` using a database access tool like DBeaver.
+- Initialise the database with the SQL scripts in `/Backend/sql/extensions.sql` and `/Backend/sql/schema.sql` using a database access tool like DBeaver.
   _**Note**: The schema setup process will be automated in the future, but for now it has to be done manually._
 
 - Set the environment variables according to [this](#configuration).
