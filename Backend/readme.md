@@ -4,6 +4,28 @@ This is the backend of our application. It has two configurations (private and p
 
 The backend is written in Go using the net/http package of the standard library. The server is equipped with a middleware that will log the URL, status code and response time of any request to std out.
 
+## Requirements
+
+### Database
+
+Both backends need a single PostgreSQL database with the PostGIS extension to be present at runtime. During development it is probably easiest to run that database locally.
+
+- Run the [official PostGIS Docker container](https://hub.docker.com/r/postgis/postgis):
+
+```
+docker run --name some-postgis -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgis/postgis
+```
+
+- Initialise the database with the SQL scripts in `/Backend/sql/schema.sql` using a database access tool like DBeaver.
+  _**Note**: The schema setup process will be automated in the future, but for now it has to be done manually._
+
+- Set the environment variables according to [this](#configuration).
+  Connection string example:
+
+```
+postgres://postgres:mysecretpassword@localhost:5432/postgres
+```
+
 ## Routes
 
 - [Public Routes](./routes-public.md)
@@ -95,5 +117,6 @@ The server is configured through environment variables. This can be achieved by 
 \* `MAGPIE_DB_URL` can be omitted if the connection information is instead given as separate environment variables (`LOGIN`, `PASSWORD`, `HOST` and `DATABASE_NAME`). This is useful for deployments using Kubernetes. If both `MAGPIE_DB_URL` and the separate environment variables are set, only `MAGPIE_DB_URL` will be used to establish a connection.
 
 #### CORS Configuration Examples
+
 - `MAGPIE_CORS_ALLOWED_ORIGINS="http://localhost:3000 https://localhost:3000 http://example.com"`
 - `MAGPIE_CORS_ALLOWED_METHODS="GET POST PUT DELETE"`
