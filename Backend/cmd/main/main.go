@@ -22,6 +22,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/handlers"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/middleware"
@@ -29,14 +30,16 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 
-	// geos "github.com/twpayne/go-geom"
 	pgxgeom "github.com/twpayne/pgx-geom"
 )
 
 const defaultPort = "8080"
 const portEnv = "MAGPIE_PORT"
 const dbUrlEnv = "MAGPIE_DB_URL"
+const corsAllowedOriginsEnv = "MAGPIE_CORS_ALLOWED_ORIGINS"
+const corsAllowedMethodsEnv = "MAGPIE_CORS_ALLOWED_METHODS"
 
 func main() {
 	err := godotenv.Load()
@@ -67,11 +70,28 @@ func main() {
 		log.Printf("%s\n", dbUrl)
 	}
 
-	router := routes.Router
+	allowedOriginsEnv := os.Getenv(corsAllowedOriginsEnv)
+	if len(allowedOriginsEnv) == 0 {
+		log.Printf("Warning: Could not find allowed origins for CORS in environment variables")
+	}
+	allowedMethodsEnv := os.Getenv(corsAllowedMethodsEnv)
+	if len(allowedMethodsEnv) == 0 {
+		log.Printf("Warning: Could not find allowed methods for CORS in environment variables")
+	}
+
+	allowedOrigins := strings.Split(allowedOriginsEnv, " ")
+	allowedMethods := strings.Split(allowedMethodsEnv, " ")
+
+	corsManager := cors.New(cors.Options{
+		AllowedOrigins: allowedOrigins,
+		AllowedMethods: allowedMethods,
+	})
 
 	middlewares := middleware.CreateMiddlewareStack(
 		middleware.Logging,
+		corsManager.Handler,
 	)
+	router := routes.Router
 
 	ctx := context.Background()
 

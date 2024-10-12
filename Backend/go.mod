@@ -6,7 +6,8 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/joho/godotenv v1.5.1
-	github.com/twpayne/pgx-geos v0.0.3
+	github.com/twpayne/go-geom v1.5.7
+	github.com/twpayne/pgx-geom v0.0.2
 	golang.org/x/crypto v0.28.0
 )
 
@@ -30,8 +31,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/twpayne/go-geom v1.5.7 // indirect
-	github.com/twpayne/pgx-geom v0.0.2 // indirect
+	github.com/rs/cors v1.11.1 // indirect
 	go.mongodb.org/mongo-driver v1.14.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
