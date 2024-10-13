@@ -1,8 +1,8 @@
 swagger: "2.0"
 info:
-  title: Public API
+  title: Magpie API
   version: 1.0
-  description: This is the public API for the project.
+  description: This is our backend api for Magpie project
   contact: {}
 basePath: /public
 paths:

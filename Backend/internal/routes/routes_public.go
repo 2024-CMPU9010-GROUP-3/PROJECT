@@ -31,14 +31,15 @@ func pointsPublic() *http.ServeMux {
 	router := http.NewServeMux()
 	pointsHandler := &handlers.PointsHandler{}
 
-	// @Summary Get points by radius
-	// @Description Get points within a specified radius
-	// @Tags points
-	// @Accept  json
-	// @Produce  json
-	// @Param   radius  query  float64  true  "Radius"
-	// @Success 200 {object} handlers.PointsResponse
-	// @Router /points/byRadius [get]
+	// Write code here for swagger annotations for the below path
+	// swagger:operation GET /product Product getList
+	// Get Point by Radius
+	//
+	// ---
+	// responses:
+	//
+	//  401: CommonError
+	//  200: CommonSuccess
 	router.HandleFunc("GET /byRadius", pointsHandler.HandleGetByRadius)
 
 	// @Summary Get point details

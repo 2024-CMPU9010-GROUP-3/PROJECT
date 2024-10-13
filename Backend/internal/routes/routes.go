@@ -38,9 +38,13 @@ func init() {
 
 	opts := middleware.SwaggerUIOpts{SpecURL: "/swagger.yaml"}
 	sh := middleware.SwaggerUI(opts, nil)
+	// @Summary Swagger Route
+	// @Description Swagger UI is accessible via this route.
+	// @Success 200 {string} string "ok"
+	// @Router /docs [get]
 	Router.Handle("/docs", sh)
 	Router.HandleFunc("/swagger.yaml", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "docs/swagger.yaml")
+		http.ServeFile(w, r, "cmd/main/docs/swagger.yaml")
 	})
 
 	Router.Handle("/v1/", http.StripPrefix("/v1", v1Router))
