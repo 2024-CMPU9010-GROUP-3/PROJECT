@@ -1,0 +1,179 @@
+swagger: "2.0"
+info:
+  title: Public API
+  version: 1.0
+  description: This is the public API for the project.
+  contact: {}
+basePath: /public
+paths:
+  /points/byRadius:
+    get:
+      summary: Get points by radius
+      description: Get points within a specified radius
+      tags:
+        - points
+      parameters:
+        - name: radius
+          in: query
+          description: Radius
+          required: true
+          type: number
+          format: float
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PointsResponse'
+  /points/{id}:
+    get:
+      summary: Get point details
+      description: Get details of a specific point by ID
+      tags:
+        - points
+      parameters:
+        - name: id
+          in: path
+          description: Point ID
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.PointDetailsResponse'
+  /auth/User/{id}:
+    get:
+      summary: Get user details
+      description: Get details of a specific user by ID
+      tags:
+        - auth
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: string
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UserResponse'
+    put:
+      summary: Update user details
+      description: Update details of a specific user by ID
+      tags:
+        - auth
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: string
+        - name: user
+          in: body
+          description: User data
+          required: true
+          schema:
+            $ref: '#/definitions/handlers.UserRequest'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.UserResponse'
+    delete:
+      summary: Delete a user
+      description: Delete a specific user by ID
+      tags:
+        - auth
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          type: string
+      responses:
+        204:
+          description: No Content
+  /auth/User:
+    post:
+      summary: Create a new user
+      description: Create a new user
+      tags:
+        - auth
+      parameters:
+        - name: user
+          in: body
+          description: User data
+          required: true
+          schema:
+            $ref: '#/definitions/handlers.UserRequest'
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: '#/definitions/handlers.UserResponse'
+  /auth/User/login:
+    post:
+      summary: User login
+      description: Authenticate a user
+      tags:
+        - auth
+      parameters:
+        - name: credentials
+          in: body
+          description: Login credentials
+          required: true
+          schema:
+            $ref: '#/definitions/handlers.LoginRequest'
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.LoginResponse'
+definitions:
+  handlers.PointsResponse:
+    type: object
+    properties:
+      points:
+        type: array
+        items:
+          type: object
+  handlers.PointDetailsResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      description:
+        type: string
+  handlers.UserResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      email:
+        type: string
+  handlers.UserRequest:
+    type: object
+    properties:
+      name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+  handlers.LoginRequest:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  handlers.LoginResponse:
+    type: object
+    properties:
+      token:
+        type: string
