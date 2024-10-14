@@ -1,3 +1,5 @@
+### General ###
+
 # Ignore docs inside the documentation directory
 /documentation/**/docs/
 
@@ -10,10 +12,7 @@
 # Don't commit secrets to repo
 .env
 
-###############################################################################
 ### Frontend ###
-
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
 *.pnp
@@ -50,5 +49,8 @@
 *.tsbuildinfo
 *next-env.d.ts
 
+### Python ###
 
-###############################################################################
+**/lib
+**/lib64
+**/bin
