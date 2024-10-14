@@ -72,6 +72,9 @@ ax.xaxis.set_major_formatter(date_format)
 # Rotate date labels for better readability
 plt.xticks(rotation=45)
 
+# Add grid to the chart
+ax.grid(True)
+
 # Set labels and title
 plt.xlabel('Date')
 plt.ylabel('Tasks')
