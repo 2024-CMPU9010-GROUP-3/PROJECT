@@ -107,7 +107,7 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	defer func(){
+	defer func() {
 		// potential error from rollback is not fatal, ignoring for now
 		if tx != nil {
 			_ = tx.Rollback(*dbCtx)
@@ -204,7 +204,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	defer func(){
+	defer func() {
 		// potential error from rollback is not fatal, ignoring for now
 		if tx != nil {
 			_ = tx.Rollback(*dbCtx)
@@ -340,15 +340,14 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tokenDto := bearerTokenDto{
-		tokenString,
+	cookie := http.Cookie{
+		Name:     "magpie_auth",
+		Value:    tokenString,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(parsedExpiry),
+		Path:     "/",
 	}
 
-	// send bearer token as response
-	err = json.NewEncoder(w).Encode(tokenDto)
-	if err != nil {
-		log.Printf("Could not send bearer token as response: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	http.SetCookie(w, &cookie)
 }
