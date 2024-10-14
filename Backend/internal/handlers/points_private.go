@@ -20,6 +20,14 @@ type PointDto struct {
 	Details any              `json:"details"` // potentially unsafe, but we need to accept any json object here
 }
 
+// HandlePost creates new point
+// @Summary      Create new point
+// @Tags         Points Private
+// @Description  Creates a new point in the database
+// @Accept       json
+// @Produce      json
+// @Success      201
+// @Router       /v1/private/points/ [post]
 func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	dbQueries := db.New(dbConn)
 

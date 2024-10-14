@@ -4,9 +4,11 @@ WORKDIR /app
 
 COPY go.mod ./
 
-RUN  go mod download
+RUN  go mod download && go install github.com/swaggo/swag/cmd/swag@latest
 
 COPY . .
+
+RUN swag init -g ./cmd/main/main.go
 
 RUN CGO_ENABLED=0 GOOS=linux go build -tags public -o /app/bin/main ./cmd/main
 

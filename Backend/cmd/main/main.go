@@ -25,6 +25,21 @@ const dbUrlEnv = "MAGPIE_DB_URL"
 const corsAllowedOriginsEnv = "MAGPIE_CORS_ALLOWED_ORIGINS"
 const corsAllowedMethodsEnv = "MAGPIE_CORS_ALLOWED_METHODS"
 
+
+// @title        Magpie API Documentation
+// @version      0.1
+// @description  A collection of fun related api endpoints.
+// termsOfService  http://swagger.io/terms/
+// @x-logo       {"url": "https://example.com/img.png", "backgroundColor": "#000000", "altText": "example logo", "href": "https://example.com/img.png"}
+
+// contact.name   API Support
+// @contact.url   https://gophercoding.com
+// contact.email  support@gophercoding.com
+
+// @host                        api.gophercoding.com
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        Authorization
 func main() {
 	err := godotenv.Load()
 	if err != nil {

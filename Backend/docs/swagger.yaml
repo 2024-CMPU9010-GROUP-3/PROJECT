@@ -1,0 +1,55 @@
+host: api.gophercoding.com
+info:
+  contact:
+    url: https://gophercoding.com
+  description: A collection of fun related api endpoints.
+  title: My API documentation
+  version: "0.1"
+  x-logo:
+    altText: example logo
+    backgroundColor: '#000000'
+    href: https://example.com/img.png
+    url: https://example.com/img.png
+paths:
+  /v1/private/points/:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new point in the database
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+      summary: Create new point
+  /v1/public/points/byRadius:
+    get:
+      description: Get all points in a box around the given point
+      parameters:
+      - description: Longitude of center point
+        in: query
+        name: long
+        required: true
+        type: number
+      - description: Latitude of center point
+        in: query
+        name: lat
+        required: true
+        type: number
+      - description: Size of box around center point
+        in: query
+        name: radius
+        required: true
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Points by radius
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

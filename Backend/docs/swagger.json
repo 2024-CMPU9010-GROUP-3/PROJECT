@@ -1,0 +1,81 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A collection of fun related api endpoints.",
+        "title": "My API documentation",
+        "contact": {
+            "url": "https://gophercoding.com"
+        },
+        "version": "0.1",
+        "x-logo": {
+            "altText": "example logo",
+            "backgroundColor": "#000000",
+            "href": "https://example.com/img.png",
+            "url": "https://example.com/img.png"
+        }
+    },
+    "host": "api.gophercoding.com",
+    "paths": {
+        "/v1/private/points/": {
+            "post": {
+                "description": "Creates a new point in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create new point",
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    }
+                }
+            }
+        },
+        "/v1/public/points/byRadius": {
+            "get": {
+                "description": "Get all points in a box around the given point",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Points by radius",
+                "parameters": [
+                    {
+                        "type": "number",
+                        "description": "Longitude of center point",
+                        "name": "long",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Latitude of center point",
+                        "name": "lat",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "number",
+                        "description": "Size of box around center point",
+                        "name": "radius",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

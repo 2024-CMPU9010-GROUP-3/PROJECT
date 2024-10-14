@@ -23,6 +23,16 @@ type pointDto struct {
 	Type    db.PointType
 }
 
+// HandleGetByRadius gets all points in a box around the center point
+// @Summary      Points by radius
+// @Tags         Points Public
+// @Description  Get all points in a box around the given point
+// @param 			 long query number true "Longitude of center point"
+// @param 			 lat query number true "Latitude of center point"
+// @param 			 radius query number true "Size of box around center point"
+// @Produce      json
+// @Success      200
+// @Router       /v1/public/points/byRadius [get]
 func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request) {
 	// parameters long, lat, radius are required
 	params := r.URL.Query()
