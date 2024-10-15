@@ -1,59 +1,228 @@
-import Link from "next/link"
+// "use client";
 
-import { Button } from "@/components/ui/registry/button"
+// import Link from "next/link";
+// import { useState } from "react"; // useState
+// import { Button } from "@/components/ui/registry/button";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/registry/card";
+// import { Input } from "@/components/ui/registry/input";
+// import { Label } from "@/components/ui/registry/label";
+// import { useRouter } from 'next/compat/router'; // useRouter
+
+// export function LoginForm() {
+//   const [email, setEmail] = useState(""); // email state
+//   const [password, setPassword] = useState(""); // password state
+//   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
+//   const [isLoading, setIsLoading] = useState(false); // loading state
+//   const router = useRouter(); // router
+
+//   const onSubmit = async (event: React.SyntheticEvent) => {
+//     event.preventDefault(); // prevent default form submission behavior
+//     setIsLoading(true); // set loading state
+
+//     // check if fields are empty
+//     if (!email.trim() || !password.trim()) {
+//       setErrorMessage('Fields cannot be empty');
+//       setIsLoading(false);
+//       return;
+//     }
+
+//     try {
+//       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ username: email, password }), // send username and password
+//       });
+
+//       if (response.ok) {
+//         // login success, handle logic
+//         if (router) { // 确保 router 不为 null
+//           router.push('/dashboard'); // redirect to dashboard after login
+//         }
+//       } else {
+//         const errorData = await response.json();
+//         setErrorMessage('Login failed: ' + errorData.message); // display error message
+//       }
+//     } catch (error) {
+//       console.error('An error occurred', error);
+//       setErrorMessage('An error occurred during login');
+//     } finally {
+//       setIsLoading(false); // reset loading state
+//     }
+//   };
+
+//   return (
+//     <Card className="mx-auto max-w-sm">
+//       <CardHeader>
+//         <CardTitle className="text-2xl">Login</CardTitle>
+//         <CardDescription>
+//           Enter your email below to login to your account
+//         </CardDescription>
+//       </CardHeader>
+//       <CardContent>
+//         <form onSubmit={onSubmit}> {/* form submission handling */}
+//           <div className="grid gap-4">
+//             <div className="grid gap-2">
+//               <Label htmlFor="email">Email</Label>
+//               <Input
+//                 id="email"
+//                 type="email"
+//                 placeholder="m@example.com"
+//                 required
+//                 value={email} // bind email state
+//                 onChange={(e) => setEmail(e.target.value)} // update email state
+//               />
+//             </div>
+//             <div className="grid gap-2">
+//               <div className="flex items-center">
+//                 <Label htmlFor="password">Password</Label>
+//                 <Link href="#" className="ml-auto inline-block text-sm underline">
+//                   Forgot your password?
+//                 </Link>
+//               </div>
+//               <Input
+//                 id="password"
+//                 type="password"
+//                 required
+//                 value={password} // bind password state
+//                 onChange={(e) => setPassword(e.target.value)} // update password state
+//               />
+//             </div>
+//             <Button type="submit" className="w-full" disabled={isLoading}>
+//               {isLoading ? 'Logging in...' : 'Login'} {/* display loading state */}
+//             </Button>
+//             {errorMessage && <div className="text-red-500">{errorMessage}</div>} {/* display error message */}
+//           </div>
+//         </form>
+//         <div className="mt-4 text-center text-sm">
+//             Don&apos;t have an account?{" "}
+//           <Link href="./signup" className="underline">
+//             Sign up
+//           </Link>
+//         </div>
+//       </CardContent>
+//     </Card>
+//   );
+// }
+
+
+"use client";
+
+import Link from "next/link";
+import { useState } from "react"; // useState
+import { Button } from "@/components/ui/registry/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/registry/card"
-import { Input } from "@/components/ui/registry/input"
-import { Label } from "@/components/ui/registry/label"
+} from "@/components/ui/registry/card";
+import { Input } from "@/components/ui/registry/input";
+import { Label } from "@/components/ui/registry/label";
+import { useRouter } from 'next/compat/router'; // useRouter
 
 export function LoginForm() {
+  const [usernameOrEmail, setUsernameOrEmail] = useState(""); // Allow login via username or email
+  const [password, setPassword] = useState(""); // password state
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
+  const [isLoading, setIsLoading] = useState(false); // loading state
+  const router = useRouter(); // router
+
+  const onSubmit = async (event: React.SyntheticEvent) => {
+    event.preventDefault(); // prevent default form submission behavior
+    setIsLoading(true); // set loading state
+
+    // check if fields are empty
+    if (!usernameOrEmail.trim() || !password.trim()) {
+      setErrorMessage('Fields cannot be empty');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: usernameOrEmail, password }), // send username/email and password
+      });
+
+      if (response.ok) {
+        // login success, handle logic
+        if (router) { // Ensure router is not null
+          router.push('/dashboard'); // redirect to dashboard after login
+        }
+      } else {
+        const errorData = await response.json();
+        setErrorMessage('Login failed: ' + errorData.message); // display error message
+      }
+    } catch (error) {
+      console.error('An error occurred', error);
+      setErrorMessage('An error occurred during login');
+    } finally {
+      setIsLoading(false); // reset loading state
+    }
+  };
+
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
         <CardTitle className="text-2xl">Login</CardTitle>
         <CardDescription>
-          Enter your email below to login to your account
+          Enter your username or email below to login to your account
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <Link href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </Link>
+        <form onSubmit={onSubmit}> {/* form submission handling */}
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="usernameOrEmail">Username/Email</Label>
+              <Input
+                id="usernameOrEmail"
+                type="text"
+                placeholder="username or m@example.com"
+                required
+                value={usernameOrEmail} // bind usernameOrEmail state
+                onChange={(e) => setUsernameOrEmail(e.target.value)} // update state
+              />
             </div>
-            <Input id="password" type="password" required />
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+                <Link href="#" className="ml-auto inline-block text-sm underline">
+                  Forgot your password?
+                </Link>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                required
+                value={password} // bind password state
+                onChange={(e) => setPassword(e.target.value)} // update password state
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? 'Logging in...' : 'Login'} {/* display loading state */}
+            </Button>
+            {errorMessage && <div className="text-red-500">{errorMessage}</div>} {/* display error message */}
           </div>
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-          {/* <Button variant="outline" className="w-full">
-            Login with Google
-          </Button> */}
-        </div>
+        </form>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
+            Don&apos;t have an account?{" "}
           <Link href="./signup" className="underline">
             Sign up
           </Link>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
