@@ -233,6 +233,8 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		resp.SendError(customErrors.Database.TransactionCommitError, w)
 		return
 	}
+
+	resp.SendResponse(resp.Response{Content: userId, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
