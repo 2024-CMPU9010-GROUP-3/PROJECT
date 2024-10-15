@@ -3,8 +3,9 @@ package errors
 import "net/http"
 
 const (
-	codeUnknown          = 1001
-	codeJwtSecretMissing = 1002
+	codeUnknownError          = 1001
+	codeJwtSecretMissingError = 1002
+	codeHashingError          = 1003
 
 	codeDatabaseConnectionError        = 1101
 	codeDatabaseTransactionStartError  = 1102
@@ -30,14 +31,20 @@ const (
 
 var unknownError = CustomError{
 	HttpStatus: http.StatusInternalServerError,
-	ErrorCode:  codeUnknown,
+	ErrorCode:  codeUnknownError,
 	ErrorMsg:   "Unknown internal server error",
 }
 
 var jwtSecretMissingError = CustomError{
 	HttpStatus: http.StatusInternalServerError,
-	ErrorCode:  codeJwtSecretMissing,
+	ErrorCode:  codeJwtSecretMissingError,
 	ErrorMsg:   "Could not generate JWT, secret not set",
+}
+
+var hashingError = CustomError{
+	HttpStatus: http.StatusInternalServerError,
+	ErrorCode:  codeHashingError,
+	ErrorMsg:   "Could not hash password",
 }
 
 var databaseConnectionError = CustomError{
@@ -145,9 +152,11 @@ var invalidTokenError = CustomError{
 var Internal = struct {
 	UnknownError          CustomError
 	JwtSecretMissingError CustomError
+	HashingError          CustomError
 }{
 	UnknownError:          unknownError,
 	JwtSecretMissingError: jwtSecretMissingError,
+	HashingError:          hashingError,
 }
 
 var Database = struct {
