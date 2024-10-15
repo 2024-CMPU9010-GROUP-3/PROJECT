@@ -13,7 +13,7 @@ git clone https://github.com/ultralytics/yolov5.git
 cd yolov5
 pip install -r requirements.txt
 
-5.1 Add the data.yaml and hyp.yaml files to the yolov5 directory
+5.Add the data.yaml and hyp.yaml files to the yolov5 directory
 
 6. Download pre-trained weights for the yolov5 model (i've chosen the small model - yolov5s.pt -- to start with)
 python detect.py --weights yolov5s.pt --source data/images
@@ -25,6 +25,4 @@ python train.py --img 640 --batch 16 --epochs 10 --data data.yaml --weights C:\{
 8. view results of the runs in runs/train/exp directory
 
 9. test the model on the test images to label the rest
-python detect.py --weights runs/train/exp8/weights/best.pt --img 640 --conf 0.25 --source C:\{YOUR FILE PATH}\dataset_ann\images\test
-
-
+python detect.py --weights runs/train/exp8/weights/best.pt --img 640 --conf 0.35 --source C:\{YOUR FILE PATH}\dataset_ann\images\test
