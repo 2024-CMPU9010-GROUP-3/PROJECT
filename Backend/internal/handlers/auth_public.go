@@ -350,4 +350,15 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &cookie)
+
+	tokenDto := bearerTokenDto{
+		BearerToken: tokenString,
+	}
+
+	err = json.NewEncoder(w).Encode(tokenDto)
+	if err != nil {
+		log.Printf("Could not send user details as response: %+v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 }
