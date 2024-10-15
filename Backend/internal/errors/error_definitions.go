@@ -6,6 +6,7 @@ const (
 	codeUnknownError          = 1001
 	codeJwtSecretMissingError = 1011
 	codeHashingError          = 1012
+	codeJwtParseError         = 1013
 	codeJsonEncodingError     = 1021
 	codeJsonDecodingError     = 1022
 	codeGeoJsonEncodingError  = 1023
@@ -34,6 +35,7 @@ const (
 	codeUnauthorizedError     = 1401
 	codeWrongCredentialsError = 1402
 	codeInvalidTokenError     = 1403
+	codeIdMissingInContext    = 1404
 )
 
 var unknownError = CustomError{
@@ -52,6 +54,12 @@ var hashingError = CustomError{
 	HttpStatus: http.StatusInternalServerError,
 	ErrorCode:  codeHashingError,
 	ErrorMsg:   "Could not hash password",
+}
+
+var jwtParseError = CustomError{
+	HttpStatus: http.StatusInternalServerError,
+	ErrorCode:  codeJwtParseError,
+	ErrorMsg:   "Could not parse JWT",
 }
 
 var jsonEncodingError = CustomError{
@@ -198,16 +206,24 @@ var invalidTokenError = CustomError{
 	ErrorMsg:   "Bearer token not valid",
 }
 
+var idMissingInContextError = CustomError{
+	HttpStatus: http.StatusUnauthorized,
+	ErrorCode:  codeIdMissingInContext,
+	ErrorMsg:   "UserId from token missing in context",
+}
+
 var Internal = struct {
 	UnknownError          CustomError
 	JwtSecretMissingError CustomError
 	HashingError          CustomError
+	JwtParseError         CustomError
 	JsonEncodingError     CustomError
 	JsonDecodingError     CustomError
 }{
 	UnknownError:          unknownError,
 	JwtSecretMissingError: jwtSecretMissingError,
 	HashingError:          hashingError,
+	JwtParseError:         jwtParseError,
 	JsonEncodingError:     jsonEncodingError,
 	JsonDecodingError:     jsonDecodingError,
 }
@@ -263,11 +279,13 @@ var NotFound = struct {
 }
 
 var Auth = struct {
-	UnauthorizedError     CustomError
-	WrongCredentialsError CustomError
-	InvalidTokenError     CustomError
+	UnauthorizedError       CustomError
+	WrongCredentialsError   CustomError
+	InvalidTokenError       CustomError
+	IdMissingInContextError CustomError
 }{
-	UnauthorizedError:     unauthorizedError,
-	WrongCredentialsError: wrongCredentialsError,
-	InvalidTokenError:     invalidTokenError,
+	UnauthorizedError:       unauthorizedError,
+	WrongCredentialsError:   wrongCredentialsError,
+	InvalidTokenError:       invalidTokenError,
+	IdMissingInContextError: idMissingInContextError,
 }
