@@ -136,7 +136,7 @@ pydub==0.25.1
 pygit2==1.12.2
 Pygments==2.16.1
 PyGObject==3.42.1
-PyJWT==2.3.0
+PyJWT==2.4.0
 pykerberos==1.1.14
 pymssql==2.2.11
 pynvim==0.4.2
