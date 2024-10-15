@@ -188,7 +188,7 @@ torch==2.2.0
 torchmetrics==1.2.1
 torchsde==0.2.5
 tornado==6.4.1
-tqdm==4.64.1
+tqdm==4.66.3
 traitlets==5.13.0
 trampoline==0.1.2
 transformers==4.38.0
