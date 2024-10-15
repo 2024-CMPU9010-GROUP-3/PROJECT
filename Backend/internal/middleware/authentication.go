@@ -11,6 +11,8 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type tokenKey string
+
 func accessAuthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 
@@ -44,7 +46,9 @@ func accessAuthenticated(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(request.Context(), "token_user_id", subject)
+		key := tokenKey("token_user_id")
+
+		ctx := context.WithValue(request.Context(), key, subject)
 
 		next.ServeHTTP(writer, request.WithContext(ctx))
 
@@ -64,7 +68,9 @@ func accessOwnerOnly(next http.Handler) http.Handler {
 			return
 		}
 
-		tokenUserId := request.Context().Value("token_user_id")
+		key := tokenKey("token_user_id")
+
+		tokenUserId := request.Context().Value(key)
 		if tokenUserId == nil {
 			log.Printf("No user_id from token present in context")
 			writer.WriteHeader(http.StatusInternalServerError)
