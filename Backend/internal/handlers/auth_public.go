@@ -5,12 +5,15 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
 	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/public"
+	customErrors "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/errors"
+	resp "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/responses"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -46,36 +49,30 @@ type userIdDto struct {
 
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	userIdPathParam := r.PathValue("id")
-	log.Printf("User id path param: %v\n", userIdPathParam)
 	var userId pgtype.UUID
 	err := userId.Scan(userIdPathParam)
 
 	// bad request if parameter is not valid uuid
 	if err != nil {
-		log.Printf("Invalid path parameter: %v\n", userIdPathParam)
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
 		return
 	}
 
 	userDetails, err := db.New(dbConn).GetUserDetails(*dbCtx, userId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			log.Printf("User details not found in database: %+v\n", err)
-			w.WriteHeader(http.StatusNotFound)
+			resp.SendError(customErrors.NotFound.UserNotFoundError, w)
 			return
 		} else {
-			log.Printf("Could not get user details from database: %+v\n", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 			return
 		}
 	}
 
-	err = json.NewEncoder(w).Encode(userDetails)
-	if err != nil {
-		log.Printf("Could not send user details as response: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	resp.SendResponse(resp.Response{
+		HttpStatus: http.StatusOK,
+		Content:    userDetails,
+	}, w)
 }
 
 func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
@@ -83,28 +80,37 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&userDto)
 	if err != nil {
-		log.Printf("Could not decode request body: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Payload.InvalidPayloadUserError, w)
 		return
 	}
 
 	// check the required parameters are present
 	if len(userDto.Username) == 0 || len(userDto.Email) == 0 || len(userDto.Password) == 0 {
-		log.Printf("One or more request parameters missing: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Payload.RequiredParameterMissingError, w)
+		return
+	}
+
+	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
+	if !errors.Is(err, pgx.ErrNoRows) {
+		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
+		return
+	}
+
+	_, err = db.New(dbConn).GetLoginByUsername(*dbCtx, userDto.Username)
+	if !errors.Is(err, pgx.ErrNoRows) {
+		resp.SendError(customErrors.Payload.UsernameAlreadyExistsError, w)
 		return
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(userDto.Password), 12)
 	if err != nil {
-		log.Printf("Could not hash password: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Internal.HashingError, w)
 		return
 	}
+
 	tx, err := dbConn.Begin(*dbCtx)
 	if err != nil {
-		log.Printf("Could not begin database transaction: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.TransactionStartError, w)
 		return
 	}
 	defer func() {
@@ -118,35 +124,27 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	createUserParams := db.CreateUserParams{Username: userDto.Username, Email: userDto.Email, Passwordhash: string(passwordHash)}
 	userId, err := db.New(dbConn).WithTx(tx).CreateUser(*dbCtx, createUserParams)
 	if err != nil {
-		log.Printf("Could not create user: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
 
 	createUserDetailParams := db.CreateUserDetailsParams{ID: userId, Firstname: userDto.FirstName, Lastname: userDto.LastName}
 	userId, err = db.New(dbConn).WithTx(tx).CreateUserDetails(*dbCtx, createUserDetailParams)
 	if err != nil {
-		log.Printf("Could not create user details: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
 
 	// only commit the transaction once both the user and the user details have been created successfully
 	err = tx.Commit(*dbCtx)
 	if err != nil {
-		log.Printf("Could not commit changes to database: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.TransactionCommitError, w)
 		return
 	}
 
 	idDto := userIdDto{UserId: userId}
 
-	err = json.NewEncoder(w).Encode(idDto)
-	if err != nil {
-		log.Printf("Could not send user id as response: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	resp.SendResponse(resp.Response{Content: idDto, HttpStatus: http.StatusCreated}, w)
 }
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
@@ -159,15 +157,13 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 
 	// bad request if parameter is not valid uuid
 	if err != nil {
-		log.Printf("Invalid path parameter: %v\n", userIdPathParam)
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
 		return
 	}
 
 	err = json.NewDecoder(r.Body).Decode(&userDto)
 	if err != nil {
-		log.Printf("Could not decode request body: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Payload.InvalidPayloadUserError, w)
 		return
 	}
 
@@ -176,10 +172,21 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	if len(userDto.Password) != 0 {
 		passwordHash, err = bcrypt.GenerateFromPassword([]byte(userDto.Password), 12)
 		if err != nil {
-			log.Printf("Could not hash password: %v\n", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			resp.SendError(customErrors.Internal.HashingError, w)
 			return
 		}
+	}
+
+	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
+	if !errors.Is(err, pgx.ErrNoRows) {
+		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
+		return
+	}
+
+	_, err = db.New(dbConn).GetLoginByUsername(*dbCtx, userDto.Username)
+	if !errors.Is(err, pgx.ErrNoRows) {
+		resp.SendError(customErrors.Payload.UsernameAlreadyExistsError, w)
+		return
 	}
 
 	updateLoginParams := db.UpdateLoginParams{
@@ -196,12 +203,9 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		Profilepicture: userDto.ProfilePicture,
 	}
 
-	log.Printf("update login params: %+v\n", updateLoginParams)
-	log.Printf("update user details params: %+v\n", updateUserDetailsParams)
 	tx, err := dbConn.Begin(*dbCtx)
 	if err != nil {
-		log.Printf("Could not begin database transaction: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.TransactionStartError, w)
 		return
 	}
 	defer func() {
@@ -213,23 +217,20 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 
 	err = db.New(dbConn).WithTx(tx).UpdateLogin(*dbCtx, updateLoginParams)
 	if err != nil {
-		log.Printf("Could not update login: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
 
 	err = db.New(dbConn).WithTx(tx).UpdateUserDetails(*dbCtx, updateUserDetailsParams)
 	if err != nil {
-		log.Printf("Could not update user details: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
 
 	// only commit the transaction once both the user and the user details have been created successfully
 	err = tx.Commit(*dbCtx)
 	if err != nil {
-		log.Printf("Could not commit changes to database: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.TransactionCommitError, w)
 		return
 	}
 }
@@ -240,15 +241,13 @@ func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	err := userId.Scan(userIdPathParam)
 	// bad request if parameter is not valid uuid
 	if err != nil {
-		log.Printf("Invalid path parameter: %v\n", userIdPathParam)
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
 		return
 	}
 
 	err = db.New(dbConn).DeleteUser(*dbCtx, userId)
 	if err != nil {
-		log.Printf("Could not delete user from database: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
 }
@@ -258,20 +257,17 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var loginDto userLoginDto
 	err := json.NewDecoder(r.Body).Decode(&loginDto)
 	if err != nil {
-		log.Printf("Could not decode request body: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Payload.InvalidPayloadLoginError, w)
 		return
 	}
 
 	if len(loginDto.Password) == 0 {
-		log.Printf("Password is a required parameter\n")
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Payload.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required")), w)
 		return
 	}
 
 	if len(loginDto.Username) == 0 {
-		log.Printf("Username is a required parameter\n")
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Payload.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required")), w)
 		return
 	}
 
@@ -280,12 +276,10 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			log.Printf("User not found\n")
-			w.WriteHeader(http.StatusUnauthorized)
+			resp.SendError(customErrors.Auth.WrongCredentialsError, w)
 			return
 		} else {
-			log.Printf("Could not get login details from database: %+v\n", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 			return
 		}
 	}
@@ -293,16 +287,14 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	// check password against password hash
 	err = bcrypt.CompareHashAndPassword([]byte(userLogin.Passwordhash), []byte(loginDto.Password))
 	if err != nil {
-		log.Printf("Password incorrect: %+v\n", err)
-		w.WriteHeader(http.StatusUnauthorized)
+		resp.SendError(customErrors.Auth.WrongCredentialsError, w)
 		return
 	}
 
 	// all env variables should be moved into a separate package and checked on startup in the future
 	secret := os.Getenv(secretEnv)
 	if len(secret) == 0 {
-		log.Printf("Could not generate JWT, environment variable MAGPIE_JWT_SECRET not set")
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Internal.JwtSecretMissingError, w)
 		return
 	}
 	expiry := os.Getenv(expiryEnv)
@@ -313,8 +305,7 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	parsedExpiry, err := time.ParseDuration(expiry)
 	if err != nil {
-		log.Printf("Could not parse JWT expiry to duration: %+v", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Internal.UnknownError.WithCause(fmt.Errorf("Could not parse JWT expiry duration")), w)
 		return
 	}
 
@@ -327,16 +318,14 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	tokenString, err := token.SignedString([]byte(secret))
 	if err != nil {
-		log.Printf("Could not generate signed JWT: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Internal.UnknownError.WithCause(fmt.Errorf("Could not sign JWT")), w)
 		return
 	}
 
 	// set last logged in in database
 	err = db.New(dbConn).UpdateLastLogin(*dbCtx, userLogin.ID)
 	if err != nil {
-		log.Printf("Could not update login date in database: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
 
@@ -355,10 +344,5 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		BearerToken: tokenString,
 	}
 
-	err = json.NewEncoder(w).Encode(tokenDto)
-	if err != nil {
-		log.Printf("Could not send user details as response: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	resp.SendResponse(resp.Response{Content: tokenDto, HttpStatus: http.StatusOK}, w)
 }
