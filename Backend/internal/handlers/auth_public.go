@@ -39,8 +39,9 @@ type userLoginDto struct {
 	Password string `json:"password"`
 }
 
-type bearerTokenDto struct {
-	BearerToken string `json:"bearertoken"`
+type loginSuccessfulDto struct {
+	BearerToken string      `json:"bearertoken"`
+	UserId      pgtype.UUID `json:"userid"`
 }
 
 type userIdDto struct {
@@ -234,7 +235,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: userId, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(resp.Response{Content: userIdDto{userId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
@@ -252,6 +253,7 @@ func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
+	resp.SendResponse(resp.Response{Content: userIdDto{userId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 // this method is very big and needs to be refactored in the future
@@ -342,8 +344,9 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &cookie)
 
-	tokenDto := bearerTokenDto{
+	tokenDto := loginSuccessfulDto{
 		BearerToken: tokenString,
+		UserId:      userLogin.ID,
 	}
 
 	resp.SendResponse(resp.Response{Content: tokenDto, HttpStatus: http.StatusOK}, w)
