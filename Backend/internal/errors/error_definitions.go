@@ -18,6 +18,7 @@ const (
 	codeInvalidPayloadUserError        = 1206
 	codeUsernameAlreadyExistsError     = 1207
 	codeEmailAlreadyExistsError        = 1208
+	codeRequiredParameterMissingError  = 1209
 
 	codeUserNotFoundError  = 1301
 	codePointNotFoundError = 1302
@@ -105,6 +106,12 @@ var emailAlreadyExistsError = CustomError{
 	ErrorMsg:   "Email already exists",
 }
 
+var requiredParameterMissingError = CustomError{
+	HttpStatus: http.StatusBadRequest,
+	ErrorCode:  codeRequiredParameterMissingError,
+	ErrorMsg:   "One or more required parameters are missing",
+}
+
 var userNotFoundError = CustomError{
 	HttpStatus: http.StatusNotFound,
 	ErrorCode:  codeUserNotFoundError,
@@ -166,15 +173,17 @@ var Parameter = struct {
 }
 
 var Payload = struct {
-	InvalidPayloadPointError   CustomError
-	InvalidPayloadUserError    CustomError
-	UsernameAlreadyExistsError CustomError
-	EmailAlreadyExistsError    CustomError
+	InvalidPayloadPointError      CustomError
+	InvalidPayloadUserError       CustomError
+	UsernameAlreadyExistsError    CustomError
+	EmailAlreadyExistsError       CustomError
+	RequiredParameterMissingError CustomError
 }{
-	InvalidPayloadPointError:   invalidPayloadPointError,
-	InvalidPayloadUserError:    invalidPayloadUserError,
-	UsernameAlreadyExistsError: usernameAlreadyExistsError,
-	EmailAlreadyExistsError:    emailAlreadyExistsError,
+	InvalidPayloadPointError:      invalidPayloadPointError,
+	InvalidPayloadUserError:       invalidPayloadUserError,
+	UsernameAlreadyExistsError:    usernameAlreadyExistsError,
+	EmailAlreadyExistsError:       emailAlreadyExistsError,
+	RequiredParameterMissingError: requiredParameterMissingError,
 }
 
 var NotFound = struct {
