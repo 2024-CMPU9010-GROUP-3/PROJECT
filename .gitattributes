@@ -1,1 +1,5 @@
+# Apply CRLF to all files
 * text eol=crlf
+
+# Exclude .zip files from EOL normalization
+*.zip -text
