@@ -86,7 +86,7 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	// check the required parameters are present
 	if len(userDto.Username) == 0 || len(userDto.Email) == 0 || len(userDto.Password) == 0 {
-		resp.SendError(customErrors.Payload.RequiredParameterMissingError, w)
+		resp.SendError(customErrors.Parameter.RequiredParameterMissingError, w)
 		return
 	}
 
@@ -264,12 +264,12 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(loginDto.Password) == 0 {
-		resp.SendError(customErrors.Payload.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required")), w)
+		resp.SendError(customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required")), w)
 		return
 	}
 
 	if len(loginDto.Username) == 0 {
-		resp.SendError(customErrors.Payload.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required")), w)
+		resp.SendError(customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required")), w)
 		return
 	}
 

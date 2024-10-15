@@ -4,26 +4,29 @@ import "net/http"
 
 const (
 	codeUnknownError          = 1001
-	codeJwtSecretMissingError = 1002
-	codeHashingError          = 1003
-	codeJsonEncodingError     = 1004
-	codeJsonDecodingError     = 1005
+	codeJwtSecretMissingError = 1011
+	codeHashingError          = 1012
+	codeJsonEncodingError     = 1021
+	codeJsonDecodingError     = 1022
+	codeGeoJsonEncodingError  = 1023
+	codeGeoJsonDecodingError  = 1024
 
 	codeDatabaseConnectionError        = 1101
 	codeDatabaseTransactionStartError  = 1102
 	codeDatabaseTransactionCommitError = 1103
 	codeUnknownDatabaseError           = 1104
 
-	codeInvalidParameterUUIDError      = 1201
-	codeInvalidParameterFloatError     = 1202
-	codeInvalidParameterLongitudeError = 1203
-	codeInvalidParameterLatitudeError  = 1204
-	codeInvalidPayloadPointError       = 1205
-	codeInvalidPayloadUserError        = 1206
-	codeInvalidPayloadLoginError       = 1207
-	codeUsernameAlreadyExistsError     = 1208
-	codeEmailAlreadyExistsError        = 1209
-	codeRequiredParameterMissingError  = 1210
+	codeRequiredParameterMissingError  = 1201
+	codeInvalidParameterUUIDError      = 1202
+	codeInvalidParameterFloatError     = 1203
+	codeInvalidParameterIntError       = 1204
+	codeInvalidParameterLongitudeError = 1205
+	codeInvalidParameterLatitudeError  = 1206
+	codeInvalidPayloadPointError       = 1211
+	codeInvalidPayloadUserError        = 1212
+	codeInvalidPayloadLoginError       = 1213
+	codeUsernameAlreadyExistsError     = 1221
+	codeEmailAlreadyExistsError        = 1222
 
 	codeUserNotFoundError  = 1301
 	codePointNotFoundError = 1302
@@ -63,6 +66,18 @@ var jsonDecodingError = CustomError{
 	ErrorMsg:   "Could not decode json",
 }
 
+var geoJsonEncodingError = CustomError{
+	HttpStatus: http.StatusInternalServerError,
+	ErrorCode:  codeGeoJsonEncodingError,
+	ErrorMsg:   "Could not encode GeoJson",
+}
+
+var geoJsonDecodingError = CustomError{
+	HttpStatus: http.StatusInternalServerError,
+	ErrorCode:  codeGeoJsonDecodingError,
+	ErrorMsg:   "Could not decode GeoJson",
+}
+
 var databaseConnectionError = CustomError{
 	HttpStatus: http.StatusInternalServerError,
 	ErrorCode:  codeDatabaseConnectionError,
@@ -87,6 +102,12 @@ var databaseUnknownError = CustomError{
 	ErrorMsg:   "Unknown database error",
 }
 
+var requiredParameterMissingError = CustomError{
+	HttpStatus: http.StatusBadRequest,
+	ErrorCode:  codeRequiredParameterMissingError,
+	ErrorMsg:   "One or more required parameters are missing",
+}
+
 var invalidParameterUUIDError = CustomError{
 	HttpStatus: http.StatusBadRequest,
 	ErrorCode:  codeInvalidParameterUUIDError,
@@ -97,6 +118,12 @@ var invalidParameterFloatError = CustomError{
 	HttpStatus: http.StatusBadRequest,
 	ErrorCode:  codeInvalidParameterFloatError,
 	ErrorMsg:   "Parameter invalid, expected type Float",
+}
+
+var invalidParameterIntError = CustomError{
+	HttpStatus: http.StatusBadRequest,
+	ErrorCode:  codeInvalidParameterIntError,
+	ErrorMsg:   "Parameter invalid, expected type Int",
 }
 
 var invalidParameterLongitudeError = CustomError{
@@ -139,12 +166,6 @@ var emailAlreadyExistsError = CustomError{
 	HttpStatus: http.StatusBadRequest,
 	ErrorCode:  codeEmailAlreadyExistsError,
 	ErrorMsg:   "Email already exists",
-}
-
-var requiredParameterMissingError = CustomError{
-	HttpStatus: http.StatusBadRequest,
-	ErrorCode:  codeRequiredParameterMissingError,
-	ErrorMsg:   "One or more required parameters are missing",
 }
 
 var userNotFoundError = CustomError{
@@ -204,31 +225,33 @@ var Database = struct {
 }
 
 var Parameter = struct {
-	InvalidUUIDError      CustomError
-	InvalidFloatError     CustomError
-	InvalidLongitudeError CustomError
-	InvalidLatitudeError  CustomError
+	RequiredParameterMissingError CustomError
+	InvalidUUIDError              CustomError
+	InvalidFloatError             CustomError
+	InvalidIntError               CustomError
+	InvalidLongitudeError         CustomError
+	InvalidLatitudeError          CustomError
 }{
-	InvalidUUIDError:      invalidParameterUUIDError,
-	InvalidFloatError:     invalidParameterFloatError,
-	InvalidLongitudeError: invalidParameterLongitudeError,
-	InvalidLatitudeError:  invalidParameterLatitudeError,
+	RequiredParameterMissingError: requiredParameterMissingError,
+	InvalidUUIDError:              invalidParameterUUIDError,
+	InvalidFloatError:             invalidParameterFloatError,
+	InvalidIntError:               invalidParameterIntError,
+	InvalidLongitudeError:         invalidParameterLongitudeError,
+	InvalidLatitudeError:          invalidParameterLatitudeError,
 }
 
 var Payload = struct {
-	InvalidPayloadPointError      CustomError
-	InvalidPayloadUserError       CustomError
-	InvalidPayloadLoginError      CustomError
-	UsernameAlreadyExistsError    CustomError
-	EmailAlreadyExistsError       CustomError
-	RequiredParameterMissingError CustomError
+	InvalidPayloadPointError   CustomError
+	InvalidPayloadUserError    CustomError
+	InvalidPayloadLoginError   CustomError
+	UsernameAlreadyExistsError CustomError
+	EmailAlreadyExistsError    CustomError
 }{
-	InvalidPayloadPointError:      invalidPayloadPointError,
-	InvalidPayloadUserError:       invalidPayloadUserError,
-	InvalidPayloadLoginError:      invalidPayloadLoginError,
-	UsernameAlreadyExistsError:    usernameAlreadyExistsError,
-	EmailAlreadyExistsError:       emailAlreadyExistsError,
-	RequiredParameterMissingError: requiredParameterMissingError,
+	InvalidPayloadPointError:   invalidPayloadPointError,
+	InvalidPayloadUserError:    invalidPayloadUserError,
+	InvalidPayloadLoginError:   invalidPayloadLoginError,
+	UsernameAlreadyExistsError: usernameAlreadyExistsError,
+	EmailAlreadyExistsError:    emailAlreadyExistsError,
 }
 
 var NotFound = struct {
