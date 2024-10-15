@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended"
-  ]
+  "extends": ["config:recommended"],
+  "branchPrefix": "update/",
+  "schedule": ["after 9am every weekday", "before 6pm every weekday"]
 }
