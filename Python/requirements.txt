@@ -51,7 +51,7 @@ fonttools==4.46.0
 frozenlist==1.4.0
 fsspec==2023.12.1
 future==0.18.3
-gradio==3.41.2
+gradio==5.0.0
 gradio_client==0.5.0
 greenlet==1.1.2
 h11==0.14.0
