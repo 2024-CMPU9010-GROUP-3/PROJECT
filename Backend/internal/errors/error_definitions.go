@@ -20,9 +20,10 @@ const (
 	codeInvalidParameterLatitudeError  = 1204
 	codeInvalidPayloadPointError       = 1205
 	codeInvalidPayloadUserError        = 1206
-	codeUsernameAlreadyExistsError     = 1207
-	codeEmailAlreadyExistsError        = 1208
-	codeRequiredParameterMissingError  = 1209
+	codeInvalidPayloadLoginError       = 1207
+	codeUsernameAlreadyExistsError     = 1208
+	codeEmailAlreadyExistsError        = 1209
+	codeRequiredParameterMissingError  = 1210
 
 	codeUserNotFoundError  = 1301
 	codePointNotFoundError = 1302
@@ -122,6 +123,12 @@ var invalidPayloadUserError = CustomError{
 	ErrorMsg:   "Payload (User) not valid",
 }
 
+var invalidPayloadLoginError = CustomError{
+	HttpStatus: http.StatusBadRequest,
+	ErrorCode:  codeInvalidPayloadLoginError,
+	ErrorMsg:   "Payload (Login) not valid",
+}
+
 var usernameAlreadyExistsError = CustomError{
 	HttpStatus: http.StatusBadRequest,
 	ErrorCode:  codeUsernameAlreadyExistsError,
@@ -211,12 +218,14 @@ var Parameter = struct {
 var Payload = struct {
 	InvalidPayloadPointError      CustomError
 	InvalidPayloadUserError       CustomError
+	InvalidPayloadLoginError      CustomError
 	UsernameAlreadyExistsError    CustomError
 	EmailAlreadyExistsError       CustomError
 	RequiredParameterMissingError CustomError
 }{
 	InvalidPayloadPointError:      invalidPayloadPointError,
 	InvalidPayloadUserError:       invalidPayloadUserError,
+	InvalidPayloadLoginError:      invalidPayloadLoginError,
 	UsernameAlreadyExistsError:    usernameAlreadyExistsError,
 	EmailAlreadyExistsError:       emailAlreadyExistsError,
 	RequiredParameterMissingError: requiredParameterMissingError,
