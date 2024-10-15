@@ -28,7 +28,7 @@ click==8.1.7
 comm==0.2.0
 command-not-found==0.3
 contourpy==1.2.0
-cryptography==41.0.5
+cryptography==43.0.1
 cx-Oracle==8.3.0
 cycler==0.12.1
 dbus-python==1.2.18
