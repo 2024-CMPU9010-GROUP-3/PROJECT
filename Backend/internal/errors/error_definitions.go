@@ -10,6 +10,7 @@ const (
 	codeDatabaseConnectionError        = 1101
 	codeDatabaseTransactionStartError  = 1102
 	codeDatabaseTransactionCommitError = 1103
+	codeUnknownDatabaseError           = 1104
 
 	codeInvalidParameterUUIDError      = 1201
 	codeInvalidParameterFloatError     = 1202
@@ -63,6 +64,12 @@ var databaseTransactionCommitError = CustomError{
 	HttpStatus: http.StatusInternalServerError,
 	ErrorCode:  codeDatabaseTransactionCommitError,
 	ErrorMsg:   "Could not commit database transaction",
+}
+
+var databaseUnknownError = CustomError{
+	HttpStatus: http.StatusInternalServerError,
+	ErrorCode:  codeUnknownDatabaseError,
+	ErrorMsg:   "Unknown database error",
 }
 
 var invalidParameterUUIDError = CustomError{
@@ -163,10 +170,12 @@ var Database = struct {
 	ConnectionError        CustomError
 	TransactionStartError  CustomError
 	TransactionCommitError CustomError
+	UnknownDatabaseError   CustomError
 }{
 	ConnectionError:        databaseConnectionError,
 	TransactionStartError:  databaseTransactionStartError,
 	TransactionCommitError: databaseTransactionCommitError,
+	UnknownDatabaseError:   databaseUnknownError,
 }
 
 var Parameter = struct {
