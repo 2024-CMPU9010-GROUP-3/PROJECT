@@ -6,6 +6,7 @@ const (
 	codeUnknownError          = 1001
 	codeJwtSecretMissingError = 1002
 	codeHashingError          = 1003
+	codeJsonEncodingError     = 1004
 
 	codeDatabaseConnectionError        = 1101
 	codeDatabaseTransactionStartError  = 1102
@@ -46,6 +47,12 @@ var hashingError = CustomError{
 	HttpStatus: http.StatusInternalServerError,
 	ErrorCode:  codeHashingError,
 	ErrorMsg:   "Could not hash password",
+}
+
+var jsonEncodingError = CustomError{
+	HttpStatus: http.StatusInternalServerError,
+	ErrorCode:  codeJsonEncodingError,
+	ErrorMsg:   "Could not encode json",
 }
 
 var databaseConnectionError = CustomError{
@@ -160,10 +167,12 @@ var Internal = struct {
 	UnknownError          CustomError
 	JwtSecretMissingError CustomError
 	HashingError          CustomError
+	JsonEncodingError     CustomError
 }{
 	UnknownError:          unknownError,
 	JwtSecretMissingError: jwtSecretMissingError,
 	HashingError:          hashingError,
+	JsonEncodingError:     jsonEncodingError,
 }
 
 var Database = struct {
