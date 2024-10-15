@@ -184,7 +184,7 @@ systemd-python==234
 tokenizers==0.13.3
 tomlkit==0.12.2
 toolz==0.12.0
-torch==2.1.1
+torch==2.2.0
 torchmetrics==1.2.1
 torchsde==0.2.5
 tornado==6.4.1
