@@ -9,8 +9,8 @@ import (
 )
 
 type Response struct {
-	HttpStatus int
-	Content    any
+	HttpStatus int `json:"-"`
+	Content    any `json:"content"`
 }
 
 type responseDto struct {
