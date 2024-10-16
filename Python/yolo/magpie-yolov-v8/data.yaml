@@ -1,0 +1,8 @@
+## tell the yolo model where to find my data
+
+train: .\images\train  #training imgs
+val: .\images\val      # val imgs
+
+# class name & numbers
+nc: 1 
+names: ['car']
