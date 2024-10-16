@@ -47,15 +47,13 @@ architects.department@fingal.ie
 018905050
 
 ### Dun Laioghaire-Rathdown City council
---> general
+* general
 info@dlrcoco.ie
 012054700
-
---> HR
+* HR
 hr@dlrcoco.ie
 01 205 4854
-
---> communications
+* communications
 commsoffice@dlrcoco.ie
 01 204 7090
 
