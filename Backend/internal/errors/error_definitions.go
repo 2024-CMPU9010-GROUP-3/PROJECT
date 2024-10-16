@@ -219,6 +219,8 @@ var Internal = struct {
 	JwtParseError         CustomError
 	JsonEncodingError     CustomError
 	JsonDecodingError     CustomError
+	GeoJsonEncodingError  CustomError
+	GeoJsonDecodingError  CustomError
 }{
 	UnknownError:          unknownError,
 	JwtSecretMissingError: jwtSecretMissingError,
@@ -226,6 +228,8 @@ var Internal = struct {
 	JwtParseError:         jwtParseError,
 	JsonEncodingError:     jsonEncodingError,
 	JsonDecodingError:     jsonDecodingError,
+	GeoJsonEncodingError:  geoJsonEncodingError,
+	GeoJsonDecodingError:  geoJsonDecodingError,
 }
 
 var Database = struct {
