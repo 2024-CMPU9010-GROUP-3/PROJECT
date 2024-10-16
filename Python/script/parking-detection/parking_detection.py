@@ -4,6 +4,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 import os
+import numpy as np
 
 def get_images(imag_save_path, longitude, latitude, mapbox_type):
     """
@@ -37,8 +38,17 @@ def create_mask(image_path, save_path, threshold=240):
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
-
-    cv2.imwrite(save_path, road_mask)
+    kernel = np.ones((5, 5), np.uint8)
+    road_mask_dilated = cv2.dilate(road_mask, kernel, iterations=2)
+    
+    contours, _ = cv2.findContours(road_mask_dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    mask_filtered = np.zeros_like(road_mask)
+    
+    for contour in contours:
+        if cv2.contourArea(contour) > 600:  
+            cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
+    
+    cv2.imwrite(save_path, mask_filtered)
 
 def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
     """
@@ -124,4 +134,4 @@ def main(longitude, latidue):
     #print(detections)
 
 if __name__ == "__main__":
-    main(-6.2453, 53.3038)
+    main(-6.2849, 53.3531)
