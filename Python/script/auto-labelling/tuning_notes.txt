@@ -1,0 +1,35 @@
+laundry list + notes
+30/09
+- research more on creating your own image dataset
+- brush up on transfer Learning
+- in-depth research of other models we are going to use
+
+02/10
+- find residential areas and run the script (install pandas & pillow in venv)
+
+08/10
+- find way to automatically label using label studio
+you did it pookie :) on 09/10 but you did it :) proud of you
+
+10/10
+- get the PR approved
+- try to further tune the model
+- label the rest of the pictures
+
+14/10
+- it5 of the model uses hyp.yaml, accuracy went from 0.79 to 0.81
+- it6 i will reduce the Learning rate from 0.01 to 0.001 and use it5 weights = acc went frm 0.81 to 0.82
+- it7 will put 20 epochs + use weights from it6 = acc went from 0.82 to 0.84
+- it8 will keep 20 epochs and changing iou threshold from 0.2 to 0.4 + use weights from it7 = acc went from 0.84 to 0.86
+- it9 will keep 20 epochs, changing warm up epochs to 5 instead of 4 + use weights from it8 = same results as it8
+- it10 i will reduce epochs back to 10, warmup to 2, add 5.0 degrees img rotation and use it8 weights = same results as it9
+- it11 i will keep epochs at 10, increase degrees to 7.0, decrease scale to 0.3 (parameters focused on image augmentation) & cls to 1.5 = same but p curve worse than previous iteration. img augmentation did Nothing.
+- it12 i will keep 10 epochs, put the img aug param back, keep cls at 1.5 and increase box loss from 0.05 to 0.1; will use it8 weights = acc decreased to 0.85, p curve as bad as it11, i think its because of the class loss
+- it13 i will put cls back to 1.0, but box loss back to 0.05 and reduce mosaic augmentation from 1.0 to 0.5 = same results, trying now with mosaic 0 and i will overwrite it13 = acc same but pr mAP shows slight decrease, no overwrite
+
+wtf do i do
+
+15/10
+- i think i will try to use the yolov8 labels again because the first iteration yielded very good acc (0.86) in the first run without hyp +
+- moved to using the yolov8 model, wrote the script and ran the model for 20 epochs-16 batch on the "n" model = acc at 0.59
+- switch to the "s" model = acc at 0.61, will use this moving forward
