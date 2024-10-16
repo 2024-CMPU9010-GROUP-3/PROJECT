@@ -39,11 +39,6 @@ type userLoginDto struct {
 	Password string `json:"password"`
 }
 
-type loginSuccessfulDto struct {
-	BearerToken string      `json:"bearertoken"`
-	UserId      pgtype.UUID `json:"userid"`
-}
-
 type userIdDto struct {
 	UserId pgtype.UUID `json:"userid"`
 }
@@ -344,9 +339,8 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &cookie)
 
-	tokenDto := loginSuccessfulDto{
-		BearerToken: tokenString,
-		UserId:      userLogin.ID,
+	tokenDto := userIdDto{
+		UserId: userLogin.ID,
 	}
 
 	resp.SendResponse(resp.Response{Content: tokenDto, HttpStatus: http.StatusOK}, w)
