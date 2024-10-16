@@ -33,3 +33,5 @@ wtf do i do
 - i think i will try to use the yolov8 labels again because the first iteration yielded very good acc (0.86) in the first run without hyp +
 - moved to using the yolov8 model, wrote the script and ran the model for 20 epochs-16 batch on the "n" model = acc at 0.59
 - switch to the "s" model = acc at 0.61, will use this moving forward
+- keeping "s" model, adding evolve=True and switching to batch=8 for 10 epochs (also realized i was using an empty model for the previous ones, i'm using pre-trained now) = 0.71 acc
+- using .tune with 10 iterations-20 epochs-adamw optimizer-batch 16 and no plotting or validation until last it for faster tuning = the fitness/tuning plot showed no improvement overtime, so Saul is running overnight for 100 itérations + val=True for hopefully better results.
