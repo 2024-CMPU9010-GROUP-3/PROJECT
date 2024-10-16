@@ -104,13 +104,57 @@ jobs:
           echo "Coverage: $coverage%"
 
       - name: Post comment on the PR with test coverage
+        working-directory: ./Backend
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          COVERAGE="${{ steps.check_coverage.outputs.total_coverage }}"
-          COMMENT_BODY="Test Coverage (public): $COVERAGE%"
-          gh issue comment $${{ env.PR_NUMBER }} --body "$COMMENT_BODY"
+          COVERAGE=${{ steps.check_coverage.outputs.total_coverage }}
+          COVERAGE_REPORT=$(go tool cover -func=../TestCoverage-private.out)
+          RUN_NUMBER=${{ github.run_number }}
+          INDICATOR="\U00002705"
+          if (( $(echo "$COVERAGE < 75" | bc -l) )); then
+            INDICATOR="\U0000274C"
+          fi
+
+          THRESHOLD=75.0
+
+          echo "<details>" > coverage_table.md
+          echo "<summary>Detailed Coverage Report</summary>" >> coverage_table.md
+          echo "" >> coverage_table.md # Blank line for proper markdown rendering
+          echo "| File | Function | Coverage | 🔎 |" >> coverage_table.md
+          echo "|------|----------|----------| - |" >> coverage_table.md
+
+          echo "$COVERAGE_REPORT" | while read -r line; do
+            if [[ $line == total:* ]]; then
+                FILE="total:"
+                FUNCTION="(statements)"
+              else
+                FILE=$(echo "$line" | awk -F':' '{print $1":"$2}')
+                FUNCTION=$(echo "$line" | awk '{print $(NF-1)}')
+              fi
+              
+            STATEMENT_COVERAGE=$(echo "$line" | awk '{print $NF}' | sed 's/%//')
+
+            if (( $(echo "$STATEMENT_COVERAGE >= $THRESHOLD" | bc -l) )); then
+              SYMBOL="✅"
+            elif (( $(echo "$STATEMENT_COVERAGE > 0" | bc -l) )); then
+              SYMBOL="⚠️"
+            else
+              SYMBOL="❌"
+            fi
+
+            STATEMENT_COVERAGE="\`$STATEMENT_COVERAGE%\`"
+            FILE="\`$FILE\`"
+            FUNCTION="\`$FUNCTION\`"
+
+            echo "| $FILE | $FUNCTION | $STATEMENT_COVERAGE | $SYMBOL |" >> coverage_table.md
+          done
+
+          echo "</details>" >> coverage_table.md
+
+          COMMENT_BODY=$(echo -e "### [[Run #$RUN_NUMBER]](https://github.com/2024-CMPU9010-GROUP-3/PROJECT/actions/runs/${{ github.run_id }}#summary) Test Coverage for \`private\`: $COVERAGE% $INDICATOR\n$(cat coverage_table.md)")
+          gh issue comment ${{ env.PR_NUMBER }} --body "$COMMENT_BODY"
       
       - name: Fail if coverage is below threshold
         run: |
