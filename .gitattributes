@@ -3,3 +3,9 @@
 
 # Exclude .zip files from EOL normalization
 *.zip -text
+
+# Exlucde .jpg files from EOL normalization
+*.jpg -text
+
+# Exlucde .png files from EOL normalization
+*.png -text
