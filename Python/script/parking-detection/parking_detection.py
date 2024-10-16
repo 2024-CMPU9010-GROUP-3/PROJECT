@@ -1,10 +1,32 @@
 import torch
 import cv2
-import numpy as np
+import requests
+from PIL import Image
+from io import BytesIO
+import os
+
+def get_images(imag_save_path, longitude, latitude, mapbox_type):
+    """
+    Gets and saves an image from the Mapbox Static Images API
+
+    Params:
+        imag_save_path (str): Path to save the image
+        longitude (float): Longitude value
+        latitude (float): Latitude value
+        mapbox_type (str): Satelite (satellite-v9) or Road view (streets-v12)
+    """
+
+    url = f'https://api.mapbox.com/styles/v1/mapbox/{mapbox_type}/static/{longitude},{latitude},18,0,0/400x400?access_token=pk.eyJ1Ijoia2F1c3R1Ymh0cml2ZWRpIiwiYSI6ImNtMWo2NndsbzB4N3EycHM1aGF2cDd5NzkifQ.4aegzX6Kfy3zW8pHkLWU7Q'
+    response = requests.get(url)
+    if response.status_code == 200:
+        img = Image.open(BytesIO(response.content))
+        img.save(imag_save_path)
+        print(f"Image saved to {imag_save_path}")
+
 
 def create_mask(image_path, save_path, threshold=240):
     """
-    Creates a binary mask from the mapbox image of the road (Mapbox Streets). The roads are in white while the rest of the image is darker.
+    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets). The roads are in white while the rest of the image is darker.
     
     Params:
         image_path (str): Path of the image
@@ -74,12 +96,32 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
     cv2.imwrite(output_image_path, img)
     return detections_parking
 
-def main():
+def main(longitude, latidue):
+    """
+    Detects the parking spaces in the image at the longitude and latitude
+
+    Params:
+        longitude (float): Longitude value
+        latitude (float): Latitude value
+    """
     model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5/runs/train/exp3/weights/best.pt', force_reload=True)
-    create_mask('street3.png', 'mask.png')
-    detections = detect_parking_spots_in_image('sateliteview3.png','mask.png', 'bounding_boxes_parked_cars.png', model)
+    
+    if not os.path.exists('image_output'):
+        os.makedirs('image_output')
+
+    output_folder = 'image_output'
+    output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latidue}_satelite.png')
+    output_path_road_image = os.path.join(output_folder, f'{longitude}_{latidue}_road.png')
+    output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latidue}_mask.png')
+    output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latidue}_bounding_boxes.png')
+
+
+    get_images(output_path_satelite_image, longitude, latidue, 'satellite-v9')
+    get_images(output_path_road_image, longitude, latidue, 'streets-v12')
+
+    create_mask(output_path_road_image, output_path_mask_image)
+    detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
     #print(detections)
 
-
 if __name__ == "__main__":
-    main()
+    main(-6.2453, 53.3038)
