@@ -57,6 +57,13 @@ language-server-log.txt
 **/yolov8
 **/yolov
 
+yolov8x.pt
+yolov8m.pt
+yolo11n.pt
+
+# Ignore runs directory
+runs/
+
 # Repo-specific GitIgnore ----------------------------------------------------------------------------------------------
 *.jpg
 *.jpeg
