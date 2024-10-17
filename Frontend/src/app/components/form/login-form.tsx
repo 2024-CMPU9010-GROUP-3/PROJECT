@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/registry/card";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
-import { useRouter } from 'next/compat/router'; // useRouter
+import { useRouter } from 'next/navigation'; // useRouter
 
 export function LoginForm() {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // allow login with username or email
@@ -51,7 +51,7 @@ export function LoginForm() {
           setErrorMessage(null); // clear any error message
           console.log('Redirecting to home...'); // add debug information
           console.log("router:", router);
-          router?.push('/home'); // safely check if router is defined before pushing to home
+          router?.push('/'); // safely check if router is defined before pushing to home
         } else {
           setErrorMessage('Login failed: No token received'); // if no token, display error message
         }
