@@ -9,3 +9,6 @@
 
 # Exlucde .png files from EOL normalization
 *.png -text
+
+# Exlucde .pt files from EOL normalization
+*.pt -text
