@@ -52,6 +52,22 @@ def create_mask(image_path, save_path, threshold=240):
     
     cv2.imwrite(save_path, mask_filtered)
 
+def old_mask(image_path, save_path, threshold=240):
+    """
+    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets). The roads are in white while the rest of the image is darker
+    Initial mask, that doesn't remove the street names
+
+    Params:
+        image_path (str): Path of the image
+        save_path (str): Path to save the mask
+        threshold (int): Threshold to differentiate the road from the areas outside of the road
+    """
+    img = cv2.imread(image_path)
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
+    cv2.imwrite(save_path, road_mask)
+
 def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
     """
     Detect cars in the image using the retrained YOLO model and remove those on the road
@@ -65,13 +81,11 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
     Returns:
         A lsit of the bounding boxes for the cars not on the road
     """
-
     img = cv2.imread(image_path)
 
     results = model(img)
     detections = results.xyxy[0]  # bounding boxes format [x_min, y_min, x_max, y_max, confidence, class]
     detections_parking = []
-    #print(detections)
 
     road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
 
@@ -86,7 +100,6 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         y_max = int(detection[3].item())
         conf = detection[4].item()
         cls = int(detection[5].item())
-        #print(detection)
 
         if cls == 0:
             car_region = road_mask[y_min:y_max, x_min:x_max]
@@ -120,8 +133,7 @@ def convert_bounding_box_to_coordinates(x, y, longitude, latitude):
     Returns:
         long, lat (float): The longitude and latitude of the center of the bounding box
     """
-    zoom_level = 18
-    num_tiles = 2 ** zoom_level
+    num_tiles = 2 ** 18
     tile_size = 256
 
     lat_rad = math.radians(latitude)
@@ -132,7 +144,7 @@ def convert_bounding_box_to_coordinates(x, y, longitude, latitude):
     center_tile_x = center_x_tile * tile_size
     center_tile_y = center_y_tile * tile_size
 
-    meters_per_pixel = 156543.03392 * math.cos(lat_rad) / (2 ** zoom_level)
+    meters_per_pixel = 156543.03392 * math.cos(lat_rad) / (2 ** 18)
 
     pixel_x_offset = (x - 200) * meters_per_pixel
     pixel_y_offset = (y - 200) * meters_per_pixel
@@ -152,7 +164,6 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
     Params:
         x_min, y_min, x_max, y_max (int): Top left and bottom right cordinates of the bounding box
     """
-
     x = (x_min + x_max) / 2
     y = (y_min + y_max) / 2
 
@@ -177,24 +188,22 @@ def main(longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-
     get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
     get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
-    create_mask(output_path_road_image, output_path_mask_image)
+    old_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
-    #print(detections)
 
     all_detections = []
 
     for detection in detections:
         x, y = get_center_bounding_box(detection[0], detection[1], detection[2], detection[3])
         long, lat = convert_bounding_box_to_coordinates(x, y, longitude, latitude)
-        print(f"Center of car coordinates: ({long}, {lat})")
+        print(f"Car coordinates: ({long}, {lat})")
         all_detections.append([long, lat])
 
     df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
-    df.to_csv("coordinates.csv", index=False)
+    df.to_csv(f"coordinates_{longitude}_{latitude}.csv", index=False)
 
 if __name__ == "__main__":
-    main(-6.2727, 53.362)
+    main(-6.2668, 53.3643)
