@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/registry/card";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
-import { useRouter } from 'next/navigation'; // useRouter
+import { useRouter } from "next/navigation"; // useRouter
 
 export function LoginForm() {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // allow login with username or email
@@ -23,10 +23,10 @@ export function LoginForm() {
 
   // check if user is already logged in
   useEffect(() => {
-    const token = localStorage.getItem('token'); // check user login status
+    const token = localStorage.getItem("token"); // check user login status
     if (token) {
       // if user is already logged in, redirect to home
-      router.push('/'); // redirect to home
+      router.push("/"); // redirect to home
     }
   }, [router]);
 
@@ -36,42 +36,46 @@ export function LoginForm() {
 
     // check if fields are empty
     if (!usernameOrEmail.trim() || !password.trim()) {
-        setErrorMessage('Fields cannot be empty');
-        setIsLoading(false);
-        return;
+      setErrorMessage("Fields cannot be empty");
+      setIsLoading(false);
+      return;
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // TEST:ensure request includes credentials (cookies)
-        body: JSON.stringify({ username: usernameOrEmail, password }), // send username/email and password
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // TEST:ensure request includes credentials (cookies)
+          body: JSON.stringify({ username: usernameOrEmail, password }), // send username/email and password
+        }
+      );
 
       if (response.ok) {
         // login success, handle logic
         const data = await response.json();
-        console.log('Login successful:', data); // print success response
-        if (data.bearertoken) { // ensure bearerToken exists, note the key name
-          localStorage.setItem('token', data.bearertoken); // store token
+        console.log("Login successful:", data); // print success response
+        if (data.bearertoken) {
+          // ensure bearerToken exists, note the key name
+          localStorage.setItem("token", data.bearertoken); // store token
           setErrorMessage(null); // clear any error message
-          console.log('Redirecting to home...'); // add debug information
+          console.log("Redirecting to home..."); // add debug information
           console.log("router:", router);
-          router?.push('/'); // safely check if router is defined before pushing to home
+          router?.push("/"); // safely check if router is defined before pushing to home
         } else {
-          setErrorMessage('Login failed: No token received'); // if no token, display error message
+          setErrorMessage("Login failed: No token received"); // if no token, display error message
         }
       } else {
         // handle error case
         const errorData = await response.text(); // get error data
-        setErrorMessage('Login failed: ' + errorData); // display original error message
+        setErrorMessage("Login failed: " + errorData); // display original error message
       }
     } catch (error) {
-      console.error('An error occurred', error);
-      setErrorMessage('An error occurred during login');
+      console.error("An error occurred", error);
+      setErrorMessage("An error occurred during login");
     } finally {
       setIsLoading(false); // reset loading state
     }
@@ -86,7 +90,9 @@ export function LoginForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit}> {/* form submission handling */}
+        <form onSubmit={onSubmit}>
+          {" "}
+          {/* form submission handling */}
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="usernameOrEmail">Username/Email</Label>
@@ -102,7 +108,10 @@ export function LoginForm() {
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link href="#" className="ml-auto inline-block text-sm underline">
+                <Link
+                  href="#"
+                  className="ml-auto inline-block text-sm underline"
+                >
                   Forgot your password?
                 </Link>
               </div>
@@ -115,13 +124,15 @@ export function LoginForm() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Logging in...' : 'Login'} {/* display loading state */}
+              {isLoading ? "Logging in..." : "Login"}{" "}
+              {/* display loading state */}
             </Button>
-            {errorMessage && <div className="text-red-500">{errorMessage}</div>} {/* display error message */}
+            {errorMessage && <div className="text-red-500">{errorMessage}</div>}{" "}
+            {/* display error message */}
           </div>
         </form>
         <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="./signup" className="underline">
             Sign up
           </Link>

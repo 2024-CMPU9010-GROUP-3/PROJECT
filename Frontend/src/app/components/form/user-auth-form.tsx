@@ -1,111 +1,125 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
-import { Icons } from "@/components/ui/icons"
-import { Button } from "@/components/ui/registry/button"
-import { Input } from "@/components/ui/registry/input"
-import { Label } from "@/components/ui/registry/label"
-import { useRouter } from 'next/navigation';
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/ui/icons";
+import { Button } from "@/components/ui/registry/button";
+import { Input } from "@/components/ui/registry/input";
+import { Label } from "@/components/ui/registry/label";
+import { useRouter } from "next/navigation";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   username?: string;
   password?: string;
   confirmPassword?: string;
-  email?: string; 
+  email?: string;
 }
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false)
-  const [email, setEmail] = React.useState<string>("")
-  const [password, setPassword] = React.useState<string>("")
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [email, setEmail] = React.useState<string>("");
+  const [password, setPassword] = React.useState<string>("");
   const [confirmPassword, setConfirmPassword] = React.useState<string>("");
   const [firstName, setFirstName] = React.useState<string>("");
   const [lastName, setLastName] = React.useState<string>("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const router = useRouter()
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);
+  const router = useRouter();
 
   async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
-    setIsLoading(true)
-    setErrorMessage(null); // clear error previous message 
+    event.preventDefault();
+    setIsLoading(true);
+    setErrorMessage(null); // clear error previous message
 
-    if (!email.trim() || !password.trim() || !confirmPassword.trim() || !firstName.trim() || !lastName.trim()) {
-      console.error('Fields cannot be empty');
-      setErrorMessage('Fields cannot be empty'); 
+    if (
+      !email.trim() ||
+      !password.trim() ||
+      !confirmPassword.trim() ||
+      !firstName.trim() ||
+      !lastName.trim()
+    ) {
+      console.error("Fields cannot be empty");
+      setErrorMessage("Fields cannot be empty");
       setIsLoading(false);
       return;
     }
 
     // passwordComplexity check
-    const passwordComplexity = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordComplexity =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordComplexity.test(password)) {
-      console.error('Password does not meet complexity requirements');
-      setErrorMessage('Password does not meet complexity requirements');
+      console.error("Password does not meet complexity requirements");
+      setErrorMessage("Password does not meet complexity requirements");
       setIsLoading(false);
       return;
     }
 
     // Check if password and confirm password match
     if (password !== confirmPassword) {
-      console.error('Passwords do not match');
-      setErrorMessage('Passwords do not match');
+      console.error("Passwords do not match");
+      setErrorMessage("Passwords do not match");
       setIsLoading(false);
       return;
     }
 
-    console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL); // debug        
+    console.log("Backend URL:", process.env.NEXT_PUBLIC_BACKEND_URL); // debug
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          username: email.split('@')[0],
-          email, 
-          password, 
-          firstName,
-          lastName
-        }),
-      })
-      console.log('Response:', response); // debug
-      console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
-      const responseData = await response.json(); // Ensure response is only read once
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: email.split("@")[0],
+            email,
+            password,
+            firstName,
+            lastName,
+          }),
+        }
+      );
+      console.log("Response:", response);
+      const responseData = await response.json();
 
       if (response.ok) {
         // handle successful registration
-        console.log('Registration successful:', responseData); // print success response
+        console.log("Registration successful:", responseData); // print success response
 
         // store user info and login status
-        localStorage.setItem('token', responseData.bearerToken); // store token
-        localStorage.setItem('userInfo', JSON.stringify({ // store user info
-          username: responseData.username,
-          email: responseData.email,
-          firstName: responseData.firstName,
-          lastName: responseData.lastName,
-        }));
+        localStorage.setItem("token", responseData.bearerToken); // store token
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify({
+            // store user info
+            username: responseData.username,
+            email: responseData.email,
+            firstName: responseData.firstName,
+            lastName: responseData.lastName,
+          })
+        );
 
-        alert('Sign up successful'); // display success message
-        console.log('Redirecting to home page'); // display redirect message
-        console.log('User info:', localStorage.getItem('userInfo')); // display user info
-        console.log('Token:', localStorage.getItem('token')); // display token
-        console.log('Router:', router); // display router
-        router?.push('/'); // redirect to home
+        alert("Sign up successful"); // display success message
+        console.log("Redirecting to home page"); // display redirect message
+        console.log("User info:", localStorage.getItem("userInfo")); // display user info
+        console.log("Token:", localStorage.getItem("token")); // display token
+        console.log("Router:", router); // display router
+        router?.push("/"); // redirect to home
       } else {
         // Handle errors
-        console.error('Registration failed:', responseData);
-        setErrorMessage('Registration failed: ' + responseData.message);  // display error message
-        alert('Sign up failed: ' + responseData.message); // alert user that sign up failed
+        console.error("Registration failed:", responseData);
+        setErrorMessage("Registration failed: " + responseData.message); // display error message
+        alert("Sign up failed: " + responseData.message); // alert user that sign up failed
       }
     } catch (error) {
-      console.error('An error occurred', error)
-      alert('An error occurred, please try again later.'); // alert user that an error occurred
+      console.error("An error occurred", error);
+      alert("An error occurred, please try again later."); // alert user that an error occurred
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -161,35 +175,51 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             <Label className="sr-only" htmlFor="password">
               Password
             </Label>
-            <Input
-              id="password"
-              placeholder="Enter your password"
-              type="password"
-              autoCapitalize="none"
-              autoComplete="current-password"
-              disabled={isLoading}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                placeholder="Enter your password"
+                type={showPassword ? "text" : "password"}
+                autoCapitalize="none"
+                autoComplete="current-password"
+                disabled={isLoading}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
-          <div className="grid gap-1"> {/* Confirm Password input */}
+          <div className="grid gap-1">
             <Label className="sr-only" htmlFor="confirm-password">
               Confirm Password
             </Label>
-            <Input
-              id="confirm-password"
-              placeholder="Confirm your password"
-              type="password"
-              autoCapitalize="none"
-              autoComplete="current-password"
-              disabled={isLoading}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+            <div className="relative">
+              <Input
+                id="confirm-password"
+                placeholder="Confirm your password"
+                type={showConfirmPassword ? "text" : "password"}
+                autoCapitalize="none"
+                autoComplete="current-password"
+                disabled={isLoading}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              >
+                {showConfirmPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
-          {errorMessage && ( // error message
-            <div className="text-red-500">{errorMessage}</div>
-          )}
+          {errorMessage && <div className="text-red-500">{errorMessage}</div>}
           <Button disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
@@ -199,5 +229,5 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         </div>
       </form>
     </div>
-  )
+  );
 }
