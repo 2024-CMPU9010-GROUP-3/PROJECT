@@ -89,3 +89,5 @@ data/images/*
 !data/*.sh
 
 results*.csv
+Python/yolo/magpie-yolov-v8/yolov8m.pt
+Python/yolo/magpie-yolov-v8/yolov8x.pt
