@@ -5,6 +5,8 @@ from PIL import Image
 from io import BytesIO
 import os
 import numpy as np
+import math
+import pandas as pd
 
 def get_images(imag_save_path, longitude, latitude, mapbox_type):
     """
@@ -27,7 +29,7 @@ def get_images(imag_save_path, longitude, latitude, mapbox_type):
 
 def create_mask(image_path, save_path, threshold=240):
     """
-    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets). The roads are in white while the rest of the image is darker.
+    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets). The roads are in white while the rest of the image is darker
     
     Params:
         image_path (str): Path of the image
@@ -54,14 +56,14 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
     """
     Detect cars in the image using the retrained YOLO model and remove those on the road
 
-    Parameters:
+    Params:
         image_path (str): Path of the image
         road_mask_path (str): Path of the saved mask
         output_image_path (str): Path to save the image with bounding boxes, red for parking and blue cars on the road
         model_path : YOLO model.
         
     Returns:
-        a lsit of the bounding boxes for the cars not on the road
+        A lsit of the bounding boxes for the cars not on the road
     """
 
     img = cv2.imread(image_path)
@@ -106,7 +108,57 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
     cv2.imwrite(output_image_path, img)
     return detections_parking
 
-def main(longitude, latidue):
+def convert_bounding_box_to_coordinates(x, y, longitude, latitude):
+    """
+    Convert pixel coordinates of the bounding box center to longitude and latitude
+    
+    Params:
+        x, y (float): Pixel coordinates
+        longitude (float): Longitude of the image center
+        latitude (float): Latitude of the image center
+    
+    Returns:
+        long, lat (float): The longitude and latitude of the center of the bounding box
+    """
+    zoom_level = 18
+    num_tiles = 2 ** zoom_level
+    tile_size = 256
+
+    lat_rad = math.radians(latitude)
+
+    center_x_tile = (longitude + 180.0) / 360.0 * num_tiles
+    center_y_tile = (1.0 - math.log(math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * num_tiles
+
+    center_tile_x = center_x_tile * tile_size
+    center_tile_y = center_y_tile * tile_size
+
+    meters_per_pixel = 156543.03392 * math.cos(lat_rad) / (2 ** zoom_level)
+
+    pixel_x_offset = (x - 200) * meters_per_pixel
+    pixel_y_offset = (y - 200) * meters_per_pixel
+
+    long = (center_tile_x + pixel_x_offset) / (num_tiles * tile_size) * 360.0 - 180.0
+    
+    lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * (center_tile_y + pixel_y_offset) / (num_tiles * tile_size))))
+    lat = math.degrees(lat_rad)
+
+    return long, lat
+    
+
+def get_center_bounding_box(x_min, y_min, x_max, y_max):
+    """
+    Returns the center of the bounding box
+    
+    Params:
+        x_min, y_min, x_max, y_max (int): Top left and bottom right cordinates of the bounding box
+    """
+
+    x = (x_min + x_max) / 2
+    y = (y_min + y_max) / 2
+
+    return x, y
+
+def main(longitude, latitude):
     """
     Detects the parking spaces in the image at the longitude and latitude
 
@@ -120,18 +172,29 @@ def main(longitude, latidue):
         os.makedirs('image_output')
 
     output_folder = 'image_output'
-    output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latidue}_satelite.png')
-    output_path_road_image = os.path.join(output_folder, f'{longitude}_{latidue}_road.png')
-    output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latidue}_mask.png')
-    output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latidue}_bounding_boxes.png')
+    output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
+    output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
+    output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
+    output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
 
-    get_images(output_path_satelite_image, longitude, latidue, 'satellite-v9')
-    get_images(output_path_road_image, longitude, latidue, 'streets-v12')
+    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
     #print(detections)
 
+    all_detections = []
+
+    for detection in detections:
+        x, y = get_center_bounding_box(detection[0], detection[1], detection[2], detection[3])
+        long, lat = convert_bounding_box_to_coordinates(x, y, longitude, latitude)
+        print(f"Center of car coordinates: ({long}, {lat})")
+        all_detections.append([long, lat])
+
+    df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
+    df.to_csv("coordinates.csv", index=False)
+
 if __name__ == "__main__":
-    main(-6.2849, 53.3531)
+    main(-6.2727, 53.362)
