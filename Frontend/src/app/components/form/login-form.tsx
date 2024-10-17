@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react"; // useState 和 useEffect
+import { useState, useEffect } from "react"; // useState and useEffect
 import { Button } from "@/components/ui/registry/button";
 import {
   Card,

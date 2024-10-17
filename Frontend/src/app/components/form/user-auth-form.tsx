@@ -24,10 +24,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [firstName, setFirstName] = React.useState<string>("");
   const [lastName, setLastName] = React.useState<string>("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [confirmPassword, setConfirmPassword] = React.useState<string>("");
-  const [firstName, setFirstName] = React.useState<string>("");
-  const [lastName, setLastName] = React.useState<string>("");
-  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const router = useRouter()
 
   async function onSubmit(event: React.SyntheticEvent) {
@@ -35,7 +31,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     setIsLoading(true)
     setErrorMessage(null); // clear error previous message 
 
-    if (!email.trim() || !password.trim() || !confirmPassword.trim() || !firstName.trim() || !lastName.trim()) {
     if (!email.trim() || !password.trim() || !confirmPassword.trim() || !firstName.trim() || !lastName.trim()) {
       console.error('Fields cannot be empty');
       setErrorMessage('Fields cannot be empty'); 
@@ -61,7 +56,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     }
 
     console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL); // debug        
-    console.log('Backend URL:', process.env.NEXT_PUBLIC_BACKEND_URL); // debug        
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/`, {
@@ -69,13 +63,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          username: email.split('@')[0],
-          email, 
-          password, 
-          firstName,
-          lastName
-        }),
         body: JSON.stringify({ 
           username: email.split('@')[0],
           email, 
@@ -117,7 +104,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     } catch (error) {
       console.error('An error occurred', error)
       alert('An error occurred, please try again later.'); // alert user that an error occurred
-      alert('An error occurred, please try again later.'); // alert user that an error occurred
     } finally {
       setIsLoading(false)
     }
@@ -127,34 +113,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
-          <div className="flex gap-2">
-            <div className="flex-1">
-              <Label className="sr-only" htmlFor="first-name">
-                First Name
-              </Label>
-              <Input
-                id="first-name"
-                placeholder="First Name"
-                type="text"
-                disabled={isLoading}
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
-              />
-            </div>
-            <div className="flex-1">
-              <Label className="sr-only" htmlFor="last-name">
-                Last Name
-              </Label>
-              <Input
-                id="last-name"
-                placeholder="Last Name"
-                type="text"
-                disabled={isLoading}
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div>
-          </div>
           <div className="flex gap-2">
             <div className="flex-1">
               <Label className="sr-only" htmlFor="first-name">
@@ -236,7 +194,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign Up
             Sign Up
           </Button>
         </div>
