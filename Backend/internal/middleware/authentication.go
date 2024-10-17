@@ -3,22 +3,30 @@ package middleware
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgtype"
+
+	customErrors "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/errors"
+	resp "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/responses"
 )
 
 type tokenKey string
 
 func accessAuthenticated(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, request *http.Request) {
 
 		auth_cookie, err := request.Cookie("magpie_auth")
 		if err != nil {
-			writer.WriteHeader(http.StatusUnauthorized)
+			resp.SendError(customErrors.Auth.UnauthorizedError, w)
+			return
+		}
+
+		jwtSecret := []byte(os.Getenv("MAGPIE_JWT_SECRET"))
+		if len(jwtSecret) == 0 {
+			resp.SendError(customErrors.Internal.JwtSecretMissingError, w)
 			return
 		}
 
@@ -28,21 +36,16 @@ func accessAuthenticated(next http.Handler) http.Handler {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
 
-			jwtSecret := []byte(os.Getenv("MAGPIE_JWT_SECRET"))
-			if len(jwtSecret) == 0 {
-				return nil, fmt.Errorf("Cannot decrypt JWT, MAGPIE_JWT_SECRET not set")
-			}
-
 			return jwtSecret, nil
 		})
 		if err != nil {
-			log.Printf("Auth token could not be parsed: %+v", err)
+			resp.SendError(customErrors.Internal.JwtParseError, w)
 			return
 		}
 
 		subject, err := token.Claims.GetSubject()
 		if err != nil {
-			log.Printf("Could not extract user id from auth token: %+v\n", err)
+			resp.SendError(customErrors.Internal.JwtParseError, w)
 			return
 		}
 
@@ -50,21 +53,20 @@ func accessAuthenticated(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(request.Context(), key, subject)
 
-		next.ServeHTTP(writer, request.WithContext(ctx))
+		next.ServeHTTP(w, request.WithContext(ctx))
 
 	})
 }
 
 func accessOwnerOnly(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, request *http.Request) {
 		userIdPathParam := request.PathValue("id")
 		var userId pgtype.UUID
 		err := userId.Scan(userIdPathParam)
 
 		// bad request if parameter is not valid uuid
 		if err != nil {
-			log.Printf("Invalid value for user id")
-			writer.WriteHeader(http.StatusBadRequest)
+			resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
 			return
 		}
 
@@ -72,17 +74,15 @@ func accessOwnerOnly(next http.Handler) http.Handler {
 
 		tokenUserId := request.Context().Value(key)
 		if tokenUserId == nil {
-			log.Printf("No user_id from token present in context")
-			writer.WriteHeader(http.StatusInternalServerError)
+			resp.SendError(customErrors.Auth.IdMissingInContextError, w)
 			return
 		}
 
 		if tokenUserId != userIdPathParam {
-			log.Printf("User not authorised for this request")
-			writer.WriteHeader(http.StatusUnauthorized)
+			resp.SendError(customErrors.Auth.UnauthorizedError, w)
 			return
 		}
-		next.ServeHTTP(writer, request)
+		next.ServeHTTP(w, request)
 	})
 }
 

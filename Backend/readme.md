@@ -31,6 +31,9 @@ postgres://postgres:mysecretpassword@localhost:5432/postgres
 - [Public Routes](./routes-public.md)
 - [Private Routes](./routes-private.md)
 
+## Error Codes
+A list of all cutom error codes can be found [here](./readme_errors.md).
+
 ## Usage
 
 There are two options to run the backend, either locally or using Docker.

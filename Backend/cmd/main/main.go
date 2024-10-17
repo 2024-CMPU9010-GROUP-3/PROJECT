@@ -70,7 +70,7 @@ func main() {
 	corsManager := cors.New(cors.Options{
 		AllowedOrigins:   allowedOrigins,
 		AllowedMethods:   allowedMethods,
-		AllowCredentials: true,
+		AllowCredentials: true, // needed for login
 	})
 
 	middlewares := middleware.CreateMiddlewareStack(
