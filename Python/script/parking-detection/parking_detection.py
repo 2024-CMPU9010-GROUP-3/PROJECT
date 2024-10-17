@@ -1,4 +1,5 @@
 import torch
+from ultralytics import YOLO
 import cv2
 import requests
 from PIL import Image
@@ -82,41 +83,40 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         A lsit of the bounding boxes for the cars not on the road
     """
     img = cv2.imread(image_path)
+    results = model.predict(img)
 
-    results = model(img)
-    detections = results.xyxy[0]  # bounding boxes format [x_min, y_min, x_max, y_max, confidence, class]
     detections_parking = []
 
     road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
 
-    if detections.shape[0] == 0:
+    if not results:
         print("No cars detected.")
         return detections_parking
-    
-    for detection in detections:
-        x_min = int(detection[0].item())
-        y_min = int(detection[1].item())
-        x_max = int(detection[2].item())
-        y_max = int(detection[3].item())
-        conf = detection[4].item()
-        cls = int(detection[5].item())
 
-        if cls == 0:
-            car_region = road_mask[y_min:y_max, x_min:x_max]
+    for result in results:
+        detections = result.boxes
 
-            if car_region.size == 0:
-                continue
+        for box in detections:
+            x_min, y_min, x_max, y_max = box.xyxy[0] 
+            conf = box.conf[0] 
+            cls = int(box.cls[0])
 
-            road_pixels = cv2.countNonZero(car_region)
-            total_pixels = car_region.size
+            if cls == 0:
+                car_region = road_mask[int(y_min):int(y_max), int(x_min):int(x_max)]
 
-            if road_pixels / total_pixels > 0.5:
-                print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is on the road")
-                cv2.rectangle(img, (x_min, y_min), (x_max, y_max), (255, 0, 0), 2)#blue if on the road
-            else:
-                print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
-                detections_parking.append([x_min, y_min, x_max, y_max, conf, cls])
-                cv2.rectangle(img, (x_min, y_min), (x_max, y_max), (0, 0, 255), 2)#red if parked 
+                if car_region.size == 0:
+                    continue
+
+                road_pixels = cv2.countNonZero(car_region)
+                total_pixels = car_region.size
+
+                if road_pixels / total_pixels > 0.5:
+                    print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is on the road")
+                    cv2.rectangle(img, (int(x_min), int(y_min)), (int(x_max), int(y_max)), (255, 0, 0), 2)  #blue if on the road
+                else:
+                    print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
+                    detections_parking.append([x_min, y_min, x_max, y_max])
+                    cv2.rectangle(img, (int(x_min), int(y_min)), (int(x_max), int(y_max)), (0, 0, 255), 2)  #red if parked
 
     cv2.imwrite(output_image_path, img)
     return detections_parking
@@ -177,8 +177,6 @@ def main(longitude, latitude):
         longitude (float): Longitude value
         latitude (float): Latitude value
     """
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path='yolov5/runs/train/exp3/weights/best.pt', force_reload=True)
-    
     if not os.path.exists('image_output'):
         os.makedirs('image_output')
 
@@ -191,6 +189,7 @@ def main(longitude, latitude):
     get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
     get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
+    model = YOLO('best.pt')
     old_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
 
@@ -206,4 +205,4 @@ def main(longitude, latitude):
     df.to_csv(f"coordinates_{longitude}_{latitude}.csv", index=False)
 
 if __name__ == "__main__":
-    main(-6.2668, 53.3643)
+    main(-6.2654, 53.3653)
