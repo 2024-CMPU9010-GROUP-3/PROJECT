@@ -169,17 +169,14 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
-def main(longitude, latitude):
+def get_parking_coords_in_image(model, longitude, latitude):
     """
-    Detects the parking spaces in the image at the longitude and latitude
+    Detects the parking spaces in the image (at longitude/latitude) and returns a list of coordinates
 
     Params:
         longitude (float): Longitude value
         latitude (float): Latitude value
     """
-    if not os.path.exists('image_output'):
-        os.makedirs('image_output')
-
     output_folder = 'image_output'
     output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
     output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
@@ -189,7 +186,6 @@ def main(longitude, latitude):
     get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
     get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
-    model = YOLO('best.pt')
     old_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
 
@@ -201,8 +197,78 @@ def main(longitude, latitude):
         print(f"Car coordinates: ({long}, {lat})")
         all_detections.append([long, lat])
 
-    df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
-    df.to_csv(f"coordinates_{longitude}_{latitude}.csv", index=False)
+    return all_detections
 
+def long_lat_to_tile_coords(long, lat):
+    num_tiles = 2 ** 18
+    lat_radians = math.radians(lat)
+    x_tile = (long + 180.0) / 360.0 * num_tiles
+    y_tile = (1.0 - math.log(math.tan(lat_radians) + (1 / math.cos(lat_radians))) / math.pi) / 2.0 * num_tiles
+    
+    return x_tile, y_tile
+
+def tile_coords_to_long_lat(x_tile, y_tile):
+    num_tiles = 2 ** 18
+    long = x_tile / num_tiles * 360.0 - 180.0
+    lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * y_tile / num_tiles)))
+    lat = math.degrees(lat_rad)
+
+    return long, lat
+
+    
+    return longitude, latitude
+
+def get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude):
+    """
+    Returns centers of all the images within the bounding box.
+    """
+    top_left_x_tile, top_left_y_tile = long_lat_to_tile_coords(top_left_longitude, top_left_latitude)
+    bottom_right_x_tile, bottom_right_y_tile = long_lat_to_tile_coords(bottom_right_longitude, bottom_right_latitude)
+
+    num_hor_tiles = math.ceil(abs(bottom_right_x_tile - top_left_x_tile))
+    num_vert_tiles = math.ceil(abs(top_left_y_tile - bottom_right_y_tile))
+
+    print(f"Top-left tile coords: ({top_left_x_tile}, {top_left_y_tile})")
+    print(f"Bottom-right tile coords: ({bottom_right_x_tile}, {bottom_right_y_tile})")
+    print(f"Number of horizontal tiles: {num_hor_tiles}")
+    print(f"Number of vertical tiles: {num_vert_tiles}")
+
+    centers = []
+
+    for i in range(num_hor_tiles):
+        for j in range(num_vert_tiles):
+            center_x_tile = top_left_x_tile + i + 0.5 
+            center_y_tile = top_left_y_tile - j - 0.5
+            center_long, center_lat = tile_coords_to_long_lat(center_x_tile, center_y_tile)
+            centers.append((center_long, center_lat))
+
+    return centers
+
+
+def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude):
+    """
+    Detects the parking spaces in the image at the longitude and latitude
+
+    Params:
+        longitude (float): Longitude value
+        latitude (float): Latitude value
+    """
+    if not os.path.exists('image_output'):
+        os.makedirs('image_output')
+
+    #model = YOLO('best.pt')
+
+    centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
+    """all_detections = []
+
+    for long, lat in centers:
+        detections = get_parking_coords_in_image(model, long, lat)
+        for detection in detections:
+            all_detections.append(detection) 
+
+    df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
+    df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
+    """
+    print(centers)
 if __name__ == "__main__":
-    main(-6.2654, 53.3653)
+    main(-6.2747, 53.3694, -6.2671, 53.3649)
