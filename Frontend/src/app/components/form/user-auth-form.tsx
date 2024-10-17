@@ -72,8 +72,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         }),
       })
 
-      const responseText = await response.text(); // 获取响应文本
-      console.log('Response:', responseText); // 打印响应内容
+      const responseText = await response.text(); // aquire response text
+      console.log('Response:', responseText); // display response
 
       if (response.ok) {
         // Handle successful registration

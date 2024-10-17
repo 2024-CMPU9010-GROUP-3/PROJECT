@@ -27,9 +27,9 @@ export function LoginForm() {
 
     // check if fields are empty
     if (!usernameOrEmail.trim() || !password.trim()) {
-      setErrorMessage('Fields cannot be empty');
-      setIsLoading(false);
-      return;
+        setErrorMessage('Fields cannot be empty');
+        setIsLoading(false);
+        return;
     }
 
     try {
@@ -38,24 +38,27 @@ export function LoginForm() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // TEST:ensure request includes credentials (cookies)
         body: JSON.stringify({ username: usernameOrEmail, password }), // send username/email and password
       });
 
       if (response.ok) {
         // login success, handle logic
         const data = await response.json();
-                localStorage.setItem('token', data.bearerToken); // storage the token
-        if (router) { // Ensure router is not null
-          router.push('/'); // redirect to home after login
+        console.log('Login successful:', data); // print success response
+        if (data.bearertoken) { // ensure bearerToken exists, note the key name
+          localStorage.setItem('token', data.bearertoken); // store token
+          setErrorMessage(null); // clear any error message
+          console.log('Redirecting to home...'); // add debug information
+          console.log("router:", router);
+          router?.push('/home'); // safely check if router is defined before pushing to home
+        } else {
+          setErrorMessage('Login failed: No token received'); // if no token, display error message
         }
       } else {
-        const errorData = await response.text(); // aquire error data
-        try {
-          const jsonErrorData = JSON.parse(errorData); // try to parse as JSON
-          setErrorMessage('Login failed: ' + jsonErrorData.message); // display error message
-        } catch (e) {
-          setErrorMessage('Login failed: ' + errorData); // display original error message if parsing fails
-        }
+        // handle error case
+        const errorData = await response.text(); // get error data
+        setErrorMessage('Login failed: ' + errorData); // display original error message
       }
     } catch (error) {
       console.error('An error occurred', error);
