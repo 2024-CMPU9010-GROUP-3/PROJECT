@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react"; // useState
+import { useState, useEffect } from "react"; // useState 和 useEffect
 import { Button } from "@/components/ui/registry/button";
 import {
   Card,
@@ -20,6 +20,15 @@ export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
   const [isLoading, setIsLoading] = useState(false); // loading state
   const router = useRouter(); // router
+
+  // check if user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('token'); // check user login status
+    if (token) {
+      // if user is already logged in, redirect to home
+      router.push('/'); // redirect to home
+    }
+  }, [router]);
 
   const onSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault(); // prevent default form submission behavior

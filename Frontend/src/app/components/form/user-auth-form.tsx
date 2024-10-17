@@ -7,7 +7,7 @@ import { Icons } from "@/components/ui/icons"
 import { Button } from "@/components/ui/registry/button"
 import { Input } from "@/components/ui/registry/input"
 import { Label } from "@/components/ui/registry/label"
-import { useRouter } from 'next/compat/router';
+import { useRouter } from 'next/navigation';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   username?: string;
@@ -71,24 +71,35 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           lastName
         }),
       })
-
-      const responseText = await response.text(); // aquire response text
-      console.log('Response:', responseText); // display response
+      console.log('Response:', response); // debug
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      const responseData = await response.json(); // Ensure response is only read once
 
       if (response.ok) {
-        // Handle successful registration
-        alert('Sign up successful'); //  display success message
-        if (router) {
-          router.push('/')
-        } else {
-          console.error('Router not found')
-        }
+        // handle successful registration
+        console.log('Registration successful:', responseData); // print success response
+
+        // store user info and login status
+        localStorage.setItem('token', responseData.bearerToken); // store token
+        localStorage.setItem('userInfo', JSON.stringify({ // store user info
+          username: responseData.username,
+          email: responseData.email,
+          firstName: responseData.firstName,
+          lastName: responseData.lastName,
+        }));
+
+        alert('Sign up successful'); // display success message
+        console.log('Redirecting to home page'); // display redirect message
+        console.log('User info:', localStorage.getItem('userInfo')); // display user info
+        console.log('Token:', localStorage.getItem('token')); // display token
+        console.log('Router:', router); // display router
+        router?.push('/'); // redirect to home
       } else {
         // Handle errors
-        const errorData = await response.json();
-        console.error('Registration failed:', errorData);
-        setErrorMessage('Registration failed: ' + errorData.message); // display error message
-        alert('Sign up failed: ' + errorData.message); // alert user that sign up failed
+        console.error('Registration failed:', responseData);
+        setErrorMessage('Registration failed: ' + responseData.message);  // display error message
+        alert('Sign up failed: ' + responseData.message); // alert user that sign up failed
       }
     } catch (error) {
       console.error('An error occurred', error)
