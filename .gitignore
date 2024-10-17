@@ -58,6 +58,8 @@ language-server-log.txt
 **/yolov
 
 # Repo-specific GitIgnore ----------------------------------------------------------------------------------------------
+*.jpg
+*.jpeg
 *.bmp
 *.tif
 *.tiff
