@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/registry/button";
 import { LoginForm } from "@/app/components/form/login-form";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
+import { AuthProvider } from "@/app/components/AuthContext";
 
 
 
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
+    <AuthProvider>
     <ProtectedRoute>
       <div className="md:hidden relative min-h-screen flex flex-col items-center justify-center">
         {/* Mobile version */}
@@ -124,6 +126,7 @@ export default function LoginPage() {
         </div>
       </div>
     </ProtectedRoute >
+    </AuthProvider>
   );
 }
 

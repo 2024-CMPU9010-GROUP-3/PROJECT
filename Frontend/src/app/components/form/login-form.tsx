@@ -13,22 +13,16 @@ import {
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation"; // useRouter
+import { useAuth } from "@/app/components/AuthContext"; // 导入 AuthContext
 
 export function LoginForm() {
+  const auth = useAuth(); // 使用 AuthContext
+  const { setIsLoggedIn } = auth || { setIsLoggedIn: () => {} }; // 确保 setIsLoggedIn 存在
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // allow login with username or email
   const [password, setPassword] = useState(""); // password state
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
   const [isLoading, setIsLoading] = useState(false); // loading state
   const router = useRouter(); // router
-
-  // check if user is already logged in
-  useEffect(() => {
-    const token = localStorage.getItem("token"); // check user login status
-    if (token) {
-      // if user is already logged in, redirect to home
-      router.push("/"); // redirect to home
-    }
-  }, [router]);
 
   const onSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault(); // prevent default form submission behavior
@@ -49,29 +43,25 @@ export function LoginForm() {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", // TEST:ensure request includes credentials (cookies)
-          body: JSON.stringify({ username: usernameOrEmail, password }), // send username/email and password
+          credentials: "include",
+          body: JSON.stringify({ username: usernameOrEmail, password }),
         }
       );
 
       if (response.ok) {
-        // login success, handle logic
         const data = await response.json();
-        console.log("Login successful:", data); // print success response
+        console.log("data", data);
         if (data.bearertoken) {
-          // ensure bearerToken exists, note the key name
           localStorage.setItem("token", data.bearertoken); // store token
-          setErrorMessage(null); // clear any error message
-          console.log("Redirecting to home..."); // add debug information
-          console.log("router:", router);
-          router?.push("/"); // safely check if router is defined before pushing to home
+
+          setIsLoggedIn(true); // 更新登录状态
+          router.push("/"); // redirect to home
         } else {
-          setErrorMessage("Login failed: No token received"); // if no token, display error message
+          setErrorMessage("Login failed: No token received");
         }
       } else {
-        // handle error case
-        const errorData = await response.text(); // get error data
-        setErrorMessage("Login failed: " + errorData); // display original error message
+        const errorData = await response.text();
+        setErrorMessage("Login failed: " + errorData);
       }
     } catch (error) {
       console.error("An error occurred", error);
@@ -91,8 +81,6 @@ export function LoginForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit}>
-          {" "}
-          {/* form submission handling */}
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="usernameOrEmail">Username/Email</Label>
@@ -101,17 +89,14 @@ export function LoginForm() {
                 type="text"
                 placeholder="username or m@example.com"
                 required
-                value={usernameOrEmail} // bind usernameOrEmail state
-                onChange={(e) => setUsernameOrEmail(e.target.value)} // update state
+                value={usernameOrEmail}
+                onChange={(e) => setUsernameOrEmail(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link
-                  href="#"
-                  className="ml-auto inline-block text-sm underline"
-                >
+                <Link href="#" className="ml-auto inline-block text-sm underline">
                   Forgot your password?
                 </Link>
               </div>
@@ -119,16 +104,14 @@ export function LoginForm() {
                 id="password"
                 type="password"
                 required
-                value={password} // bind password state
-                onChange={(e) => setPassword(e.target.value)} // update password state
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}{" "}
-              {/* display loading state */}
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
-            {errorMessage && <div className="text-red-500">{errorMessage}</div>}{" "}
-            {/* display error message */}
+            {errorMessage && <div className="text-red-500">{errorMessage}</div>}
           </div>
         </form>
         <div className="mt-4 text-center text-sm">
