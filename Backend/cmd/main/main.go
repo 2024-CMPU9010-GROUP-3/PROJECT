@@ -65,11 +65,10 @@ func main() {
 
 	allowedOrigins := strings.Split(allowedOriginsEnv, " ")
 	allowedMethods := strings.Split(allowedMethodsEnv, " ")
-	log.Printf("%+v", allowedOrigins)
 
 	corsManager := cors.New(cors.Options{
-		AllowedOrigins:   allowedOrigins,
-		AllowedMethods:   allowedMethods,
+		AllowedOrigins:  allowedOrigins,
+		AllowedMethods:  allowedMethods,
 		AllowCredentials: true, // needed for login
 	})
 
