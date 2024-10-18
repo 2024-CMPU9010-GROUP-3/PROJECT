@@ -10,7 +10,7 @@ requests==2.32.3
 scipy==1.14.1
 seaborn==0.13.2
 torch==2.4.1
-torchvision==0.19.1
+torchvision==0.20.0
 ultralytics==8.3.16
 tqdm==4.66.5
 ultralytics-thop==2.0.9
