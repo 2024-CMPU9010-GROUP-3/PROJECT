@@ -3,3 +3,6 @@ language-server-log.txt
 
 # Don't commit secrets to repo
 .env
+
+# Ignore macOS directory attributes file
+.DS_STORE
