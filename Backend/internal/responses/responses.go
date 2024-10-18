@@ -13,13 +13,13 @@ type Response struct {
 	Content    any `json:"content"`
 }
 
-type responseDto struct {
+type ResponseDto struct {
 	Error    *errs.CustomError `json:"error"`
 	Response *Response         `json:"response"`
 }
 
 func SendResponse(response Response, w http.ResponseWriter) {
-	resp := responseDto{
+	resp := ResponseDto{
 		Error:    nil,
 		Response: &response,
 	}
@@ -28,7 +28,7 @@ func SendResponse(response Response, w http.ResponseWriter) {
 }
 
 func SendError(err errs.CustomError, w http.ResponseWriter) {
-	resp := responseDto{
+	resp := ResponseDto{
 		Error:    &err,
 		Response: nil,
 	}
@@ -37,7 +37,7 @@ func SendError(err errs.CustomError, w http.ResponseWriter) {
 	send(resp, w)
 }
 
-func send(resp responseDto, w http.ResponseWriter) {
+func send(resp ResponseDto, w http.ResponseWriter) {
 	err := json.NewEncoder(w).Encode(resp)
 	if err != nil {
 		// In this case we cannot send any data to the frontend
