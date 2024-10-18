@@ -1,13 +1,13 @@
 "use client";
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+// import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenuDemo } from "@/app/components/avatarmenu/avatarmenu";
-import { useState } from "react"; // add useState
+// import { useState } from "react"; // add useState
 
 
 const TestPage = () => {
 
-  const [open, setOpen] = useState(false); // add setOpen
+  // const [open, setOpen] = useState(false); // add setOpen
 //   const isLoggedIn = false; // 
 
 //   const handleAvatarClick = () => {
