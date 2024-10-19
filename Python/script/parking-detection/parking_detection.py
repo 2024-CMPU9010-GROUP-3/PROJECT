@@ -48,7 +48,7 @@ def create_mask(image_path, save_path, threshold=240):
     mask_filtered = np.zeros_like(road_mask)
     
     for contour in contours:
-        if cv2.contourArea(contour) > 600:  
+        if cv2.contourArea(contour) > 600:  #tune this
             cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
     
     cv2.imwrite(save_path, mask_filtered)
@@ -77,7 +77,7 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         image_path (str): Path of the image
         road_mask_path (str): Path of the saved mask
         output_image_path (str): Path to save the image with bounding boxes, red for parking and blue cars on the road
-        model_path : YOLO model.
+        model : YOLO model.
         
     Returns:
         A lsit of the bounding boxes for the cars not on the road
@@ -163,6 +163,9 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
     
     Params:
         x_min, y_min, x_max, y_max (int): Top left and bottom right cordinates of the bounding box
+
+    Returns:
+        x, y (float): Center coordinates of the bounding box
     """
     x = (x_min + x_max) / 2
     y = (y_min + y_max) / 2
@@ -174,8 +177,12 @@ def get_parking_coords_in_image(model, longitude, latitude):
     Detects the parking spaces in the image (at longitude/latitude) and returns a list of coordinates
 
     Params:
+        model : YOLO model
         longitude (float): Longitude value
         latitude (float): Latitude value
+
+    Returns: 
+        all_detections (list): List of all coordinates of parking spots found in the image
     """
     output_folder = 'image_output'
     output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
@@ -206,6 +213,16 @@ def get_parking_coords_in_image(model, longitude, latitude):
     return all_detections
 
 def long_lat_to_tile_coords(long, lat):
+    """
+    Converts longitude and latitude to tile coordinates
+
+    Params:
+        long (float): Longitude value
+        lat (float): Latitude value
+
+    Returns: 
+        x_tile, y_tile (float): Tile coordinates
+    """
     num_tiles = 2 ** 18
     lat_radians = math.radians(lat)
     x_tile = (long + 180.0) / 360.0 * num_tiles
@@ -214,6 +231,16 @@ def long_lat_to_tile_coords(long, lat):
     return x_tile, y_tile
 
 def tile_coords_to_long_lat(x_tile, y_tile):
+    """
+    Converts tile coordinates to longitude and latitude
+
+    Params:
+        x_tile (float): x-coordinate of the tile
+        y_tile (float): y-coordinate of the tile
+
+    Returns: 
+        long, lat (float): Longitude and Latitude values
+    """
     num_tiles = 2 ** 18
     long = x_tile / num_tiles * 360.0 - 180.0
     lat_rad = math.atan(math.sinh(math.pi * (1 - 2 * y_tile / num_tiles)))
@@ -224,7 +251,16 @@ def tile_coords_to_long_lat(x_tile, y_tile):
     
 def get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude):
     """
-    Returns centers of all the images within the bounding box.
+    Returns all the centers coordinates of each image necessary to generate within a bounding box
+
+    Params:
+        top_left_longitude (float): Longitude of the top left corner of the bounding box
+        top_left_latitude (float): Latitude of the top left corner of the bounding box
+        bottom_right_longitude (float): Longitude of the bottom right corner of the bounding box
+        bottom_right_latitude (float): Latitude of the bottom right corner of the bounding box
+
+    Returns: 
+        centers (list):  List of all the center coordinates
     """
     top_left_x_tile, top_left_y_tile = long_lat_to_tile_coords(top_left_longitude, top_left_latitude)
     bottom_right_x_tile, bottom_right_y_tile = long_lat_to_tile_coords(bottom_right_longitude, bottom_right_latitude)
@@ -256,19 +292,22 @@ def get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, botto
 
 def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude):
     """
-    Detects the parking spaces in the image at the longitude and latitude
+    Detects all the parking spaces contained within a bounding box defined by the top left/ bottom right longitudes and latitudes.
+    And saves them in a csv file.
 
     Params:
-        longitude (float): Longitude value
-        latitude (float): Latitude value
-    """
-    if not os.path.exists('image_output'):
-        os.makedirs('image_output')
+        top_left_longitude (float): Longitude of the top left corner of the bounding box
+        top_left_latitude (float): Latitude of the top left corner of the bounding box
+        bottom_right_longitude (float): Longitude of the bottom right corner of the bounding box
+        bottom_right_latitude (float): Latitude of the bottom right corner of the bounding box
 
-    model = YOLO('best.pt')
+    """
+    if not os.path.exists("image_output"):
+        os.makedirs("image_output")
+
+    model = YOLO("best.pt")
 
     centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
-    #print(centers)
 
     all_detections = []
 
@@ -278,11 +317,9 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
             all_detections.append(detection) #as we don't want a list of lists but rather a normal list
 
     df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
-    df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is overlap in the images
+    df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
     df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
 
 
 if __name__ == "__main__":
-    #main(-6.2747, 53.3694, -6.2671, 53.3649)
-    #main(-6.2969, 53.2854, -6.2936, 53.2874)
-    main(-6.2746, 53.3918, -6.2672, 53.3962)
+    main(-6.3072, 53.4044, -6.3031, 53.4068)
