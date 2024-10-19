@@ -194,6 +194,12 @@ def get_parking_coords_in_image(model, longitude, latitude):
     for detection in detections:
         x, y = get_center_bounding_box(detection[0], detection[1], detection[2], detection[3])
         long, lat = convert_bounding_box_to_coordinates(x, y, longitude, latitude)
+
+        if isinstance(long, torch.Tensor):
+            long = long.item()
+        if isinstance(lat, torch.Tensor):
+            lat = lat.item()
+
         print(f"Car coordinates: ({long}, {lat})")
         all_detections.append([long, lat])
 
@@ -216,8 +222,6 @@ def tile_coords_to_long_lat(x_tile, y_tile):
     return long, lat
 
     
-    return longitude, latitude
-
 def get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude):
     """
     Returns centers of all the images within the bounding box.
@@ -236,9 +240,14 @@ def get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, botto
     centers = []
 
     for i in range(num_hor_tiles):
+        center_x_tile = top_left_x_tile + i + 0.5  #even in negative cases, we add (just means we get closer to 0)
+        
         for j in range(num_vert_tiles):
-            center_x_tile = top_left_x_tile + i + 0.5 
-            center_y_tile = top_left_y_tile - j - 0.5
+            if top_left_y_tile > bottom_right_y_tile:
+                center_y_tile = top_left_y_tile - j - 0.5 #in the normal case we decrease
+            else:
+                center_y_tile = top_left_y_tile + j + 0.5 #but if the latitude is negative we need to increase
+
             center_long, center_lat = tile_coords_to_long_lat(center_x_tile, center_y_tile)
             centers.append((center_long, center_lat))
 
@@ -256,19 +265,24 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     if not os.path.exists('image_output'):
         os.makedirs('image_output')
 
-    #model = YOLO('best.pt')
+    model = YOLO('best.pt')
 
     centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
-    """all_detections = []
+    #print(centers)
+
+    all_detections = []
 
     for long, lat in centers:
         detections = get_parking_coords_in_image(model, long, lat)
         for detection in detections:
-            all_detections.append(detection) 
+            all_detections.append(detection) #as we don't want a list of lists but rather a normal list
 
     df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
+    df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is overlap in the images
     df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
-    """
-    print(centers)
+
+
 if __name__ == "__main__":
-    main(-6.2747, 53.3694, -6.2671, 53.3649)
+    #main(-6.2747, 53.3694, -6.2671, 53.3649)
+    #main(-6.2969, 53.2854, -6.2936, 53.2874)
+    main(-6.2746, 53.3918, -6.2672, 53.3962)
