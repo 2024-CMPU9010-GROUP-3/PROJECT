@@ -251,36 +251,43 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </div>
         </div>
       )}
-      <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
-        <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
-          <div className="px-2 py-4 space-y-2">
-            <div className="space-y-1">
-              <label>Distance</label>
-              <Slider
-                onValueChange={(value) => setSliderValue(value[0])}
-                defaultValue={[0]}
-                max={100}
-                step={1}
-                className={cn("w-[60%]", className)}
-                {...props}
-              />
-            </div>
-            <div className="">
-              <span className="p-1">{sliderValue}</span>
-            </div>
-            <div className="flex justify-center gap-5">
-              <div className="w-2/4">
-                <label>Long</label>
-                <Input />
-              </div>
-              <div className="w-2/4">
-                <label>Lat</label>
-                <Input />
+      {mapBoxApiKey ? (
+        <>
+          <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
+            <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
+              <div className="px-2 py-4 space-y-2">
+                <div className="space-y-1">
+                  <label>Distance</label>
+                  <Slider
+                    onValueChange={(value) => setSliderValue(value[0])}
+                    defaultValue={[0]}
+                    max={100}
+                    step={1}
+                    className={cn("w-[60%]", className)}
+                    {...props}
+                  />
+                </div>
+                <div className="">
+                  <span className="p-1">{sliderValue}</span>
+                </div>
+                <div className="flex justify-center gap-5">
+                  <div className="w-2/4">
+                    <label>Long</label>
+                    <Input />
+                  </div>
+                  <div className="w-2/4">
+                    <label>Lat</label>
+                    <Input />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </>
+      ) : (
+        <></>
+      )}
+
       {/* <div className="absolute bg-transparent bottom-10 right-20 scale-105 z-20">
         <FloatingDock items={links} desktopClassName="bg-transparent " />
       </div> */}
