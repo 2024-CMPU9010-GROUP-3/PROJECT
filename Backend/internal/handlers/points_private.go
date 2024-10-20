@@ -30,17 +30,16 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	dbQueries := db.New(dbConn)
 
 	var point PointDto
-	err := json.NewDecoder(r.Body).Decode(&point)
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err := decoder.Decode(&point)
 	if err != nil {
 		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
 		return
 	}
 
-	encodedJson, err := json.Marshal(point.Details)
-	if err != nil {
-		resp.SendError(customErrors.Internal.JsonEncodingError, w)
-		return
-	}
+	// cannot result in error if decoding above was successful
+	encodedJson, _ := json.Marshal(point.Details)
 
 	geometry, err := point.Longlat.Decode()
 	if err != nil {
@@ -86,7 +85,9 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	dbQueries := db.New(dbConn)
 
 	var point PointDto
-	err = json.NewDecoder(r.Body).Decode(&point)
+	decoder := json.NewDecoder(r.Body)
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&point)
 	if err != nil {
 		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
 		return
@@ -97,11 +98,8 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	encodedJson, err := json.Marshal(point.Details)
-	if err != nil {
-		resp.SendError(customErrors.Internal.JsonEncodingError, w)
-		return
-	}
+	// cannot result in error if decoding above was successful
+	encodedJson, _ := json.Marshal(point.Details)
 
 	geometry, err := point.Longlat.Decode()
 	if err != nil {
