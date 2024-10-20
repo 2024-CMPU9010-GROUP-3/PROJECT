@@ -107,10 +107,6 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 		{
 			name: "Invalid input",
 			inputJSON: `{
-				"longlat": {
-					"type": "Point",
-					"coordinates": [11, 12]
-				},
 				"type1": "placeholder1",
 				"details": {
 					"test": 1234
