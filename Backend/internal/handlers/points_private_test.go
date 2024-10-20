@@ -232,7 +232,7 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 			},
 			mockSetup: func(mock pgxmock.PgxPoolIface) {
         point := go_geom.NewPoint(go_geom.XY)
-        point.SetCoords(go_geom.Coord{11, 12})
+        _,_ = point.SetCoords(go_geom.Coord{11, 12})
 				mock.ExpectExec("UPDATE points").
 					WithArgs(
 						int64(123456),
@@ -368,7 +368,7 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 			},
 			mockSetup: func(mock pgxmock.PgxPoolIface) {
         point := go_geom.NewPoint(go_geom.XY)
-        point.SetCoords(go_geom.Coord{11, 12})
+        _,_ = point.SetCoords(go_geom.Coord{11, 12})
 				mock.ExpectExec("UPDATE points").
 					WithArgs(
 						int64(123456),
