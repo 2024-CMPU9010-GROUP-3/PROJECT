@@ -1,13 +1,12 @@
 "use client";
 
-import React, { Fragment, useEffect, useState } from "react";
-import Map, { Marker } from "react-map-gl";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import DeckGL from "@deck.gl/react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MapClickEvent } from "@/lib/interfaces/types";
 import { Coordinates } from "@/lib/interfaces/types";
-
+import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
 import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
 // import { FloatingDock } from "@/components/ui/floating-dock";
 // import { IconHome } from "@tabler/icons-react";
@@ -27,26 +26,53 @@ type TListOfPlaces = {
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
   const [isMarkerVisible, setIsMarkerVisible] = useState<boolean>(false);
-
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
     longitude: 0,
   });
-
-  const [markerSquareSize, setMarkerSquareSize] = useState<number>(0);
+  const [markerSquareSize, setMarkerSquareSize] = useState<number>(0.027);
   const [currentPositionCords, setCurrentPositionCords] = useState<Coordinates>(
     { latitude: 0, longitude: 0 }
   );
-  const [sliderValue, setSliderValue] = useState<number>(0);
+  const [sliderValue, setSliderValue] = useState<number>(40);
+  const markerCoords = useMemo(
+    () => [coordinates?.longitude, coordinates?.latitude],
+    [coordinates]
+  );
+  const squareSize = markerSquareSize;
+  const [squareCoordinates, setSquareCoordinates] = useState<number[][]>([
+    [markerCoords[0] - squareSize, markerCoords[1] - squareSize], // Bottom left
+    [markerCoords[0] - squareSize, markerCoords[1] + squareSize], // Top left
+    [markerCoords[0] + squareSize, markerCoords[1] + squareSize], // Top right
+    [markerCoords[0] + squareSize, markerCoords[1] - squareSize], // Bottom right
+    [markerCoords[0] - squareSize, markerCoords[1] - squareSize], // Close the square
+  ]);
+
+  const getTopLeftAndBottomRight = (coordinates: number[][]) => {
+    const topLeft = coordinates[1];
+    const bottomRight = coordinates[3];
+    return { topLeft, bottomRight };
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { topLeft, bottomRight } = getTopLeftAndBottomRight(squareCoordinates);
 
   useEffect(() => {
-    setMarkerSquareSize(sliderValue * 100);
+    const size = markerSquareSize;
+    setSquareCoordinates([
+      [markerCoords[0] - size / 2, markerCoords[1] - size / 2], // Bottom left
+      [markerCoords[0] - size / 2, markerCoords[1] + size / 2], // Top left
+      [markerCoords[0] + size / 2, markerCoords[1] + size / 2], // Top right
+      [markerCoords[0] + size / 2, markerCoords[1] - size / 2], // Bottom right
+      [markerCoords[0] - size / 2, markerCoords[1] - size / 2], // Close the square
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [squareSize, markerCoords]);
+
+  useEffect(() => {
+    const newSize = (sliderValue + 1) * 0.0003;
+    setMarkerSquareSize(newSize);
   }, [sliderValue]);
-
-  useEffect(() => {
-    console.log("Marker Square Size>>>>", markerSquareSize);
-    console.log(markerSquareSize);
-  }, [markerSquareSize]);
 
   useEffect(() => {
     // Fetch Mapbox API key from the server
@@ -66,15 +92,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   function success(pos: GeolocationPosition) {
     const crd = pos.coords;
-
-    console.log("Your current position is:");
-    console.log(`Latitude : ${crd.latitude}`);
-    console.log(`Longitude: ${crd.longitude}`);
     setCurrentPositionCords({
       latitude: crd.latitude,
       longitude: crd.longitude,
     });
-    console.log(`More or less ${crd.accuracy} meters.`);
   }
 
   function error(err: unknown) {
@@ -178,6 +199,32 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     }
   };
 
+  // Define the square's coordinates based on the marker's position
+  // Size of the square in degrees
+
+  useEffect(() => {
+    setSquareCoordinates([
+      [markerCoords[0] - squareSize, markerCoords[1] - squareSize], // Bottom left
+      [markerCoords[0] - squareSize, markerCoords[1] + squareSize], // Top left
+      [markerCoords[0] + squareSize, markerCoords[1] + squareSize], // Top right
+      [markerCoords[0] + squareSize, markerCoords[1] - squareSize], // Bottom right
+      [markerCoords[0] - squareSize, markerCoords[1] - squareSize], // Close the square
+    ]);
+  }, [squareSize, markerCoords]);
+
+  useEffect(() => {
+    console.log("squareCoordinates", squareCoordinates);
+  }, [squareCoordinates]);
+
+  const layerStyle: LayerProps = {
+    id: "square",
+    type: "line",
+    paint: {
+      "line-color": "#007cbf", // Color of the border
+      "line-width": 2, // Width of the border
+    },
+  };
+
   return (
     <div>
       {mapBoxApiKey ? (
@@ -193,7 +240,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             antialias={true}
           >
             <Marker
-              className={`p-10 border-2 border-[#8CCBF7]`}
+              // className={`p-10 border-2 border-[#8CCBF7]`}
               longitude={coordinates?.longitude}
               latitude={coordinates?.latitude}
               anchor="center"
@@ -210,6 +257,19 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <FaLocationDot size={35} color="blue" />
               </div>
             </Marker>
+            <Source
+              id="square"
+              type="geojson"
+              data={{
+                type: "Feature",
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [squareCoordinates],
+                },
+              }}
+            >
+              <Layer {...layerStyle} />
+            </Source>
           </Map>
         </DeckGL>
       ) : (
@@ -260,7 +320,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <label>Distance</label>
                   <Slider
                     onValueChange={(value) => setSliderValue(value[0])}
-                    defaultValue={[0]}
+                    defaultValue={[sliderValue]}
                     max={100}
                     step={1}
                     className={cn("w-[60%]", className)}
