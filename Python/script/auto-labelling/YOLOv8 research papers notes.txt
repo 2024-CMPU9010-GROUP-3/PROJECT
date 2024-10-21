@@ -14,3 +14,14 @@ fire precision: 95.7%
 smoke precision: 99.3%
 mAP: 97.5%
 *my conclusion: I might need more images for training
+
+## Paper 2: Colorectal polyp detection in colonoscopy image using YOLOv8 network (2023)
+*They chose Yolov8 "m" model
+*They achieved Following results:
+precision: 95.6%
+recall: 91.7%
+F1-score: 92.4%
+*Used 1,890 images in total from 5 publicly available datasets, split into train 80 - val 10 - test 10
+*Trained all five YOLOv8 models
+*No mention of the exact parameters for the training
+*my conclusion: try to increase the percentage of training maybe? right now i'm at 80-20, try 90-10, or decrease even to 70-30
