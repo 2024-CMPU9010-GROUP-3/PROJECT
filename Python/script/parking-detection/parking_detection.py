@@ -69,6 +69,35 @@ def old_mask(image_path, save_path, threshold=240):
     _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
     cv2.imwrite(save_path, road_mask)
 
+def new_mask(image_path, save_path, threshold=240):
+    """
+    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets).
+    The roads are in white and some additional roads are in orange/yellow (highways/ roads with more lanes).
+
+    Params:
+        image_path (str): Path of the image
+        save_path (str): Path to save the mask
+        threshold (int): Threshold to differentiate the road from the areas outside of the road
+    """
+    img = cv2.imread(image_path)
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
+
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    lower_orange = np.array([10, 100, 100])
+    upper_orange = np.array([25, 255, 255])
+    lower_yellow = np.array([25, 100, 100])
+    upper_yellow = np.array([35, 255, 255])
+
+    orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
+    yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
+
+    combined_mask = cv2.bitwise_or(road_mask, orange_mask)
+    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+    cv2.imwrite(save_path, combined_mask)
+
+
 def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
     """
     Detect cars in the image using the retrained YOLO model and remove those on the road
@@ -193,7 +222,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
     get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
     get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
-    old_mask(output_path_road_image, output_path_mask_image)
+    new_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
 
     all_detections = []
@@ -307,6 +336,9 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
     model = YOLO("best.pt")
 
+    get_parking_coords_in_image(model, top_left_longitude, top_left_latitude)
+
+    """
     centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
 
     all_detections = []
@@ -319,7 +351,8 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
     df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
+    """
 
 
 if __name__ == "__main__":
-    main(-6.3072, 53.4044, -6.3031, 53.4068)
+    main(-6.2244, 53.4101, -6.3031, 53.4068)
