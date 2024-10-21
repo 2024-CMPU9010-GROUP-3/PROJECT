@@ -13,7 +13,7 @@ def send_parking_spots_to_api(data):
         point_data = {
             "longlat": {
                 "type": "Point",
-                "coordinates": [row['latitude'], row['longitude']]
+                "coordinates": [row['longitude'], row['latitude']]
             },
             "type": "parking",
             "details": {
@@ -24,9 +24,7 @@ def send_parking_spots_to_api(data):
             response = requests.post(url, json=point_data)
             
             if response.status_code == 200 or response.status_code == 201:
-                response_data = response.json()
-                point_id = response_data.get("PointId")
-                print(f"Successfully added point {point_id} with longitude {row['longitude']} and latitude {row['latitude']}")
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
                 successful_posts += 1
             else:
                 print(f"Failed to add point: {response.status_code}, {response.text}")
@@ -39,7 +37,7 @@ def send_parking_spots_to_api(data):
 
 def read_csv_file(csv_file_path):
     """
-    Functiion to read the csv file
+    Functiion to read the csv file in a pandas dataframe
     """
     try:
         data = pd.read_csv(csv_file_path)
@@ -48,11 +46,10 @@ def read_csv_file(csv_file_path):
         print(f"Error reading CSV file: {e}")
         return None
 
-def main():
+def main(csv_file_path):
     """
-    Main function
+    Main function to send all the coordiantes in a csv file to the backend
     """
-    csv_file_path = 'coordinates_in_-6.3072_53.4044--6.3031_53.4068.csv'
     data = read_csv_file(csv_file_path)
 
     if data is not None:
@@ -60,4 +57,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main('coordinates_in_-6.3072_53.4044--6.3031_53.4068.csv')
