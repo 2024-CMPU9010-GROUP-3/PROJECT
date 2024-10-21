@@ -1,0 +1,5 @@
+# YOLOv8 research papers notes
+
+## An improved ire detection approach based on YOLOv8 for smart cities (2023)
+*Yolo is popular because of its high accuracy & small model size
+*Yolov8 is anchor-free which means it estimates the center of the object explicitely instead of predicting an item's distance from a known anchor-box.
