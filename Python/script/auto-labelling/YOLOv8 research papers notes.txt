@@ -3,3 +3,14 @@
 ## An improved ire detection approach based on YOLOv8 for smart cities (2023)
 *Yolo is popular because of its high accuracy & small model size
 *Yolov8 is anchor-free which means it estimates the center of the object explicitely instead of predicting an item's distance from a known anchor-box.
+-->Anchor free detection lowers the number of box prédictions which expedites NMS
+--> NMS (non-maximum suppression) is a pre-processing technique used in computer vision tasks to eliminate redundant bounding boxes, refining model prédictions especially in object detection tasks.
+*their model was configured as follows
+epochs: 300	|batch size: 16		|parameters: 11,136,374
+lr: 0.01	|n° imgs: 26,520	|train/test split: 80-20
+img size: 512	|layers: 225
+*results as follows
+fire precision: 95.7%
+smoke precision: 99.3%
+mAP: 97.5%
+*my conclusion: I might need more images for training
