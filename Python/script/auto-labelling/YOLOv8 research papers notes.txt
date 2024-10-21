@@ -25,3 +25,31 @@ F1-score: 92.4%
 *Trained all five YOLOv8 models
 *No mention of the exact parameters for the training
 *my conclusion: try to increase the percentage of training maybe? right now i'm at 80-20, try 90-10, or decrease even to 70-30
+
+## Paper 3: YOLOv1 to v8: Unveiling each variant - a comprehensive review of YOLO
+
+### summary of each YOLO version
+*key issue in object detection involves effectively manageing fluctuations in image résolutions & aspect ratios; also, object detection architectures usually demand considerate computational resources
+*two types of object detectors: single stage (SSD, YOLO, RefineDet, DSSD) and two stage (RCNN, Fast-RCNN, Faster-RCNN, FPN)
+*YOLOv1 (2016) was enthused by GoogLeNet architecture and exploited the DarkNet Framework benchmarked on the VOC Pascal Dataset for training. It uses LReuLU activation function for all its 24 convolutional laers except the final one (linear); each layer is followed by max pooling layers, embracing 1x1 convolutions
+-->main drawbacks: large localization errors & lower recall compared to two-stage detectors.
+*YOLOv2 (2016) was inspired by VGG architecture and incorporated several data augmentation techniques; it also introduced new optimisation procédures.
+-->main drawbacks: struggle to detect small-sized objects.
+*YOLOv3 (2018) addressed main drawbacks in previous versions and was benchmarked on the COCO dataset; it was also constructed on the DarkNet-53 Framework, employing 53 convolutional layers, 3x3 and 1x1 convolution filters. It achieved twice the speed of ResNet-152. It also introduced a foundational generic architecture inspired by FPN integrating elements such as residual blocks, skip connections & up-sampling.
+-->main drawbacks: difficulties achieving precise results for medium & large sized objects.
+*YOLOv4 (2020) introduced many Advanced techniques to make faster and more accurate object détections in production systems. Pivotal components include initial image processing, feature extraction, feature scaling, etc...
+-->main drawbacks: ??
+*YOLOv5 (2020) transitioned from DarkNet Framework to PyTroch with an architecture initiating a strided convolution layer with large window size aimed at reducing memory & computational costs. everal image augmentation techniques were introduced including mosiac, copy-paste, HSV augmentation… It also manifested 5 variants to accommodate for various applications (n, s, m, l, x). It also also open-source and is known for its ease of use, training & development across various devices.
+-->main drawbacks: ??
+*YOLOv6 (2022) introduced key features like a new backbone based on RepVGG contributing to improved efficiency & adaptability; new architecture adopting task alignment Learning approaching enhancing label assignment; self-distillation strategy for regression & classification tasks improving performance and generalization capabilities; 8 scaled model variants from v6-N to v6-L6.
+-->main drawbacks: ??
+*YOLOv7 (2022) was trained on the MS COCO dataset without leveragin pre-trained backbones and outperformed many present (2024) object detectors ranging from 5FPS to 160FPS. New architectural features included extended version of ELAN, concatenation-based architecture to generate models of varying sizes, the introduction of RepConVN to redicate Identity connection; lastly the integration of batch normalization.
+-->main drawbacks: ??
+*YOLOv8 (2023) introduced 5 scaled versions (n, s, m, l, x); preserved the YOLOv5 backbone architecture with adjustments in the GSP layer to enhance detection accuracy; and the introduction of a segmentation model variant.
+-->main drawbacks: ??
+
+### main challenges faced by YOLO models
+*they are unable to effectively handle occluded objects & scènes; the model struggles to detect objjects overlapping/partially obscured
+*scale variations and fine-grained object detection can still be refined a lot more
+*there is room for improvement in the domain adaptation of the model
+*it may exhibit biases that mirror the biases present in the data; integrating federated Learning can helpt address some of these biases.
