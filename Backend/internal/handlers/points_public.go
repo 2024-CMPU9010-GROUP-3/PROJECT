@@ -23,26 +23,21 @@ type pointDto struct {
 	Type    db.PointType
 }
 
-func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request) {
+func (p *PointsHandler) HandleGetInEnvelope(w http.ResponseWriter, r *http.Request) {
 	// parameters long, lat, radius are required
 	params := r.URL.Query()
-	long, err_long := strconv.ParseFloat(params.Get("long"), floatPrecision)
-	lat, err_lat := strconv.ParseFloat(params.Get("lat"), floatPrecision)
-	radius, err_radius := strconv.ParseFloat(params.Get("radius"), floatPrecision)
+	long1, err_long1 := strconv.ParseFloat(params.Get("long1"), floatPrecision)
+	lat1, err_lat1 := strconv.ParseFloat(params.Get("lat1"), floatPrecision)
+	long2, err_long2 := strconv.ParseFloat(params.Get("long2"), floatPrecision)
+	lat2, err_lat2 := strconv.ParseFloat(params.Get("lat2"), floatPrecision)
 
 	// bad request if any parameters can't be parsed to float
-	if err_long != nil || err_lat != nil || err_radius != nil {
+	if err_long1 != nil || err_lat1 != nil || err_long2 != nil || err_lat2 != nil {
 		resp.SendError(customErrors.Parameter.InvalidFloatError, w)
 		return
 	}
 
-	// construct envelope
-	x1 := long - radius
-	y1 := lat - radius
-	x2 := long + radius
-	y2 := lat + radius
-
-	points, err := db.New(dbConn).GetPointsInEnvelope(*dbCtx, db.GetPointsInEnvelopeParams{X1: x1, Y1: y1, X2: x2, Y2: y2})
+	points, err := db.New(dbConn).GetPointsInEnvelope(*dbCtx, db.GetPointsInEnvelopeParams{X1: long1, Y1: lat1, X2: long2, Y2: lat2})
 	if err != nil {
 		if !errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
