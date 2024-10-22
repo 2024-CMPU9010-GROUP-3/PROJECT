@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: public-backend
-          image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.2.1@sha256:3a4080ff6453daa23bab68dc54e19b5f4ceb9e27c5155bd12be1a92482012dcb
+          image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.5.0@sha256:e42fcd2f4c773b67cf6ac2d544a067f639e554d5835dbccdca539b4e7fff08ff
           resources: {}
           ports:
             - containerPort: 8080
@@ -45,3 +45,14 @@ spec:
                 secretKeyRef:
                   name: secret-magpie-db-user
                   key: DATABASE_NAME
+
+            - name: MAGPIE_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-magpie-jwt-secret
+                  key: MAGPIE_JWT_SECRET
+                  
+            - name: MAGPIE_CORS_ALLOWED_ORIGINS
+              value: "http://frontend-service.magpie.svc.cluster.local https://magpie.solonsstuff.com"
+            - name: MAGPIE_CORS_ALLOWED_METHODS
+              value: "GET, POST, PUT, DELETE, OPTIONS"
