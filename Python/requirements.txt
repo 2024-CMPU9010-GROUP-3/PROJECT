@@ -11,6 +11,6 @@ scipy==1.14.1
 seaborn==0.13.2
 torch==2.5.0
 torchvision==0.20.0
-ultralytics==8.3.18
+ultralytics==8.3.19
 tqdm==4.66.5
 ultralytics-thop==2.0.9
