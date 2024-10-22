@@ -36,13 +36,7 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// construct envelope
-	x1 := long - radius
-	y1 := lat - radius
-	x2 := long + radius
-	y2 := lat + radius
-
-	points, err := db.New(dbConn).GetPointsInEnvelope(*dbCtx, db.GetPointsInEnvelopeParams{X1: x1, Y1: y1, X2: x2, Y2: y2})
+	points, err := db.New(dbConn).GetPointsInRadius(*dbCtx, db.GetPointsInRadiusParams{Latitude: lat, Longitude: long, Radius: radius})
 	if err != nil {
 		if !errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)

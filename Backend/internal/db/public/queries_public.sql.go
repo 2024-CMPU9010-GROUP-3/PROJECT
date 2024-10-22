@@ -183,6 +183,47 @@ func (q *Queries) GetPointsInEnvelope(ctx context.Context, arg GetPointsInEnvelo
 	return items, nil
 }
 
+const getPointsInRadius = `-- name: GetPointsInRadius :many
+SELECT Id, LongLat::geometry, Type from points
+WHERE ST_DWithin(
+  LongLat::geography,
+  ST_SetSRID(ST_MakePoint($1::float, $2::float), 4326)::geography,
+  $3::float
+)
+`
+
+type GetPointsInRadiusParams struct {
+	Longitude float64 `json:"longitude"`
+	Latitude  float64 `json:"latitude"`
+	Radius    float64 `json:"radius"`
+}
+
+type GetPointsInRadiusRow struct {
+	ID      int64          `json:"id"`
+	Longlat *go_geom.Point `json:"longlat"`
+	Type    PointType      `json:"type"`
+}
+
+func (q *Queries) GetPointsInRadius(ctx context.Context, arg GetPointsInRadiusParams) ([]GetPointsInRadiusRow, error) {
+	rows, err := q.db.Query(ctx, getPointsInRadius, arg.Longitude, arg.Latitude, arg.Radius)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetPointsInRadiusRow
+	for rows.Next() {
+		var i GetPointsInRadiusRow
+		if err := rows.Scan(&i.ID, &i.Longlat, &i.Type); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUserDetails = `-- name: GetUserDetails :one
 SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn
 FROM user_details

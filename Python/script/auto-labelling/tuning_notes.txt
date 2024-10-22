@@ -41,10 +41,58 @@ wtf do i do
 17/10
 - looking at the fitness plot, the tuning did help find an ideal set of parameters, waiting for saul to run a new training now with these weights
 - training with the new weights, 30 epochs-patience 10-seed 1-batch 16-cache "disk" = 0.88 acc which is promising
-- training with same weights for 50 epochs-patience 20 etc... = 0.86 acc, which decreased. tbh before i hadnt put seed param so reproducibility was not there, now it is. i'm not sure what to change this time around to final cross into 0.90 territory
+- training with same weights for 50 epochs-patience 20 etc... = 0.86 acc, which decreased. tbh before i hadnt put seed param so reproducibility was not there, now it is. i'm not sure what to change this time around to finally cross into 0.90 territory
 - switched to the m model with the fine tuned weights from s model, no improvement, therefore Saul with run tuning again tonight on the m model and we'll retrain tomorrow with hopefully more appropriate weights
 - decided to do one last training of the m model with val=true and optimizer=adamw to see if anything improves = 0.83, yeah we will go with fine-tuning.
 - in the first fine-tune, i think i set way too many itérations relative to the size of my dataset and batch size (data_size / batch size = n itérations) so i'm reducing it accordingly and hopefully we get better results tonight.
+
+18/10
+- saul ran the tuning model for 15 epochs-20 itérations and a warning came up, the model was not tuning at all. I'm not sure why that is.
+- yesterday evening we had a meeting with Damian about the Survey, we told him our progress with the model accuracy and he said "ML model with 90%+ acc is suspicious" so i'm wondering what do to, should we just settle?
+
+21/10
+- realized that the images were labelled kinda poorly, so i went and relabelled them all. I'm now gonna run the n model first again, on 20 epochs, patience 10, seed 1, imgsz 400, batch 16, cache disk, val True and optimizer adamw = 0.89 fuck yesssssssssss
+- let me train again same settings + pre-trained weights on the prev model (train7) = 0.90 WE MADE IT!! The graphs seem promising, I will train tomorrow for more epochs to see where this goes, and maybe try SGD optimizer as well
+
+22/10:
+- sending it over to saul to train the model on 50 epochs - patience 15, pre-trained weights of the 0.89 model(train7), optimizer adamw, val true, seed 1, img size 400, batch 16, cache disk = 0.93 (train_saul1)
+precision: 1.00 (conf 0.879)
+recall: 0.97 (conf 0.000)
+f1:0.83
+conf threshold: 0.558
+mAP@50:0.841
+
+- trying again same settings for 35 epochs instead = 0.93 (train_saul2)
+precision:
+recall:
+f1:
+conf threshold:
+mAP@50:
+
+- same settings but changing optimizer to SGD = 0.89 --discard
+
+- same settings back with adamw 35 epochs 15 patience but on the s model with no pre-trained weights = 0.91, very nice (train_saul3)
+precision: 1.00 (conf 0.826)
+recall: 0.98 (conf 0.000)
+f1: 0.84
+conf threshold: 0.379
+mAP@50: 0.853
+
+- still using s model, using pre-trained weights of 0.91, epochs 20 patience 10 = 0.92 interesting, need to look more into the results but i think i can call the training done. (train_saul4)
+precision: 1.00 (conf 0.751)
+recall: 0.98 (conf 0.000)
+f1: 0.84
+conf threshold: 0.358
+mAP@50: 0.856
+
+# NOTES FOR FURTHER TUNING
+- the S model seems very promising, achieving high score with no custom pre-trained weights. For now, I think we can settle for these results but for the future, it could be interesting to use the .tune method and use those hyp for further training
+- or manually play around with lr and image size (i lowered it from previous trainings)
+
+#random notes
+- F1 vs confidence threshold : highest point in the f1 curve represents optimal confidence threshold where the model achieves the best balance between precision and recall
+- high confidence threshold (close to 1) means the model is very conservative and only makes prédictions when it's very sure, resulting in fewer prédictions, fewer FPs (high precision, low recall)
+- low confidence threshold (close to 0) is the opposite, model is less strict resulting in more prédictions but also more FPs (higher recall, lower precision)
 
 # notes on yolo v8 model
 "n" - nano, smallest & lightest model out there optimized for speed and lower resources

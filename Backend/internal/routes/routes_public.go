@@ -27,7 +27,7 @@ func pointsPublic() *http.ServeMux {
 	pointsHandler := &handlers.PointsHandler{}
 
 	// Authenticated access
-	router.Handle("GET /byRadius", middleware.Access.Authenticated(http.HandlerFunc(pointsHandler.HandleGetByRadius)))
+	router.Handle("GET /inRadius", middleware.Access.Authenticated(http.HandlerFunc(pointsHandler.HandleGetByRadius)))
 	router.Handle("GET /{id}", middleware.Access.Authenticated(http.HandlerFunc(pointsHandler.HandleGetPointDetails)))
 
 	return router

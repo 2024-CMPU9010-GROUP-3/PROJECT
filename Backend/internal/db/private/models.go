@@ -17,8 +17,7 @@ import (
 type PointType string
 
 const (
-	PointTypePlaceholder1 PointType = "placeholder1"
-	PointTypePlaceholder2 PointType = "placeholder2"
+	PointTypeParking PointType = "parking"
 )
 
 func (e *PointType) Scan(src interface{}) error {
