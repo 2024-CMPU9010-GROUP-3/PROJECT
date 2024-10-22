@@ -41,10 +41,18 @@ wtf do i do
 17/10
 - looking at the fitness plot, the tuning did help find an ideal set of parameters, waiting for saul to run a new training now with these weights
 - training with the new weights, 30 epochs-patience 10-seed 1-batch 16-cache "disk" = 0.88 acc which is promising
-- training with same weights for 50 epochs-patience 20 etc... = 0.86 acc, which decreased. tbh before i hadnt put seed param so reproducibility was not there, now it is. i'm not sure what to change this time around to final cross into 0.90 territory
+- training with same weights for 50 epochs-patience 20 etc... = 0.86 acc, which decreased. tbh before i hadnt put seed param so reproducibility was not there, now it is. i'm not sure what to change this time around to finally cross into 0.90 territory
 - switched to the m model with the fine tuned weights from s model, no improvement, therefore Saul with run tuning again tonight on the m model and we'll retrain tomorrow with hopefully more appropriate weights
 - decided to do one last training of the m model with val=true and optimizer=adamw to see if anything improves = 0.83, yeah we will go with fine-tuning.
 - in the first fine-tune, i think i set way too many itérations relative to the size of my dataset and batch size (data_size / batch size = n itérations) so i'm reducing it accordingly and hopefully we get better results tonight.
+
+18/10
+- saul ran the tuning model for 15 epochs-20 itérations and a warning came up, the model was not tuning at all. I'm not sure why that is.
+- yesterday evening we had a meeting with Damian about the Survey, we told him our progress with the model accuracy and he said "ML model with 90%+ acc is suspicious" so i'm wondering what do to, should we just settle?
+
+21/10
+- realized that the images were labelled kinda poorly, so i went and relabelled them all. I'm now gonna run the n model first again, on 20 epochs, patience 10, seed 1, imgsz 400, batch 16, cache disk, val True and optimizer adamw = 0.89 fuck yesssssssssss
+- let me train again same settings + pre-trained weights on the prev model (train7) = 0.90 WE MADE IT!! The graphs seem promising, I will train tomorrow for more epochs to see where this goes, and maybe try SGD optimizer as well
 
 # notes on yolo v8 model
 "n" - nano, smallest & lightest model out there optimized for speed and lower resources
