@@ -30,7 +30,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     latitude: 0,
     longitude: 0,
   });
-  const [markerSquareSize, setMarkerSquareSize] = useState<number>(0.027);
+  // const [markerSquareSize, setMarkerSquareSize] = useState<number>(0.027);
   const [currentPositionCords, setCurrentPositionCords] = useState<Coordinates>(
     { latitude: 0, longitude: 0 }
   );
@@ -39,40 +39,53 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     () => [coordinates?.longitude, coordinates?.latitude],
     [coordinates]
   );
-  const squareSize = markerSquareSize;
-  const [squareCoordinates, setSquareCoordinates] = useState<number[][]>([
-    [markerCoords[0] - squareSize, markerCoords[1] - squareSize], // Bottom left
-    [markerCoords[0] - squareSize, markerCoords[1] + squareSize], // Top left
-    [markerCoords[0] + squareSize, markerCoords[1] + squareSize], // Top right
-    [markerCoords[0] + squareSize, markerCoords[1] - squareSize], // Bottom right
-    [markerCoords[0] - squareSize, markerCoords[1] - squareSize], // Close the square
-  ]);
 
-  const getTopLeftAndBottomRight = (coordinates: number[][]) => {
-    const topLeft = coordinates[1];
-    const bottomRight = coordinates[3];
-    return { topLeft, bottomRight };
-  };
+  const [circleCoordinates, setCircleCoordinates] = useState<number[][]>(() => {
+    const radiusInMeters = sliderValue * 100; // Convert slider value to meters
+    const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
+    const numPoints = 64; // Number of points to define the circle
+    const angleStep = (2 * Math.PI) / numPoints;
+    const coordinates = [];
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { topLeft, bottomRight } = getTopLeftAndBottomRight(squareCoordinates);
+    for (let i = 0; i < numPoints; i++) {
+      const angle = i * angleStep;
+      const x =
+        markerCoords[0] +
+        (radiusInDegrees * Math.cos(angle)) /
+          Math.cos(markerCoords[1] * (Math.PI / 180));
+      const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
+      coordinates.push([x, y]);
+    }
+
+    // Close the circle
+    coordinates.push(coordinates[0]);
+
+    return coordinates;
+  });
 
   useEffect(() => {
-    const size = markerSquareSize;
-    setSquareCoordinates([
-      [markerCoords[0] - size / 2, markerCoords[1] - size / 2], // Bottom left
-      [markerCoords[0] - size / 2, markerCoords[1] + size / 2], // Top left
-      [markerCoords[0] + size / 2, markerCoords[1] + size / 2], // Top right
-      [markerCoords[0] + size / 2, markerCoords[1] - size / 2], // Bottom right
-      [markerCoords[0] - size / 2, markerCoords[1] - size / 2], // Close the square
-    ]);
+    const radiusInMeters = sliderValue * 100; // Convert slider value to meters
+    const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
+    const numPoints = 64; // Number of points to define the circle
+    const angleStep = (2 * Math.PI) / numPoints;
+    const coordinates = [];
+
+    for (let i = 0; i < numPoints; i++) {
+      const angle = i * angleStep;
+      const x =
+        markerCoords[0] +
+        (radiusInDegrees * Math.cos(angle)) /
+          Math.cos(markerCoords[1] * (Math.PI / 180));
+      const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
+      coordinates.push([x, y]);
+    }
+
+    // Close the circle
+    coordinates.push(coordinates[0]);
+
+    setCircleCoordinates(coordinates);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [squareSize, markerCoords]);
-
-  useEffect(() => {
-    const newSize = (sliderValue + 1) * 0.0003;
-    setMarkerSquareSize(newSize);
-  }, [sliderValue]);
+  }, [sliderValue, markerCoords]);
 
   useEffect(() => {
     // Fetch Mapbox API key from the server
@@ -165,30 +178,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     },
   ];
 
-  // const links = [
-  //   {
-  //     title: "Home",
-  //     icon: (
-  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-  //     ),
-  //     href: "#",
-  //   },
-  //   {
-  //     title: "Home",
-  //     icon: (
-  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-  //     ),
-  //     href: "#",
-  //   },
-  //   {
-  //     title: "Home",
-  //     icon: (
-  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-  //     ),
-  //     href: "#",
-  //   },
-  // ];
-
   // Handle map click event
   const handleMapClick = (event: unknown) => {
     const mapClickEvent = event as MapClickEvent; // Type assertion
@@ -199,29 +188,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     }
   };
 
-  // Define the square's coordinates based on the marker's position
-  // Size of the square in degrees
-
-  useEffect(() => {
-    setSquareCoordinates([
-      [markerCoords[0] - squareSize, markerCoords[1] - squareSize], // Bottom left
-      [markerCoords[0] - squareSize, markerCoords[1] + squareSize], // Top left
-      [markerCoords[0] + squareSize, markerCoords[1] + squareSize], // Top right
-      [markerCoords[0] + squareSize, markerCoords[1] - squareSize], // Bottom right
-      [markerCoords[0] - squareSize, markerCoords[1] - squareSize], // Close the square
-    ]);
-  }, [squareSize, markerCoords]);
-
-  useEffect(() => {
-    console.log("squareCoordinates", squareCoordinates);
-  }, [squareCoordinates]);
-
   const layerStyle: LayerProps = {
-    id: "square",
+    id: "circle",
     type: "line",
     paint: {
-      "line-color": "#007cbf", // Color of the border
-      "line-width": 2, // Width of the border
+      "line-color": "#007cbf", // Color of the circle outline
+      "line-width": 2, // Width of the circle outline
+      "line-opacity": 0.8, // Opacity of the circle outline
     },
   };
 
@@ -240,7 +213,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             antialias={true}
           >
             <Marker
-              // className={`p-10 border-2 border-[#8CCBF7]`}
               longitude={coordinates?.longitude}
               latitude={coordinates?.latitude}
               anchor="center"
@@ -258,13 +230,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               </div>
             </Marker>
             <Source
-              id="square"
+              id="circle"
               type="geojson"
               data={{
                 type: "Feature",
                 geometry: {
                   type: "Polygon",
-                  coordinates: [squareCoordinates],
+                  coordinates: [circleCoordinates],
                 },
               }}
             >
@@ -328,7 +300,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   />
                 </div>
                 <div className="">
-                  <span className="p-1">{sliderValue}</span>
+                  <span className="p-1">{sliderValue * 100} meters</span>
                 </div>
                 <div className="flex justify-center gap-5">
                   <div className="w-2/4">
@@ -347,10 +319,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       ) : (
         <></>
       )}
-
-      {/* <div className="absolute bg-transparent bottom-10 right-20 scale-105 z-20">
-        <FloatingDock items={links} desktopClassName="bg-transparent " />
-      </div> */}
     </div>
   );
 };
