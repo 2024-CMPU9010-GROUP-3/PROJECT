@@ -27,12 +27,39 @@ def get_images(imag_save_path, longitude, latitude, mapbox_type):
         img.save(imag_save_path)
         print(f"Image saved to {imag_save_path}")
 
+def create_mask_using_canny(image_path, save_path, low_threshold=30, high_threshold=100):
+   """
+    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets) using Canny edge detction
+
+    Params:
+        image_path (str): Path of the image
+        save_path (str): Path to save the mask
+        low_threshold (int): Lower threshold for Canny edge detection
+        high_threshold (int): Upper threshold for Canny edge detection
+    """
+   img = cv2.imread(image_path)
+   img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+   blurred = cv2.GaussianBlur(img_gray, (3, 3), 0)
+   edges = cv2.Canny(blurred, low_threshold, high_threshold)
+
+   kernel = np.ones((2, 2), np.uint8)
+   edges_cleaned = cv2.morphologyEx(edges, cv2.MORPH_OPEN, kernel)
+   contours, _ = cv2.findContours(edges_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+   mask_filtered = np.zeros_like(edges)
+
+   for contour in contours:
+        if cv2.contourArea(contour) > 100:
+            cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
+
+   cv2.imwrite(save_path, mask_filtered)
 
 def create_mask(image_path, save_path, threshold=240):
     """
     Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets).
     The roads are in white and some additional roads are in orange/yellow (highways/ roads with more lanes).
-    The street names are also removed in a way as to not distort the road sizes
+    Most of the street names are removed in a way as to not distort the road sizes. (Some text remains as then 
+    smaller roads (where the name takes up the entire width) would be completly erased)
 
     Params:
         image_path (str): Path of the image
@@ -61,7 +88,7 @@ def create_mask(image_path, save_path, threshold=240):
     mask_filtered = np.zeros_like(combined_mask)
 
     for contour in contours:
-        if cv2.contourArea(contour) > 500: #still tune?
+        if cv2.contourArea(contour) > 400: 
             cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
 
     cv2.imwrite(save_path, mask_filtered)
@@ -226,7 +253,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
     Returns: 
         all_detections (list): List of all coordinates of parking spots found in the image
     """
-    output_folder = 'image_output'
+    output_folder = 'image_output_new'
     output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
     output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
@@ -235,7 +262,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
     get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
     get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
-    create_mask(output_path_road_image, output_path_mask_image)
+    create_mask_using_canny(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
 
     all_detections = []
@@ -344,8 +371,8 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
         bottom_right_latitude (float): Latitude of the bottom right corner of the bounding box
 
     """
-    if not os.path.exists("image_output"):
-        os.makedirs("image_output")
+    if not os.path.exists("image_output_new"):
+        os.makedirs("image_output_new")
 
     model = YOLO("best.pt")
 
@@ -366,5 +393,4 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
 
 if __name__ == "__main__":
-    #main(-6.279, 53.3558, -6.2589, 53.3638)
-    main(-6.2756, 53.3408, -6.2446, 53.3531)
+    main(-6.2412, 53.343, -6.2339, 53.3459)
