@@ -28,6 +28,7 @@
     "lucide-react": "^0.453.0",
     "mapbox-gl": "^3.6.0",
     "next": "14.2.15",
+    "next-auth": "^4.24.8",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.0",
@@ -35,7 +36,8 @@
     "react-loader-spinner": "^6.1.6",
     "react-map-gl": "^7.1.7",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20",

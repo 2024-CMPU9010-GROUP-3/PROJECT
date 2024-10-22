@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/registry/button";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation";
+import { signup } from "@/app/actions"; // 确保路径正确
+
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   username?: string;
@@ -64,56 +66,31 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       return;
     }
 
-    console.log("Backend URL:", process.env.NEXT_PUBLIC_BACKEND_URL); // debug
-
+    const formData = new FormData(); // 创建 FormData 对象
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("firstName", firstName);
+    formData.append("lastName", lastName); // 添加表单数据
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: email.split("@")[0],
-            email,
-            password,
-            firstName,
-            lastName,
-          }),
+      const response = await signup(formData); // 调用 Server Action
+
+      if (response.errors) {
+        // 使用类型保护来确保 response.errors 是包含 email 的对象
+        if ('email' in response.errors) {
+          setErrorMessage(response.errors.email?.[0] || null);
+        } else if ('password' in response.errors) {
+          setErrorMessage(response.errors.password?.[0] || null);
+        } else if ('firstName' in response.errors) {
+          setErrorMessage(response.errors.firstName?.[0] || null);
+        } else if ('lastName' in response.errors) {
+          setErrorMessage(response.errors.lastName?.[0] || null);
         }
-      );
-      console.log("Response:", response);
-      const responseData = await response.json();
-
-      if (response.ok) {
-        // handle successful registration
-        console.log("Registration successful:", responseData); // print success response
-
-        // store user info and login status
-        localStorage.setItem("token", responseData.bearerToken); // store token
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify({
-            // store user info
-            username: responseData.username,
-            email: responseData.email,
-            firstName: responseData.firstName,
-            lastName: responseData.lastName,
-          })
-        );
-
-        alert("Sign up successful"); // display success message
-        console.log("Redirecting to home page"); // display redirect message
-        console.log("User info:", localStorage.getItem("userInfo")); // display user info
-        console.log("Token:", localStorage.getItem("token")); // display token
-        console.log("Router:", router); // display router
-        router?.push("/"); // redirect to home
       } else {
-        // Handle errors
-        console.error("Registration failed:", responseData);
-        setErrorMessage("Registration failed: " + responseData.message); // display error message
-        alert("Sign up failed: " + responseData.message); // alert user that sign up failed
+        // 注册成功后的处理逻辑
+        console.log("Registration successful:", response);
+        alert("Sign up successful");
+        console.log("Redirecting to home page");
+        router?.push("/");
       }
     } catch (error) {
       console.error("An error occurred", error);

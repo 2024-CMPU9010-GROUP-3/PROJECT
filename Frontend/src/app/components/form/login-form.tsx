@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react"; // useState and useEffect
+import { useState } from "react"; // useState
 import { Button } from "@/components/ui/registry/button";
 import {
   Card,
@@ -13,61 +13,27 @@ import {
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation"; // useRouter
-import { useAuth } from "@/app/components/AuthContext"; // 导入 AuthContext
+import { login } from "@/app/actions"; // 导入 login Server Action
 
 export function LoginForm() {
-  const auth = useAuth(); // 使用 AuthContext
-  const { setIsLoggedIn } = auth || { setIsLoggedIn: () => {} }; // 确保 setIsLoggedIn 存在
-  const [usernameOrEmail, setUsernameOrEmail] = useState(""); // allow login with username or email
-  const [password, setPassword] = useState(""); // password state
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
-  const [isLoading, setIsLoading] = useState(false); // loading state
+  const [username, setUsername] = useState(""); // 用户名状态
+  const [password, setPassword] = useState(""); // 密码状态
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 错误信息
   const router = useRouter(); // router
 
   const onSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault(); // prevent default form submission behavior
-    setIsLoading(true); // set loading state
+    event.preventDefault(); // 防止默认表单提交行为
 
-    // check if fields are empty
-    if (!usernameOrEmail.trim() || !password.trim()) {
-      setErrorMessage("Fields cannot be empty");
-      setIsLoading(false);
-      return;
-    }
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('password', password);
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ username: usernameOrEmail, password }),
-        }
-      );
+    const result = await login(formData); // 调用 Server Action
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("data", data);
-        if (data.bearertoken) {
-          localStorage.setItem("token", data.bearertoken); // store token
-
-          setIsLoggedIn(true); // 更新登录状态
-          router.push("/"); // redirect to home
-        } else {
-          setErrorMessage("Login failed: No token received");
-        }
-      } else {
-        const errorData = await response.text();
-        setErrorMessage("Login failed: " + errorData);
-      }
-    } catch (error) {
-      console.error("An error occurred", error);
-      setErrorMessage("An error occurred during login");
-    } finally {
-      setIsLoading(false); // reset loading state
+    if (result.errors) {
+      setErrorMessage(result.errors.username?.[0] || result.errors.password?.[0] || null);
+    } else {
+      router.push("/"); // 登录成功后重定向
     }
   };
 
@@ -83,14 +49,13 @@ export function LoginForm() {
         <form onSubmit={onSubmit}>
           <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="usernameOrEmail">Username/Email</Label>
+              <Label htmlFor="username">Username</Label>
               <Input
-                id="usernameOrEmail"
+                id="username"
                 type="text"
-                placeholder="username or m@example.com"
                 required
-                value={usernameOrEmail}
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
@@ -108,8 +73,8 @@ export function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
+            <Button type="submit">
+              Login
             </Button>
             {errorMessage && <div className="text-red-500">{errorMessage}</div>}
           </div>
