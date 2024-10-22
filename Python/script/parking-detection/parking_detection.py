@@ -54,14 +54,14 @@ def create_mask(image_path, save_path, threshold=240):
     combined_mask = cv2.bitwise_or(road_mask, orange_mask)
     combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
 
-    kernel = np.ones((2, 2), np.uint8)
-    combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel)
+    kernel = np.ones((2, 2), np.uint8)#use smaller kernel as it works better
+    combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_OPEN, kernel)#cv2.MORPH_OPEN works overall bettr than cv2.MORPH_CLOSE
 
     contours, _ = cv2.findContours(combined_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     mask_filtered = np.zeros_like(combined_mask)
 
     for contour in contours:
-        if cv2.contourArea(contour) > 400: 
+        if cv2.contourArea(contour) > 500: #still tune?
             cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
 
     cv2.imwrite(save_path, mask_filtered)
@@ -232,8 +232,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -351,7 +351,6 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
     get_parking_coords_in_image(model, top_left_longitude, top_left_latitude)
 
-    """
     centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
 
     all_detections = []
@@ -364,8 +363,8 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
     df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
-    """
 
 
 if __name__ == "__main__":
-    main(-6.2039, 53.2968, -6.3031, 53.4068)
+    #main(-6.279, 53.3558, -6.2589, 53.3638)
+    main(-6.2756, 53.3408, -6.2446, 53.3531)
