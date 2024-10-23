@@ -209,7 +209,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         >
           <Map
             mapboxAccessToken={mapBoxApiKey}
-            mapStyle="mapbox://styles/mapbox/streets-v8"
+            mapStyle="mapbox://styles/kaustubhtrivedi/cm2l58j8w007b01r61q9064bv"
             antialias={true}
           >
             <Marker
