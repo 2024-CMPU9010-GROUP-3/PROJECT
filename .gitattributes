@@ -10,7 +10,7 @@
 *.tex text eol=crlf
 *.bib text eol=crlf
 
-# Appky CRLF to Python files
+# Apply CRLF to Python files
 *.py text eol=crlf
 
 # Apply CRLF to Markdown files
