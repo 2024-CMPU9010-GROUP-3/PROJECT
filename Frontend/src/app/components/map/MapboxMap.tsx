@@ -1,13 +1,12 @@
 "use client";
 
-import React, { Fragment, useEffect, useState } from "react";
-import Map, { Marker } from "react-map-gl";
+import React, { Fragment, useEffect, useMemo, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import DeckGL from "@deck.gl/react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { MapClickEvent } from "@/lib/interfaces/types";
 import { Coordinates } from "@/lib/interfaces/types";
-
+import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
 import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
 // import { FloatingDock } from "@/components/ui/floating-dock";
 // import { IconHome } from "@tabler/icons-react";
@@ -27,26 +26,66 @@ type TListOfPlaces = {
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
   const [isMarkerVisible, setIsMarkerVisible] = useState<boolean>(false);
-
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
     longitude: 0,
   });
-
-  const [markerSquareSize, setMarkerSquareSize] = useState<number>(0);
+  // const [markerSquareSize, setMarkerSquareSize] = useState<number>(0.027);
   const [currentPositionCords, setCurrentPositionCords] = useState<Coordinates>(
     { latitude: 0, longitude: 0 }
   );
-  const [sliderValue, setSliderValue] = useState<number>(0);
+  const [sliderValue, setSliderValue] = useState<number>(40);
+  const markerCoords = useMemo(
+    () => [coordinates?.longitude, coordinates?.latitude],
+    [coordinates]
+  );
+
+  const [circleCoordinates, setCircleCoordinates] = useState<number[][]>(() => {
+    const radiusInMeters = sliderValue * 100; // Convert slider value to meters
+    const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
+    const numPoints = 64; // Number of points to define the circle
+    const angleStep = (2 * Math.PI) / numPoints;
+    const coordinates = [];
+
+    for (let i = 0; i < numPoints; i++) {
+      const angle = i * angleStep;
+      const x =
+        markerCoords[0] +
+        (radiusInDegrees * Math.cos(angle)) /
+          Math.cos(markerCoords[1] * (Math.PI / 180));
+      const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
+      coordinates.push([x, y]);
+    }
+
+    // Close the circle
+    coordinates.push(coordinates[0]);
+
+    return coordinates;
+  });
 
   useEffect(() => {
-    setMarkerSquareSize(sliderValue * 100);
-  }, [sliderValue]);
+    const radiusInMeters = sliderValue * 100; // Convert slider value to meters
+    const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
+    const numPoints = 64; // Number of points to define the circle
+    const angleStep = (2 * Math.PI) / numPoints;
+    const coordinates = [];
 
-  useEffect(() => {
-    console.log("Marker Square Size>>>>", markerSquareSize);
-    console.log(markerSquareSize);
-  }, [markerSquareSize]);
+    for (let i = 0; i < numPoints; i++) {
+      const angle = i * angleStep;
+      const x =
+        markerCoords[0] +
+        (radiusInDegrees * Math.cos(angle)) /
+          Math.cos(markerCoords[1] * (Math.PI / 180));
+      const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
+      coordinates.push([x, y]);
+    }
+
+    // Close the circle
+    coordinates.push(coordinates[0]);
+
+    setCircleCoordinates(coordinates);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sliderValue, markerCoords]);
 
   useEffect(() => {
     // Fetch Mapbox API key from the server
@@ -66,15 +105,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   function success(pos: GeolocationPosition) {
     const crd = pos.coords;
-
-    console.log("Your current position is:");
-    console.log(`Latitude : ${crd.latitude}`);
-    console.log(`Longitude: ${crd.longitude}`);
     setCurrentPositionCords({
       latitude: crd.latitude,
       longitude: crd.longitude,
     });
-    console.log(`More or less ${crd.accuracy} meters.`);
   }
 
   function error(err: unknown) {
@@ -144,30 +178,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     },
   ];
 
-  // const links = [
-  //   {
-  //     title: "Home",
-  //     icon: (
-  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-  //     ),
-  //     href: "#",
-  //   },
-  //   {
-  //     title: "Home",
-  //     icon: (
-  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-  //     ),
-  //     href: "#",
-  //   },
-  //   {
-  //     title: "Home",
-  //     icon: (
-  //       <IconHome className="h-full w-full text-neutral-500 dark:text-neutral-300" />
-  //     ),
-  //     href: "#",
-  //   },
-  // ];
-
   // Handle map click event
   const handleMapClick = (event: unknown) => {
     const mapClickEvent = event as MapClickEvent; // Type assertion
@@ -176,6 +186,16 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       setCoordinates({ latitude, longitude });
       setIsMarkerVisible(true);
     }
+  };
+
+  const layerStyle: LayerProps = {
+    id: "circle",
+    type: "line",
+    paint: {
+      "line-color": "#007cbf", // Color of the circle outline
+      "line-width": 2, // Width of the circle outline
+      "line-opacity": 0.8, // Opacity of the circle outline
+    },
   };
 
   return (
@@ -189,11 +209,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         >
           <Map
             mapboxAccessToken={mapBoxApiKey}
-            mapStyle="mapbox://styles/mapbox/streets-v8"
+            mapStyle="mapbox://styles/kaustubhtrivedi/cm2l58j8w007b01r61q9064bv"
             antialias={true}
           >
             <Marker
-              className={`p-10 border-2 border-[#8CCBF7]`}
               longitude={coordinates?.longitude}
               latitude={coordinates?.latitude}
               anchor="center"
@@ -210,6 +229,19 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <FaLocationDot size={35} color="blue" />
               </div>
             </Marker>
+            <Source
+              id="circle"
+              type="geojson"
+              data={{
+                type: "Feature",
+                geometry: {
+                  type: "Polygon",
+                  coordinates: [circleCoordinates],
+                },
+              }}
+            >
+              <Layer {...layerStyle} />
+            </Source>
           </Map>
         </DeckGL>
       ) : (
@@ -251,39 +283,42 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </div>
         </div>
       )}
-      <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
-        <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
-          <div className="px-2 py-4 space-y-2">
-            <div className="space-y-1">
-              <label>Distance</label>
-              <Slider
-                onValueChange={(value) => setSliderValue(value[0])}
-                defaultValue={[0]}
-                max={100}
-                step={1}
-                className={cn("w-[60%]", className)}
-                {...props}
-              />
-            </div>
-            <div className="">
-              <span className="p-1">{sliderValue}</span>
-            </div>
-            <div className="flex justify-center gap-5">
-              <div className="w-2/4">
-                <label>Long</label>
-                <Input />
-              </div>
-              <div className="w-2/4">
-                <label>Lat</label>
-                <Input />
+      {mapBoxApiKey ? (
+        <>
+          <div className="absolute bg-transparent top-20 right-32 scale-125 transition-all">
+            <div className="2xl:min-w-[200px] 2xl:max-w-[300px] bg-white rounded-xl ">
+              <div className="px-2 py-4 space-y-2">
+                <div className="space-y-1">
+                  <label>Distance</label>
+                  <Slider
+                    onValueChange={(value) => setSliderValue(value[0])}
+                    defaultValue={[sliderValue]}
+                    max={100}
+                    step={1}
+                    className={cn("w-[60%]", className)}
+                    {...props}
+                  />
+                </div>
+                <div className="">
+                  <span className="p-1">{sliderValue * 100} meters</span>
+                </div>
+                <div className="flex justify-center gap-5">
+                  <div className="w-2/4">
+                    <label>Long</label>
+                    <Input />
+                  </div>
+                  <div className="w-2/4">
+                    <label>Lat</label>
+                    <Input />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      {/* <div className="absolute bg-transparent bottom-10 right-20 scale-105 z-20">
-        <FloatingDock items={links} desktopClassName="bg-transparent " />
-      </div> */}
+        </>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

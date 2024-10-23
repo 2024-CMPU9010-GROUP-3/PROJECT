@@ -55,14 +55,14 @@ There are currently three different route access levels for public routes in the
 
 ## Points
 
-### `GET` `/v1/public/points/byRadius?long={}&lat={}&radius={}`
+### `GET` `/v1/public/points/inRadius?long={}&lat={}&radius={}`
 
 - **Access:** `authenticated`
 - **Path Parameters:** None
 - **Query Parameters:** Longitude, Latitude, Radius
 - **Accepts:** None
 - **Response:** JSON (List of points)
-- **Description:** This route returns all points in a square with a given radius around the given latitude and longitude
+- **Description:** This route returns all points in a circle with a given radius around the given latitude and longitude
 
 ### `GET` `/v1/public/points/{id}`
 

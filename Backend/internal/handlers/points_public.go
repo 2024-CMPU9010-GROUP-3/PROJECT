@@ -5,12 +5,12 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"net/http"
 	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/public"
-	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util"
+	customErrors "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/errors"
+	resp "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/responses"
 	"github.com/jackc/pgx/v5"
 	"github.com/twpayne/go-geom/encoding/geojson"
 )
@@ -32,24 +32,14 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 
 	// bad request if any parameters can't be parsed to float
 	if err_long != nil || err_lat != nil || err_radius != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Parameter.InvalidFloatError, w)
 		return
 	}
 
-	// construct envelope
-	x1 := long - radius
-	y1 := lat - radius
-	x2 := long + radius
-	y2 := lat + radius
-
-	points, err := db.New(dbConn).GetPointsInEnvelope(*dbCtx, db.GetPointsInEnvelopeParams{X1: x1, Y1: y1, X2: x2, Y2: y2})
+	points, err := db.New(dbConn).GetPointsInRadius(*dbCtx, db.GetPointsInRadiusParams{Latitude: lat, Longitude: long, Radius: radius})
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows) {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		} else {
-			log.Printf("Could not get points from database, unknown error: %+v\n", err)
-			w.WriteHeader(http.StatusInternalServerError)
+		if !errors.Is(err, pgx.ErrNoRows) {
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 			return
 		}
 	}
@@ -59,7 +49,8 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 	for _, p := range points {
 		longlat, err := geojson.Encode(p.Longlat)
 		if err != nil {
-			log.Printf("Could not encode point: %+v\n", err)
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
+			return
 		} else {
 			pointDtos = append(pointDtos, pointDto{
 				p.ID,
@@ -68,8 +59,7 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 			})
 		}
 	}
-	err = json.NewEncoder(w).Encode(pointDtos)
-	util.CheckResponseError(err, w)
+	resp.SendResponse(resp.Response{Content: pointDtos, HttpStatus: http.StatusOK}, w)
 }
 
 func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Request) {
@@ -78,19 +68,17 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 
 	// bad request if id can't be parsed to int
 	if err != nil {
-		log.Printf("Invalid path parameter: %v\n", err)
-		w.WriteHeader(http.StatusBadRequest)
+		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
 		return
 	}
 
 	pointDetailsBytes, err := db.New(dbConn).GetPointDetails(*dbCtx, pointId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			w.WriteHeader(http.StatusNotFound)
+			resp.SendError(customErrors.NotFound.PointNotFoundError, w)
 			return
 		} else {
-			log.Printf("Could not get point details from database: %+v\n", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 			return
 		}
 	}
@@ -99,15 +87,9 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 	var decodedDetails json.RawMessage
 	err = json.Unmarshal(pointDetailsBytes, &decodedDetails)
 	if err != nil {
-		log.Printf("Received invalid json from database: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		resp.SendError(customErrors.Internal.JsonDecodingError, w)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(decodedDetails)
-	if err != nil {
-		log.Printf("Could not send bearer token as response: %+v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	resp.SendResponse(resp.Response{Content: decodedDetails, HttpStatus: http.StatusOK}, w)
 }

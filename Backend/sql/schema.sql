@@ -1,4 +1,4 @@
-CREATE TYPE point_type AS ENUM ('placeholder1', 'placeholder2');
+CREATE TYPE point_type AS ENUM ('parking');
 
 CREATE TABLE points (
   Id BIGSERIAL PRIMARY KEY,
