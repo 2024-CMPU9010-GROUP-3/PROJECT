@@ -27,9 +27,10 @@ def get_images(imag_save_path, longitude, latitude, mapbox_type):
         img.save(imag_save_path)
         print(f"Image saved to {imag_save_path}")
 
-def create_mask_using_canny(image_path, save_path, low_threshold=30, high_threshold=100):
+def create_mask_using_canny(image_path, save_path, low_threshold=50, high_threshold=200):
    """
     Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets) using Canny edge detction
+    Gives worse results than the original and previous mask as there are too many edges interfering with the road
 
     Params:
         image_path (str): Path of the image
@@ -39,20 +40,36 @@ def create_mask_using_canny(image_path, save_path, low_threshold=30, high_thresh
     """
    img = cv2.imread(image_path)
    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+   _, road_mask = cv2.threshold(img_gray, 240, 255, cv2.THRESH_BINARY)
 
-   blurred = cv2.GaussianBlur(img_gray, (3, 3), 0)
-   edges = cv2.Canny(blurred, low_threshold, high_threshold)
+   img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+   lower_orange = np.array([10, 100, 100])
+   upper_orange = np.array([25, 255, 255])
+   lower_yellow = np.array([25, 100, 100])
+   upper_yellow = np.array([35, 255, 255])
 
-   kernel = np.ones((2, 2), np.uint8)
-   edges_cleaned = cv2.morphologyEx(edges, cv2.MORPH_OPEN, kernel)
+   orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
+   yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
+   combined_mask = cv2.bitwise_or(road_mask, orange_mask)
+   combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+   masked_img = cv2.bitwise_and(img_gray, img_gray, mask=combined_mask)
+   edges = cv2.Canny(masked_img, low_threshold, high_threshold)
+
+   kernel = np.ones((3, 3), np.uint8)
+   edges_cleaned = cv2.dilate(edges, kernel, iterations=1)
+   edges_cleaned = cv2.erode(edges_cleaned, kernel, iterations=1)
+   edges_cleaned = cv2.morphologyEx(edges_cleaned, cv2.MORPH_CLOSE, kernel)
+
    contours, _ = cv2.findContours(edges_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
    mask_filtered = np.zeros_like(edges)
 
    for contour in contours:
-        if cv2.contourArea(contour) > 100:
+        if cv2.contourArea(contour) > 50: 
             cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
 
    cv2.imwrite(save_path, mask_filtered)
+
 
 def create_mask(image_path, save_path, threshold=240):
     """
@@ -253,7 +270,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
     Returns: 
         all_detections (list): List of all coordinates of parking spots found in the image
     """
-    output_folder = 'image_output_new'
+    output_folder = 'image_output'
     output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
     output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
@@ -262,7 +279,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
     get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
     get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
-    create_mask_using_canny(output_path_road_image, output_path_mask_image)
+    create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
 
     all_detections = []
@@ -371,8 +388,8 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
         bottom_right_latitude (float): Latitude of the bottom right corner of the bounding box
 
     """
-    if not os.path.exists("image_output_new"):
-        os.makedirs("image_output_new")
+    if not os.path.exists("image_output"):
+        os.makedirs("image_output")
 
     model = YOLO("best.pt")
 
@@ -393,4 +410,4 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
 
 if __name__ == "__main__":
-    main(-6.2412, 53.343, -6.2339, 53.3459)
+    main(-6.2567, 53.3507, -6.2463, 53.3549)
