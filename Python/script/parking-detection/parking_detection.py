@@ -27,11 +27,57 @@ def get_images(imag_save_path, longitude, latitude, mapbox_type):
         img.save(imag_save_path)
         print(f"Image saved to {imag_save_path}")
 
+def create_mask_using_canny(image_path, save_path, low_threshold=50, high_threshold=200):
+   """
+    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets) using Canny edge detction
+    Gives worse results than the original and previous mask as there are too many edges interfering with the road
+
+    Params:
+        image_path (str): Path of the image
+        save_path (str): Path to save the mask
+        low_threshold (int): Lower threshold for Canny edge detection
+        high_threshold (int): Upper threshold for Canny edge detection
+    """
+   img = cv2.imread(image_path)
+   img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+   _, road_mask = cv2.threshold(img_gray, 240, 255, cv2.THRESH_BINARY)
+
+   img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+   lower_orange = np.array([10, 100, 100])
+   upper_orange = np.array([25, 255, 255])
+   lower_yellow = np.array([25, 100, 100])
+   upper_yellow = np.array([35, 255, 255])
+
+   orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
+   yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
+   combined_mask = cv2.bitwise_or(road_mask, orange_mask)
+   combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+   masked_img = cv2.bitwise_and(img_gray, img_gray, mask=combined_mask)
+   edges = cv2.Canny(masked_img, low_threshold, high_threshold)
+
+   kernel = np.ones((3, 3), np.uint8)
+   edges_cleaned = cv2.dilate(edges, kernel, iterations=1)
+   edges_cleaned = cv2.erode(edges_cleaned, kernel, iterations=1)
+   edges_cleaned = cv2.morphologyEx(edges_cleaned, cv2.MORPH_CLOSE, kernel)
+
+   contours, _ = cv2.findContours(edges_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+   mask_filtered = np.zeros_like(edges)
+
+   for contour in contours:
+        if cv2.contourArea(contour) > 50: 
+            cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
+
+   cv2.imwrite(save_path, mask_filtered)
+
 
 def create_mask(image_path, save_path, threshold=240):
     """
-    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets). The roads are in white while the rest of the image is darker
-    
+    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets).
+    The roads are in white and some additional roads are in orange/yellow (highways/ roads with more lanes).
+    Most of the street names are removed in a way as to not distort the road sizes. (Some text remains as then 
+    smaller roads (where the name takes up the entire width) would be completly erased)
+
     Params:
         image_path (str): Path of the image
         save_path (str): Path to save the mask
@@ -39,18 +85,29 @@ def create_mask(image_path, save_path, threshold=240):
     """
     img = cv2.imread(image_path)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
     _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
-    kernel = np.ones((5, 5), np.uint8)
-    road_mask_dilated = cv2.dilate(road_mask, kernel, iterations=2)
-    
-    contours, _ = cv2.findContours(road_mask_dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    mask_filtered = np.zeros_like(road_mask)
-    
+
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    lower_orange = np.array([10, 100, 100])
+    upper_orange = np.array([25, 255, 255])
+    lower_yellow = np.array([25, 100, 100])
+    upper_yellow = np.array([35, 255, 255])
+
+    orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
+    yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
+    combined_mask = cv2.bitwise_or(road_mask, orange_mask)
+    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+    kernel = np.ones((2, 2), np.uint8)#use smaller kernel as it works better
+    combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel)#cv2.MORPH_CLOSE actually works better
+
+    contours, _ = cv2.findContours(combined_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    mask_filtered = np.zeros_like(combined_mask)
+
     for contour in contours:
-        if cv2.contourArea(contour) > 600:  #tune this
+        if cv2.contourArea(contour) > 300: 
             cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
-    
+
     cv2.imwrite(save_path, mask_filtered)
 
 def old_mask(image_path, save_path, threshold=240):
@@ -68,6 +125,35 @@ def old_mask(image_path, save_path, threshold=240):
 
     _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
     cv2.imwrite(save_path, road_mask)
+
+def new_mask(image_path, save_path, threshold=240):
+    """
+    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets).
+    The roads are in white and some additional roads are in orange/yellow (highways/ roads with more lanes).
+
+    Params:
+        image_path (str): Path of the image
+        save_path (str): Path to save the mask
+        threshold (int): Threshold to differentiate the road from the areas outside of the road
+    """
+    img = cv2.imread(image_path)
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
+
+    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    lower_orange = np.array([10, 100, 100])
+    upper_orange = np.array([25, 255, 255])
+    lower_yellow = np.array([25, 100, 100])
+    upper_yellow = np.array([35, 255, 255])
+
+    orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
+    yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
+
+    combined_mask = cv2.bitwise_or(road_mask, orange_mask)
+    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+    cv2.imwrite(save_path, combined_mask)
+
 
 def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
     """
@@ -193,7 +279,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
     get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
     get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
-    old_mask(output_path_road_image, output_path_mask_image)
+    create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
 
     all_detections = []
@@ -305,7 +391,9 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     if not os.path.exists("image_output"):
         os.makedirs("image_output")
 
-    model = YOLO("best.pt")
+    model = YOLO("finaltrain_weights.pt")
+
+    get_parking_coords_in_image(model, top_left_longitude, top_left_latitude)
 
     centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
 
@@ -322,4 +410,5 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
 
 if __name__ == "__main__":
-    main(-6.3072, 53.4044, -6.3031, 53.4068)
+    main(-6.3045, 53.3581, -6.2857, 53.3694)
+    #main(-6.4148, 53.2603, -6.1553, 53.4153) #all of dublin
