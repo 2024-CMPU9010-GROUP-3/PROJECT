@@ -12,7 +12,6 @@ import { signup } from "@/app/actions"; // 确保路径正确
 
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
-  username?: string;
   password?: string;
   confirmPassword?: string;
   email?: string;
@@ -25,6 +24,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [confirmPassword, setConfirmPassword] = React.useState<string>("");
   const [firstName, setFirstName] = React.useState<string>("");
   const [lastName, setLastName] = React.useState<string>("");
+  const [profilePicture, setProfilePicture] = React.useState<string | null>(null); // 初始化为 null
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);
@@ -33,7 +33,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
-    setErrorMessage(null); // clear error previous message
+    setErrorMessage(null); // clear previous error message
 
     if (
       !email.trim() ||
@@ -52,8 +52,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     const passwordComplexity =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordComplexity.test(password)) {
-      console.error("Password does not meet complexity requirements");
-      setErrorMessage("Password does not meet complexity requirements");
+      console.error("Password must contain uppercase, lowercase numbers and special characters");
+      setErrorMessage("Password must contain uppercase, lowercase numbers and special characters");
       setIsLoading(false);
       return;
     }
@@ -66,16 +66,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       return;
     }
 
-    const formData = new FormData(); // 创建 FormData 对象
+    const formData = new FormData(); // create a new FormData object
     formData.append("email", email);
     formData.append("password", password);
     formData.append("firstName", firstName);
-    formData.append("lastName", lastName); // 添加表单数据
+    formData.append("lastName", lastName); // 
+    formData.append("profilePicture", profilePicture || ""); // set profilePicture to empty string if it's null
     try {
-      const response = await signup(formData); // 调用 Server Action
+      const response = await signup(formData); // call the signup Server Action
 
       if (response.errors) {
-        // 使用类型保护来确保 response.errors 是包含 email 的对象
+        // use the errors object from the response to set the error message
         if ('email' in response.errors) {
           setErrorMessage(response.errors.email?.[0] || null);
         } else if ('password' in response.errors) {
@@ -86,7 +87,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           setErrorMessage(response.errors.lastName?.[0] || null);
         }
       } else {
-        // 注册成功后的处理逻辑
+        // Logic to handle successful registration
         console.log("Registration successful:", response);
         alert("Sign up successful");
         console.log("Redirecting to home page");

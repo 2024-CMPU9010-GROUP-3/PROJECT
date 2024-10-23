@@ -16,24 +16,41 @@ import { useRouter } from "next/navigation"; // useRouter
 import { login } from "@/app/actions"; // 导入 login Server Action
 
 export function LoginForm() {
-  const [username, setUsername] = useState(""); // 用户名状态
-  const [password, setPassword] = useState(""); // 密码状态
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 错误信息
+  const [username, setUsername] = useState(""); // username status
+  const [password, setPassword] = useState(""); // password status
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // error messesage
   const router = useRouter(); // router
+  const [isLoading, setIsLoading] = useState(false); //  loading state
 
   const onSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault(); // 防止默认表单提交行为
+    event.preventDefault(); // avoid defauld form submission
+    setIsLoading(true); // set loading
+    setErrorMessage(null); //   clear previous error message
+
+    //  validate fields
+    if (!username.trim() || !password.trim()) {
+      setErrorMessage("Username and password are required");
+      setIsLoading(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.append('username', username);
     formData.append('password', password);
 
-    const result = await login(formData); // 调用 Server Action
+    try {
+      const result = await login(formData); //  login
 
-    if (result.errors) {
-      setErrorMessage(result.errors.username?.[0] || result.errors.password?.[0] || null);
-    } else {
-      router.push("/"); // 登录成功后重定向
+      if (result.errors) {
+        setErrorMessage(result.errors.username?.[0] || result.errors.password?.[0] || null);
+      } else {
+        router.push("/"); //  redirect to home
+      }
+    } catch (error) {
+      console.error("An error occurred during login:", error);
+      setErrorMessage("Login failed, please try again later.");
+    } finally {
+      setIsLoading(false); //   set loading to false
     }
   };
 
@@ -73,8 +90,8 @@ export function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit">
-              Login
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
             {errorMessage && <div className="text-red-500">{errorMessage}</div>}
           </div>

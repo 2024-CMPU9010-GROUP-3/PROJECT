@@ -11,18 +11,19 @@ const loginSchema = z.object({
 
 const signupSchema = z.object({
   email: z.string().email({ message: "Invalid email" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  password: z.string().min(8, { message: "Password must contain uppercase, lowercase numbers and special characters" }),
   firstName: z.string().min(1, { message: "First name is required" }),
   lastName: z.string().min(1, { message: "Last name is required" }),
+  profilePicture: z.string().optional(), // optional
 });
 
-// 密码复杂性检查
-const passwordComplexity = (password: string) => {
-  const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  return complexityRegex.test(password);
-};
+// // check password complexity
+// const passwordComplexity = (password: string) => {
+//   const complexityRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+//   return complexityRegex.test(password);
+// };
 
-// 登录 Server Action
+// Login Server Action
 export async function login(formData: FormData) {
   const parsedData = loginSchema.safeParse({
     username: formData.get('username'),
@@ -35,7 +36,7 @@ export async function login(formData: FormData) {
 
   const { username, password } = parsedData.data;
 
-  // 调用后端 API 进行登录
+  // call backend api to fetch
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`, {
     method: 'POST',
     headers: {
@@ -48,43 +49,58 @@ export async function login(formData: FormData) {
     throw new Error('Login failed');
   }
 
-  // 登录成功后重定向
+  // redirect after login successfully
   redirect('/');
 }
 
-// 注册 Server Action
+// signup Server Action
 export async function signup(formData: FormData) {
   const parsedData = signupSchema.safeParse({
-    email: formData.get('email') as string, // 强制转换为 string
-    password: formData.get('password') as string, // 强制转换为 string
-    firstName: formData.get('firstName') as string, // 强制转换为 string
-    lastName: formData.get('lastName') as string, // 强制转换为 string
+    email: formData.get('email'),
+    password: formData.get('password'),
+    firstName: formData.get('firstName'),
+    lastName: formData.get('lastName'),
+    profilePicture: formData.get('profilePicture'), 
   });
 
   if (!parsedData.success) {
     return { errors: parsedData.error.flatten().fieldErrors };
   }
 
-  const { email, password, firstName, lastName } = parsedData.data;
+  const { email, password, firstName, lastName, profilePicture } = parsedData.data; 
 
-  // 检查密码复杂性
-  if (!passwordComplexity(password)) {
-    return { errors: { password: "Password does not meet complexity requirements" } };
-  }
+  // extract username
+  const username = email.split("@")[0]; // Use the first half of your email as username
 
-  // 调用后端 API 进行注册
+//   // check password complexity
+//   if (!passwordComplexity(password)) {
+//     return { errors: { password: "Password must contain uppercase, lowercase numbers and special characters" } };
+//   }
+
+  // Print request data for debugging
+  console.log('Signup data:', { email, password, firstName, lastName, username, profilePicture });
+
+  // call backend api to fetch
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/signup`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email, password, firstName, lastName }),
+    body: JSON.stringify({ 
+      username, 
+      email, 
+      password, 
+      firstName, 
+      lastName, 
+      profilePicture 
+    }),
   });
 
   if (!res.ok) {
-    throw new Error('Signup failed');
+    const errorMessage = await res.text(); // await for the response text
+    throw new Error(`Signup failed: ${errorMessage}`); // throw an error with the error message
   }
 
-  // 注册成功后重定向
+  // redirect after signup successfully
   redirect('/');
 }
