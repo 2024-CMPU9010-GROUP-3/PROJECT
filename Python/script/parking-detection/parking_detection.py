@@ -99,13 +99,13 @@ def create_mask(image_path, save_path, threshold=240):
     combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
 
     kernel = np.ones((2, 2), np.uint8)#use smaller kernel as it works better
-    combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_OPEN, kernel)#cv2.MORPH_OPEN works overall bettr than cv2.MORPH_CLOSE
+    combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel)#cv2.MORPH_CLOSE actually works better
 
     contours, _ = cv2.findContours(combined_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     mask_filtered = np.zeros_like(combined_mask)
 
     for contour in contours:
-        if cv2.contourArea(contour) > 400: 
+        if cv2.contourArea(contour) > 300: 
             cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
 
     cv2.imwrite(save_path, mask_filtered)
@@ -391,7 +391,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     if not os.path.exists("image_output"):
         os.makedirs("image_output")
 
-    model = YOLO("best.pt")
+    model = YOLO("finaltrain_weights.pt")
 
     get_parking_coords_in_image(model, top_left_longitude, top_left_latitude)
 
@@ -410,4 +410,5 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
 
 if __name__ == "__main__":
-    main(-6.2567, 53.3507, -6.2463, 53.3549)
+    main(-6.3045, 53.3581, -6.2857, 53.3694)
+    #main(-6.4148, 53.2603, -6.1553, 53.4153) #all of dublin
