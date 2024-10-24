@@ -55,16 +55,24 @@ func runHandlerTest(t *testing.T, tt PointsHandlerTest, handlerFunc func(rr http
 		if err := json.Unmarshal(rr.Body.Bytes(), &responseBody); err != nil {
 			t.Fatalf("failed to unmarshal response: %v", err)
 		}
-		t.Logf("%s", rr.Body.Bytes())
-		t.Logf("%+v", responseBody)
+
 		if responseBody.Error.ErrorMsg != tt.expectedError {
 			t.Errorf("expected error message %v, got %v", tt.expectedError, responseBody.Error.ErrorMsg)
 		}
 	}
 
 	if tt.expectedJSON != "" {
-		if rr.Body.String() != tt.expectedJSON {
-			t.Errorf("expected JSON output %v, got %v", tt.expectedJSON, rr.Body.String())
+		compactedJson := &bytes.Buffer{}
+		err := json.Compact(compactedJson, []byte(tt.expectedJSON))
+		if err != nil {
+			t.Errorf("could not flatten expected JSON, this is due to incorrect test case definition")
+		}
+
+		// this is needed because the response body always includes a newline
+		compactedJson.WriteByte(0x0a)
+
+		if rr.Body.String() != compactedJson.String() {
+			t.Errorf("expected JSON output %x, got %x", compactedJson.String(), rr.Body.String())
 		}
 	}
 
@@ -387,6 +395,96 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			runHandlerTest(t, tt, handler.HandlePut, mock)
+		})
+	}
+}
+
+func TestPointsHandlerHandleDelete(t *testing.T) {
+	mock, err := pgxmock.NewPool()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer mock.Close()
+
+	ctx := context.Background()
+
+	RegisterDatabaseConnection(&ctx, mock)
+
+	handler := &PointsHandler{}
+
+	tests := []PointsHandlerTest{
+		{
+			name: "Valid input",
+			pathParams: map[string]string{
+				"id": "123456",
+			},
+			mockSetup: func(mock pgxmock.PgxPoolIface) {
+        point := go_geom.NewPoint(go_geom.XY)
+        _,_ = point.SetCoords(go_geom.Coord{11, 12})
+				mock.ExpectExec("DELETE FROM points").
+					WithArgs(
+						int64(123456),
+					).WillReturnResult(pgxmock.NewResult("DELETED", 1))
+			},
+			expectedStatus: http.StatusAccepted,
+			expectedJSON: `{
+				"error": null,
+				"response": {
+					"content": {
+						"id": 123456
+					}
+				}
+			}`,
+		},
+    {
+			name: "Invalid id",
+			pathParams: map[string]string{
+				"id": "abdcd",
+			},
+			mockSetup: func(mock pgxmock.PgxPoolIface) {
+        // No mock setup needed, handler should return error before making db request
+			},
+			expectedStatus: http.StatusBadRequest,
+      expectedError: customErrors.Parameter.InvalidIntError.ErrorMsg,
+			expectedJSON: `{
+				"error": {
+					"errorCode": 1204,
+					"errorMsg": "Parameter invalid, expected type Int"
+				},
+				"response": null
+			}`,
+		},
+		{
+			name: "Database error on delete",
+      pathParams: map[string]string{
+				"id": "123456",
+			},
+			mockSetup: func(mock pgxmock.PgxPoolIface) {
+        point := go_geom.NewPoint(go_geom.XY)
+        _,_ = point.SetCoords(go_geom.Coord{11, 12})
+				mock.ExpectExec("DELETE FROM points").
+					WithArgs(
+						int64(123456),
+					).
+					// Simulate a database error
+					WillReturnError(fmt.Errorf("Unable to connect to database"))
+			},
+			expectedStatus: http.StatusInternalServerError,
+			expectedError:  customErrors.Database.UnknownDatabaseError.ErrorMsg,
+			expectedJSON: `{
+				"error": {
+					"errorCode": 1104,
+					"errorMsg": "Unknown database error",
+					"cause": "Unable to connect to database"
+				},
+				"response": null
+			}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			runHandlerTest(t, tt, handler.HandleDelete, mock)
 		})
 	}
 }
