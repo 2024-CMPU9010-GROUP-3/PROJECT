@@ -40,8 +40,8 @@
    - **Andreas:** Started changing the backend route to accept circle inputs for distance measurements. He faced issues with discrepancies between PostGIS and Google Maps distance measurements. He is continuing to work on resolving this issue today and also worked on the report with Saul.
    - **Saul:** Focused primarily on the report yesterday and will continue working on it today.
    - **Steven:** Reviewed articles Kaustubh sent about Next.js and refactored parts of the authentication process. He plans to complete the authentication work by tomorrow and will help with the report afterward.
-   - **Anais:** Worked on running points to the backend and resolved some issues with mapbox’s Street View. She is experimenting with edge detection using `cv2` functions to improve performance.
-   - **Jessica:** Re-labeled 250 images after realizing that rotated bounding boxes would better fit the cars. She retrained the YOLO model, and the accuracy improved. Today, she will complete labeling the rest of the images and continue model training. She also sent follow-up emails to Andrea and Damien, awaiting permission to send the survey to the mailing list.
+   - **Jessica:** Worked on running points to the backend and resolved some issues with mapbox’s Street View road mask. She is experimenting with edge detection using different `cv2` functions to improve performance.
+   - **Anais:** Re-labeled 250 images after realizing that rotated bounding boxes would better fit the cars. She retrained the YOLO model, and the accuracy improved. Today, she will complete labeling the rest of the images and continue model training. She also sent follow-up emails to Andrea and Damien, awaiting permission to send the survey to the mailing list.
 
 2. **Machine Learning and Integration:**
 

@@ -40,8 +40,8 @@
    - **Andreas:** Encountered issues with the login functionality, particularly when trying to log in, which he discussed with Steven. He will continue working on unit tests and back-end integration today.
    - **Saul:** Continued working on the report and updated sections based on feedback. He is also focusing on the demo preparation for Friday.
    - **Steven:** Fixed the login bug related to the sign-up page being marked as a protected route. He is refining the authentication and integrating it with the back-end. Today, he will work closely with Kaustubh on API integration.
-   - **Anais:** Encountered issues with edge detection for maps, as it detected irrelevant edges like street names. She will focus on finishing up the general masking function today and improving the overall accuracy.
-   - **Jessica:** Finished labeling images and retraining the model for parking detection. She will create a table for the results and continue refining the model.
+   - **Jessica:** Encountered issues with using Canny edge detection for maps, as it detected irrelevant edges like street names. She will focus on finishing up the original masking function today and improving the overall accuracy.
+   - **Anais:** Finished labeling images and retraining the model for parking detection. She will create a table for the results and continue refining the model.
 
 2. **Integration Challenges:**
 
