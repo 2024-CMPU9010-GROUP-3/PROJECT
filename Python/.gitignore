@@ -44,6 +44,7 @@ data/images/*
 # Remove results
 results*.csv
 runs/
+datase_ann
 /yolo/magpie-yolov-v8/runs
 yolo11n.pt`
 yolov8_n
