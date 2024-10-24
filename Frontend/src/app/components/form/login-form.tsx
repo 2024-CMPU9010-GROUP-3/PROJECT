@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react"; // useState
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/registry/button";
 import {
   Card,
@@ -12,20 +13,19 @@ import {
 } from "@/components/ui/registry/card";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
-import { useRouter } from "next/navigation"; // useRouter
-import { login } from "@/app/actions"; // 导入 login Server Action
+import { login } from "@/app/actions";
 
 export function LoginForm() {
-  const [username, setUsername] = useState(""); // username status
-  const [password, setPassword] = useState(""); // password status
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // error messesage
-  const router = useRouter(); // router
-  const [isLoading, setIsLoading] = useState(false); //  loading state
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault(); // avoid defauld form submission
-    setIsLoading(true); // set loading
-    setErrorMessage(null); //   clear previous error message
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoading(true);
+    setErrorMessage(null);
 
     //  validate fields
     if (!username.trim() || !password.trim()) {
@@ -39,12 +39,13 @@ export function LoginForm() {
     formData.append('password', password);
 
     try {
-      const result = await login(formData); //  login
+      const result = await login(formData);
 
-      if (result.errors) {
-        setErrorMessage(result.errors.username?.[0] || result.errors.password?.[0] || null);
+      if ('errors' in result) {
+        setErrorMessage(result.errors.username?.[0] || result.errors.password?.[0] || "登录失败");
       } else {
-        router.push("/"); //  redirect to home
+        // login success, redirect to home page
+        router.push("/");
       }
     } catch (error) {
       console.error("An error occurred during login:", error);

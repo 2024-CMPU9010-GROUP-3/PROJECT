@@ -1,21 +1,22 @@
-// "use client"; 
+'use client';
 
-// import { useEffect } from "react";
-// import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { verifySession } from '@/lib/dal';
 
-// const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-//     const router = useRouter();
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
 
-//     useEffect(() => {
-//         const token = localStorage.getItem('token');
-//         if (!token) {
-//             if (router) {
-//                 router.push('/login'); // if no token, redirect to login page
-//             }
-//         }
-//     }, [router]);
+  useEffect(() => {
+    const checkAuth = async () => {
+      const session = await verifySession();
+      if (!session) {
+        router.push('/login');
+      }
+    };
 
-//     return <>{children}</>;
-// };
+    checkAuth();
+  }, [router]);
 
-// export default ProtectedRoute;
+  return <>{children}</>;
+}

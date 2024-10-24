@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Providers from "./providers";
 import "./globals.css";
+import { UserProvider } from './contexts/UserContext'
 
 export const metadata: Metadata = {
   title: "Magpie - Services at a glance",
@@ -8,15 +8,17 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+  children, 
+}: {
+  children: React.ReactNode 
+}) {
   return (
-    <html lang="en">
-      <body className={`antialiased min-h-screen`}>
-        <Providers>{children}</Providers>
+    <html lang="zh">
+      <body>
+        <UserProvider>
+          {children}
+        </UserProvider>
       </body>
     </html>
-  );
+  )
 }
