@@ -97,6 +97,22 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     fetchMapboxKey();
   }, []);
 
+  // THIS IS AN EXAMPLE: demonstrate access to protected backend route
+  useEffect(() => {
+    const fetchPointsFromDB = async () => {
+      const response = await fetch(
+        `/api/points?long=${ coordinates.longitude}&lat=${coordinates.latitude}&radius=${sliderValue * 100}`,
+        {
+          method: "GET", 
+          credentials: 'include',
+        }
+      );
+      const data = await response.json();
+      console.log(data);
+    };
+    fetchPointsFromDB();
+  })
+
   const options = {
     enableHighAccuracy: true,
     timeout: 5000,

@@ -1,10 +1,11 @@
 import LocationAggregatorMap from "../map/MapboxMap";
+import ProtectedRoute from "../ProtectedRoute";
 
 const HomePage = () => {
   return (
-    <div>
-      <LocationAggregatorMap />
-    </div>
+      <ProtectedRoute>
+        <LocationAggregatorMap />
+      </ProtectedRoute>
   );
 };
 
