@@ -43,7 +43,7 @@ export function LoginForm() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`,
+        "/api/login",
         {
           method: "POST",
           headers: {
@@ -58,15 +58,15 @@ export function LoginForm() {
         // login success, handle logic
         const data = await response.json();
         console.log("Login successful:", data); // print success response
-        if (data.bearertoken) {
+        if (data.response.content.userid) {
           // ensure bearerToken exists, note the key name
-          localStorage.setItem("token", data.bearertoken); // store token
+          localStorage.setItem("userId", data.response.content.userid); // store user id
           setErrorMessage(null); // clear any error message
           console.log("Redirecting to home..."); // add debug information
           console.log("router:", router);
           router?.push("/"); // safely check if router is defined before pushing to home
         } else {
-          setErrorMessage("Login failed: No token received"); // if no token, display error message
+          setErrorMessage("Login failed: No user id received"); // if no user id, display error message
         }
       } else {
         // handle error case
