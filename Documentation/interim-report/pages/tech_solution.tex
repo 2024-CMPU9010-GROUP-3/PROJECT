@@ -151,7 +151,7 @@ PostgreSQL database.
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.65\columnwidth]{images/opacity_mask.png}
-    \caption{Parking with mask applied}
+    \caption{Map \& Mask (red:parking spaces, blue:cars on road)}
     \label{fig:parking_detection}
 \end{figure}
 
@@ -240,7 +240,7 @@ replicates the Kubernetes config to the cluster.
 \noindent{}Flux only solves half of the problem. We also need to ensure that our
 containerised application is built, otherwise, while Flux will replicate the
 config, it will not update the application. To solve this, we use \textit{GitHub
-Actions.}. We have implemented several Actions which build the application. Once
+Actions}. We have implemented several Actions which build the application. Once
 built, the containers are pushed to the \textit{GitHub Container Registry}.
 
 \noindent{}There are scenarios where we may have a built container but may not
