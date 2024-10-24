@@ -40,7 +40,7 @@
    - **Anais:** Worked on tuning the model with Saul and hopes to complete training the model and labeling the remaining images today.
    - **Steven:** Tested and fixed the login function after a call with Andreas. The login now works properly, returning a token. However, there are issues with routing in Next.js that Steven will work on, with Kaustubh's help, after today's meeting. He will also finish the UI prototypes later tonight.
    - **Andreas:** Fixed the login bug in the back end and started working on unit testing. Set up GitHub actions for testing, which will be completed by the afternoon.
-   - **Jessica:** Continued working on parking detection, successfully identifying cars in multiple parts of images. Updated the masks and is now working on extracting coordinates from bounding boxes for further processing.
+   - **Jessica:** Started working on the parking detection script, successfully identifying cars in multiple parts of images. Updated the masks and is now working on extracting coordinates from bounding boxes for further processing.
 
 2. **Labeling and Model Integration:**
 
@@ -53,7 +53,7 @@
 
 4. **Next Steps for Development:**
    - Andreas and Steven will hop on a call to fix remaining issues with login routing.
-   - Jessica and Anais will continue working on extracting coordinates and completing labeling.
+   - Jessica and Anais will continue working on extracting coordinates of the bounding boxes found and completing training and tuning.
    - Kaustubh will work on logic for displaying data points in the front end, including UI elements for showing the number of parking spaces in a radius.
 
 ---
