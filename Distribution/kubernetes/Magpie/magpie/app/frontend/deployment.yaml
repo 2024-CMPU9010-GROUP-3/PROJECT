@@ -32,3 +32,5 @@ spec:
                   key: Mapbox_API
             - name: NODE_ENV
               value: production
+            - name: NEXT_PUBLIC_BACKEND_URL
+              value: http://public-backend-service.magpie.svc.cluster.local:8080
