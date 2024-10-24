@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   try {
     if (process.env.NEXT_PUBLIC_BACKEND_URL){
-      let req = new NextRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/points/inRadius${request.nextUrl.search}`, request)
+      const req = new NextRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/points/inRadius${request.nextUrl.search}`, request)
       const resp = await fetch(req);
       const j = await resp.json();
       return NextResponse.json(j);
