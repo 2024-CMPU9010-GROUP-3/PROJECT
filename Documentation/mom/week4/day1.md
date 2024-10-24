@@ -45,7 +45,7 @@
 
    - Andreas is going to work on database connectivity to the backend.
    - Saul will be working on actual project deployment on the server and connecting to his domain.
-   - Jessica is working on using YOLO for annotating the images of the dataset.
+   - Jessica is working on using YOLO for annotating the images of the dataset automatically in label studio using the ml backend extension.
    - Steven is going to work on user authentication pages today.
    - Kaustubh is working on introducing swagger for the backend.
 

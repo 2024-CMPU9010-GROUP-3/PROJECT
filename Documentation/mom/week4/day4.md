@@ -51,7 +51,7 @@
    - The group decided to prioritize completing their weekly diaries before working on the presentation slides, as the submission deadline was approaching.
 
 4. **Task Assignments for Presentation Preparation:**
-   - Anais volunteered to start the presentation after finishing his weekly diary, using PowerPoint. The slides will be available for all members to contribute.
+   - Anais volunteered to start the presentation after finishing her weekly diary, using PowerPoint. The slides will be available for all members to contribute.
    - Steven will work on enhancing the front-end interface, including login responsiveness and adding pages for terms and privacy policies.
    - Saul continued to work on Kubernetes deployment, addressing compatibility issues and restructuring the setup for the project.
 
