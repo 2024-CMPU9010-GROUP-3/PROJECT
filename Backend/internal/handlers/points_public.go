@@ -15,7 +15,7 @@ import (
 	"github.com/twpayne/go-geom/encoding/geojson"
 )
 
-const floatPrecision = 32
+const floatPrecision = 64
 
 type pointDto struct {
 	Id      int64
