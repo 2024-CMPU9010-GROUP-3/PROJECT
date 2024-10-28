@@ -60,7 +60,7 @@ func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr htt
 		}
 
 		if responseBody.Error.ErrorMsg != tt.ExpectedError {
-			t.Errorf("expected error message %v, got %v", tt.ExpectedError, responseBody.Error.ErrorMsg)
+			t.Errorf("expected error message \"%v\", got \"%v\"", tt.ExpectedError, responseBody.Error.ErrorMsg)
 		}
 	}
 
