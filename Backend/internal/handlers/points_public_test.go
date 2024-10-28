@@ -13,7 +13,7 @@ import (
 	go_geom "github.com/twpayne/go-geom"
 )
 
-func TestPointsHandler_HandleGetByRadius(t *testing.T) {
+func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	if err != nil {
 		t.Fatal(err)
@@ -79,7 +79,7 @@ func TestPointsHandler_HandleGetByRadius(t *testing.T) {
 	testutil.RunTests(t, handler.HandleGetByRadius, mock, tests)
 }
 
-func TestPointsHandler_HandleGetPointDetails(t *testing.T) {
+func TestPointsHandlerHandleGetPointDetails(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	if err != nil {
 		t.Fatal(err)
