@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/public"
+	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/errors"
 	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util/testutil"
 	"github.com/pashagolub/pgxmock/v4"
 	go_geom "github.com/twpayne/go-geom"
@@ -74,6 +75,72 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 					}
 				}`,
 		},
+		{
+			Name:   "Non-parsable Longitude",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			QueryParams: map[string]string{
+				"long":   "abcd",
+				"lat":    "53.345474",
+				"radius": "5000",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// Handler should return error before db call is made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.InvalidFloatError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1203,
+						"errorMsg": "Parameter invalid, expected type Float"
+					},
+					"response": null
+				}`,
+		},
+		{
+			Name:   "Non-parsable Latitude",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			QueryParams: map[string]string{
+				"long":   "-6.269925",
+				"lat":    "abcd",
+				"radius": "5000",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// Handler should return error before db call is made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.InvalidFloatError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1203,
+						"errorMsg": "Parameter invalid, expected type Float"
+					},
+					"response": null
+				}`,
+		},
+		{
+			Name:   "Non-parsable Radius",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			QueryParams: map[string]string{
+				"long":   "-6.269925",
+				"lat":    "53.345474",
+				"radius": "xyz",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// Handler should return error before db call is made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.InvalidFloatError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1203,
+						"errorMsg": "Parameter invalid, expected type Float"
+					},
+					"response": null
+				}`,
+		},
 	}
 
 	testutil.RunTests(t, handler.HandleGetByRadius, mock, tests)
@@ -103,7 +170,7 @@ func TestPointsHandlerHandleGetPointDetails(t *testing.T) {
 			Method: "GET",
 			Route:  "/points/inRadius",
 			PathParams: map[string]string{
-				"id":   "236",
+				"id": "236",
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(`SELECT Details::jsonb FROM points WHERE id = \$1 LIMIT 1`).
