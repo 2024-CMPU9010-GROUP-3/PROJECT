@@ -53,6 +53,12 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pointType := db.PointType(point.Type)
+	if !pointType.IsValid() {
+		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
+		return
+	}
+
 	createPointParams := db.CreatePointParams{
 		Longlat: pt,
 		Type:    db.PointType(point.Type),

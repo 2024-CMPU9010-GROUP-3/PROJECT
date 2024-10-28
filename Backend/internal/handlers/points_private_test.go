@@ -31,12 +31,14 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 	tests := []testutil.HandlerTestDefinition{
 		{
 			Name: "Valid input",
+			Method: "POST",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
 				},
-				"type": "placeholder1",
+				"type": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -45,7 +47,7 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 				mock.ExpectQuery("INSERT INTO points").
 					WithArgs(
 						pgxmock.AnyArg(),
-						db.PointType("placeholder1"),
+						db.PointType("parking"),
 						[]byte(`{"test":1234}`),
 					).WillReturnRows(pgxmock.NewRows([]string{"id"}).AddRow(int64(1)))
 			},
@@ -53,8 +55,10 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 		},
 		{
 			Name: "Invalid input",
+			Method: "POST",
+			Route: "/points",
 			InputJSON: `{
-				"type1": "placeholder1",
+				"type1": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -67,12 +71,34 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 		},
 		{
 			Name: "Invalid geometry",
+			Method: "POST",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "InvalidType",
 					"coordinates": [11, 12]
 				},
-				"type": "placeholder1",
+				"type": "parking",
+				"details": {
+					"test": 1234
+				}
+			}`,
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// No mock setup needed, handler should return error before making db request
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
+		},
+		{
+			Name: "Invalid type",
+			Method: "POST",
+			Route: "/points",
+			InputJSON: `{
+				"longlat": {
+					"type": "Point",
+					"coordinates": [11, 12]
+				},
+				"type": "invalid",
 				"details": {
 					"test": 1234
 				}
@@ -85,6 +111,8 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 		},
 		{
 			Name: "Valid geometry, but not point",
+			Method: "POST",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Polygon",
@@ -98,7 +126,7 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 						]
 					]
 				},
-				"type": "placeholder1",
+				"type": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -111,12 +139,14 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 		},
 		{
 			Name: "Database error on insert",
+			Method: "POST",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
 				},
-				"type": "placeholder1",
+				"type": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -125,7 +155,7 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 				mock.ExpectQuery("INSERT INTO points").
 					WithArgs(
 						pgxmock.AnyArg(),
-						db.PointType("placeholder1"),
+						db.PointType("parking"),
 						[]byte(`{"test":1234}`),
 					).
 					// Simulate a database error
@@ -155,12 +185,14 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 	tests := []testutil.HandlerTestDefinition{
 		{
 			Name: "Valid input",
+			Method: "PUT",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
 				},
-				"type": "placeholder1",
+				"type": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -175,7 +207,7 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					WithArgs(
 						int64(123456),
 						point,
-						db.PointType("placeholder1"),
+						db.PointType("parking"),
 						[]byte(`{"test":1234}`),
 					).WillReturnResult(pgxmock.NewResult("UPDATED", 1))
 			},
@@ -183,12 +215,14 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name: "Invlid id",
+			Method: "PUT",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
 				},
-				"type": "placeholder1",
+				"type": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -204,8 +238,10 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name: "Invalid input",
+			Method: "PUT",
+			Route: "/points",
 			InputJSON: `{
-				"type1": "placeholder1",
+				"type1": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -221,6 +257,8 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name: "Parameter Missing",
+			Method: "PUT",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
@@ -241,12 +279,14 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name: "Invalid geometry",
+			Method: "PUT",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "InvalidType",
 					"coordinates": [11, 12]
 				},
-				"type": "placeholder1",
+				"type": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -262,6 +302,8 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name: "Valid geometry, but not point",
+			Method: "POST",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Polygon",
@@ -275,7 +317,7 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 						]
 					]
 				},
-				"type": "placeholder1",
+				"type": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -291,12 +333,14 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name: "Database error on insert",
+			Method: "PUT",
+			Route: "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
 				},
-				"type": "placeholder1",
+				"type": "parking",
 				"details": {
 					"test": 1234
 				}
@@ -311,7 +355,7 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					WithArgs(
 						int64(123456),
 						point,
-						db.PointType("placeholder1"),
+						db.PointType("parking"),
 						[]byte(`{"test":1234}`),
 					).WillReturnResult(pgxmock.NewResult("UPDATED", 1)).
 					// Simulate a database error
@@ -341,6 +385,8 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 	tests := []testutil.HandlerTestDefinition{
 		{
 			Name: "Valid input",
+			Method: "DELETE",
+			Route: "/points",
 			PathParams: map[string]string{
 				"id": "123456",
 			},
@@ -364,6 +410,8 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 		},
 		{
 			Name: "Invalid id",
+			Method: "DELETE",
+			Route: "/points",
 			PathParams: map[string]string{
 				"id": "abdcd",
 			},

@@ -14,6 +14,8 @@ import (
 
 type HandlerTestDefinition struct {
 	Name           string
+	Method				 string
+	Route					 string
 	InputJSON      string
 	MockSetup      func(mock pgxmock.PgxPoolIface)
 	ExpectedStatus int
@@ -25,7 +27,7 @@ type HandlerTestDefinition struct {
 func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
 	tt.MockSetup(mock)
 
-	req, err := http.NewRequest("POST", "/points", bytes.NewBuffer([]byte(tt.InputJSON)))
+	req, err := http.NewRequest(tt.Method, tt.Route, bytes.NewBuffer([]byte(tt.InputJSON)))
 	if err != nil {
 		t.Fatalf("failed to create request: %v", err)
 	}
