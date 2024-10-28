@@ -192,11 +192,6 @@ func TestPointsHandlerHandleGetPointDetails(t *testing.T) {
 
 	handler := &PointsHandler{}
 
-	// validPoint, err := go_geom.NewPoint(go_geom.XY).SetSRID(4326).SetCoords([]float64{-6.268726783812387, 53.3484472329815})
-	// if err != nil {
-	// 	t.Fatal(err)
-	// }
-
 	tests := []testutil.HandlerTestDefinition{
 		{
 			Name:   "Valid input",
@@ -219,6 +214,93 @@ func TestPointsHandlerHandleGetPointDetails(t *testing.T) {
 						"example": "test"
 						}
 					}
+				}`,
+		},
+		{
+			Name:   "Invalid ID",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			PathParams: map[string]string{
+				"id": "211646e2-a2cd-41da-b27d-d2dfdc274dac",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// Handler should return error before db call is made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.InvalidIntError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+						"errorCode": 1204,
+						"errorMsg": "Parameter invalid, expected type Int"
+					},
+				"response": null
+				}`,
+		},
+		{
+			Name:   "Point not found in DB",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			PathParams: map[string]string{
+				"id": "236",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(`SELECT Details::jsonb FROM points WHERE id = \$1 LIMIT 1`).
+					WithArgs(int64(236)).
+					WillReturnRows(pgxmock.NewRows([]string{"details"}))
+			},
+			ExpectedStatus: http.StatusNotFound,
+			ExpectedError:  errors.NotFound.PointNotFoundError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+						"errorCode": 1302,
+						"errorMsg": "Point not found"
+					},
+				"response": null
+				}`,
+		},
+		{
+			Name:   "Simulate DB error during query",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			PathParams: map[string]string{
+				"id": "236",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(`SELECT Details::jsonb FROM points WHERE id = \$1 LIMIT 1`).
+					WithArgs(int64(236)).
+					WillReturnError(fmt.Errorf("Simulate Database Error"))
+			},
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError:  errors.Database.UnknownDatabaseError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+						"errorCode": 1104,
+						"errorMsg": "Unknown database error",
+						"cause": "Simulate Database Error"
+					},
+				"response": null
+				}`,
+		},
+		{
+			Name:   "Simulate invalid JSON from DB",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			PathParams: map[string]string{
+				"id": "236",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(`SELECT Details::jsonb FROM points WHERE id = \$1 LIMIT 1`).
+					WithArgs(int64(236)).
+					WillReturnRows(pgxmock.NewRows([]string{"details"}).
+						AddRow([]byte(`{"example": "test"`)))
+			},
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON: `{
+				"error": {
+						"errorCode": 1022,
+						"errorMsg": "Could not decode json"
+					},
+				"response": null
 				}`,
 		},
 	}
