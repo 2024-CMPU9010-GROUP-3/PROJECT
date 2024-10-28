@@ -3,83 +3,17 @@
 package handlers
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/private"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/errors"
-	resp "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/responses"
+	testutil "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util/testutil"
 	"github.com/pashagolub/pgxmock/v4"
-  go_geom "github.com/twpayne/go-geom"
+	go_geom "github.com/twpayne/go-geom"
 )
-
-// Struct for test cases
-type PointsHandlerTest struct {
-	name           string
-	inputJSON      string
-	mockSetup      func(mock pgxmock.PgxPoolIface)
-	expectedStatus int
-	expectedError  string
-	expectedJSON   string
-	pathParams     map[string]string
-}
-
-func runHandlerTest(t *testing.T, tt PointsHandlerTest, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
-	tt.mockSetup(mock)
-
-	req, err := http.NewRequest("POST", "/points", bytes.NewBuffer([]byte(tt.inputJSON)))
-	if err != nil {
-		t.Fatalf("failed to create request: %v", err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	for k, v := range tt.pathParams {
-		req.SetPathValue(k, v)
-	}
-
-	rr := httptest.NewRecorder()
-
-	// FUNCTION OF INTEREST
-	handlerFunc(rr, req)
-
-	if status := rr.Code; status != tt.expectedStatus {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, tt.expectedStatus)
-	}
-
-	if tt.expectedError != "" {
-		var responseBody resp.ResponseDto
-		if err := json.Unmarshal(rr.Body.Bytes(), &responseBody); err != nil {
-			t.Fatalf("failed to unmarshal response: %v", err)
-		}
-
-		if responseBody.Error.ErrorMsg != tt.expectedError {
-			t.Errorf("expected error message %v, got %v", tt.expectedError, responseBody.Error.ErrorMsg)
-		}
-	}
-
-	if tt.expectedJSON != "" {
-		compactedJson := &bytes.Buffer{}
-		err := json.Compact(compactedJson, []byte(tt.expectedJSON))
-		if err != nil {
-			t.Errorf("could not flatten expected JSON, this is due to incorrect test case definition")
-		}
-
-		// this is needed because the response body always includes a newline
-		compactedJson.WriteByte(0x0a)
-
-		if rr.Body.String() != compactedJson.String() {
-			t.Errorf("expected JSON output %x, got %x", compactedJson.String(), rr.Body.String())
-		}
-	}
-
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %v", err)
-	}
-}
 
 func TestPointsHandlerHandlePost(t *testing.T) {
 	mock, err := pgxmock.NewPool()
@@ -94,10 +28,10 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 
 	handler := &PointsHandler{}
 
-	tests := []PointsHandlerTest{
+	tests := []testutil.HandlerTestDefinition{
 		{
-			name: "Valid input",
-			inputJSON: `{
+			Name: "Valid input",
+			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
@@ -107,7 +41,7 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery("INSERT INTO points").
 					WithArgs(
 						pgxmock.AnyArg(),
@@ -115,25 +49,25 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 						[]byte(`{"test":1234}`),
 					).WillReturnRows(pgxmock.NewRows([]string{"id"}).AddRow(int64(1)))
 			},
-			expectedStatus: http.StatusCreated,
+			ExpectedStatus: http.StatusCreated,
 		},
 		{
-			name: "Invalid input",
-			inputJSON: `{
+			Name: "Invalid input",
+			InputJSON: `{
 				"type1": "placeholder1",
 				"details": {
 					"test": 1234
 				}
 			}`,
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-			expectedError: customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			name: "Invalid geometry",
-			inputJSON: `{
+			Name: "Invalid geometry",
+			InputJSON: `{
 				"longlat": {
 					"type": "InvalidType",
 					"coordinates": [11, 12]
@@ -143,15 +77,15 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-			expectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			name: "Valid geometry, but not point",
-			inputJSON: `{
+			Name: "Valid geometry, but not point",
+			InputJSON: `{
 				"longlat": {
 					"type": "Polygon",
 					"coordinates": [
@@ -169,15 +103,15 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-			expectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			name: "Database error on insert",
-			inputJSON: `{
+			Name: "Database error on insert",
+			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
@@ -187,7 +121,7 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery("INSERT INTO points").
 					WithArgs(
 						pgxmock.AnyArg(),
@@ -197,16 +131,12 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 					// Simulate a database error
 					WillReturnError(fmt.Errorf("Unable to connect to database"))
 			},
-			expectedStatus: http.StatusInternalServerError,
-			expectedError:  customErrors.Database.UnknownDatabaseError.ErrorMsg,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError:  customErrors.Database.UnknownDatabaseError.ErrorMsg,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			runHandlerTest(t, tt, handler.HandlePost, mock)
-		})
-	}
+	testutil.RunTests(t, handler.HandlePost, mock, tests)
 }
 
 func TestPointsHandlerHandlePut(t *testing.T) {
@@ -222,10 +152,10 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 
 	handler := &PointsHandler{}
 
-	tests := []PointsHandlerTest{
+	tests := []testutil.HandlerTestDefinition{
 		{
-			name: "Valid input",
-			inputJSON: `{
+			Name: "Valid input",
+			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
@@ -235,12 +165,12 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-			pathParams: map[string]string{
+			PathParams: map[string]string{
 				"id": "123456",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
-        point := go_geom.NewPoint(go_geom.XY)
-        _,_ = point.SetCoords(go_geom.Coord{11, 12})
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				point := go_geom.NewPoint(go_geom.XY)
+				_, _ = point.SetCoords(go_geom.Coord{11, 12})
 				mock.ExpectExec("UPDATE points").
 					WithArgs(
 						int64(123456),
@@ -249,11 +179,11 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 						[]byte(`{"test":1234}`),
 					).WillReturnResult(pgxmock.NewResult("UPDATED", 1))
 			},
-			expectedStatus: http.StatusAccepted,
+			ExpectedStatus: http.StatusAccepted,
 		},
-    {
-			name: "Invlid id",
-			inputJSON: `{
+		{
+			Name: "Invlid id",
+			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
@@ -263,35 +193,35 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-			pathParams: map[string]string{
+			PathParams: map[string]string{
 				"id": "abdcd",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
-        // No mock setup needed, handler should return error before making db request
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-      expectedError: customErrors.Parameter.InvalidIntError.ErrorMsg,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Parameter.InvalidIntError.ErrorMsg,
 		},
 		{
-			name: "Invalid input",
-			inputJSON: `{
+			Name: "Invalid input",
+			InputJSON: `{
 				"type1": "placeholder1",
 				"details": {
 					"test": 1234
 				}
 			}`,
-      pathParams: map[string]string{
+			PathParams: map[string]string{
 				"id": "123456",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-			expectedError: customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
-    {
-			name: "Parameter Missing",
-			inputJSON: `{
+		{
+			Name: "Parameter Missing",
+			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
@@ -300,18 +230,18 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-			pathParams: map[string]string{
+			PathParams: map[string]string{
 				"id": "123456",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
-        // No mock setup needed, handler should return error before making db request
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-      expectedError: customErrors.Parameter.RequiredParameterMissingError.ErrorMsg,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Parameter.RequiredParameterMissingError.ErrorMsg,
 		},
 		{
-			name: "Invalid geometry",
-			inputJSON: `{
+			Name: "Invalid geometry",
+			InputJSON: `{
 				"longlat": {
 					"type": "InvalidType",
 					"coordinates": [11, 12]
@@ -321,18 +251,18 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-      pathParams: map[string]string{
+			PathParams: map[string]string{
 				"id": "123456",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-			expectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			name: "Valid geometry, but not point",
-			inputJSON: `{
+			Name: "Valid geometry, but not point",
+			InputJSON: `{
 				"longlat": {
 					"type": "Polygon",
 					"coordinates": [
@@ -350,18 +280,18 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-      pathParams: map[string]string{
+			PathParams: map[string]string{
 				"id": "123456",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-			expectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			name: "Database error on insert",
-			inputJSON: `{
+			Name: "Database error on insert",
+			InputJSON: `{
 				"longlat": {
 					"type": "Point",
 					"coordinates": [11, 12]
@@ -371,12 +301,12 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					"test": 1234
 				}
 			}`,
-      pathParams: map[string]string{
+			PathParams: map[string]string{
 				"id": "123456",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
-        point := go_geom.NewPoint(go_geom.XY)
-        _,_ = point.SetCoords(go_geom.Coord{11, 12})
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				point := go_geom.NewPoint(go_geom.XY)
+				_, _ = point.SetCoords(go_geom.Coord{11, 12})
 				mock.ExpectExec("UPDATE points").
 					WithArgs(
 						int64(123456),
@@ -387,16 +317,12 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 					// Simulate a database error
 					WillReturnError(fmt.Errorf("Unable to connect to database"))
 			},
-			expectedStatus: http.StatusInternalServerError,
-			expectedError:  customErrors.Database.UnknownDatabaseError.ErrorMsg,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError:  customErrors.Database.UnknownDatabaseError.ErrorMsg,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			runHandlerTest(t, tt, handler.HandlePut, mock)
-		})
-	}
+	testutil.RunTests(t, handler.HandlePut, mock, tests)
 }
 
 func TestPointsHandlerHandleDelete(t *testing.T) {
@@ -412,22 +338,22 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 
 	handler := &PointsHandler{}
 
-	tests := []PointsHandlerTest{
+	tests := []testutil.HandlerTestDefinition{
 		{
-			name: "Valid input",
-			pathParams: map[string]string{
+			Name: "Valid input",
+			PathParams: map[string]string{
 				"id": "123456",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
-        point := go_geom.NewPoint(go_geom.XY)
-        _,_ = point.SetCoords(go_geom.Coord{11, 12})
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				point := go_geom.NewPoint(go_geom.XY)
+				_, _ = point.SetCoords(go_geom.Coord{11, 12})
 				mock.ExpectExec("DELETE FROM points").
 					WithArgs(
 						int64(123456),
 					).WillReturnResult(pgxmock.NewResult("DELETED", 1))
 			},
-			expectedStatus: http.StatusAccepted,
-			expectedJSON: `{
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: `{
 				"error": null,
 				"response": {
 					"content": {
@@ -436,17 +362,17 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 				}
 			}`,
 		},
-    {
-			name: "Invalid id",
-			pathParams: map[string]string{
+		{
+			Name: "Invalid id",
+			PathParams: map[string]string{
 				"id": "abdcd",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
-        // No mock setup needed, handler should return error before making db request
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// No mock setup needed, handler should return error before making db request
 			},
-			expectedStatus: http.StatusBadRequest,
-      expectedError: customErrors.Parameter.InvalidIntError.ErrorMsg,
-			expectedJSON: `{
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  customErrors.Parameter.InvalidIntError.ErrorMsg,
+			ExpectedJSON: `{
 				"error": {
 					"errorCode": 1204,
 					"errorMsg": "Parameter invalid, expected type Int"
@@ -455,13 +381,13 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 			}`,
 		},
 		{
-			name: "Database error on delete",
-      pathParams: map[string]string{
+			Name: "Database error on delete",
+			PathParams: map[string]string{
 				"id": "123456",
 			},
-			mockSetup: func(mock pgxmock.PgxPoolIface) {
-        point := go_geom.NewPoint(go_geom.XY)
-        _,_ = point.SetCoords(go_geom.Coord{11, 12})
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				point := go_geom.NewPoint(go_geom.XY)
+				_, _ = point.SetCoords(go_geom.Coord{11, 12})
 				mock.ExpectExec("DELETE FROM points").
 					WithArgs(
 						int64(123456),
@@ -469,9 +395,9 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 					// Simulate a database error
 					WillReturnError(fmt.Errorf("Unable to connect to database"))
 			},
-			expectedStatus: http.StatusInternalServerError,
-			expectedError:  customErrors.Database.UnknownDatabaseError.ErrorMsg,
-			expectedJSON: `{
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError:  customErrors.Database.UnknownDatabaseError.ErrorMsg,
+			ExpectedJSON: `{
 				"error": {
 					"errorCode": 1104,
 					"errorMsg": "Unknown database error",
@@ -482,9 +408,5 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			runHandlerTest(t, tt, handler.HandleDelete, mock)
-		})
-	}
+	testutil.RunTests(t, handler.HandleDelete, mock, tests)
 }
