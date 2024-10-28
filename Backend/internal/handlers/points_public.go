@@ -68,7 +68,7 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 
 	// bad request if id can't be parsed to int
 	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		resp.SendError(customErrors.Parameter.InvalidIntError, w)
 		return
 	}
 
