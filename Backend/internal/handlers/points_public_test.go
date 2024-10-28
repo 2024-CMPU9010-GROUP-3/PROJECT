@@ -4,6 +4,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -137,6 +138,38 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 					"error": {
 						"errorCode": 1203,
 						"errorMsg": "Parameter invalid, expected type Float"
+					},
+					"response": null
+				}`,
+		},
+		{
+			Name:   "Database error",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			QueryParams: map[string]string{
+				"long":   "-6.269925",
+				"lat":    "53.345474",
+				"radius": "5000",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(`SELECT Id, LongLat::geometry, Type from points
+                      WHERE ST_DWithin\(
+                          LongLat::geography,
+                          ST_SetSRID\(ST_MakePoint\(\$1::float, \$2::float\), 4326\)::geography,
+                          \$3::float
+                      \)`).
+					WithArgs(
+						float64(-6.269925),
+						float64(53.345474),
+						float64(5000)).
+					WillReturnError(fmt.Errorf("Simulate Database Error"))
+			},
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1104,
+						"errorMsg": "Unknown database error",
+						"cause": "Simulate Database Error"
 					},
 					"response": null
 				}`,
