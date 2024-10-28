@@ -22,6 +22,7 @@ type HandlerTestDefinition struct {
 	ExpectedError  string
 	ExpectedJSON   string
 	PathParams     map[string]string
+	QueryParams    map[string]string
 }
 
 func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
@@ -35,6 +36,13 @@ func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr htt
 	for k, v := range tt.PathParams {
 		req.SetPathValue(k, v)
 	}
+
+	q := req.URL.Query()
+	for k, v := range tt.QueryParams {
+		q.Add(k, v)
+	}
+
+	req.URL.RawQuery = q.Encode()
 
 	rr := httptest.NewRecorder()
 
@@ -67,7 +75,7 @@ func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr htt
 		compactedJson.WriteByte(0x0a)
 
 		if rr.Body.String() != compactedJson.String() {
-			t.Errorf("expected JSON output %x, got %x", compactedJson.String(), rr.Body.String())
+			t.Errorf("expected JSON output %s, got %s", compactedJson.String(), rr.Body.String())
 		}
 	}
 
