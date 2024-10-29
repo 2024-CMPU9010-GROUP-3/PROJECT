@@ -73,6 +73,25 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 				"id": "41692803-0f09-4d6b-9b0f-f893bb985bff",
 			},
 		},
+		{
+			Name: "Invalid UUID",
+			Method: "GET",
+			Route: "/auth/User",
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// handler should return before db is queried
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1202,
+						"errorMsg": "Parameter invalid, expected type UUIDv4"
+					},
+					"response": null
+				}`,
+			PathParams: map[string]string{
+				"id": "41692803-0f09-4d6b-9b0f-f893bb985bf",
+			},
+		},
 	}
 	testutil.RunTests(t, authHandler.HandleGet, mock, tests)
 }
