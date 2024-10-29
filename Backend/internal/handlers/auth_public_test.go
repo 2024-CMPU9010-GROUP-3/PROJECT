@@ -4,6 +4,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"testing"
 	"time"
@@ -93,7 +94,7 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 			},
 		},
 		{
-			Name: "Positive testcase",
+			Name: "User not found",
 			Method: "GET",
 			Route: "/auth/User",
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
@@ -109,6 +110,30 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 					"error": {
 						"errorCode": 1301,
 						"errorMsg": "User not found"
+					},
+					"response": null
+				}`,
+			PathParams: map[string]string{
+				"id": "41692803-0f09-4d6b-9b0f-f893bb985bff",
+			},
+		},
+		{
+			Name: "Database error during query",
+			Method: "GET",
+			Route: "/auth/User",
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
+												 `FROM user_details ` +
+												 `WHERE Id = \$1 ` +
+												 `LIMIT 1`).
+						 WithArgs(userId).WillReturnError(fmt.Errorf("Simulate Database Error"))
+						},
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1104,
+						"errorMsg": "Unknown database error",
+							"cause": "Simulate Database Error"
 					},
 					"response": null
 				}`,
