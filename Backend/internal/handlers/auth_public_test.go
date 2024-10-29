@@ -92,6 +92,30 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 				"id": "41692803-0f09-4d6b-9b0f-f893bb985bf",
 			},
 		},
+		{
+			Name: "Positive testcase",
+			Method: "GET",
+			Route: "/auth/User",
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
+												 `FROM user_details ` +
+												 `WHERE Id = \$1 ` +
+												 `LIMIT 1`).
+						 WithArgs(userId).
+						 WillReturnRows(pgxmock.NewRows([]string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"}))
+			},
+			ExpectedStatus: http.StatusNotFound,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1301,
+						"errorMsg": "User not found"
+					},
+					"response": null
+				}`,
+			PathParams: map[string]string{
+				"id": "41692803-0f09-4d6b-9b0f-f893bb985bff",
+			},
+		},
 	}
 	testutil.RunTests(t, authHandler.HandleGet, mock, tests)
 }
