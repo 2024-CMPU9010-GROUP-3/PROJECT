@@ -370,7 +370,9 @@ def main():
     if not os.path.exists("temp_images"):
         os.makedirs("temp_images")
 
-    model = YOLO(model_weights_path)
+    os.environ['YOLO_VERBOSE'] = 'False'
+
+    model = YOLO(model_weights_path, verbose=False)
 
     all_detections = []
 
