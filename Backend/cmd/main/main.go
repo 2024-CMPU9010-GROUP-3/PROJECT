@@ -8,9 +8,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/handlers"
-	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/middleware"
-	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/routes"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/handlers"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/middleware"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/routes"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
@@ -67,8 +67,8 @@ func main() {
 	allowedMethods := strings.Split(allowedMethodsEnv, " ")
 
 	corsManager := cors.New(cors.Options{
-		AllowedOrigins: allowedOrigins,
-		AllowedMethods: allowedMethods,
+		AllowedOrigins:   allowedOrigins,
+		AllowedMethods:   allowedMethods,
 		AllowCredentials: true, // needed for login
 	})
 

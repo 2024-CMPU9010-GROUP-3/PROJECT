@@ -1,4 +1,4 @@
-module github.com/2024-CMPU9010-GROUP-3/PROJECT
+module github.com/2024-CMPU9010-GROUP-3/magpie
 
 go 1.23.1
 

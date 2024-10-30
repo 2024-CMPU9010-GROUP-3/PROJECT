@@ -44,7 +44,7 @@ Requirements:
 
 - Docker or Docker-compliant container runtime
 
-Navigate to the `PROJECT/Backend` and build the Docker image:
+Navigate to the `magpie/Backend` and build the Docker image:
 
 #### Build Private Backend
 
@@ -82,7 +82,7 @@ Requirements:
 
 - Golang >= 1.23.1
 
-Navigate to `PROJECT/Backend` and run this command:
+Navigate to `magpie/Backend` and run this command:
 
 ```
 go run -tags private cmd/main/main.go
@@ -96,7 +96,7 @@ Requirements:
 
 - Golang >= 1.23.1
 
-Navigate to `PROJECT/Backend` and run this command:
+Navigate to `magpie/Backend` and run this command:
 
 ```
 go run -tags public cmd/main/main.go
