@@ -10,11 +10,3 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 3000
-      
-    - protocol: TCP
-      port: 443
-      targetPort: 443
-
-    - protocol: UDP
-      port: 443
-      targetPort: 443
