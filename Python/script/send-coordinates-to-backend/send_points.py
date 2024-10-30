@@ -502,6 +502,73 @@ def send_bleeperbike_to_api(data):
     
     print(f"Total successful posts: {successful_posts}/{len(data)}")
 
+def send_parking_meter_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['longitude'], row['latitude']]
+            },
+            "type": "parking_meter",
+            "details": {
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_public_bins_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['longitude'], row['latitude']]
+            },
+            "type": "public_bins",
+            "details": {
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+
 def read_csv_file(csv_file_path):
     """
     Functiion to read the csv file in a pandas dataframe
@@ -534,6 +601,8 @@ def main(csv_file_path):
         #send_accessible_parking_to_api(data)
         #send_multistorey_car_park_to_api(data)
         #send_bleeperbike_to_api(data)
+        #send_parking_meter_to_api(data)
+        #send_public_bins_to_api(data)
 
 
 if __name__ == "__main__":
@@ -551,4 +620,6 @@ if __name__ == "__main__":
     #main('accessible_parking_dublin.csv')
     #main('multi_story_car_parks_location.26052021.csv')
     #main('bleeperbike_map.csv')
+    #main('parking-meter.csv')
+    #main('public_bin.csv)
 

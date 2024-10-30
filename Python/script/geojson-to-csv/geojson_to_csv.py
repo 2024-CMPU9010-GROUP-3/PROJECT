@@ -18,7 +18,7 @@ def read_geojson_save_as_csv(geojson_path, csv_path):
 
 def read_geojson_save_as_csv_for_files_with_problems_in_format(geojson_path, csv_path):
     """
-    Main function to save the geojson file to a csv file
+    Function to save the geojson file to a csv file if issues with the format
     """
     with open(geojson_path, 'r') as file:
         geojson_data = json.load(file)
