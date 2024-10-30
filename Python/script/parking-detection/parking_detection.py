@@ -258,6 +258,69 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
+def detect_empty_spots(cars, row_threshold=20, spot_width=30):
+    """
+    Detects empty spots in a row of parked cars based on the detected car bounding boxes and returns their coordinates
+    
+    Params:
+        cars (list): List of car bounding boxes centers
+        row_threshold (int): Maximum allowed y-axis distance to consider boxes in the same row
+        spot_width (int): Average width of a parking spot
+        
+    Returns:
+        list: Coordinates of estimated empty parking spots
+    """
+    cars = sorted(cars, key=lambda point: point[0])
+
+    empty_spots = []
+    for i in range(len(cars) - 1):
+        x_current = cars[i][0]
+        x_next = cars[i + 1][0]
+        gap = x_next - x_current
+        
+        if gap > spot_width:
+            num_spots = int(gap // spot_width)
+            y_center = cars[i][1]
+
+            if abs(cars[i][1] - cars[i + 1][1]) < row_threshold:
+                for j in range(1, num_spots + 1):
+                    empty_x_center = x_current + j * spot_width
+                    empty_spots.append([
+                        empty_x_center - spot_width // 2,  # x1
+                        y_center - row_threshold // 2,      # y1
+                        empty_x_center + spot_width // 2,  # x2
+                        y_center + row_threshold // 2       # y2
+                    ])
+                
+    return empty_spots
+
+def draw_empty_spots_on_image(image_path, empty_spots, longitude, latitude, spot_width=30, row_threshold=20):
+    """
+    Draws the empty parking spots on the image
+
+    Params:
+        image_path (str): Path to the image
+        empty_spots (list): List of empty parking spots' center coordinates
+        longitude (float): Longitude of the center of image
+        latitude (float): Latitude of the center of the image
+        row_threshold (int): Maximum allowed y-axis distance to consider boxes in the same row
+        spot_width (int): Average width of a parking spot
+    """
+    image = cv2.imread(image_path)
+
+    for spot in empty_spots:
+        x_pixel, y_pixel = long_lat_to_tile_coords(spot[0], spot[1], longitude, latitude)
+
+        x1 = int(x_pixel - spot_width // 2)
+        y1 = int(y_pixel - row_threshold // 2)
+        x2 = int(x_pixel + spot_width // 2)
+        y2 = int(y_pixel + row_threshold // 2)
+        
+        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+
+    cv2.imwrite(image_path, image)
+
+
 def get_parking_coords_in_image(model, longitude, latitude):
     """
     Detects the parking spaces in the image (at longitude/latitude) and returns a list of coordinates
@@ -276,8 +339,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -295,6 +358,10 @@ def get_parking_coords_in_image(model, longitude, latitude):
 
         print(f"Car coordinates: ({long}, {lat})")
         all_detections.append([long, lat])
+
+    empty_spots = detect_empty_spots(all_detections)
+    draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude)
+    all_detections.extend(empty_spots)
 
     return all_detections
 
@@ -395,7 +462,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
     get_parking_coords_in_image(model, top_left_longitude, top_left_latitude)
 
-    centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
+    '''centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
 
     all_detections = []
 
@@ -407,8 +474,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
     df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
-
+    '''
 
 if __name__ == "__main__":
-    main(-6.3045, 53.3581, -6.2857, 53.3694)
-    #main(-6.4148, 53.2603, -6.1553, 53.4153) #all of dublin
+    main(-6.4148, 53.2603, -6.1553, 53.4153)
