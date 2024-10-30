@@ -1,0 +1,7 @@
+DROP TABLE user_details ON DELETE CASCADE;
+
+DROP TABLE logins ON DELETE CASCADE;
+
+DROP TABLE points;
+
+DROP TYPE point_type;
