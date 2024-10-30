@@ -3,7 +3,7 @@ import requests
 
 def send_parking_spots_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send parking data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -36,7 +36,7 @@ def send_parking_spots_to_api(data):
 
 def send_coach_parking_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send coach parking data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -70,7 +70,7 @@ def send_coach_parking_to_api(data):
 
 def send_dublinbikes_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send dublin bikes sharing station data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -104,7 +104,7 @@ def send_dublinbikes_to_api(data):
 
 def send_bike_stands_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send bike stand data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -138,7 +138,7 @@ def send_bike_stands_to_api(data):
 
 def send_water_fountain_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send water fountain data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -171,7 +171,7 @@ def send_water_fountain_to_api(data):
 
 def send_public_toilets_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send public toilets data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -204,7 +204,7 @@ def send_public_toilets_to_api(data):
 
 def send_accessible_parking_dlr_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send accessible parking in dlr data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -237,7 +237,7 @@ def send_accessible_parking_dlr_to_api(data):
 
 def send_bike_stands_dlr_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send bike stand in dlr data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -271,7 +271,7 @@ def send_bike_stands_dlr_to_api(data):
 
 def send_bike_stands_south_dublin_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send bike stand in south dublin data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -338,7 +338,7 @@ def send_accessible_parking_south_dublin_to_api(data):
 
 def send_public_wifi_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send public wifi access point data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -372,7 +372,7 @@ def send_public_wifi_to_api(data):
 
 def send_libraries_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send library data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -405,7 +405,7 @@ def send_libraries_to_api(data):
 
 def send_accessible_parking_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send accessible parking data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -438,7 +438,7 @@ def send_accessible_parking_to_api(data):
 
 def send_multistorey_car_park_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send multistorey data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -471,7 +471,7 @@ def send_multistorey_car_park_to_api(data):
 
 def send_bleeperbike_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send bleeperbike sharing station data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -504,7 +504,7 @@ def send_bleeperbike_to_api(data):
 
 def send_parking_meter_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send parking meter data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 
@@ -537,7 +537,7 @@ def send_parking_meter_to_api(data):
 
 def send_public_bins_to_api(data):
     """
-    Function to send the data as post requests to the backend
+    Function to send public bins data as post requests to the backend
     """
     url = "http://localhost:8080/v1/private/points/"
 

@@ -29,7 +29,7 @@ def read_geojson_save_as_csv_for_files_with_problems_in_format(geojson_path, csv
         properties = feature['properties']
         coordinates = feature['geometry']['coordinates']
         
-        if len(coordinates) == 2:  # Ensure there are two coordinates
+        if len(coordinates) == 2:
             longitude = coordinates[0]
             latitude = coordinates[1]
 
