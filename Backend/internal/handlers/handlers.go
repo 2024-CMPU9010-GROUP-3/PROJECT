@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 
-	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/db"
 )
 
 type PointsHandler struct{}

@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	resp "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/responses"
+	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 
 	"github.com/pashagolub/pgxmock/v4"
 )

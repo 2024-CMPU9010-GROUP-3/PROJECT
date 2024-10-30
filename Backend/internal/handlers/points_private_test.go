@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"testing"
 
-	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/private"
-	customErrors "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/errors"
-	testutil "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util/testutil"
+	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/private"
+	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
+	testutil "github.com/2024-CMPU9010-GROUP-3/magpie/internal/util/testutil"
 	"github.com/pashagolub/pgxmock/v4"
 	go_geom "github.com/twpayne/go-geom"
 )

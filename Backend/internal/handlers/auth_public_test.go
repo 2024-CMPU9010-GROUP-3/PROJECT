@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/util/testutil"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util/testutil"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/pashagolub/pgxmock/v4"
 )
