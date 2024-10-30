@@ -16,7 +16,7 @@ sql:
             import: "github.com/twpayne/go-geom"
             pointer: true
             type: "Point"
-- schema: "sql/schema.sql"
+- schema: "sql/migrations"
   queries: "sql/queries_public.sql"
   engine: "postgresql"
   gen:
