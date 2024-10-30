@@ -123,7 +123,7 @@ func main() {
 
 	currentMigration, dirty, err := m.Version()
 	if err != nil {
-		if errors.Is(migrate.ErrNilVersion, err) {
+		if errors.Is(err, migrate.ErrNilVersion) {
 			log.Printf("No migration version found in database\n")
 		} else {
 			log.Fatalf("Could not read migration version from database: %v\n", err)
