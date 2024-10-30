@@ -1,5 +1,6 @@
 import pandas as pd
 import requests
+import sys
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -27,7 +28,7 @@ def send_parking_spots_to_api(data):
     """
     Function to send the data as POST requests to the backend using multithreading.
     """
-    url = "http://localhost:8080/v1/private/points/"
+    url = "http://localhost:8080/v1/private/points/" # This is intentionally hardcoded, this will never change in prod
     successful_posts = 0
     total = len(data)
 
@@ -69,4 +70,4 @@ def main(csv_file_path):
         send_parking_spots_to_api(data)
 
 if __name__ == "__main__":
-    main('./output.csv')
+    main(sys.argv[1])
