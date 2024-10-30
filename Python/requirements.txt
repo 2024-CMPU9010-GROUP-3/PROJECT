@@ -13,4 +13,4 @@ torch==2.5.0
 torchvision==0.20.1
 ultralytics==8.3.25
 tqdm==4.66.6
-ultralytics-thop==2.0.9
+ultralytics-thop==2.0.10
