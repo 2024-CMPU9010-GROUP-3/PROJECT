@@ -16,15 +16,14 @@ Both backends need a single PostgreSQL database with the PostGIS extension to be
 docker run --name some-postgis -e POSTGRES_PASSWORD=mysecretpassword -d -p 5432:5432 postgis/postgis
 ```
 
-- Initialise the database with the SQL scripts in `/Backend/sql/extensions.sql` and `/Backend/sql/schema.sql` using a database access tool like DBeaver.
-  _**Note**: The schema setup process will be automated in the future, but for now it has to be done manually._
-
 - Set the environment variables according to [this](#configuration).
   Connection string example:
 
 ```
 postgres://postgres:mysecretpassword@localhost:5432/postgres
 ```
+
+- Database initialisation and migration is handled automatically on application startup.
 
 ## Routes
 
@@ -55,7 +54,7 @@ docker build -f Dockerfile.private -t cmpu9010-backend-private .
 Then run the container with the following command:
 
 ```
-docker run -p 8081:8080 cmpu9010-backend-private
+docker run -p 8081:8080 [--env-file <environment_file>] [--network="host"] cmpu9010-backend-private
 ```
 
 The server will then be reachable on `localhost:8081`
@@ -69,7 +68,7 @@ docker build -f Dockerfile.public -t cmpu9010-backend-public .
 Then run the container with the following command:
 
 ```
-docker run -p 8080:8080 cmpu9010-backend-public
+docker run -p 8080:8080 [--env-file <environment_file>] [--network="host"] cmpu9010-backend-public
 ```
 
 The server will then be reachable on `localhost:8080`
