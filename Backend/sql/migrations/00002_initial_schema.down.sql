@@ -1,6 +1,6 @@
-DROP TABLE user_details ON DELETE CASCADE;
+DROP TABLE user_details CASCADE;
 
-DROP TABLE logins ON DELETE CASCADE;
+DROP TABLE logins CASCADE;
 
 DROP TABLE points;
 
