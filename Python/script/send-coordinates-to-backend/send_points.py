@@ -34,6 +34,374 @@ def send_parking_spots_to_api(data):
     
     print(f"Total successful posts: {successful_posts}/{len(data)}")
 
+def send_coach_parking_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['Longitude'], row['Latitude']]
+            },
+            "type": "coach_parking",
+            "details": {
+                "number_spaces_avaliable": row['Spaces available']
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_dublinbikes_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['Longitude'], row['Latitude']]
+            },
+            "type": "bike_sharing_station",
+            "details": {
+                "number_bikes_avaliable": row['Number']
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_bike_stands_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['X'], row['Y']]
+            },
+            "type": "bike_stand",
+            "details": {
+                "number_stands": row['no_stands']
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_water_fountain_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['Long'], row['Lat']]
+            },
+            "type": "drinking_water_fountain",
+            "details": {
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_public_toilets_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['Long'], row['Lat']]
+            },
+            "type": "public_toilet",
+            "details": {
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_accessible_parking_dlr_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['X'], row['Y']]
+            },
+            "type": "accessible_parking",
+            "details": {
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_bike_stands_dlr_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['long'], row['lat']]
+            },
+            "type": "bike_stand",
+            "details": {
+                "number_stands": row['nostands']
+            }
+        }        
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_bike_stands_south_dublin_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['X'], row['Y']]
+            },
+            "type": "bike_stand",
+            "details": {
+            }
+        }        
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_accessible_parking_south_dublin_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['Longitude'], row['Latitude']]
+            },
+            "type": "accessible_parking",
+            "details": {
+                "number_spaces": row['No_Of_Spaces']
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+def send_public_wifi_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['LONGITUDE'], row['LATITUDE']]
+            },
+            "type": "public_wifi_access_point",
+            "details": {
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
+
+
+def send_libraries_to_api(data):
+    """
+    Function to send the data as post requests to the backend
+    """
+    url = "http://localhost:8080/v1/private/points/"
+
+    successful_posts = 0
+
+    for index, row in data.iterrows():
+        point_data = {
+            "longlat": {
+                "type": "Point",
+                "coordinates": [row['Longitude'], row['latitude']]
+            },
+            "type": "library",
+            "details": {
+            }
+        }
+        
+        try:
+            response = requests.post(url, json=point_data)
+            
+            if response.status_code == 200 or response.status_code == 201:
+                print(f"Successfully added point with longitude {row['longitude']} and latitude {row['latitude']}")
+                successful_posts += 1
+            else:
+                print(f"Failed to add point: {response.status_code}, {response.text}")
+        
+        except Exception as e:
+            print(f"Error sending data to API: {e}")
+    
+    print(f"Total successful posts: {successful_posts}/{len(data)}")
 
 def read_csv_file(csv_file_path):
     """
@@ -53,8 +421,29 @@ def main(csv_file_path):
     data = read_csv_file(csv_file_path)
 
     if data is not None:
-        send_parking_spots_to_api(data)
+        send_coach_parking_to_api(data)
+        #send_dublinbikes_to_api(data)
+        #send_bike_stands_to_api(data)
+        #send_water_fountain_to_api(data)
+        #send_public_toilets_to_api(data)
+        #send_accessible_parking_dlr_to_api(data)
+        #send_bike_stands_dlr_to_api(data)
+        #send_bike_stands_south_dublin_to_api(data)
+        #send_accessible_parking_south_dublin_to_api(data)
+        #send_public_wifi_to_api(data)
+        #send_libraries_to_api(data)
 
 
 if __name__ == "__main__":
-    main('coordinates_in_-6.3072_53.4044--6.3031_53.4068.csv')
+    main('2020-coach-parking-dcc-1.csv')
+    #main('dublinbikes.csv')
+    #main('bike_stands.csv')
+    #main('drinking_water_fountain.csv')
+    #main('public-toilets-dcc-2021-updated.csv')
+    #main('accessible_parking_bays_dlr2016.csv')
+    #main('bicycleparkingstandsdlr.csv')
+    #main('Bicycle_Parking_Stands_SDCC.csv')
+    #main('Accessible_Parking_Spaces_SDCC.csv')
+    #main('dcc_wifi4eu_locations.csv')
+    #main('dublincitylibrarylocation2021.csv')
+
