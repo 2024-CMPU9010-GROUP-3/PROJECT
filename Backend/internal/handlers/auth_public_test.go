@@ -14,6 +14,9 @@ import (
 	"github.com/pashagolub/pgxmock/v4"
 )
 
+const userRoute = "/auth/User"
+const userIdString = "41692803-0f09-4d6b-9b0f-f893bb985bff"
+
 func TestAuthHandlerHandleGet(t *testing.T) {
 	mock, err := pgxmock.NewPool()
 	if err != nil {
@@ -40,13 +43,13 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 	}
 
 	userId := pgtype.UUID{}
-	userId.Scan("41692803-0f09-4d6b-9b0f-f893bb985bff")
+	userId.Scan(userIdString)
 
 	tests := []testutil.HandlerTestDefinition {
 		{
 			Name: "Positive testcase",
 			Method: "GET",
-			Route: "/auth/User",
+			Route: userRoute,
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
 												 `FROM user_details ` +
@@ -57,11 +60,11 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 						 AddRow(userId, registerDate, "Testy", "McTesterson", "https://example.com/", lastLoginDate))
 			},
 			ExpectedStatus: http.StatusOK,
-			ExpectedJSON: `{
+			ExpectedJSON: fmt.Sprintf(`{
 				"error": null,
 				"response": {
 					"content": {
-						"id": "41692803-0f09-4d6b-9b0f-f893bb985bff",
+						"id": "%s",
 						"registerdate": "2024-10-10T12:34:56.789Z",
 						"firstname": "Testy",
 						"lastname": "McTesterson",
@@ -69,15 +72,15 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 						"lastloggedin": "2024-10-30T12:34:56.789Z"
 					}
 				}
-			}`,
+			}`, userIdString),
 			PathParams: map[string]string{
-				"id": "41692803-0f09-4d6b-9b0f-f893bb985bff",
+				"id": userIdString,
 			},
 		},
 		{
 			Name: "Invalid UUID",
 			Method: "GET",
-			Route: "/auth/User",
+			Route: userRoute,
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// handler should return before db is queried
 			},
@@ -90,13 +93,13 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 					"response": null
 				}`,
 			PathParams: map[string]string{
-				"id": "41692803-0f09-4d6b-9b0f-f893bb985bf",
+				"id": userIdString[1:], // first char removed
 			},
 		},
 		{
 			Name: "User not found",
 			Method: "GET",
-			Route: "/auth/User",
+			Route: userRoute,
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
 												 `FROM user_details ` +
@@ -114,13 +117,13 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 					"response": null
 				}`,
 			PathParams: map[string]string{
-				"id": "41692803-0f09-4d6b-9b0f-f893bb985bff",
+				"id": userIdString,
 			},
 		},
 		{
 			Name: "Database error during query",
 			Method: "GET",
-			Route: "/auth/User",
+			Route: userRoute,
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
 												 `FROM user_details ` +
@@ -138,7 +141,7 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 					"response": null
 				}`,
 			PathParams: map[string]string{
-				"id": "41692803-0f09-4d6b-9b0f-f893bb985bff",
+				"id": userIdString,
 			},
 		},
 	}
@@ -158,7 +161,6 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 
 	authHandler := &AuthHandler{}
 	tests := []testutil.HandlerTestDefinition {
-		// TODO: Add test cases
 	}
 	testutil.RunTests(t, authHandler.HandlePost, mock, tests)
 }
