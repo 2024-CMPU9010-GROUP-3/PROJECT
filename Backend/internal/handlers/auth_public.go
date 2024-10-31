@@ -124,7 +124,14 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createUserDetailParams := db.CreateUserDetailsParams{ID: userId, Firstname: userDto.FirstName, Lastname: userDto.LastName}
+	profilePictureAsPgType := pgtype.Text{}
+	err = profilePictureAsPgType.Scan(userDto.ProfilePicture)
+	if err != nil {
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+
+	createUserDetailParams := db.CreateUserDetailsParams{ID: userId, Firstname: userDto.FirstName, Lastname: userDto.LastName, Profilepicture: profilePictureAsPgType}
 	userId, err = db.New(dbConn).WithTx(tx).CreateUserDetails(*dbCtx, createUserDetailParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
