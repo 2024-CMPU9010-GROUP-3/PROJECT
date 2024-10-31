@@ -30,13 +30,13 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 
 	authHandler := &AuthHandler{}
 
-	registerDate :=  pgtype.Timestamp{}
+	registerDate := pgtype.Timestamp{}
 	err = registerDate.Scan(time.Date(2024, 10, 10, 12, 34, 56, 789000000, time.UTC))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	lastLoginDate :=  pgtype.Timestamp{}
+	lastLoginDate := pgtype.Timestamp{}
 	err = lastLoginDate.Scan(time.Date(2024, 10, 30, 12, 34, 56, 789000000, time.UTC))
 	if err != nil {
 		t.Fatal(err)
@@ -45,19 +45,19 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 	userId := pgtype.UUID{}
 	userId.Scan(userIdString)
 
-	tests := []testutil.HandlerTestDefinition {
+	tests := []testutil.HandlerTestDefinition{
 		{
-			Name: "Positive testcase",
+			Name:   "Positive testcase",
 			Method: "GET",
-			Route: userRoute,
+			Route:  userRoute,
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
-												 `FROM user_details ` +
-												 `WHERE Id = \$1 ` +
-												 `LIMIT 1`).
-						 WithArgs(userId).
-						 WillReturnRows(pgxmock.NewRows([]string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"}).
-						 AddRow(userId, registerDate, "Testy", "McTesterson", "https://example.com/", lastLoginDate))
+					`FROM user_details ` +
+					`WHERE Id = \$1 ` +
+					`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"}).
+						AddRow(userId, registerDate, "Testy", "McTesterson", "https://example.com/", lastLoginDate))
 			},
 			ExpectedStatus: http.StatusOK,
 			ExpectedJSON: fmt.Sprintf(`{
@@ -78,9 +78,9 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 			},
 		},
 		{
-			Name: "Invalid UUID",
+			Name:   "Invalid UUID",
 			Method: "GET",
-			Route: userRoute,
+			Route:  userRoute,
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// handler should return before db is queried
 			},
@@ -97,16 +97,16 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 			},
 		},
 		{
-			Name: "User not found",
+			Name:   "User not found",
 			Method: "GET",
-			Route: userRoute,
+			Route:  userRoute,
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
-												 `FROM user_details ` +
-												 `WHERE Id = \$1 ` +
-												 `LIMIT 1`).
-						 WithArgs(userId).
-						 WillReturnRows(pgxmock.NewRows([]string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"}))
+					`FROM user_details ` +
+					`WHERE Id = \$1 ` +
+					`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"}))
 			},
 			ExpectedStatus: http.StatusNotFound,
 			ExpectedJSON: `{
@@ -121,16 +121,16 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 			},
 		},
 		{
-			Name: "Database error during query",
+			Name:   "Database error during query",
 			Method: "GET",
-			Route: userRoute,
+			Route:  userRoute,
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
-												 `FROM user_details ` +
-												 `WHERE Id = \$1 ` +
-												 `LIMIT 1`).
-						 WithArgs(userId).WillReturnError(fmt.Errorf("Simulate Database Error"))
-						},
+					`FROM user_details ` +
+					`WHERE Id = \$1 ` +
+					`LIMIT 1`).
+					WithArgs(userId).WillReturnError(fmt.Errorf("Simulate Database Error"))
+			},
 			ExpectedStatus: http.StatusInternalServerError,
 			ExpectedJSON: `{
 					"error": {
@@ -160,7 +160,76 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 	RegisterDatabaseConnection(&ctx, mock)
 
 	authHandler := &AuthHandler{}
-	tests := []testutil.HandlerTestDefinition {
+
+	userId := pgtype.UUID{}
+	userId.Scan(userIdString)
+
+	username := `testy`
+	email := `testy@example.com`
+	pw := `test`
+	firstname := `Testy`
+	lastname := `McTesterson`
+	pfpLink := `https://www.example.com/image.png`
+	pfpLinkPG := pgtype.Text{}
+	err = pfpLinkPG.Scan(pfpLink)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tests := []testutil.HandlerTestDefinition{
+		{
+			Name:   "Positive testcase",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pw, firstname, lastname, pfpLink),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+					`FROM logins ` +
+					`WHERE Email = \$1 ` +
+					`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+					`FROM logins ` +
+					`WHERE Username = \$1 ` +
+					`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectBegin()
+
+				mock.ExpectQuery(`INSERT INTO logins`).
+					WithArgs(username, email, testutil.BcryptArg()).
+					WillReturnRows(pgxmock.NewRows([]string{"Id"}).
+						AddRow(userId))
+
+				mock.ExpectQuery(`INSERT INTO user_details`).
+					WithArgs(userId, firstname, lastname, pfpLinkPG).
+					WillReturnRows(pgxmock.NewRows([]string{"Id"}).
+						AddRow(userId))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusCreated,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePost, mock, tests)
 }
@@ -175,9 +244,9 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 	ctx := context.Background()
 
 	RegisterDatabaseConnection(&ctx, mock)
-	
+
 	authHandler := &AuthHandler{}
-	tests := []testutil.HandlerTestDefinition {
+	tests := []testutil.HandlerTestDefinition{
 		// TODO: Add test cases
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
@@ -195,7 +264,7 @@ func TestAuthHandlerHandleDelete(t *testing.T) {
 	RegisterDatabaseConnection(&ctx, mock)
 
 	authHandler := &AuthHandler{}
-	tests := []testutil.HandlerTestDefinition {
+	tests := []testutil.HandlerTestDefinition{
 		// TODO: Add test cases
 	}
 	testutil.RunTests(t, authHandler.HandleDelete, mock, tests)
@@ -213,7 +282,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 	RegisterDatabaseConnection(&ctx, mock)
 
 	authHandler := &AuthHandler{}
-	tests := []testutil.HandlerTestDefinition {
+	tests := []testutil.HandlerTestDefinition{
 		// TODO: Add test cases
 	}
 	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
