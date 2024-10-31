@@ -365,7 +365,7 @@ def send_public_bins(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
 
-def send_parking_spots_to_api(data):
+def send_points_to_api(data, function):
     """
     Function to send the data as POST requests to the backend using multithreading.
     """
@@ -379,7 +379,7 @@ def send_parking_spots_to_api(data):
     with ThreadPoolExecutor() as executor:
         futures = []
         for index, row in data.iterrows():
-            futures.append(executor.submit(send_parking_spot, session, url, row))
+            futures.append(executor.submit(function, session, url, row))
 
         with tqdm(total=total, desc="Uploading parking spots", unit="spot") as pbar:
             for future in as_completed(futures):
@@ -402,13 +402,19 @@ def read_csv_file(csv_file_path):
         print(f"Error reading CSV file: {e}")
         return None
 
-def main(csv_file_path):
+def main(csv_file_path, function_name):
     """
     Main function to send all the coordinates in a CSV file to the backend.
     """
     data = read_csv_file(csv_file_path)
-    send_parking_spots_to_api(data)
+
+    function = globals().get(function_name)
+    if function is None:
+        print(f"Function '{function_name}' not found.")
+        return
+    
+    send_points_to_api(data, function)
     
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], sys.argv[2])
