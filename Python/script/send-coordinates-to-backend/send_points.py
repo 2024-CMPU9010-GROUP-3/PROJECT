@@ -68,7 +68,7 @@ def send_dublinbikes(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
       
- def send_bike_stands(session, url, row):
+def send_bike_stands(session, url, row):
     point_data = {
             "longlat": {
                 "type": "Point",
@@ -175,7 +175,7 @@ def send_bike_stands_dlr(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
       
- def send_bike_stands_south_dublin(session, url, row):
+def send_bike_stands_south_dublin(session, url, row):
     point_data = {
             "longlat": {
                 "type": "Point",
@@ -218,8 +218,8 @@ def send_accessible_parking_south_dublin(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
       
- def send_public_wifi(session, url, row):
-     point_data = {
+def send_public_wifi(session, url, row):
+    point_data = {
             "longlat": {
                 "type": "Point",
                 "coordinates": [row['LONGITUDE'], row['LATITUDE']]
@@ -240,7 +240,7 @@ def send_accessible_parking_south_dublin(session, url, row):
         return False
       
 def send_libraries(session, url, row):
-     point_data = {
+    point_data = {
             "longlat": {
                 "type": "Point",
                 "coordinates": [row['Longitude'], row['Latitude']]
@@ -260,8 +260,8 @@ def send_libraries(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
       
- def send_accessible_parking(session, url, row):
-     point_data = {
+def send_accessible_parking(session, url, row):
+    point_data = {
             "longlat": {
                 "type": "Point",
                 "coordinates": [row['longitude'], row['latitude']]
@@ -281,8 +281,8 @@ def send_libraries(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
       
- def send_multistorey_car_park(session, url, row):
-     point_data = {
+def send_multistorey_car_park(session, url, row):
+    point_data = {
             "longlat": {
                 "type": "Point",
                 "coordinates": [row['Longitude'], row['Latitude']]
@@ -302,8 +302,8 @@ def send_libraries(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
       
- def send_bleeperbike(session, url, row):
-     point_data = {
+def send_bleeperbike(session, url, row):
+    point_data = {
             "longlat": {
                 "type": "Point",
                 "coordinates": [row['longitude'], row['latitude']]
@@ -323,8 +323,8 @@ def send_libraries(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
       
- def send_parking_meter(session, url, row):
-     point_data = {
+def send_parking_meter(session, url, row):
+    point_data = {
             "longlat": {
                 "type": "Point",
                 "coordinates": [row['longitude'], row['latitude']]
@@ -344,8 +344,8 @@ def send_libraries(session, url, row):
         print(f"Error sending data to API: {e}")
         return False
       
- def send_public_bins(session, url, row):
-     point_data = {
+def send_public_bins(session, url, row):
+    point_data = {
             "longlat": {
                 "type": "Point",
                 "coordinates": [row['longitude'], row['latitude']]
