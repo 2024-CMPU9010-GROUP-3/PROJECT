@@ -9,8 +9,8 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 
-	customErrors "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/errors"
-	resp "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/responses"
+	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
+	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 )
 
 type tokenKey string

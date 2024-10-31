@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: public-backend
-          image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.5.0@sha256:e42fcd2f4c773b67cf6ac2d544a067f639e554d5835dbccdca539b4e7fff08ff
+          image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.6.0@sha256:6d6985b8e4bd896282ae066330477a5be708f25e6f5e787624642eed0332f1f6
           resources: {}
           ports:
             - containerPort: 8080

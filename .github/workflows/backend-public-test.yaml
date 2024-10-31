@@ -153,7 +153,7 @@ jobs:
 
           echo "</details>" >> coverage_table.md
 
-          COMMENT_BODY=$(echo -e "### [[Run #$RUN_NUMBER]](https://github.com/2024-CMPU9010-GROUP-3/PROJECT/actions/runs/${{ github.run_id }}#summary) Test Coverage for \`public\`: $COVERAGE% $INDICATOR\n$(cat coverage_table.md)")
+          COMMENT_BODY=$(echo -e "### [[Run #$RUN_NUMBER]](https://github.com/2024-CMPU9010-GROUP-3/magpie/actions/runs/${{ github.run_id }}#summary) Test Coverage for \`public\`: $COVERAGE% $INDICATOR\n$(cat coverage_table.md)")
           gh issue comment ${{ env.PR_NUMBER }} --body "$COMMENT_BODY"
       
       - name: Fail if coverage is below threshold
