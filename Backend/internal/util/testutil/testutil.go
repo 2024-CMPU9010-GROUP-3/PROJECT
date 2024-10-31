@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"testing"
 
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
@@ -23,6 +24,19 @@ type HandlerTestDefinition struct {
 	ExpectedJSON   string
 	PathParams     map[string]string
 	QueryParams    map[string]string
+}
+
+type bcryptArgument struct {}
+
+var bcryptHashPattern = regexp.MustCompile(`^\$2[ayb]\$.{56}$`)
+
+func (b bcryptArgument) Match(arg interface{}) bool {
+    hash, ok := arg.(string)
+    return ok && bcryptHashPattern.MatchString(hash)
+}
+
+func BcryptArg () pgxmock.Argument {
+	return bcryptArgument{}
 }
 
 func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
