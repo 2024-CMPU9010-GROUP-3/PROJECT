@@ -8,6 +8,8 @@ import os
 import numpy as np
 import math
 import pandas as pd
+from geopy.distance import geodesic
+
 
 def get_images(imag_save_path, longitude, latitude, mapbox_type):
     """
@@ -202,6 +204,7 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
                 else:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
                     detections_parking.append([x_min, y_min, x_max, y_max])
+                    print(x_min, y_min, x_max, y_max)
                     cv2.rectangle(img, (int(x_min), int(y_min)), (int(x_max), int(y_max)), (0, 0, 255), 2)  #red if parked
 
     cv2.imwrite(output_image_path, img)
@@ -241,7 +244,41 @@ def convert_bounding_box_to_coordinates(x, y, longitude, latitude):
     lat = math.degrees(lat_rad)
 
     return long, lat
+
+def convert_coordinates_to_bounding_box(longitude, latitude, center_long, center_lat):
+    """
+    Convert longitude and latitude to pixel coordinates
     
+    Params:
+        longitude (float): Longitude of the object (car or empty parking space)
+        latitude (float): Latitude of the object (car or empty parking space)
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image.
+        
+    Returns:
+        x, y (float): pixel coordinates of the center of the bounding box
+    """
+    num_tiles = 2 ** 18
+    tile_size = 256
+
+    center_lat_rad = math.radians(center_lat)
+    center_x_tile = (center_long + 180.0) / 360.0 * num_tiles
+    center_y_tile = (1.0 - math.log(math.tan(center_lat_rad) + (1 / math.cos(center_lat_rad))) / math.pi) / 2.0 * num_tiles
+
+    lat_rad = math.radians(latitude)
+    x_tile = (longitude + 180.0) / 360.0 * num_tiles
+    y_tile = (1.0 - math.log(math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * num_tiles
+
+    center_x_pixel = center_x_tile * tile_size
+    center_y_pixel = center_y_tile * tile_size
+    x_pixel = x_tile * tile_size
+    y_pixel = y_tile * tile_size
+
+    meters_per_pixel = 156543.03392 * math.cos(center_lat_rad) / num_tiles
+    x_offset = (x_pixel - center_x_pixel) / meters_per_pixel + 400 / 2
+    y_offset = (y_pixel - center_y_pixel) / meters_per_pixel + 400 / 2
+
+    return x_offset, y_offset
 
 def get_center_bounding_box(x_min, y_min, x_max, y_max):
     """
@@ -258,65 +295,81 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
-def detect_empty_spots(cars, row_threshold=20, spot_width=30):
+def detect_empty_spots(cars, row_threshold_meters= 5, spot_width_meters= 1.8, spot_length_meters= 4.5):
     """
     Detects empty spots in a row of parked cars based on the detected car bounding boxes and returns their coordinates
     
     Params:
         cars (list): List of car bounding boxes centers
-        row_threshold (int): Maximum allowed y-axis distance to consider boxes in the same row
-        spot_width (int): Average width of a parking spot
+        row_threshold_meters (float): Maximum allowed y-axis distance to consider boxes in the same row (in meters)
+        spot_width_meters (float): Average width of a parking spot in meters
+        spot_length_meters (float): Average length of a parking spot in meters
+
         
     Returns:
         list: Coordinates of estimated empty parking spots
     """
     cars = sorted(cars, key=lambda point: point[0])
 
+    average_latitude = sum(car[1] for car in cars) / len(cars)
+    spot_width_degrees = spot_width_meters / (111320 * math.cos(math.radians(average_latitude)))
+    spot_length_degrees = spot_length_meters / 111320
     empty_spots = []
-    for i in range(len(cars) - 1):
-        x_current = cars[i][0]
-        x_next = cars[i + 1][0]
-        gap = x_next - x_current
-        
-        if gap > spot_width:
-            num_spots = int(gap // spot_width)
-            y_center = cars[i][1]
 
-            if abs(cars[i][1] - cars[i + 1][1]) < row_threshold:
+    for i in range(len(cars) - 1):
+        x_current, y_current = cars[i]
+        x_next, y_next = cars[i + 1]
+        
+        gap_longitude = geodesic((y_current, x_current), (y_current, x_next)).meters
+        print(f"Horizontal gap between car {i} and car {i + 1}: {gap_longitude:.2f} meters")
+
+        if gap_longitude > spot_width_meters:
+            print("in first if")
+            num_spots = int(gap_longitude // spot_width_meters)
+            gap_latitude = geodesic((y_current, x_current), (y_next, x_current)).meters
+            print(gap_latitude)
+
+            if gap_latitude < row_threshold_meters:
+
+                print("in second if")
+
                 for j in range(1, num_spots + 1):
-                    empty_x_center = x_current + j * spot_width
-                    empty_spots.append([
-                        empty_x_center - spot_width // 2,  # x1
-                        y_center - row_threshold // 2,      # y1
-                        empty_x_center + spot_width // 2,  # x2
-                        y_center + row_threshold // 2       # y2
-                    ])
-                
+                    empty_x_center = x_current + j * spot_width_degrees
+                    long = empty_x_center - (spot_width_degrees / 2)
+                    lat = y_current - (spot_length_degrees / 2)
+                    empty_spots.append([long, lat])
+                    print(f"Empty parking spot coordinates: ({long}, {lat})")
+        
     return empty_spots
 
-def draw_empty_spots_on_image(image_path, empty_spots, longitude, latitude, spot_width=30, row_threshold=20):
+
+def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=3, spot_length =8):
     """
     Draws the empty parking spots on the image
 
     Params:
         image_path (str): Path to the image
         empty_spots (list): List of empty parking spots' center coordinates
-        longitude (float): Longitude of the center of image
-        latitude (float): Latitude of the center of the image
-        row_threshold (int): Maximum allowed y-axis distance to consider boxes in the same row
-        spot_width (int): Average width of a parking spot
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image.
+        spot_width (float): Average width of a parking spot in pixels
+        spot_length (float): Average length of a parking spot in pixels
     """
     image = cv2.imread(image_path)
 
     for spot in empty_spots:
-        x_pixel, y_pixel = long_lat_to_tile_coords(spot[0], spot[1], longitude, latitude)
+        x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+        print(x_pixel, y_pixel)
 
         x1 = int(x_pixel - spot_width // 2)
-        y1 = int(y_pixel - row_threshold // 2)
+        y1 = int(y_pixel - spot_length // 2)
         x2 = int(x_pixel + spot_width // 2)
-        y2 = int(y_pixel + row_threshold // 2)
+        y2 = int(y_pixel + spot_length // 2)
+
+        print(x1, y1, x2, y2)
         
-        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 0, 255), 2)
+        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        print("bounding box drawn")
 
     cv2.imwrite(image_path, image)
 
@@ -477,4 +530,4 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     '''
 
 if __name__ == "__main__":
-    main(-6.4148, 53.2603, -6.1553, 53.4153)
+    main(-6.302440063476553, 53.36178802374502, -6.1553, 53.4153)
