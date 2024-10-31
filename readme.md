@@ -2,7 +2,7 @@
 
 <img src="https://github.com/user-attachments/assets/c147b766-d1bd-4cf7-b4e9-fa49705c89b1" align="center" width="144px" height="144px"/>
 
-# Group 3 Project Repository
+# Magpie Project Repository
 
 _Repository for Group 3 of the TU Dublin ASD/DS masters Group Project_
 
@@ -35,11 +35,30 @@ The file structure is as follows:
 
 ```sh
 📁
-├── 📁 .github
-├── 📁 Backend
-├── 📁 Distribution
-├── 📁 Documentation
-└── 📁 Frontend
+├──📁 Backend
+│   ├──📁 cmd
+│   ├──📁 internal
+│   └──📁 sql
+├──📁 Distribution
+│   ├──📁 compose
+│   └──📁 kubernetes
+├──📁 Documentation
+│   ├──📁 gantt-chart
+│   ├──📁 interim-report
+│   ├──📁 mom
+│   ├──📁 presentation
+│   ├──📁 project plan
+│   ├──📁 retrospectives
+│   ├──📁 survey
+│   └──📁 ux-documents
+├──📁 Frontend
+│   ├──📁 public
+│   └──📁 src
+└──📁 Python
+    ├──📁 charts
+    ├──📁 notebooks
+    ├──📁 script
+    └──📁 yolo
 ```
 
 # ⚙️ Using the development containers
