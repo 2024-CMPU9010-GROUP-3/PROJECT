@@ -232,6 +232,59 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			}`, userIdString),
 		},
 		{
+			Name:   "Json field order should not matter",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"FirstName": "%s",
+				"Password": "%s",
+				"ProfilePicture": "%s",
+				"Username": "%s",
+				"Email": "%s",
+				"LastName": "%s"
+			}`, firstname, pw, pfpLink, username, email, lastname),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+					`FROM logins ` +
+					`WHERE Email = \$1 ` +
+					`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+					`FROM logins ` +
+					`WHERE Username = \$1 ` +
+					`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectBegin()
+
+				mock.ExpectQuery(`INSERT INTO logins`).
+					WithArgs(username, email, testutil.BcryptArg()).
+					WillReturnRows(pgxmock.NewRows([]string{"Id"}).
+						AddRow(userId))
+
+				mock.ExpectQuery(`INSERT INTO user_details`).
+					WithArgs(userId, firstname, lastname, pfpLinkPG).
+					WillReturnRows(pgxmock.NewRows([]string{"Id"}).
+						AddRow(userId))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusCreated,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
+		{
 			Name:   "Invalid input json",
 			Method: "POST",
 			Route:  userRoute,
