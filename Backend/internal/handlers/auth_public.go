@@ -86,6 +86,14 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+  profilePictureAsPgType := pgtype.Text{}
+	err = profilePictureAsPgType.Scan(userDto.ProfilePicture)
+	if err != nil {
+    // in theory this case should never happen given the json is correctly decoded
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+
 	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
 	if !errors.Is(err, pgx.ErrNoRows) {
 		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
@@ -119,13 +127,6 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	// converting the hash to a string here is not ideal, but sqlc interprets char(72) as a string so here we are
 	createUserParams := db.CreateUserParams{Username: userDto.Username, Email: userDto.Email, Passwordhash: string(passwordHash)}
 	userId, err := db.New(dbConn).WithTx(tx).CreateUser(*dbCtx, createUserParams)
-	if err != nil {
-		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
-		return
-	}
-
-	profilePictureAsPgType := pgtype.Text{}
-	err = profilePictureAsPgType.Scan(userDto.ProfilePicture)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
