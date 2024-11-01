@@ -21,7 +21,7 @@ _Magpie_ is a geographical information service that allows Civil Planners and ot
 
 You can access the live version of the project [here](https://magpie.solonsstuff.com/).
 
-![Arc_87X7XBsTlm](https://github.com/user-attachments/assets/d019ce55-e555-468f-8050-65f386845a5e)
+![magpie](https://github.com/user-attachments/assets/bcffd0ca-e228-484c-9236-d749e9769932)
 
 # 📂 Repository Structure
 
