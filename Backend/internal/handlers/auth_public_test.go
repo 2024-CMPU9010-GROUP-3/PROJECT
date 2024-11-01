@@ -532,6 +532,53 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 					"response": null
 				}`,
 		},
+		{
+			Name:   "Database error during insert",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Email": "%s",
+				"Username": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, email, username, pw, firstname, lastname, pfpLink),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"})) // no rows returned
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"})) // no rows returned
+
+				mock.ExpectBegin()
+
+        mock.ExpectQuery(`INSERT INTO logins`).
+        WithArgs(username, email, testutil.BcryptArg()).
+        WillReturnError(fmt.Errorf("Simulate database error"))
+
+        mock.ExpectRollback() // transaction should roll bock on error
+			},
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError:  errors.Database.UnknownDatabaseError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1104,
+						"errorMsg": "Unknown database error",
+            "cause": "Simulate database error"
+					},
+					"response": null
+				}`,
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePost, mock, tests)
 }
