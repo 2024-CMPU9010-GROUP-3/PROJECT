@@ -212,7 +212,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 				mock.ExpectBegin()
 
 				mock.ExpectQuery(`INSERT INTO logins`).
-					WithArgs(username, email, testutil.BcryptArg()).
+					WithArgs(username, email, testutil.BcryptArg(pw)).
 					WillReturnRows(pgxmock.NewRows([]string{"Id"}).
 						AddRow(userId))
 
@@ -265,7 +265,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 				mock.ExpectBegin()
 
 				mock.ExpectQuery(`INSERT INTO logins`).
-					WithArgs(username, email, testutil.BcryptArg()).
+					WithArgs(username, email, testutil.BcryptArg(pw)).
 					WillReturnRows(pgxmock.NewRows([]string{"Id"}).
 						AddRow(userId))
 
@@ -563,7 +563,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 				mock.ExpectBegin()
 
         mock.ExpectQuery(`INSERT INTO logins`).
-        WithArgs(username, email, testutil.BcryptArg()).
+        WithArgs(username, email, testutil.BcryptArg(pw)).
         WillReturnError(fmt.Errorf("Simulate database error"))
 
         mock.ExpectRollback() // transaction should roll bock on error

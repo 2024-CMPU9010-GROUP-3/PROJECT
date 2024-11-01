@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
+	"golang.org/x/crypto/bcrypt"
 
 	"github.com/pashagolub/pgxmock/v4"
 )
@@ -26,17 +27,20 @@ type HandlerTestDefinition struct {
 	QueryParams    map[string]string
 }
 
-type bcryptArgument struct {}
+type bcryptArgument struct {
+	expected string
+}
 
 var bcryptHashPattern = regexp.MustCompile(`^\$2[ayb]\$.{56}$`)
 
 func (b bcryptArgument) Match(arg interface{}) bool {
     hash, ok := arg.(string)
-    return ok && bcryptHashPattern.MatchString(hash)
+		err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(b.expected))
+    return ok && bcryptHashPattern.MatchString(hash) && err == nil
 }
 
-func BcryptArg () pgxmock.Argument {
-	return bcryptArgument{}
+func BcryptArg (expected string) pgxmock.Argument {
+	return bcryptArgument{expected: expected}
 }
 
 func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
