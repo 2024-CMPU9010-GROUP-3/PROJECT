@@ -19,15 +19,13 @@ _Repository for Group 3 of the TU Dublin ASD/DS masters Group Project_
 
 _Magpie_ is a geographical information service that allows Civil Planners and other users to easily explore public amenities 'at a glance'.
 
-You can access the live version of the project [here](https://magpie.solonsstuff.com/).
-
-
 <div align="center">
 
 ![magpie](https://github.com/user-attachments/assets/bcffd0ca-e228-484c-9236-d749e9769932)
 
 </div>
 
+You can access the live version of the project [here](https://magpie.solonsstuff.com/).
 
 # 📂 Repository Structure
 
