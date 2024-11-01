@@ -168,6 +168,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 	username := `testy`
 	email := `testy@example.com`
 	pw := `test`
+	pwLong := `7z6PX6a1aQieKp94NcaDLCTPBEG1fc90YFZLz4a5rf7TFKMuVEA9trFbgtkpLQUrAEuJp3ffx` // 73 bytes
 	firstname := `Testy`
 	lastname := `McTesterson`
 	pwHash := `$2a$12$oMO4XyesvVS29xYsd8HKn.KBB8J2pxCydSPkuFcTnEfwQaKb2MX2i`
@@ -449,6 +450,44 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 					"error": {
 						"errorCode": 1221,
 						"errorMsg": "Username already exists"
+					},
+					"response": null
+				}`,
+		},
+		{
+			Name:   "Password hashing error",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Email": "%s",
+				"Username": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, email, username, pwLong, firstname, lastname, pfpLink),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"})) // no rows returned
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"})) // no rows returned
+			},
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError:  errors.Internal.HashingError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1012,
+						"errorMsg": "Could not hash password"
 					},
 					"response": null
 				}`,
