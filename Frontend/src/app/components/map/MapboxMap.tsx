@@ -70,6 +70,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     return coordinates;
   });
 
+  // Checkbox code begins
+
+  // Checkbox code ends
+
   useEffect(() => {
     console.log("Slider Value Commit>>>>>", sliderValue);
     console.log("Slider Value Display>>>>", sliderValueDisplay);
@@ -317,6 +321,50 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           />
         </div>
       )}
+      {mapBoxApiKey && (
+        <>
+          <div className="absolute bottom-20 left-20">
+            <div className="min-h-20 min-w-60 bg-white rounded-xl">
+              <div className=" p-3 space-y-2">
+                <label className="block text-lg font-medium">
+                  Select Options:
+                </label>
+                <div>
+                  <input type="checkbox" id="option1" name="option1" />
+                  <label htmlFor="option1" className="ml-2">
+                    Coach Parking
+                  </label>
+                </div>
+                <div>
+                  <input type="checkbox" id="option2" name="option2" />
+                  <label htmlFor="option2" className="ml-2">
+                    Bike Stand
+                  </label>
+                </div>
+                <div>
+                  <input type="checkbox" id="option3" name="option3" />
+                  <label htmlFor="option3" className="ml-2">
+                    Public Toilet
+                  </label>
+                </div>
+                <div>
+                  <input type="checkbox" id="option4" name="option4" />
+                  <label htmlFor="option4" className="ml-2">
+                    Parking Meter
+                  </label>
+                </div>
+                <div>
+                  <input type="checkbox" id="option5" name="option5" />
+                  <label htmlFor="option5" className="ml-2">
+                    Parking
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       {isMarkerVisible && (
         <div className="absolute right-24 top-1/3 bg-white p-5 rounded-xl max-h-[400px] max-w-[450px] overflow-scroll">
           <div>
