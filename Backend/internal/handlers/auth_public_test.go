@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util/testutil"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/pashagolub/pgxmock/v4"
@@ -229,6 +230,31 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 					}
 				}
 			}`, userIdString),
+		},
+		{
+			Name:   "Invalid input json",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			`, username, email, pw, firstname, lastname, pfpLink), // json invalid: closing brace missing
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// Handler should return error before db call is made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Payload.InvalidPayloadUserError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1212,
+						"errorMsg": "Payload (User) not valid"
+					},
+					"response": null
+				}`,
 		},
 	}
 	testutil.RunTests(t, authHandler.HandlePost, mock, tests)
