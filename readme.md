@@ -2,7 +2,7 @@
 
 <img src="https://github.com/user-attachments/assets/c147b766-d1bd-4cf7-b4e9-fa49705c89b1" align="center" width="144px" height="144px"/>
 
-# Magpie Project Repository
+# Magpie
 
 _Repository for Group 3 of the TU Dublin ASD/DS masters Group Project_
 
@@ -17,19 +17,25 @@ _Repository for Group 3 of the TU Dublin ASD/DS masters Group Project_
 
 # ❓ What is this repository for?
 
-This repository is for the Group 3 project for the TU Dublin ASD/DS masters course. (stub)
+_Magpie_ is a geographical information service that allows Civil Planners and other users to easily explore public amenities 'at a glance'.
+
+You can access the live version of the project [here](https://magpie.solonsstuff.com/).
+
+
 
 # 📂 Repository Structure
 
 The project is divided into several parts:
 
-1. `Backend`: (stub)
+1. `Backend`: Public and Private API services
 
-2. `Distribution`: (stub)
+2. `Distribution`: Docker Compose and Kubernetes deployment files
 
-3. `Documentation`: (stub)
+3. `Documentation`: Project documentation, including interim reports, MOMs, and retrospectives
 
-4. `Frontend`: (stub)
+4. `Frontend`: Next.js frontend
+
+5. `Python`: Python scripts for data processing, machine learning, and data visualization
 
 The file structure is as follows:
 
