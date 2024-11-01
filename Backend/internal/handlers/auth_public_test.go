@@ -304,6 +304,30 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 					"response": null
 				}`,
 		},
+		{
+			Name:   "Password missing",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Email": "%s",
+				"Username": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, email, username, firstname, lastname, pfpLink),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// Handler should return error before db call is made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.RequiredParameterMissingError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1201,
+						"errorMsg": "One or more required parameters are missing"
+					},
+					"response": null
+				}`,
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePost, mock, tests)
 }
