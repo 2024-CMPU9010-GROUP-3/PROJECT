@@ -170,6 +170,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 	pw := `test`
 	firstname := `Testy`
 	lastname := `McTesterson`
+	pwHash := `$2a$12$oMO4XyesvVS29xYsd8HKn.KBB8J2pxCydSPkuFcTnEfwQaKb2MX2i`
 	pfpLink := `https://www.example.com/image.png`
 	pfpLinkPG := pgtype.Text{}
 	err = pfpLinkPG.Scan(pfpLink)
@@ -377,6 +378,38 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 					"error": {
 						"errorCode": 1201,
 						"errorMsg": "One or more required parameters are missing"
+					},
+					"response": null
+				}`,
+		},
+		{
+			Name:   "Email already exists",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Email": "%s",
+				"Username": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, email, username, pw, firstname, lastname, pfpLink),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+					`FROM logins ` +
+					`WHERE Email = \$1 ` +
+					`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+					AddRow(userId, username, email, pwHash))
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Payload.EmailAlreadyExistsError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1222,
+						"errorMsg": "Email already exists"
 					},
 					"response": null
 				}`,
