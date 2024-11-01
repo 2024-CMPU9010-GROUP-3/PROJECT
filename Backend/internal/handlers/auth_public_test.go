@@ -194,17 +194,17 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(
 					`SELECT Id, Username, Email, PasswordHash ` +
-					`FROM logins ` +
-					`WHERE Email = \$1 ` +
-					`LIMIT 1`).
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
 
 				mock.ExpectQuery(
 					`SELECT Id, Username, Email, PasswordHash ` +
-					`FROM logins ` +
-					`WHERE Username = \$1 ` +
-					`LIMIT 1`).
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
 
@@ -247,17 +247,17 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(
 					`SELECT Id, Username, Email, PasswordHash ` +
-					`FROM logins ` +
-					`WHERE Email = \$1 ` +
-					`LIMIT 1`).
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
 
 				mock.ExpectQuery(
 					`SELECT Id, Username, Email, PasswordHash ` +
-					`FROM logins ` +
-					`WHERE Username = \$1 ` +
-					`LIMIT 1`).
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
 
@@ -397,12 +397,12 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(
 					`SELECT Id, Username, Email, PasswordHash ` +
-					`FROM logins ` +
-					`WHERE Email = \$1 ` +
-					`LIMIT 1`).
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
-					AddRow(userId, username, email, pwHash))
+						AddRow(userId, username, email, pwHash))
 			},
 			ExpectedStatus: http.StatusBadRequest,
 			ExpectedError:  errors.Payload.EmailAlreadyExistsError.ErrorMsg,
@@ -410,6 +410,45 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 					"error": {
 						"errorCode": 1222,
 						"errorMsg": "Email already exists"
+					},
+					"response": null
+				}`,
+		},
+		{
+			Name:   "Username already exists",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Email": "%s",
+				"Username": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, email, username, pw, firstname, lastname, pfpLink),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"})) // no rows returned
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+						AddRow(userId, username, email, pwHash))
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Payload.UsernameAlreadyExistsError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1221,
+						"errorMsg": "Username already exists"
 					},
 					"response": null
 				}`,
