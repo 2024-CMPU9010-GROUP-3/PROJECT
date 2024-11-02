@@ -11,12 +11,23 @@ import (
 
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util/testutil"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/pashagolub/pgxmock/v4"
 )
 
-const userRoute = "/auth/User"
-const userIdString = "41692803-0f09-4d6b-9b0f-f893bb985bff"
+const (
+	userRoute    = "/auth/User"
+	userIdString = "41692803-0f09-4d6b-9b0f-f893bb985bff"
+	username     = `testy`
+	email        = `testy@example.com`
+	pw           = `test`
+	pwLong       = `7z6PX6a1aQieKp94NcaDLCTPBEG1fc90YFZLz4a5rf7TFKMuVEA9trFbgtkpLQUrAEuJp3ffx` // 73 bytes
+	firstname    = `Testy`
+	lastname     = `McTesterson`
+	pwHash       = `$2a$12$oMO4XyesvVS29xYsd8HKn.KBB8J2pxCydSPkuFcTnEfwQaKb2MX2i`
+	pfpLink      = `https://www.example.com/image.png`
+)
 
 func TestAuthHandlerHandleGet(t *testing.T) {
 	mock, err := pgxmock.NewPool()
@@ -165,14 +176,6 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 	userId := pgtype.UUID{}
 	userId.Scan(userIdString)
 
-	username := `testy`
-	email := `testy@example.com`
-	pw := `test`
-	pwLong := `7z6PX6a1aQieKp94NcaDLCTPBEG1fc90YFZLz4a5rf7TFKMuVEA9trFbgtkpLQUrAEuJp3ffx` // 73 bytes
-	firstname := `Testy`
-	lastname := `McTesterson`
-	pwHash := `$2a$12$oMO4XyesvVS29xYsd8HKn.KBB8J2pxCydSPkuFcTnEfwQaKb2MX2i`
-	pfpLink := `https://www.example.com/image.png`
 	pfpLinkPG := pgtype.Text{}
 	err = pfpLinkPG.Scan(pfpLink)
 	if err != nil {
@@ -704,8 +707,71 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 	RegisterDatabaseConnection(&ctx, mock)
 
 	authHandler := &AuthHandler{}
+
+	userId := pgtype.UUID{}
+	userId.Scan(userIdString)
+
+	pfpLinkPG := pgtype.Text{}
+	err = pfpLinkPG.Scan(pfpLink)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	tests := []testutil.HandlerTestDefinition{
-		// TODO: Add test cases
+		{
+			Name:   "Positive testcase",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, username, email, testutil.BcryptArg(pw)).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+					
+					mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
 }
