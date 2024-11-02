@@ -103,7 +103,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 | Anais Blenet     | [@anaisbl](https://github.com/anaisbl)                 | TODO                                                  |
 | Andreas Kraus    | [@ankraus](https://github.com/ankraus)                 | TODO                                                  |
 | Jessica Fornetti | [@JessicaFornetti](https://github.com/JessicaFornetti) | TODO                                                  |
-| Kaustubh Trivedi | [@KaustubhTrivedi](https://github.com/KaustubhTrivedi) | TODO                                                  |
+| Kaustubh Trivedi | [@KaustubhTrivedi](https://github.com/KaustubhTrivedi) | [kaus12tri@gmail.com](mailto:kaus12tri@gmail.com)     |
 | Saul Burgess     | [@1Solon](https://github.com/1Solon)                   | [burgesssaul@gmail.com](mailto:Burgesssaul@gmail.com) |
 | Yuanshuo Du      | [@YuanshuoDu](https://github.com/YuanshuoDu)           | TODO                                                  |
 
