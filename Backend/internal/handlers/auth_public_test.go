@@ -772,6 +772,60 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				}
 			}`, userIdString),
 		},
+		{
+			Name:   "Json field order should not matter",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"FirstName": "%s",
+				"Password": "%s",
+				"ProfilePicture": "%s",
+				"Username": "%s",
+				"Email": "%s",
+				"LastName": "%s"
+			}`, firstname, pw, pfpLink, username, email, lastname),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, username, email, testutil.BcryptArg(pw)).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+					
+					mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
 }
