@@ -722,6 +722,18 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	registerDate := pgtype.Timestamp{}
+	err = registerDate.Scan(time.Date(2024, 10, 10, 12, 34, 56, 789000000, time.UTC))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	lastLoginDate := pgtype.Timestamp{}
+	err = lastLoginDate.Scan(time.Date(2024, 10, 30, 12, 34, 56, 789000000, time.UTC))
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	tests := []testutil.HandlerTestDefinition{
 		{
 			Name:   "Positive testcase",
@@ -1030,6 +1042,78 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"LastName": "%s",
 				"ProfilePicture": "%s"
 			}`, username, email, pw, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+						AddRow(userId, username_alt, email_alt, pwHash))
+
+				mock.ExpectQuery(
+					`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
+						`FROM user_details ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"}).
+						AddRow(userId, registerDate, firstname_alt, lastname_alt, pfpLink_alt, lastLoginDate))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, username, email, pwHash).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname_alt, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
+		{
+			Name:   "No error when last name is missing",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pw, firstname, pfpLink),
 			PathParams: map[string]string{
 				"id": userIdString,
 			},
