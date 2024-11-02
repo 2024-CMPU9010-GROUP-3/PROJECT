@@ -10,17 +10,13 @@ _Repository for Group 3 of the TU Dublin ASD/DS masters Group Project_
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/2024-CMPU9010-GROUP-3/magpie?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/2024-CMPU9010-GROUP-3/magpie?style=for-the-badge)
-
-
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/2024-CMPU9010-GROUP-3/magpie/frontend-build.yaml?style=flat-square&label=Frontend-Build)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/2024-CMPU9010-GROUP-3/magpie/backend-public-build.yaml?style=flat-square&label=Backend-Public-Build)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/2024-CMPU9010-GROUP-3/magpie/backend-private-build.yaml?style=flat-square&label=Backend-Private-Build)
 
 
-
-
+![GitHub Repo stars](https://img.shields.io/github/stars/2024-CMPU9010-GROUP-3/magpie?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/2024-CMPU9010-GROUP-3/magpie?style=for-the-badge)
 
 </div>
 
