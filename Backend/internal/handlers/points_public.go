@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 	"github.com/jackc/pgx/v5"
@@ -16,12 +17,6 @@ import (
 )
 
 const floatPrecision = 64
-
-type pointDto struct {
-	Id      int64
-	Longlat geojson.Geometry
-	Type    db.PointType
-}
 
 func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request) {
 	// parameters long, lat, radius are required
@@ -44,7 +39,7 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	pointDtos := []pointDto{}
+	pointDtos := []dtos.PointDto{}
 
 	for _, p := range points {
 		longlat, err := geojson.Encode(p.Longlat)
@@ -52,14 +47,14 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 			resp.SendError(customErrors.Internal.GeoJsonEncodingError.WithCause(err), w)
 			return
 		} else {
-			pointDtos = append(pointDtos, pointDto{
-				p.ID,
-				*longlat,
-				p.Type,
+			pointDtos = append(pointDtos, dtos.PointDto{
+				Id:      p.ID,
+				Longlat: *longlat,
+				Type:    p.Type,
 			})
 		}
 	}
-	resp.SendResponse(resp.Response{Content: pointDtos, HttpStatus: http.StatusOK}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: pointDtos, HttpStatus: http.StatusOK}, w)
 }
 
 func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Request) {
@@ -91,5 +86,5 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: decodedDetails, HttpStatus: http.StatusOK}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: decodedDetails, HttpStatus: http.StatusOK}, w)
 }

@@ -8,7 +8,7 @@ import (
 	"regexp"
 	"testing"
 
-	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	"golang.org/x/crypto/bcrypt"
 
 	"github.com/pashagolub/pgxmock/v4"
@@ -72,7 +72,7 @@ func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr htt
 	}
 
 	if tt.ExpectedError != "" {
-		var responseBody resp.ResponseDto
+		var responseBody dtos.ResponseDto
 		if err := json.Unmarshal(rr.Body.Bytes(), &responseBody); err != nil {
 			t.Fatalf("failed to unmarshal response: %v", err)
 		}

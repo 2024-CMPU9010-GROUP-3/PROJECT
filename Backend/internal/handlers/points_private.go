@@ -9,27 +9,16 @@ import (
 	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/private"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/encoding/geojson"
-	// geos "github.com/twpayne/go-geom"
 )
-
-type PointDto struct {
-	Longlat geojson.Geometry `json:"longlat"`
-	Type    string           `json:"type"`
-	Details any              `json:"details"` // potentially unsafe, but we need to accept any json object here
-}
-
-type PointIdDto struct {
-	Id int64 `json:"id"`
-}
 
 func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	dbQueries := db.New(dbConn)
 
-	var point PointDto
+	var point dtos.CreatePointDto
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(&point)
@@ -71,7 +60,7 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: PointIdDto{pointId}, HttpStatus: http.StatusCreated}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusCreated}, w)
 }
 
 func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
@@ -90,7 +79,7 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 
 	dbQueries := db.New(dbConn)
 
-	var point PointDto
+	var point dtos.CreatePointDto
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	err = decoder.Decode(&point)
@@ -132,7 +121,7 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: PointIdDto{pointId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
@@ -154,5 +143,5 @@ func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: PointIdDto{pointId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusAccepted}, w)
 }

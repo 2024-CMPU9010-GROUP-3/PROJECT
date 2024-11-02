@@ -12,6 +12,7 @@ import (
 	"time"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 	"github.com/golang-jwt/jwt/v5"
@@ -22,26 +23,6 @@ import (
 
 const secretEnv = "MAGPIE_JWT_SECRET"
 const expiryEnv = "MAGPIE_JWT_EXPIRY"
-
-// these dtos need to be refactored into their own package in the future
-type createUserDto struct {
-	Username       string `json:"username"`
-	Email          string `json:"email"`
-	Password       string `json:"password"`
-	FirstName      string `json:"firstname"`
-	LastName       string `json:"lastname"`
-	ProfilePicture string `json:"profilepicture"`
-}
-
-type userLoginDto struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type userIdDto struct {
-	UserId pgtype.UUID `json:"userid"`
-}
 
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	userIdPathParam := r.PathValue("id")
@@ -65,14 +46,14 @@ func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	resp.SendResponse(resp.Response{
+	resp.SendResponse(dtos.ResponseContentDto{
 		HttpStatus: http.StatusOK,
 		Content:    userDetails,
 	}, w)
 }
 
 func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
-	var userDto createUserDto
+	var userDto dtos.CreateUserDto
 
 	err := json.NewDecoder(r.Body).Decode(&userDto)
 	if err != nil {
@@ -86,10 +67,10 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-  profilePictureAsPgType := pgtype.Text{}
+	profilePictureAsPgType := pgtype.Text{}
 	err = profilePictureAsPgType.Scan(userDto.ProfilePicture)
 	if err != nil {
-    // in theory this case should never happen given the json is correctly decoded
+		// in theory this case should never happen given the json is correctly decoded
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
@@ -146,14 +127,14 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idDto := userIdDto{UserId: userId}
+	idDto := dtos.UserIdDto{UserId: userId}
 
-	resp.SendResponse(resp.Response{Content: idDto, HttpStatus: http.StatusCreated}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: idDto, HttpStatus: http.StatusCreated}, w)
 }
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	var userId pgtype.UUID
-	var userDto createUserDto
+	var userDto dtos.CreateUserDto
 
 	userIdPathParam := r.PathValue("id")
 
@@ -238,7 +219,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: userIdDto{userId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.UserIdDto{UserId: userId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
@@ -256,12 +237,12 @@ func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
-	resp.SendResponse(resp.Response{Content: userIdDto{userId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.UserIdDto{UserId: userId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 // this method is very big and needs to be refactored in the future
 func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
-	var loginDto userLoginDto
+	var loginDto dtos.UserLoginDto
 	err := json.NewDecoder(r.Body).Decode(&loginDto)
 	if err != nil {
 		resp.SendError(customErrors.Payload.InvalidPayloadLoginError, w)
@@ -347,9 +328,9 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &cookie)
 
-	tokenDto := userIdDto{
+	tokenDto := dtos.UserIdDto{
 		UserId: userLogin.ID,
 	}
 
-	resp.SendResponse(resp.Response{Content: tokenDto, HttpStatus: http.StatusOK}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: tokenDto, HttpStatus: http.StatusOK}, w)
 }
