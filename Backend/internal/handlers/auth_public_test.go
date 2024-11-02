@@ -755,6 +755,15 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
 
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+						AddRow(userId, username_alt, email_alt, pwHash))
+
 				mock.ExpectBegin()
 
 				mock.ExpectExec(`UPDATE logins`).
@@ -809,6 +818,15 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
 
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+						AddRow(userId, username_alt, email_alt, pwHash))
+
 				mock.ExpectBegin()
 
 				mock.ExpectExec(`UPDATE logins`).
@@ -858,9 +876,9 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				mock.ExpectQuery(
 					`SELECT Id, Username, Email, PasswordHash ` +
 						`FROM logins ` +
-						`WHERE Username = \$1 ` +
+						`WHERE Email = \$1 ` +
 						`LIMIT 1`).
-					WithArgs(username).
+					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
 
 				mock.ExpectBegin()
@@ -903,11 +921,119 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				mock.ExpectQuery(
 					`SELECT Id, Username, Email, PasswordHash ` +
 						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
 						`WHERE Id = \$1 ` +
 						`LIMIT 1`).
 					WithArgs(userId).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
 						AddRow(userId, username_alt, email_alt, pwHash))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, username, email_alt, testutil.BcryptArg(pw)).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
+		{
+			Name:   "No error when password is missing",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+						AddRow(userId, username_alt, email_alt, pwHash))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, username, email, pwHash).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
+		{
+			Name:   "No error when first name is missing",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pw, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
 
 				mock.ExpectQuery(
 					`SELECT Id, Username, Email, PasswordHash ` +
@@ -917,10 +1043,27 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
 
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+						AddRow(userId, username_alt, email_alt, pwHash))
+
 				mock.ExpectBegin()
 
 				mock.ExpectExec(`UPDATE logins`).
-					WithArgs(userId, username, email_alt, testutil.BcryptArg(pw)).
+					WithArgs(userId, username, email, pwHash).
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
 
 				mock.ExpectExec(`UPDATE user_details`).
