@@ -39,7 +39,7 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	pointDtos := []dtos.PointDto{}
+	pointDtos := []dtos.GetPointDto{}
 
 	for _, p := range points {
 		longlat, err := geojson.Encode(p.Longlat)
@@ -47,7 +47,7 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 			resp.SendError(customErrors.Internal.GeoJsonEncodingError.WithCause(err), w)
 			return
 		} else {
-			pointDtos = append(pointDtos, dtos.PointDto{
+			pointDtos = append(pointDtos, dtos.GetPointDto{
 				Id:      p.ID,
 				Longlat: *longlat,
 				Type:    p.Type,

@@ -3,7 +3,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -55,24 +54,16 @@ func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	var userDto dtos.CreateUserDto
 
-	err := json.NewDecoder(r.Body).Decode(&userDto)
+	err := userDto.Decode(r.Body)
 	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadUserError, w)
-		return
-	}
-
-	// check the required parameters are present
-	if len(userDto.Username) == 0 || len(userDto.Email) == 0 || len(userDto.Password) == 0 {
-		resp.SendError(customErrors.Parameter.RequiredParameterMissingError, w)
-		return
-	}
-
-	profilePictureAsPgType := pgtype.Text{}
-	err = profilePictureAsPgType.Scan(userDto.ProfilePicture)
-	if err != nil {
-		// in theory this case should never happen given the json is correctly decoded
-		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
-		return
+		e, ok := err.(customErrors.CustomError)
+		if ok {
+			resp.SendError(e, w)
+			return
+		} else {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
+			return
+		}
 	}
 
 	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
@@ -113,7 +104,7 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createUserDetailParams := db.CreateUserDetailsParams{ID: userId, Firstname: userDto.FirstName, Lastname: userDto.LastName, Profilepicture: profilePictureAsPgType}
+	createUserDetailParams := db.CreateUserDetailsParams{ID: userId, Firstname: userDto.FirstName, Lastname: userDto.LastName, Profilepicture: userDto.ProfilePicture}
 	userId, err = db.New(dbConn).WithTx(tx).CreateUserDetails(*dbCtx, createUserDetailParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
@@ -146,20 +137,24 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = json.NewDecoder(r.Body).Decode(&userDto)
+	err = userDto.Decode(r.Body)
 	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadUserError, w)
-		return
+		e, ok := err.(customErrors.CustomError)
+		if ok {
+			resp.SendError(e, w)
+			return
+		} else {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
+			return
+		}
 	}
 
 	var passwordHash []byte
 
-	if len(userDto.Password) != 0 {
-		passwordHash, err = bcrypt.GenerateFromPassword([]byte(userDto.Password), 12)
-		if err != nil {
-			resp.SendError(customErrors.Internal.HashingError, w)
-			return
-		}
+	passwordHash, err = bcrypt.GenerateFromPassword([]byte(userDto.Password), 12)
+	if err != nil {
+		resp.SendError(customErrors.Internal.HashingError, w)
+		return
 	}
 
 	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
@@ -185,7 +180,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		ID:             userId,
 		Firstname:      userDto.FirstName,
 		Lastname:       userDto.LastName,
-		Profilepicture: userDto.ProfilePicture,
+		Profilepicture: userDto.ProfilePicture.String,
 	}
 
 	tx, err := dbConn.Begin(*dbCtx)
@@ -243,20 +238,17 @@ func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 // this method is very big and needs to be refactored in the future
 func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var loginDto dtos.UserLoginDto
-	err := json.NewDecoder(r.Body).Decode(&loginDto)
+
+	err := loginDto.Decode(r.Body)
 	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadLoginError, w)
-		return
-	}
-
-	if len(loginDto.Password) == 0 {
-		resp.SendError(customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required")), w)
-		return
-	}
-
-	if len(loginDto.Username) == 0 {
-		resp.SendError(customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required")), w)
-		return
+		e, ok := err.(customErrors.CustomError)
+		if ok {
+			resp.SendError(e, w)
+			return
+		} else {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
+			return
+		}
 	}
 
 	// get user login from db

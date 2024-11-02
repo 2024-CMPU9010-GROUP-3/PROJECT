@@ -4,7 +4,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -19,12 +18,17 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	dbQueries := db.New(dbConn)
 
 	var point dtos.CreatePointDto
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	err := decoder.Decode(&point)
-	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
-		return
+
+  err := point.Decode(r.Body)
+  if err != nil {
+		e, ok := err.(customErrors.CustomError)
+		if ok {
+			resp.SendError(e, w)
+			return
+		} else {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
+			return
+		}
 	}
 
 	// cannot result in error if decoding above was successful
@@ -80,17 +84,16 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	dbQueries := db.New(dbConn)
 
 	var point dtos.CreatePointDto
-	decoder := json.NewDecoder(r.Body)
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&point)
-	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
-		return
-	}
-
-	if len(point.Type) == 0 {
-		resp.SendError(customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Field \"Type\" cannot be empty")), w)
-		return
+	err = point.Decode(r.Body)
+  if err != nil {
+		e, ok := err.(customErrors.CustomError)
+		if ok {
+			resp.SendError(e, w)
+			return
+		} else {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
+			return
+		}
 	}
 
 	// cannot result in error if decoding above was successful

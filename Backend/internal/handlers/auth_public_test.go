@@ -330,7 +330,8 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			ExpectedJSON: `{
 					"error": {
 						"errorCode": 1201,
-						"errorMsg": "One or more required parameters are missing"
+						"errorMsg": "One or more required parameters are missing",
+						"cause":"Username is required"
 					},
 					"response": null
 				}`,
@@ -354,7 +355,8 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			ExpectedJSON: `{
 					"error": {
 						"errorCode": 1201,
-						"errorMsg": "One or more required parameters are missing"
+						"errorMsg": "One or more required parameters are missing",
+						"cause":"Email is required"
 					},
 					"response": null
 				}`,
@@ -378,7 +380,8 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			ExpectedJSON: `{
 					"error": {
 						"errorCode": 1201,
-						"errorMsg": "One or more required parameters are missing"
+						"errorMsg": "One or more required parameters are missing",
+						"cause":"Password is required"
 					},
 					"response": null
 				}`,

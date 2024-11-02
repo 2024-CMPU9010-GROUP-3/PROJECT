@@ -1,6 +1,12 @@
 package dtos
 
-import "io"
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+
+	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
+)
 
 type UserLoginDto struct {
 	Username string `json:"username"`
@@ -8,15 +14,23 @@ type UserLoginDto struct {
 	Password string `json:"password"`
 }
 
-func (self UserLoginDto) Decode(r io.Reader) error {
-	panic("not implemented") // TODO: Implement
+func (self *UserLoginDto) Decode(r io.Reader) error {
+	err := json.NewDecoder(r).Decode(&self)
+	if err != nil {
+		return customErrors.Payload.InvalidPayloadUserError
+	}
+
+	return self.Validate()
 }
 
-func (self UserLoginDto) Encode() (string, error) {
-	panic("not implemented") // TODO: Implement
-}
+func (self *UserLoginDto) Validate() error {
+	if len(self.Password) == 0 {
+		return customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required"))
+	}
 
-func (self UserLoginDto) Validate() error {
-	panic("not implemented") // TODO: Implement
-}
+	if len(self.Username) == 0 {
+		return customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required"))
+	}
 
+	return nil
+}
