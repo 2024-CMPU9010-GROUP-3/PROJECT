@@ -17,16 +17,21 @@ import (
 )
 
 const (
-	userRoute    = "/auth/User"
-	userIdString = "41692803-0f09-4d6b-9b0f-f893bb985bff"
-	username     = `testy`
-	email        = `testy@example.com`
-	pw           = `test`
-	pwLong       = `7z6PX6a1aQieKp94NcaDLCTPBEG1fc90YFZLz4a5rf7TFKMuVEA9trFbgtkpLQUrAEuJp3ffx` // 73 bytes
-	firstname    = `Testy`
-	lastname     = `McTesterson`
-	pwHash       = `$2a$12$oMO4XyesvVS29xYsd8HKn.KBB8J2pxCydSPkuFcTnEfwQaKb2MX2i`
-	pfpLink      = `https://www.example.com/image.png`
+	userRoute     = "/auth/User"
+	userIdString  = "41692803-0f09-4d6b-9b0f-f893bb985bff"
+	username      = `testy`
+	username_alt  = `testy1`
+	email         = `testy@example.com`
+	email_alt     = `testy1@example.com`
+	pw            = `test`
+	pwLong        = `7z6PX6a1aQieKp94NcaDLCTPBEG1fc90YFZLz4a5rf7TFKMuVEA9trFbgtkpLQUrAEuJp3ffx` // 73 bytes
+	firstname     = `Testy`
+	firstname_alt = `Testy1`
+	lastname      = `McTesterson`
+	lastname_alt  = `McTesterson1`
+	pwHash        = `$2a$12$oMO4XyesvVS29xYsd8HKn.KBB8J2pxCydSPkuFcTnEfwQaKb2MX2i`
+	pfpLink       = `https://www.example.com/image.png`
+	pfpLink_alt   = `https://www.example.com/image1.png`
 )
 
 func TestAuthHandlerHandleGet(t *testing.T) {
@@ -755,8 +760,8 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				mock.ExpectExec(`UPDATE logins`).
 					WithArgs(userId, username, email, testutil.BcryptArg(pw)).
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
-					
-					mock.ExpectExec(`UPDATE user_details`).
+
+				mock.ExpectExec(`UPDATE user_details`).
 					WithArgs(userId, firstname, lastname, pfpLink).
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
 
@@ -809,8 +814,8 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				mock.ExpectExec(`UPDATE logins`).
 					WithArgs(userId, username, email, testutil.BcryptArg(pw)).
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
-					
-					mock.ExpectExec(`UPDATE user_details`).
+
+				mock.ExpectExec(`UPDATE user_details`).
 					WithArgs(userId, firstname, lastname, pfpLink).
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
 
@@ -852,10 +857,64 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				mock.ExpectBegin()
 
 				mock.ExpectExec(`UPDATE logins`).
-					WithArgs(userId, nil, email, testutil.BcryptArg(pw)).
+					WithArgs(userId, username, email, testutil.BcryptArg(pw)).
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
-					
-					mock.ExpectExec(`UPDATE user_details`).
+
+				mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
+		{
+			Name:   "No error when email is missing",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+						AddRow(userId, username_alt, email_alt, pwHash))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, username, email_alt, testutil.BcryptArg(pw)).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectExec(`UPDATE user_details`).
 					WithArgs(userId, firstname, lastname, pfpLink).
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
 
