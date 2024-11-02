@@ -54,19 +54,13 @@ func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	var userDto dtos.CreateUserDto
 
-	err := userDto.Decode(r.Body)
-	if err != nil {
-		e, ok := err.(customErrors.CustomError)
-		if ok {
-			resp.SendError(e, w)
-			return
-		} else {
-			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
-			return
-		}
+	e := userDto.Decode(r.Body)
+	if e != nil {
+		resp.SendError(*e, w)
+		return
 	}
 
-	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
+	_, err := db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
 	if !errors.Is(err, pgx.ErrNoRows) {
 		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
 		return
@@ -137,16 +131,10 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = userDto.Decode(r.Body)
-	if err != nil {
-		e, ok := err.(customErrors.CustomError)
-		if ok {
-			resp.SendError(e, w)
-			return
-		} else {
-			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
-			return
-		}
+	e := userDto.Decode(r.Body)
+	if e != nil {
+		resp.SendError(*e, w)
+		return
 	}
 
 	var passwordHash []byte
@@ -239,21 +227,15 @@ func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var loginDto dtos.UserLoginDto
 
-	err := loginDto.Decode(r.Body)
-	if err != nil {
-		e, ok := err.(customErrors.CustomError)
-		if ok {
-			resp.SendError(e, w)
-			return
-		} else {
-			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
-			return
-		}
+	e := loginDto.Decode(r.Body)
+	if e != nil {
+		resp.SendError(*e, w)
+		return
 	}
 
 	// get user login from db
 	var userLogin db.Login
-	userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
+	userLogin, err := db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Auth.WrongCredentialsError, w)

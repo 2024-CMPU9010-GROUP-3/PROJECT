@@ -14,22 +14,24 @@ type UserLoginDto struct {
 	Password string `json:"password"`
 }
 
-func (self *UserLoginDto) Decode(r io.Reader) error {
+func (self *UserLoginDto) Decode(r io.Reader) *customErrors.CustomError {
 	err := json.NewDecoder(r).Decode(&self)
 	if err != nil {
-		return customErrors.Payload.InvalidPayloadUserError
+		return &customErrors.Payload.InvalidPayloadUserError
 	}
 
 	return self.Validate()
 }
 
-func (self *UserLoginDto) Validate() error {
+func (self *UserLoginDto) Validate() *customErrors.CustomError {
 	if len(self.Password) == 0 {
-		return customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required"))
+		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required"))
+		return &err
 	}
 
 	if len(self.Username) == 0 {
-		return customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required"))
+		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required"))
+		return &err
 	}
 
 	return nil

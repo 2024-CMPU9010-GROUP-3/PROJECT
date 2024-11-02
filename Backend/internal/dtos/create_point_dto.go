@@ -15,20 +15,21 @@ type CreatePointDto struct {
 	Details any              `json:"details"` // potentially unsafe, but we need to accept any json object here
 }
 
-func (self *CreatePointDto) Decode(r io.Reader) error {
+func (self *CreatePointDto) Decode(r io.Reader) *customErrors.CustomError {
 	decoder := json.NewDecoder(r)
 	decoder.DisallowUnknownFields()
 	err := decoder.Decode(self)
 	if err != nil {
-		return customErrors.Payload.InvalidPayloadPointError
+		return &customErrors.Payload.InvalidPayloadPointError
 	}
 
 	return self.Validate()
 }
 
-func (self *CreatePointDto) Validate() error {
+func (self *CreatePointDto) Validate() *customErrors.CustomError {
 	if len(self.Type) == 0 {
-		return customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Field \"Type\" cannot be empty"))
+		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Field \"Type\" cannot be empty"))
+		return &err
 	}
 	return nil
 }

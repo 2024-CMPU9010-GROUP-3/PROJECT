@@ -19,16 +19,10 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	var point dtos.CreatePointDto
 
-  err := point.Decode(r.Body)
-  if err != nil {
-		e, ok := err.(customErrors.CustomError)
-		if ok {
-			resp.SendError(e, w)
-			return
-		} else {
-			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
-			return
-		}
+  e := point.Decode(r.Body)
+  if e != nil {
+		resp.SendError(customErrors.Internal.UnknownError.WithCause(e), w)
+		return
 	}
 
 	// cannot result in error if decoding above was successful
@@ -86,14 +80,8 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	var point dtos.CreatePointDto
 	err = point.Decode(r.Body)
   if err != nil {
-		e, ok := err.(customErrors.CustomError)
-		if ok {
-			resp.SendError(e, w)
-			return
-		} else {
-			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
-			return
-		}
+		resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
+		return
 	}
 
 	// cannot result in error if decoding above was successful

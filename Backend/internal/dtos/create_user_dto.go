@@ -18,26 +18,29 @@ type CreateUserDto struct {
 	ProfilePicture pgtype.Text `json:"profilepicture"`
 }
 
-func (self *CreateUserDto) Decode(r io.Reader) error {
+func (self *CreateUserDto) Decode(r io.Reader) *customErrors.CustomError {
 	err := json.NewDecoder(r).Decode(&self)
 	if err != nil {
-		return customErrors.Payload.InvalidPayloadUserError
+		return &customErrors.Payload.InvalidPayloadUserError
 	}
 
 	return self.Validate()
 }
 
-func (self *CreateUserDto) Validate() error {
+func (self *CreateUserDto) Validate() *customErrors.CustomError {
 	if len(self.Username) == 0 {
-		return customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required"))
+		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required"))
+		return &err
 	}
 
 	if len(self.Email) == 0 {
-		return customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Email is required"))
+		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Email is required"))
+		return &err
 	}
 
 	if len(self.Password) == 0 {
-		return customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required"))
+		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required"))
+		return &err
 	}
 	return nil
 }
