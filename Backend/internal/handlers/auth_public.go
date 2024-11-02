@@ -119,7 +119,7 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	var userId pgtype.UUID
-	var userDto dtos.CreateUserDto
+	var userDto dtos.UpdateUserDto
 
 	userIdPathParam := r.PathValue("id")
 
