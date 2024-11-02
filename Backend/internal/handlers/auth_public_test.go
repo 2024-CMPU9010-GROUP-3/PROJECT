@@ -1144,6 +1144,16 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
 						AddRow(userId, username_alt, email_alt, pwHash))
 
+				mock.ExpectQuery(
+					`SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
+						`FROM user_details ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"}).
+						AddRow(userId, registerDate, firstname_alt, lastname_alt, pfpLink_alt, lastLoginDate))
+		
+				
 				mock.ExpectBegin()
 
 				mock.ExpectExec(`UPDATE logins`).
@@ -1151,7 +1161,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
 
 				mock.ExpectExec(`UPDATE user_details`).
-					WithArgs(userId, firstname, lastname, pfpLink).
+					WithArgs(userId, firstname, lastname_alt, pfpLink).
 					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
 
 				mock.ExpectCommit()
