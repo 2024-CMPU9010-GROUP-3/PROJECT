@@ -826,6 +826,51 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				}
 			}`, userIdString),
 		},
+		{
+			Name:   "No error when username is missing",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, email, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, nil, email, testutil.BcryptArg(pw)).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+					
+					mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit()
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
 }
