@@ -15,7 +15,7 @@ _Repository for Group 3 of the TU Dublin ASD/DS masters Group Project_
 
 </div>
 
-# ❓ What is this repository for?
+## ❓ What is this repository for?
 
 _Magpie_ is a geographical information service that allows Civil Planners and other users to easily explore public amenities 'at a glance'.
 
@@ -23,9 +23,18 @@ _Magpie_ is a geographical information service that allows Civil Planners and ot
   <img src="https://github.com/user-attachments/assets/bcffd0ca-e228-484c-9236-d749e9769932" width="800"/>
 </p>
 
-You can access the live version of the project [here](https://magpie.solonsstuff.com/).
+You can access a hosted version of the project [here](https://magpie.solonsstuff.com/).
 
-# 📂 Repository Structure
+## ✨ Features
+
+- **Geographical Information Service**: Easily explore public amenities such as parking spaces, bike sheds, and accessible ramps.
+- **User Authentication**: Secure login and registration for users.
+- **Data Integration**: Integrates various data sources for comprehensive information.
+- **Interactive Maps**: Visual representation of amenities on a map interface.
+- **Automated Annotations**: Uses machine learning to automate the annotation of geographical data.
+- **Deployment Options**: Supports Docker Compose and Kubernetes for deployment.
+
+## 📂 Repository Structure
 
 The file structure is as follows:
 
@@ -57,7 +66,7 @@ The file structure is as follows:
     └──📁 yolo # Custom YoLo model
 ```
 
-# 🚀 Deploying the application
+## 🚀 Deploying the application
 
 _Magpie_ is provided as a [docker-compose](./Distribution/compose/) and [kubernetes](./Distribution/kubernetes/) deployment.
 
@@ -65,7 +74,7 @@ _Magpie_ is provided as a [docker-compose](./Distribution/compose/) and [kuberne
 
 - The **kubernetes** deployment is intended for production use. However an existing `load-balancer`, `ingress-controller` and `cert-manager` are required on the cluster.
 
-# ⚙️ Using the development containers
+## ⚙️ Using the development containers
 
 This repository is set up to use dev containers for development. To use them, you will need:
 
@@ -74,23 +83,27 @@ This repository is set up to use dev containers for development. To use them, yo
 
 Once installed, open the command pallet with `Ctrl+Shift+P` and type `Dev Containers: Open Folder in Container`. Then select the desired folder.
 
-# 🤝 Contribution
+## 📚 Additional Information
+
+Each of the top level directories contains a `README.md` file with more information about the contents of that directory. Please refer to these files for more information about each part of the project.
+
+## 🤝 Contribution
 
 This repo is intended for our Masters Group Project as part of the [TUDublin](https://www.tudublin.ie/) MSc [ASD](https://www.tudublin.ie/study/postgraduate/courses/computing-advanced-software-development-tu059/) / [DS](https://www.tudublin.ie/study/postgraduate/courses/computing-data-science/) course. We are not accepting contributions at this time.
 
-# 📝 License
+## 📝 License
 
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](./licence) file for details.
 
-# 🎖️ Acknowledgments
+## 🎖️ Acknowledgments
 
-| Name             | GitHub Username  | Email                                                 |
-| ---------------- | ---------------- | ----------------------------------------------------- |
-| Anais Blenet     | @anaisbl         | TODO                                                  |
-| Andreas Kraus    | @ankraus         | TODO                                                  |
-| Jessica Fornetti | @JessicaFornetti | TODO                                                  |
-| Kaustubh Trivedi | @KaustubhTrivedi | TODO                                                  |
-| Saul Burgess     | @1Solon          | [burgesssaul@gmail.com](mailto:Burgesssaul@gmail.com) |
-| Yuanshuo Du      | @YuanshuoDu      | TODO                                                  |
+| Name             | GitHub Username                                        | Email                                                 |
+| ---------------- | ------------------------------------------------------ | ----------------------------------------------------- |
+| Anais Blenet     | [@anaisbl](https://github.com/anaisbl)                 | TODO                                                  |
+| Andreas Kraus    | [@ankraus](https://github.com/ankraus)                 | TODO                                                  |
+| Jessica Fornetti | [@JessicaFornetti](https://github.com/JessicaFornetti) | TODO                                                  |
+| Kaustubh Trivedi | [@KaustubhTrivedi](https://github.com/KaustubhTrivedi) | TODO                                                  |
+| Saul Burgess     | [@1Solon](https://github.com/1Solon)                   | [burgesssaul@gmail.com](mailto:Burgesssaul@gmail.com) |
+| Yuanshuo Du      | [@YuanshuoDu](https://github.com/YuanshuoDu)           | TODO                                                  |
 
 _Thanks to our lecturers and (especially) our supervisor for their guidance and support throughout the project!_
