@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/registry/button";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation";
+import { signup } from "@/app/components/serverActions/actions"; // Import the signup action
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   username?: string;
@@ -16,7 +17,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   email?: string;
 }
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps>) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
@@ -24,6 +25,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [firstName, setFirstName] = React.useState<string>("");
   const [lastName, setLastName] = React.useState<string>("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [formErrors, setFormErrors] = React.useState<{
+    firstName?: string[];
+    lastName?: string[];
+    email?: string[];
+    password?: string[];
+  }>({});
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);
   const router = useRouter();
@@ -31,7 +38,8 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
-    setErrorMessage(null); // clear error previous message
+    setErrorMessage(null);
+    setFormErrors({});
 
     if (
       !email.trim() ||
@@ -45,16 +53,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       return;
     }
 
-    // passwordComplexity check
-    const passwordComplexity =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordComplexity.test(password)) {
-      console.error("Password does not meet complexity requirements");
-      setErrorMessage("Password does not meet complexity requirements");
-      setIsLoading(false);
-      return;
-    }
-
     // Check if password and confirm password match
     if (password !== confirmPassword) {
       console.error("Passwords do not match");
@@ -63,60 +61,26 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       return;
     }
 
-    console.log("Backend URL:", process.env.NEXT_PUBLIC_BACKEND_URL); // debug
-
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            username: email.split("@")[0],
-            email,
-            password,
-            firstName,
-            lastName,
-          }),
-        }
-      );
-      console.log("Response:", response);
-      const responseData = await response.json();
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
 
-      if (response.ok) {
-        // handle successful registration
-        console.log("Registration successful:", responseData); // print success response
+      const result = await signup({}, formData); // Call the signup action
 
-        // store user info and login status
-        localStorage.setItem("token", responseData.bearerToken); // store token
-        localStorage.setItem(
-          "userInfo",
-          JSON.stringify({
-            // store user info
-            username: responseData.username,
-            email: responseData.email,
-            firstName: responseData.firstName,
-            lastName: responseData.lastName,
-          })
-        );
-
-        alert("Sign up successful"); // display success message
-        console.log("Redirecting to home page"); // display redirect message
-        console.log("User info:", localStorage.getItem("userInfo")); // display user info
-        console.log("Token:", localStorage.getItem("token")); // display token
-        console.log("Router:", router); // display router
-        router?.push("/"); // redirect to home
+      if (result.errors) {
+        console.error("Registration failed:", result.errors);
+        setFormErrors(result.errors);
       } else {
-        // Handle errors
-        console.error("Registration failed:", responseData);
-        setErrorMessage("Registration failed: " + responseData.message); // display error message
-        alert("Sign up failed: " + responseData.message); // alert user that sign up failed
+        alert("Sign up successful");
+        router.push("/");
       }
     } catch (error) {
       console.error("An error occurred", error);
-      alert("An error occurred, please try again later."); // alert user that an error occurred
+      alert("An error occurred, please try again later.");
+      setErrorMessage("An error occurred, please try again later.");
     } finally {
       setIsLoading(false);
     }
@@ -139,6 +103,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
+              
             </div>
             <div className="flex-1">
               <Label className="sr-only" htmlFor="last-name">
@@ -152,6 +117,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
+              
             </div>
           </div>
           <div className="grid gap-1">
@@ -169,6 +135,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+            
           </div>
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="password">
@@ -219,6 +186,35 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
             </div>
           </div>
           {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+          {formErrors.firstName && (
+              <ul className="text-red-500 text-sm mt-1">
+                {formErrors.firstName.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            )}
+          {formErrors.lastName && (
+              <ul className="text-red-500 text-sm mt-1">
+                {formErrors.lastName.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            )}
+          {formErrors.email && (
+            <ul className="text-red-500 text-sm mt-1">
+              {formErrors.email.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          )}
+          {formErrors.password && (
+            <ul className="text-red-500 text-sm mt-1">
+              {formErrors.password.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          )}       
+          
           <Button disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

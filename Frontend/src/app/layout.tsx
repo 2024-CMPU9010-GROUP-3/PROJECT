@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Providers from "./providers";
 import "./globals.css";
+import { AuthProvider } from '@/app/context/AuthContext';
+
 
 export const metadata: Metadata = {
   title: "Magpie - Services at a glance",
@@ -15,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`antialiased min-h-screen`}>
-        <Providers>{children}</Providers>
+        <AuthProvider>
+          <Providers>{children}</Providers>
+        </AuthProvider>
       </body>
     </html>
   );
