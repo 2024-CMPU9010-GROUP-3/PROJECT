@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useEffect, useMemo, useState } from "react";
+import React, { Fragment, Suspense, useEffect, useMemo, useState } from "react";
 import { FaLocationDot } from "react-icons/fa6";
 import DeckGL from "@deck.gl/react";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -41,6 +41,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     { latitude: 0, longitude: 0 }
   );
   const [sliderValue, setSliderValue] = useState<number>(40);
+  const [sliderValueDisplay, setSliderValueDisplay] = useState<number>(40);
   const markerCoords = useMemo(
     () => [coordinates?.longitude, coordinates?.latitude],
     [coordinates]
@@ -69,6 +70,15 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     return coordinates;
   });
 
+  // Checkbox code begins
+
+  // Checkbox code ends
+
+  useEffect(() => {
+    console.log("Slider Value Commit>>>>>", sliderValue);
+    console.log("Slider Value Display>>>>", sliderValueDisplay);
+  }, [sliderValue, sliderValueDisplay]);
+
   // Handle map click event
   const handleMapClick = (event: unknown) => {
     const mapClickEvent = event as MapClickEvent; // Type assertion
@@ -84,7 +94,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
     return {
       type: "FeatureCollection",
-      features: points.map((point) => ({
+      features: points?.map((point) => ({
         type: "Feature",
         geometry: {
           type: "Point",
@@ -124,7 +134,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   };
 
   useEffect(() => {
-    const radiusInMeters = sliderValue * 100; // Convert slider value to meters
+    const radiusInMeters = sliderValueDisplay * 100; // Convert slider value to meters
     const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
     const numPoints = 64; // Number of points to define the circle
     const angleStep = (2 * Math.PI) / numPoints;
@@ -145,7 +155,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
     setCircleCoordinates(coordinates);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sliderValue, markerCoords]);
+  }, [sliderValueDisplay, markerCoords]);
 
   useEffect(() => {
     // Fetch Mapbox API key from the server
@@ -254,42 +264,47 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             >
               <Layer {...layerStyle} />
             </Source>
-            <Source
-              id="points"
-              type="geojson"
-              data={pointsGeoJson}
-              cluster={true}
-              clusterMaxZoom={14} // Max zoom to cluster points on
-              clusterRadius={50}
-            >
-              <Layer
-                id="clusters"
-                type="symbol"
-                layout={{
-                  "icon-image": "parking-garage",
-                  "icon-size": 1.5,
-                  "icon-allow-overlap": true,
-                }}
-              />
-              <Layer
-                id="cluster-count"
-                type="symbol"
-                layout={{
-                  "text-field": "{point_count_abbreviated}",
-                  "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-                  "text-size": 12,
-                }}
-              />
-              <Layer
-                id="unclustered-point"
-                type="symbol"
-                layout={{
-                  "icon-image": "parking-garage",
-                  "icon-size": 1.5,
-                  "icon-allow-overlap": true,
-                }}
-              />
-            </Source>
+            <Suspense fallback={<div>Loading...</div>}>
+              <Source
+                id="points"
+                type="geojson"
+                data={pointsGeoJson}
+                cluster={true}
+                clusterMaxZoom={14} // Max zoom to cluster points on
+                clusterRadius={50}
+              >
+                <Layer
+                  id="clusters"
+                  type="symbol"
+                  layout={{
+                    "icon-image": "parking-garage",
+                    "icon-size": 1.5,
+                    "icon-allow-overlap": true,
+                  }}
+                />
+                <Layer
+                  id="cluster-count"
+                  type="symbol"
+                  layout={{
+                    "text-field": "{point_count_abbreviated}",
+                    "text-font": [
+                      "DIN Offc Pro Medium",
+                      "Arial Unicode MS Bold",
+                    ],
+                    "text-size": 12,
+                  }}
+                />
+                <Layer
+                  id="unclustered-point"
+                  type="symbol"
+                  layout={{
+                    "icon-image": "parking-garage",
+                    "icon-size": 1.5,
+                    "icon-allow-overlap": true,
+                  }}
+                />
+              </Source>
+            </Suspense>
           </Map>
         </DeckGL>
       ) : (
@@ -306,6 +321,50 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           />
         </div>
       )}
+      {mapBoxApiKey && (
+        <>
+          <div className="absolute bottom-20 left-20">
+            <div className="min-h-20 min-w-60 bg-white rounded-xl">
+              <div className=" p-3 space-y-2">
+                <label className="block text-lg font-medium">
+                  Select Options:
+                </label>
+                <div>
+                  <input type="checkbox" id="option1" name="option1" />
+                  <label htmlFor="option1" className="ml-2">
+                    Coach Parking
+                  </label>
+                </div>
+                <div>
+                  <input type="checkbox" id="option2" name="option2" />
+                  <label htmlFor="option2" className="ml-2">
+                    Bike Stand
+                  </label>
+                </div>
+                <div>
+                  <input type="checkbox" id="option3" name="option3" />
+                  <label htmlFor="option3" className="ml-2">
+                    Public Toilet
+                  </label>
+                </div>
+                <div>
+                  <input type="checkbox" id="option4" name="option4" />
+                  <label htmlFor="option4" className="ml-2">
+                    Parking Meter
+                  </label>
+                </div>
+                <div>
+                  <input type="checkbox" id="option5" name="option5" />
+                  <label htmlFor="option5" className="ml-2">
+                    Parking
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
       {isMarkerVisible && (
         <div className="absolute right-24 top-1/3 bg-white p-5 rounded-xl max-h-[400px] max-w-[450px] overflow-scroll">
           <div>
@@ -331,7 +390,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <div className="space-y-1">
                   <label>Distance</label>
                   <Slider
-                    onValueChange={(value) => setSliderValue(value[0])}
+                    onValueChange={(value) => setSliderValueDisplay(value[0])}
+                    onValueCommit={(value) => setSliderValue(value[0])}
                     defaultValue={[sliderValue]}
                     max={100}
                     step={1}
@@ -340,7 +400,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   />
                 </div>
                 <div className="">
-                  <span className="p-1">{sliderValue * 100} meters</span>
+                  <span className="p-1">{sliderValueDisplay * 100} meters</span>
                 </div>
               </div>
             </div>

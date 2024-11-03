@@ -11,9 +11,9 @@ import (
 	"os"
 	"time"
 
-	db "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/db/public"
-	customErrors "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/errors"
-	resp "github.com/2024-CMPU9010-GROUP-3/PROJECT/internal/responses"
+	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
+	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
+	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
