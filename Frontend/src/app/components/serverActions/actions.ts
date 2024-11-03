@@ -64,7 +64,8 @@ export async function login(formData: FormData) {
 
     // login successful, redirect to home page
     redirect('/');
-  } catch (_) {
+  } catch (error) {
+    console.error('Login error:', error); 
     return {
       errors: {
         username: ['login error, please try again later'],
