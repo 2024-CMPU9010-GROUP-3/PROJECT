@@ -40,7 +40,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       !firstName.trim() ||
       !lastName.trim()
     ) {
-      console.error("Fields cannot be empty");
       setErrorMessage("Fields cannot be empty");
       setIsLoading(false);
       return;
