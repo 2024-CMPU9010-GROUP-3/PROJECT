@@ -12,7 +12,7 @@ const loginSchema = z.object({
 });
 
 // public function: handle API request
-async function handleApiRequest(url: string, method: string, body: any) {
+async function handleApiRequest(url: string, method: string, body: Record<string, unknown> ) {
   try {
     const res = await fetch(url, {
       method,
@@ -64,7 +64,7 @@ export async function login(formData: FormData) {
 
     // login successful, redirect to home page
     redirect('/');
-  } catch (error) {
+  } catch (_) {
     return {
       errors: {
         username: ['login error, please try again later'],
