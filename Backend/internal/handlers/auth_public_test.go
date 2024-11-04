@@ -45,6 +45,11 @@ const (
 		`WHERE Email = \$1 ` +
 		`LIMIT 1`
 
+	queryGetLoginByUsername = `SELECT Id, Username, Email, PasswordHash ` +
+		`FROM logins ` +
+		`WHERE Username = \$1 ` +
+		`LIMIT 1`
+
 	queryGetEmailExists = `SELECT EXISTS(` +
 		`SELECT 1 ` +
 		`FROM logins ` +
@@ -1437,6 +1442,37 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHash))
+
+				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
+			},
+			ExpectedCookies: []*http.Cookie{
+				{
+					Name:     "magpie_auth",
+					HttpOnly: true,
+					SameSite: http.SameSiteLaxMode,
+					Expires:  time.Now().Add(duration),
+					Path:     "/",
+				},
+			},
+			ExpectedStatus: http.StatusOK,
+			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+		},
+		{
+			Name:   "Positive testcase (username)",
+			Method: "POST",
+			Route:  loginRoute,
+			Env: map[string]string{
+				"MAGPIE_JWT_SECRET": `RyA4diC7nVdi39Isb9UlujsKN6/qyEjPFVHeLA9VakA=`,
+				"MAGPIE_JWT_EXPIRY": `168h`,
+			},
+			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByUsername).
+					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHash))
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
