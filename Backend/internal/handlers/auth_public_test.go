@@ -64,6 +64,8 @@ const (
 
 	queryUpdateUserDetails = `UPDATE user_details`
 
+	queryDeleteFromUsers = `DELETE FROM logins WHERE Id = \$1 CASCADE`
+
 	jsonCreateUser = `{
 				"Username": "%s",
 				"Email": "%s",
@@ -156,6 +158,13 @@ const (
 					},
 					"response": null
 				}`
+	jsonInvalidUUIDError = `{
+					"error": {
+						"errorCode": 1202,
+						"errorMsg": "Parameter invalid, expected type UUIDv4"
+					},
+					"response": null
+				}`
 )
 
 var (
@@ -165,6 +174,7 @@ var (
 	rowsId             = []string{"Id"}
 	simulatedDbError   = fmt.Errorf("Simulate Database Error")
 	resultUpdated      = pgconn.NewCommandTag("UPDATED")
+	resultDeleted      = pgconn.NewCommandTag("DELETED")
 )
 
 func TestAuthHandlerHandleGet(t *testing.T) {
@@ -232,13 +242,7 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 				// handler should return before db is queried
 			},
 			ExpectedStatus: http.StatusBadRequest,
-			ExpectedJSON: `{
-					"error": {
-						"errorCode": 1202,
-						"errorMsg": "Parameter invalid, expected type UUIDv4"
-					},
-					"response": null
-				}`,
+			ExpectedJSON:   jsonInvalidUUIDError,
 			PathParams: map[string]string{
 				"id": userIdString[1:], // first char removed
 			},
@@ -1044,13 +1048,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			ExpectedStatus: http.StatusBadRequest,
 			ExpectedError:  errors.Parameter.InvalidUUIDError.ErrorMsg,
-			ExpectedJSON: `{
-				"error": {
-					"code: 1202,
-					"errorMsg": "Parameter invalid, expected type UUIDv4"
-				},
-				"response": null
-			}`,
+			ExpectedJSON:   jsonInvalidUUIDError,
 		},
 		{
 			Name:      "Invalid payload",
@@ -1331,8 +1329,53 @@ func TestAuthHandlerHandleDelete(t *testing.T) {
 	RegisterDatabaseConnection(&ctx, mock)
 
 	authHandler := &AuthHandler{}
+
+	userId := pgtype.UUID{}
+	userId.Scan(userIdString)
+
 	tests := []testutil.HandlerTestDefinition{
-		// TODO: Add test cases
+		{
+			Name:      "Positive testcase",
+			Method:    "DELETE",
+			Route:     userRoute,
+			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectExec(queryDeleteFromUsers).WithArgs(userId).WillReturnResult(resultDeleted)
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+		},
+		{
+			Name:      "Invalid UUID",
+			Method:    "DELETE",
+			Route:     userRoute,
+			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString[1:],
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// should return before any calls are made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedJSON:   jsonInvalidUUIDError,
+		},
+		{
+			Name:      "Error during delete",
+			Method:    "DELETE",
+			Route:     userRoute,
+			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString[1:],
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectExec(queryDeleteFromUsers).WithArgs(userId).WillReturnError(simulatedDbError)
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedJSON:   jsonSimulatedDbError,
+		},
 	}
 	testutil.RunTests(t, authHandler.HandleDelete, mock, tests)
 }
