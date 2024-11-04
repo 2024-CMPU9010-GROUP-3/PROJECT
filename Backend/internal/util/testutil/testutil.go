@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
-	"slices"
 	"testing"
+	"time"
 
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	"golang.org/x/crypto/bcrypt"
@@ -35,6 +35,9 @@ type bcryptArgument struct {
 }
 
 var bcryptHashPattern = regexp.MustCompile(`^\$2[ayb]\$.{56}$`)
+var jwtPattern = regexp.MustCompile(`^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$`)
+
+var expiresToleranceStr = `5s`
 
 func (b bcryptArgument) Match(arg interface{}) bool {
 	hash, ok := arg.(string)
@@ -108,11 +111,45 @@ func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr htt
 		t.Errorf("expected %d cookies to be set, got %d", len(tt.ExpectedCookies), len(rr.Result().Cookies()))
 	}
 
-	if len(tt.ExpectedCookies) != 0 {
-		for _,c := range tt.ExpectedCookies{
-			if !slices.Contains(rr.Result().Cookies(), c){
-				t.Errorf("expected cookie %s to be set, missing", c.Name)
+	for _, expected := range tt.ExpectedCookies {
+		found := false
+		for _, cookie := range rr.Result().Cookies() {
+			if cookie.Name == expected.Name {
+				found = true
+
+				if !jwtPattern.MatchString(cookie.Value) {
+					t.Errorf("cookie %s value does not match JWT format: %v", cookie.Name, cookie.Value)
+				}
+
+				if cookie.Path != expected.Path {
+					t.Errorf("cookie %s Path mismatch: got %s, want %s", cookie.Name, cookie.Path, expected.Path)
+				}
+
+				if cookie.HttpOnly != expected.HttpOnly {
+					t.Errorf("cookie %s HttpOnly mismatch: got %v, want %v", cookie.Name, cookie.HttpOnly, expected.HttpOnly)
+				}
+
+				if cookie.SameSite != expected.SameSite {
+					t.Errorf("cookie %s SameSite mismatch: got %v, want %v", cookie.Name, cookie.SameSite, expected.SameSite)
+				}
+
+				if !expected.Expires.IsZero() {
+					expiresTolerance, err := time.ParseDuration(expiresToleranceStr)
+					if err != nil {
+						t.Error(err)
+					}
+					delta := expected.Expires.Sub(cookie.Expires)
+					if delta < -expiresTolerance || delta > expiresTolerance {
+						t.Errorf("cookie %s Expires mismatch: got %v, want %v ± %v", cookie.Name, cookie.Expires, expected.Expires, expiresTolerance)
+					}
+				}
+
+				break
 			}
+		}
+
+		if !found {
+			t.Errorf("expected cookie %s to be set", expected.Name)
 		}
 	}
 
