@@ -18,6 +18,7 @@ import (
 
 const (
 	userRoute       = "/auth/User"
+	loginRoute      = "/auth/User/login"
 	userIdString    = "41692803-0f09-4d6b-9b0f-f893bb985bff"
 	userIdStringAlt = "48F06E4A-2DF7-4681-B72B-19C99E285CA0"
 	username        = `testy`
@@ -39,6 +40,11 @@ const (
 		`WHERE Id = \$1 ` +
 		`LIMIT 1`
 
+	queryGetLoginByEmail = `SELECT Id, Username, Email, PasswordHash ` +
+		`FROM logins ` +
+		`WHERE Email = \$1 ` +
+		`LIMIT 1`
+
 	queryGetEmailExists = `SELECT EXISTS(` +
 		`SELECT 1 ` +
 		`FROM logins ` +
@@ -55,6 +61,10 @@ const (
 		`FROM user_details ` +
 		`WHERE Id = \$1 ` +
 		`LIMIT 1`
+
+	queryUpdateLastLogin = `UPDATE user_details ` +
+		`SET LastLoggedIn = (NOW() AT TIME ZONE 'utc') ` +
+		`WHERE Id = \$1`
 
 	queryInsertIntoLogins = `INSERT INTO logins`
 
@@ -140,6 +150,16 @@ const (
 				"LastName": "%s",
 				"ProfilePicture": "%s"
 			`
+
+	jsonLoginUserWithEmail = `{
+				"Email": "%s",
+				"Password": "%s"
+			}`
+
+	jsonLoginUserWithUsername = `{
+				"Username": "%s",
+				"Password": "%s"
+			}`
 
 	jsonResponseUserId = `{
 				"error": null,
@@ -1392,8 +1412,47 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 	RegisterDatabaseConnection(&ctx, mock)
 
 	authHandler := &AuthHandler{}
+
+	userId := pgtype.UUID{}
+	userId.Scan(userIdString)
+
+	duration, err := time.ParseDuration(`168h`)
+	if err != nil {
+		t.Errorf("Could not parse jwt duration: %v", err)
+	}
+
 	tests := []testutil.HandlerTestDefinition{
-		// TODO: Add test cases
+		{
+			Name:   "Positive testcase (email)",
+			Method: "POST",
+			Route:  loginRoute,
+			Env: map[string]string{
+				"MAGPIE_JWT_SECRET": `RyA4diC7nVdi39Isb9UlujsKN6/qyEjPFVHeLA9VakA=`,
+				"MAGPIE_JWT_EXPIRY": `168h`,
+			},
+			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHash))
+
+				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
+			},
+			ExpectedCookies: []*http.Cookie{
+				{
+					Name:     "magpie_auth",
+					HttpOnly: true,
+					SameSite: http.SameSiteLaxMode,
+					Expires:  time.Now().Add(duration),
+					Path:     "/",
+				},
+			},
+			ExpectedStatus: http.StatusOK,
+			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+		},
 	}
 	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
 }
