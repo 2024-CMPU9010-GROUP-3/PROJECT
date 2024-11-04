@@ -737,7 +737,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 	tests := []testutil.HandlerTestDefinition{
 		{
 			Name:   "Positive testcase",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
@@ -800,7 +800,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "Json field order should not matter",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"FirstName": "%s",
@@ -863,7 +863,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "No error when username is missing",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Email": "%s",
@@ -917,7 +917,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "No error when email is missing",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
@@ -971,7 +971,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "No error when password is missing",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
@@ -1033,7 +1033,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "No error when first name is missing",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
@@ -1105,7 +1105,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "No error when last name is missing",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
@@ -1178,7 +1178,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "No error when profile picture link is missing",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
@@ -1251,7 +1251,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "User not found",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
@@ -1301,7 +1301,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "Id invalid",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
@@ -1329,7 +1329,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 		},
 		{
 			Name:   "Invalid payload",
-			Method: "POST",
+			Method: "PUT",
 			Route:  userRoute,
 			InputJSON: fmt.Sprintf(`{
 				"Username": "%s",
