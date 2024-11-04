@@ -1398,7 +1398,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"FirstName": "%s",
 				"LastName": "%s",
 				"ProfilePicture": "%s"
-			}`, username, email, pwLong, firstname, lastname, pfpLink),
+			}`, username, email, pw, firstname, lastname, pfpLink),
 			PathParams: map[string]string{
 				"id": userIdString,
 			},
@@ -1442,7 +1442,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"FirstName": "%s",
 				"LastName": "%s",
 				"ProfilePicture": "%s"
-			}`, username, email, pwLong, firstname, lastname, pfpLink),
+			}`, username, email, pw, firstname, lastname, pfpLink),
 			PathParams: map[string]string{
 				"id": userIdString,
 			},
@@ -1507,7 +1507,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"FirstName": "%s",
 				"LastName": "%s",
 				"ProfilePicture": "%s"
-			}`, username, email, pwLong, firstname, lastname, pfpLink),
+			}`, username, email, pw, firstname, lastname, pfpLink),
 			PathParams: map[string]string{
 				"id": userIdString,
 			},
@@ -1543,7 +1543,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"FirstName": "%s",
 				"LastName": "%s",
 				"ProfilePicture": "%s"
-			}`, username, email, pwLong, firstname, lastname, pfpLink),
+			}`, username, email, pw, firstname, lastname, pfpLink),
 			PathParams: map[string]string{
 				"id": userIdString,
 			},
@@ -1596,6 +1596,60 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					}
 				}
 			}`, userIdString),
+		},
+		{
+			Name:   "Error starting transaction",
+			Method: "PUT",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+					
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+					AddRow(userId, username, email, pwHash))
+
+				mock.ExpectBegin().WillReturnError(fmt.Errorf("Simulate database errror"))
+			},
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError: errors.Database.TransactionStartError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+					"code: 1102,
+					"errorMsg": "Could not start database transaction"
+				},
+				"response": null
+			}`,
 		},
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
