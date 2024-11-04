@@ -32,6 +32,7 @@ const (
 	lastname        = `McTesterson`
 	lastnameAlt     = `McTesterson1`
 	pwHash          = `$2a$12$oMO4XyesvVS29xYsd8HKn.KBB8J2pxCydSPkuFcTnEfwQaKb2MX2i`
+	pwHashAlt       = `$2a$12$iq.hG5JXuvVSPUHSoEuEaOQ4SdFjtzk7PSFzJLjJbOS0j4YgWiPxm`
 	pfpLink         = `https://www.example.com/image.png`
 	pfpLinkAlt      = `https://www.example.com/image1.png`
 
@@ -183,10 +184,19 @@ const (
 					},
 					"response": null
 				}`
+
 	jsonInvalidUUIDError = `{
 					"error": {
 						"errorCode": 1202,
 						"errorMsg": "Parameter invalid, expected type UUIDv4"
+					},
+					"response": null
+				}`
+
+	jsonWrongCredentialsError = `{
+					"error": {
+						"errorCode": 1402,
+						"errorMsg": "Wrong username or password"
 					},
 					"response": null
 				}`
@@ -1437,9 +1447,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Route:     loginRoute,
 			Env:       defaultEnv,
 			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
-			PathParams: map[string]string{
-				"id": userIdString,
-			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
@@ -1465,9 +1472,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Route:     loginRoute,
 			Env:       defaultEnv,
 			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
-			PathParams: map[string]string{
-				"id": userIdString,
-			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
@@ -1486,6 +1490,22 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			},
 			ExpectedStatus: http.StatusOK,
 			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+		},
+		{
+			Name:      "Wrong password",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByUsername).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHashAlt))
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:    jsonWrongCredentialsError,
 		},
 	}
 	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
