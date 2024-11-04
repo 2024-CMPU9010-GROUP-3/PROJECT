@@ -690,6 +690,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
+
 				mock.ExpectBegin()
 
 				mock.ExpectExec(queryUpdateLogins).
@@ -727,6 +732,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
+
 				mock.ExpectBegin()
 
 				mock.ExpectExec(queryUpdateLogins).
@@ -760,6 +770,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(email).
 					WillReturnRows(rowsGetLogin)
 
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
+
 				mock.ExpectBegin()
 
 				mock.ExpectExec(queryUpdateLogins).
@@ -792,6 +807,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(userId).
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
+
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -829,6 +849,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(userId).
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
+
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -1120,6 +1145,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, username, emailAlt, pwHash))
 
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
+
 				mock.ExpectBegin()
 
 				mock.ExpectExec(queryUpdateLogins).
@@ -1184,6 +1214,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, usernameAlt, email, pwHash))
 
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
+
 				mock.ExpectBegin()
 
 				mock.ExpectExec(queryUpdateLogins).
@@ -1222,6 +1257,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, username, email, pwHash))
 
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
+
 				mock.ExpectBegin().WillReturnError(fmt.Errorf("Simulate database errror"))
 			},
 			ExpectedStatus: http.StatusInternalServerError,
@@ -1255,6 +1295,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(userId).
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, username, email, pwHash))
+
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -1290,6 +1335,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(userId).
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, username, email, pwHash))
+
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -1329,6 +1379,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WithArgs(userId).
 					WillReturnRows(rowsGetLogin.
 						AddRow(userId, username, email, pwHash))
+
+				mock.ExpectQuery(queryGetUserDetailsById).
+					WithArgs(userId).
+					WillReturnRows(rowsGetUserDetails.
+						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
