@@ -167,6 +167,10 @@ const (
 				"Password": "%s"
 			}`
 
+	jsonLoginUserWithUsernamePasswordMissing = `{
+				"Username": "%s"
+			}`
+
 	jsonResponseUserId = `{
 				"error": null,
 				"response": {
@@ -197,6 +201,15 @@ const (
 					"error": {
 						"errorCode": 1402,
 						"errorMsg": "Wrong username or password"
+					},
+					"response": null
+				}`
+
+	jsonPasswordRequiredError = `{
+					"error": {
+						"errorCode": 1201,
+						"errorMsg": "One or more required parameters are missing",
+						"cause":"Password is required"
 					},
 					"response": null
 				}`
@@ -1506,6 +1519,22 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
 			ExpectedJSON:    jsonWrongCredentialsError,
+		},
+		{
+			Name:      "Password missing",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithUsernamePasswordMissing, username),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByUsername).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHashAlt))
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
+			ExpectedJSON:    jsonPasswordRequiredError,
 		},
 	}
 	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
