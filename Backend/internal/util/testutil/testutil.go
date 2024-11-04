@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"regexp"
+	"slices"
 	"testing"
 
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
@@ -15,16 +16,18 @@ import (
 )
 
 type HandlerTestDefinition struct {
-	Name           string
-	Method				 string
-	Route					 string
-	InputJSON      string
-	MockSetup      func(mock pgxmock.PgxPoolIface)
-	ExpectedStatus int
-	ExpectedError  string
-	ExpectedJSON   string
-	PathParams     map[string]string
-	QueryParams    map[string]string
+	Name            string
+	Method          string
+	Route           string
+	InputJSON       string
+	MockSetup       func(mock pgxmock.PgxPoolIface)
+	ExpectedStatus  int
+	ExpectedError   string
+	ExpectedJSON    string
+	ExpectedCookies []*http.Cookie
+	PathParams      map[string]string
+	QueryParams     map[string]string
+	Env             map[string]string
 }
 
 type bcryptArgument struct {
@@ -34,17 +37,21 @@ type bcryptArgument struct {
 var bcryptHashPattern = regexp.MustCompile(`^\$2[ayb]\$.{56}$`)
 
 func (b bcryptArgument) Match(arg interface{}) bool {
-    hash, ok := arg.(string)
-		err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(b.expected))
-    return ok && bcryptHashPattern.MatchString(hash) && err == nil
+	hash, ok := arg.(string)
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(b.expected))
+	return ok && bcryptHashPattern.MatchString(hash) && err == nil
 }
 
-func BcryptArg (expected string) pgxmock.Argument {
+func BcryptArg(expected string) pgxmock.Argument {
 	return bcryptArgument{expected: expected}
 }
 
 func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
 	tt.MockSetup(mock)
+
+	for k, v := range tt.Env {
+		t.Setenv(k, v)
+	}
 
 	req, err := http.NewRequest(tt.Method, tt.Route, bytes.NewBuffer([]byte(tt.InputJSON)))
 	if err != nil {
@@ -94,6 +101,18 @@ func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr htt
 
 		if rr.Body.String() != compactedJson.String() {
 			t.Errorf("expected JSON output %s, got %s", compactedJson.String(), rr.Body.String())
+		}
+	}
+
+	if len(tt.ExpectedCookies) != len(rr.Result().Cookies()) {
+		t.Errorf("expected %d cookies to be set, got %d", len(tt.ExpectedCookies), len(rr.Result().Cookies()))
+	}
+
+	if len(tt.ExpectedCookies) != 0 {
+		for _,c := range tt.ExpectedCookies{
+			if !slices.Contains(rr.Result().Cookies(), c){
+				t.Errorf("expected cookie %s to be set, missing", c.Name)
+			}
 		}
 	}
 
