@@ -200,6 +200,10 @@ var (
 	simulatedDbError   = fmt.Errorf("Simulate Database Error")
 	resultUpdated      = pgconn.NewCommandTag("UPDATED")
 	resultDeleted      = pgconn.NewCommandTag("DELETED")
+	defaultEnv         = map[string]string{
+		"MAGPIE_JWT_SECRET": `RyA4diC7nVdi39Isb9UlujsKN6/qyEjPFVHeLA9VakA=`,
+		"MAGPIE_JWT_EXPIRY": `168h`,
+	}
 )
 
 func TestAuthHandlerHandleGet(t *testing.T) {
@@ -1428,13 +1432,10 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 	tests := []testutil.HandlerTestDefinition{
 		{
-			Name:   "Positive testcase (email)",
-			Method: "POST",
-			Route:  loginRoute,
-			Env: map[string]string{
-				"MAGPIE_JWT_SECRET": `RyA4diC7nVdi39Isb9UlujsKN6/qyEjPFVHeLA9VakA=`,
-				"MAGPIE_JWT_EXPIRY": `168h`,
-			},
+			Name:      "Positive testcase (email)",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
 			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
 			PathParams: map[string]string{
 				"id": userIdString,
@@ -1459,13 +1460,10 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
 		},
 		{
-			Name:   "Positive testcase (username)",
-			Method: "POST",
-			Route:  loginRoute,
-			Env: map[string]string{
-				"MAGPIE_JWT_SECRET": `RyA4diC7nVdi39Isb9UlujsKN6/qyEjPFVHeLA9VakA=`,
-				"MAGPIE_JWT_EXPIRY": `168h`,
-			},
+			Name:      "Positive testcase (username)",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
 			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
 			PathParams: map[string]string{
 				"id": userIdString,
