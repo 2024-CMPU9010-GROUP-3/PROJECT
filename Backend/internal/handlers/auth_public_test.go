@@ -1299,6 +1299,34 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"response": null
 			}`,
 		},
+		{
+			Name:   "Id invalid",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString[1:], // first char removed
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// handler should return before db calls are made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError: errors.Parameter.InvalidUUIDError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+					"code: 1202,
+					"errorMsg": "Parameter invalid, expected type UUIDv4"
+				},
+				"response": null
+			}`,
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
 }
