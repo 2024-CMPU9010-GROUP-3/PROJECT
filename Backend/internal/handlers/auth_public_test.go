@@ -1327,6 +1327,34 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"response": null
 			}`,
 		},
+		{
+			Name:   "Invalid payload",
+			Method: "POST",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			`, username, email, pw, firstname, lastname, pfpLink), // closing brace removed
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// no database calls expected
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError: errors.Payload.InvalidPayloadUserError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+					"code: 1212,
+					"errorMsg": "Payload (User) not valid"
+				},
+				"response": null
+			}`,
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
 }
