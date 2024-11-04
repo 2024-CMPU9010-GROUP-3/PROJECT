@@ -17,15 +17,26 @@ type MiddlewareTestDefinition struct {
 	ExpectedStatusCode   int
 	ExpectedBody         string
 	ExpectedBodyContains string
+	AuthCookieValue      string
+	EnvJwtSecret         string
 }
-
-type tokenKey string
 
 func executeMiddlewareTest(t *testing.T, test MiddlewareTestDefinition, middleware func(http.Handler) http.Handler) {
 	req := httptest.NewRequest(http.MethodGet, "/some-path", nil)
 
 	req = req.WithContext(context.WithValue(req.Context(), "token_user_id", test.TokenUserId))
 	req.SetPathValue("id", test.IdPathParam)
+
+	if test.AuthCookieValue != "" {
+		req.AddCookie(&http.Cookie{
+			Name:  "magpie_auth",
+			Value: test.AuthCookieValue,
+		})
+	}
+
+	if test.EnvJwtSecret != "" {
+		t.Setenv("MAGPIE_JWT_SECRET", test.EnvJwtSecret)
+	}
 
 	rr := httptest.NewRecorder()
 

@@ -42,7 +42,7 @@ func accessAuthenticated(next http.Handler) http.Handler {
 		}
 
 		subject, err := token.Claims.GetSubject()
-		if err != nil {
+		if err != nil || len(subject) == 0 {
 			resp.SendError(customErrors.Internal.JwtParseError, w)
 			return
 		}
