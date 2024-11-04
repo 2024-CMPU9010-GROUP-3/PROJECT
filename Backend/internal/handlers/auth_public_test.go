@@ -1626,6 +1626,54 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedError:   errors.Internal.JwtSecretMissingError.ErrorMsg,
 		},
+		{
+			Name:      "Error during get query (email)",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(email).
+					WillReturnError(simulatedDbError)
+
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusInternalServerError,
+			ExpectedJSON:    jsonSimulatedDbError,
+		},
+		{
+			Name:      "Error during get query (username)",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByUsername).
+					WithArgs(username).
+					WillReturnError(simulatedDbError)
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusInternalServerError,
+			ExpectedJSON:    jsonSimulatedDbError,
+		},
+		{
+			Name:      "Error during set last logged in query",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHash))
+
+				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnError(simulatedDbError)
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusInternalServerError,
+			ExpectedJSON:    jsonSimulatedDbError,
+		},
 	}
 	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
 }
