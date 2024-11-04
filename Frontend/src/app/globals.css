@@ -83,3 +83,9 @@ button {
   font-size: 16px;
   cursor: pointer;
 }
+
+.nav-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
