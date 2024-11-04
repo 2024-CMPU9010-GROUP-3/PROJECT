@@ -65,3 +65,14 @@ func TestAccessOwnerOnly(t *testing.T) {
 
 	testutil.RunMiddlewareTests(t, accessOwnerOnly, tests)
 }
+
+func TestPublic(t *testing.T) {
+	tests := []testutil.MiddlewareTestDefinition{
+		{
+			Name:                 "Any access",
+			ExpectedStatusCode:   http.StatusOK,
+			ExpectedBodyContains: "next handler called",
+		},
+	}
+	testutil.RunMiddlewareTests(t, accessPublic, tests)
+}
