@@ -295,13 +295,13 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
-def detect_empty_spots(cars, row_threshold_meters= 5, spot_width_meters= 1.8, spot_length_meters= 4.5):
+def detect_empty_spots(cars, row_threshold_meters= 3, spot_width_meters= 1.8, spot_length_meters= 4.5):
     """
     Detects empty spots in a row of parked cars based on the detected car bounding boxes and returns their coordinates
     
     Params:
         cars (list): List of car bounding boxes centers
-        row_threshold_meters (float): Maximum allowed y-axis distance to consider boxes in the same row (in meters)
+        row_threshold_meters (float): Maximum allowed y-axis distance to consider boxes in the same row (in meters), we could have cars in a slanted line
         spot_width_meters (float): Average width of a parking spot in meters
         spot_length_meters (float): Average length of a parking spot in meters
 
@@ -343,7 +343,7 @@ def detect_empty_spots(cars, row_threshold_meters= 5, spot_width_meters= 1.8, sp
     return empty_spots
 
 
-def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=3, spot_length =8):
+def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=20, spot_length =35):
     """
     Draws the empty parking spots on the image
 
@@ -360,6 +360,7 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
     for spot in empty_spots:
         x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
         print(x_pixel, y_pixel)
+
 
         x1 = int(x_pixel - spot_width // 2)
         y1 = int(y_pixel - spot_length // 2)
