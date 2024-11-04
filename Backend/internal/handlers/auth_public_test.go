@@ -1431,6 +1431,71 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"response": null
 			}`,
 		},
+		{
+			Name:   "Username already exists, but is same user",
+			Method: "PUT",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pwLong, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+					AddRow(userId, username, email, pwHash))
+					
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+						AddRow(userId, username, email_alt, pwHash))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, username, email, testutil.BcryptArg(pw)).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit()
+
+			},
+			ExpectedStatus: http.StatusAccepted,
+			ExpectedJSON: fmt.Sprintf(`{
+				"error": null,
+				"response": {
+					"content": {
+						"userid": "%s"
+					}
+				}
+			}`, userIdString),
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
 }
