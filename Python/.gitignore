@@ -41,6 +41,9 @@ data/images/*
 !data/images/bus.jpg
 !data/*.sh
 
+# Removing database .csv files
+*.csv
+
 # Remove results
 results*.csv
 runs/
