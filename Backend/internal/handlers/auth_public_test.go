@@ -1541,9 +1541,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Env:       defaultEnv,
 			InputJSON: fmt.Sprintf(jsonLoginUserWithUsernamePasswordMissing, username),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
-				mock.ExpectQuery(queryGetLoginByUsername).
-					WithArgs(username).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHashAlt))
+				// should return before any database calls are made
 			},
 			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusUnauthorized,
@@ -1577,6 +1575,38 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedError:   errors.Payload.InvalidPayloadUserError.ErrorMsg,
 			ExpectedJSON:    jsonInvalidUserPayloadError,
+		},
+		{
+			Name:      "User not found (username)",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByUsername).
+				WithArgs(username).
+				WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:    jsonWrongCredentialsError,
+		},
+		{
+			Name:      "User not found (email)",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+				WithArgs(email).
+				WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:    jsonWrongCredentialsError,
 		},
 	}
 	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
