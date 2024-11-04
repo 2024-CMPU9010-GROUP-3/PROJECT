@@ -1777,6 +1777,73 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"response": null
 			}`,
 		},
+		{
+			Name:   "Error committing transaction",
+			Method: "PUT",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pw, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+					
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Id = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(userId).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+					AddRow(userId, username, email, pwHash))
+
+				mock.ExpectBegin()
+
+				mock.ExpectExec(`UPDATE logins`).
+					WithArgs(userId, username, email, testutil.BcryptArg(pw)).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectExec(`UPDATE user_details`).
+					WithArgs(userId, firstname, lastname, pfpLink).
+					WillReturnResult(pgconn.NewCommandTag("UPDATED"))
+
+				mock.ExpectCommit().WillReturnError(fmt.Errorf("Simulate database error"))
+
+				mock.ExpectRollback()
+
+			},
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError: errors.Database.TransactionStartError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+					"code: 1104,
+					"errorMsg": "Unknown database error",
+					"cause": "Simulate database error",
+				},
+				"response": null
+			}`,
+		},
 	}
 	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
 }
