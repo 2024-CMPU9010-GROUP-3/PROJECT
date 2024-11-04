@@ -30,7 +30,7 @@ type HandlerTestDefinition struct {
 
 var jwtPattern = regexp.MustCompile(`^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$`)
 
-func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
+func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
 	tt.MockSetup(mock)
 
 	for k, v := range tt.Env {
@@ -142,7 +142,7 @@ func executeTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr htt
 func RunHandlerTests(t *testing.T, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface, tests []HandlerTestDefinition) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			executeTest(t, tt, handlerFunc, mock)
+			executeHandlerTest(t, tt, handlerFunc, mock)
 		})
 	}
 }
