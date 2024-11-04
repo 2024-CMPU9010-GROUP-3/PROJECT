@@ -63,11 +63,10 @@ def send_parking_spot(session, url, row, point_type):
         return False
 
 
-def send_parking_spots_to_api(data, point_type):
+def send_parking_spots_to_api(data, point_type, url):
     """
     Function to send the data as POST requests to the backend using multithreading.
     """
-    url = "http://localhost:8081/v1/private/points/"
     successful_posts = 0
     total = len(data)
 
@@ -119,14 +118,15 @@ def main():
         description='Send points to API.',
         formatter_class=argparse.RawTextHelpFormatter,
         epilog="""Examples:
-  python script_name.py data.csv --type parking
-      - Sends points from 'data.csv' with type 'parking'.
+      python script_name.py data.csv --type parking --env prod
+          - Sends points from 'data.csv' with type 'parking' to the production environment.
 
-  python script_name.py all --type auto
-      - Processes all CSV files in the current directory.
-      - Infers point types from filenames.
-      \n
-"""
+      python script_name.py all --type auto --env dev
+          - Processes all CSV files in the current directory.
+          - Infers point types from filenames.
+          - Sends data to the development environment.
+          \n
+    """
     )
     parser.add_argument(
         'csv_file_path',
@@ -137,7 +137,19 @@ def main():
         required=True,
         help='Type of the points. Use "auto" to infer from filename.'
     )
+    parser.add_argument(
+        '--env',
+        choices=['prod', 'dev'],
+        default='dev',
+        help='Environment to use: "prod" for production, "dev" for development (default: dev).'
+    )
     args = parser.parse_args()
+
+    # Determine the API URL based on the environment
+    if args.env == 'prod':
+        api_url = "http://localhost:8080/v1/private/points/"
+    else:
+        api_url = "http://localhost:8081/v1/private/points/"
 
     # List of possible types
     type_list = [
@@ -206,7 +218,7 @@ def main():
 
             data = read_csv_file(csv_file)
             if data is not None:
-                send_parking_spots_to_api(data, point_type)
+                send_parking_spots_to_api(data, point_type, api_url)
     else:
         # Original code for a single CSV file
         if args.type.lower() == 'auto':
@@ -251,7 +263,7 @@ def main():
 
         data = read_csv_file(args.csv_file_path)
         if data is not None:
-            send_parking_spots_to_api(data, point_type)
+            send_parking_spots_to_api(data, point_type, api_url)
 
 
 if __name__ == "__main__":
