@@ -96,23 +96,20 @@ def read_csv_file(csv_file_path):
     Function to read the CSV file into a pandas DataFrame.
     """
     try:
-        # Specify UTF-8 encoding when reading the CSV file
-        data = pd.read_csv(csv_file_path, encoding='utf-8')
-
+        # Try with 'latin-1' encoding
+        data = pd.read_csv(csv_file_path, encoding='latin-1')
+        
         # Standardize column names
         data.columns = [col.strip().lower() for col in data.columns]
-
+        
         # Convert latitude and longitude to numeric
         data['latitude'] = pd.to_numeric(data['latitude'], errors='coerce')
         data['longitude'] = pd.to_numeric(data['longitude'], errors='coerce')
-
+        
         # Drop rows with NaN latitude or longitude
         data = data.dropna(subset=['latitude', 'longitude'])
-
+        
         return data
-    except UnicodeDecodeError as e:
-        print(f"Encoding error: {e}")
-        return None
     except Exception as e:
         print(f"Error reading CSV file: {e}")
         return None
