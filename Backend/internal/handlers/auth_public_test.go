@@ -19,6 +19,7 @@ import (
 const (
 	userRoute     = "/auth/User"
 	userIdString  = "41692803-0f09-4d6b-9b0f-f893bb985bff"
+	userIdString_alt = "48F06E4A-2DF7-4681-B72B-19C99E285CA0"
 	username      = `testy`
 	username_alt  = `testy1`
 	email         = `testy@example.com`
@@ -716,6 +717,9 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 	userId := pgtype.UUID{}
 	userId.Scan(userIdString)
 
+	userId_alt := pgtype.UUID{}
+	userId_alt.Scan(userIdString_alt)
+
 	pfpLinkPG := pgtype.Text{}
 	err = pfpLinkPG.Scan(pfpLink)
 	if err != nil {
@@ -1379,6 +1383,50 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"error": {
 					"code: 1214,
 					"errorMsg": "Password too long (max. 72 bytes)"
+				},
+				"response": null
+			}`,
+		},
+		{
+			Name:   "Username already exists",
+			Method: "PUT",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pwLong, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Email = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}))
+
+				mock.ExpectQuery(
+					`SELECT Id, Username, Email, PasswordHash ` +
+						`FROM logins ` +
+						`WHERE Username = \$1 ` +
+						`LIMIT 1`).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"}).
+					AddRow(userId_alt, username, email, pwHash))
+
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError: errors.Payload.UsernameAlreadyExistsError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+					"code: 1221,
+					"errorMsg": "Username already exists"
 				},
 				"response": null
 			}`,
