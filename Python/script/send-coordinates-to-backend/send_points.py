@@ -96,19 +96,30 @@ def read_csv_file(csv_file_path):
     Function to read the CSV file into a pandas DataFrame.
     """
     try:
-        # Try with 'latin-1' encoding
+        # Try reading the CSV file
         data = pd.read_csv(csv_file_path, encoding='latin-1')
-        
+
         # Standardize column names
         data.columns = [col.strip().lower() for col in data.columns]
-        
+
+        # Define possible column names for latitude and longitude
+        latitude_columns = ['latitude', 'lat', 'y']
+        longitude_columns = ['longitude', 'lon', 'long', 'lng', 'x']
+
+        # Find the actual latitude and longitude columns in the data
+        lat_col = next((col for col in data.columns if col in latitude_columns), None)
+        lon_col = next((col for col in data.columns if col in longitude_columns), None)
+
+        if not lat_col or not lon_col:
+            raise ValueError("CSV file must contain latitude and longitude columns.")
+
         # Convert latitude and longitude to numeric
-        data['latitude'] = pd.to_numeric(data['latitude'], errors='coerce')
-        data['longitude'] = pd.to_numeric(data['longitude'], errors='coerce')
-        
+        data['latitude'] = pd.to_numeric(data[lat_col], errors='coerce')
+        data['longitude'] = pd.to_numeric(data[lon_col], errors='coerce')
+
         # Drop rows with NaN latitude or longitude
         data = data.dropna(subset=['latitude', 'longitude'])
-        
+
         return data
     except Exception as e:
         print(f"Error reading CSV file: {e}")
