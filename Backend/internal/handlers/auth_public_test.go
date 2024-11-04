@@ -494,11 +494,11 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 					WillReturnRows(pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"})) // no rows returned
 			},
 			ExpectedStatus: http.StatusInternalServerError,
-			ExpectedError:  errors.Internal.HashingError.ErrorMsg,
+			ExpectedError:  errors.Payload.PasswordTooLongError.ErrorMsg,
 			ExpectedJSON: `{
 					"error": {
-						"errorCode": 1012,
-						"errorMsg": "Could not hash password"
+						"errorCode": 1214,
+						"errorMsg": "Password too long (max. 72 bytes)"
 					},
 					"response": null
 				}`,
@@ -1351,6 +1351,34 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"error": {
 					"code: 1212,
 					"errorMsg": "Payload (User) not valid"
+				},
+				"response": null
+			}`,
+		},
+		{
+			Name:   "Password too long",
+			Method: "PUT",
+			Route:  userRoute,
+			InputJSON: fmt.Sprintf(`{
+				"Username": "%s",
+				"Email": "%s",
+				"Password": "%s",
+				"FirstName": "%s",
+				"LastName": "%s",
+				"ProfilePicture": "%s"
+			}`, username, email, pwLong, firstname, lastname, pfpLink),
+			PathParams: map[string]string{
+				"id": userIdString,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// no database calls expected
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError: errors.Payload.PasswordTooLongError.ErrorMsg,
+			ExpectedJSON: `{
+				"error": {
+					"code: 1214,
+					"errorMsg": "Password too long (max. 72 bytes)"
 				},
 				"response": null
 			}`,
