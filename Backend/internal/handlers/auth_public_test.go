@@ -157,9 +157,9 @@ const (
 )
 
 var (
-	rowsGetUserDetails = pgxmock.NewRows([]string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"})
-	rowsGetLogin       = pgxmock.NewRows([]string{"Id", "Username", "Email", "PasswordHash"})
-	rowsId             = pgxmock.NewRows([]string{"Id"})
+	rowsGetUserDetails = []string{"Id", "RegisterDate", "FirstName", "LastName", "ProfilePicture", "LastLoggedIn"}
+	rowsGetLogin       = []string{"Id", "Username", "Email", "PasswordHash"}
+	rowsId             = []string{"Id"}
 	simulatedDbError   = fmt.Errorf("Simulate Database Error")
 	resultUpdated      = pgconn.NewCommandTag("UPDATED")
 )
@@ -200,7 +200,7 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, "Testy", "McTesterson", "https://example.com/", lastLoginDate))
 			},
 			ExpectedStatus: http.StatusOK,
@@ -247,7 +247,7 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails)
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails))
 			},
 			ExpectedStatus: http.StatusNotFound,
 			ExpectedJSON: `{
@@ -310,22 +310,22 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectBegin()
 
 				mock.ExpectQuery(queryInsertIntoLogins).
 					WithArgs(username, email, testutil.BcryptArg(pw)).
-					WillReturnRows(rowsId.
+					WillReturnRows(pgxmock.NewRows(rowsId).
 						AddRow(userId))
 
 				mock.ExpectQuery(queryInsertIntoUserDetails).
 					WithArgs(userId, firstname, lastname, pfpLinkPG).
-					WillReturnRows(rowsId.
+					WillReturnRows(pgxmock.NewRows(rowsId).
 						AddRow(userId))
 
 				mock.ExpectCommit()
@@ -341,22 +341,22 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectBegin()
 
 				mock.ExpectQuery(queryInsertIntoLogins).
 					WithArgs(username, email, testutil.BcryptArg(pw)).
-					WillReturnRows(rowsId.
+					WillReturnRows(pgxmock.NewRows(rowsId).
 						AddRow(userId))
 
 				mock.ExpectQuery(queryInsertIntoUserDetails).
 					WithArgs(userId, firstname, lastname, pfpLinkPG).
-					WillReturnRows(rowsId.
+					WillReturnRows(pgxmock.NewRows(rowsId).
 						AddRow(userId))
 
 				mock.ExpectCommit()
@@ -447,7 +447,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
 			},
 			ExpectedStatus: http.StatusBadRequest,
@@ -468,10 +468,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
 			},
 			ExpectedStatus: http.StatusBadRequest,
@@ -492,10 +492,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 			},
 			ExpectedStatus: http.StatusInternalServerError,
 			ExpectedError:  errors.Payload.PasswordTooLongError.ErrorMsg,
@@ -515,10 +515,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 
 				mock.ExpectBegin().WillReturnError(fmt.Errorf("Could not start database transaction"))
 			},
@@ -540,10 +540,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 
 				mock.ExpectBegin()
 
@@ -565,16 +565,16 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 
 				mock.ExpectBegin()
 
 				mock.ExpectQuery(queryInsertIntoLogins).
 					WithArgs(username, email, testutil.BcryptArg(pw)).
-					WillReturnRows(rowsId.
+					WillReturnRows(pgxmock.NewRows(rowsId).
 						AddRow(userId))
 
 				mock.ExpectQuery(queryInsertIntoUserDetails).
@@ -595,21 +595,21 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin) // no rows returned
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin)) // no rows returned
 
 				mock.ExpectBegin()
 
 				mock.ExpectQuery(queryInsertIntoLogins).
 					WithArgs(username, email, testutil.BcryptArg(pw)).
-					WillReturnRows(rowsId.
+					WillReturnRows(pgxmock.NewRows(rowsId).
 						AddRow(userId))
 
 				mock.ExpectQuery(queryInsertIntoUserDetails).
 					WithArgs(userId, firstname, lastname, pfpLinkPG).
-					WillReturnRows(rowsId.
+					WillReturnRows(pgxmock.NewRows(rowsId).
 						AddRow(userId))
 
 				mock.ExpectCommit().WillReturnError(simulatedDbError)
@@ -679,20 +679,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -721,20 +721,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -763,16 +763,16 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -801,16 +801,16 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -839,20 +839,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -882,20 +882,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstnameAlt, lastnameAlt, pfpLinkAlt, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -925,20 +925,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstnameAlt, lastnameAlt, pfpLinkAlt, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -968,20 +968,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstnameAlt, lastnameAlt, pfpLinkAlt, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -1010,15 +1010,15 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
 			ExpectedStatus: http.StatusNotFound,
 			ExpectedError:  errors.NotFound.UserNotFoundError.ErrorMsg,
@@ -1104,11 +1104,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userIdAlt, username, email, pwHash))
 
 			},
@@ -1133,21 +1133,21 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -1177,7 +1177,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userIdAlt, usernameAlt, email, pwHash))
 
 			},
@@ -1202,21 +1202,21 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, email, pwHash))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, email, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -1246,20 +1246,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin().WillReturnError(fmt.Errorf("Simulate database errror"))
@@ -1285,20 +1285,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -1325,20 +1325,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
@@ -1369,20 +1369,20 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
-					WillReturnRows(rowsGetLogin)
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetLogin.
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
 					WithArgs(userId).
-					WillReturnRows(rowsGetUserDetails.
+					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
 						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
