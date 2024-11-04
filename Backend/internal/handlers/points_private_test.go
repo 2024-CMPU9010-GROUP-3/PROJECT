@@ -30,9 +30,9 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 
 	tests := []testutil.HandlerTestDefinition{
 		{
-			Name: "Valid input",
+			Name:   "Valid input",
 			Method: "POST",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
@@ -54,9 +54,9 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 			ExpectedStatus: http.StatusCreated,
 		},
 		{
-			Name: "Invalid input",
+			Name:   "Invalid input",
 			Method: "POST",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"type1": "parking",
 				"details": {
@@ -70,9 +70,9 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			Name: "Invalid geometry",
+			Name:   "Invalid geometry",
 			Method: "POST",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "InvalidType",
@@ -90,9 +90,9 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			Name: "Invalid type",
+			Name:   "Invalid type",
 			Method: "POST",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
@@ -110,9 +110,9 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			Name: "Valid geometry, but not point",
+			Name:   "Valid geometry, but not point",
 			Method: "POST",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Polygon",
@@ -138,9 +138,9 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			Name: "Database error on insert",
+			Name:   "Database error on insert",
 			Method: "POST",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
@@ -166,7 +166,7 @@ func TestPointsHandlerHandlePost(t *testing.T) {
 		},
 	}
 
-	testutil.RunTests(t, handler.HandlePost, mock, tests)
+	testutil.RunHandlerTests(t, handler.HandlePost, mock, tests)
 }
 
 func TestPointsHandlerHandlePut(t *testing.T) {
@@ -184,9 +184,9 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 
 	tests := []testutil.HandlerTestDefinition{
 		{
-			Name: "Valid input",
+			Name:   "Valid input",
 			Method: "PUT",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
@@ -214,9 +214,9 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 			ExpectedStatus: http.StatusAccepted,
 		},
 		{
-			Name: "Invlid id",
+			Name:   "Invlid id",
 			Method: "PUT",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
@@ -237,9 +237,9 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 			ExpectedError:  customErrors.Parameter.InvalidIntError.ErrorMsg,
 		},
 		{
-			Name: "Invalid input",
+			Name:   "Invalid input",
 			Method: "PUT",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"type1": "parking",
 				"details": {
@@ -256,9 +256,9 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			Name: "Parameter Missing",
+			Name:   "Parameter Missing",
 			Method: "PUT",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
@@ -278,9 +278,9 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 			ExpectedError:  customErrors.Parameter.RequiredParameterMissingError.ErrorMsg,
 		},
 		{
-			Name: "Invalid geometry",
+			Name:   "Invalid geometry",
 			Method: "PUT",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "InvalidType",
@@ -301,9 +301,9 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			Name: "Valid geometry, but not point",
+			Name:   "Valid geometry, but not point",
 			Method: "POST",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Polygon",
@@ -332,9 +332,9 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 			ExpectedError:  customErrors.Payload.InvalidPayloadPointError.ErrorMsg,
 		},
 		{
-			Name: "Database error on insert",
+			Name:   "Database error on insert",
 			Method: "PUT",
-			Route: "/points",
+			Route:  "/points",
 			InputJSON: `{
 				"longlat": {
 					"type": "Point",
@@ -366,7 +366,7 @@ func TestPointsHandlerHandlePut(t *testing.T) {
 		},
 	}
 
-	testutil.RunTests(t, handler.HandlePut, mock, tests)
+	testutil.RunHandlerTests(t, handler.HandlePut, mock, tests)
 }
 
 func TestPointsHandlerHandleDelete(t *testing.T) {
@@ -384,9 +384,9 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 
 	tests := []testutil.HandlerTestDefinition{
 		{
-			Name: "Valid input",
+			Name:   "Valid input",
 			Method: "DELETE",
-			Route: "/points",
+			Route:  "/points",
 			PathParams: map[string]string{
 				"id": "123456",
 			},
@@ -409,9 +409,9 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 			}`,
 		},
 		{
-			Name: "Invalid id",
+			Name:   "Invalid id",
 			Method: "DELETE",
-			Route: "/points",
+			Route:  "/points",
 			PathParams: map[string]string{
 				"id": "abdcd",
 			},
@@ -456,5 +456,5 @@ func TestPointsHandlerHandleDelete(t *testing.T) {
 		},
 	}
 
-	testutil.RunTests(t, handler.HandleDelete, mock, tests)
+	testutil.RunHandlerTests(t, handler.HandleDelete, mock, tests)
 }

@@ -176,7 +176,7 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 		},
 	}
 
-	testutil.RunTests(t, handler.HandleGetByRadius, mock, tests)
+	testutil.RunHandlerTests(t, handler.HandleGetByRadius, mock, tests)
 }
 
 func TestPointsHandlerHandleGetPointDetails(t *testing.T) {
@@ -305,5 +305,5 @@ func TestPointsHandlerHandleGetPointDetails(t *testing.T) {
 		},
 	}
 
-	testutil.RunTests(t, handler.HandleGetPointDetails, mock, tests)
+	testutil.RunHandlerTests(t, handler.HandleGetPointDetails, mock, tests)
 }

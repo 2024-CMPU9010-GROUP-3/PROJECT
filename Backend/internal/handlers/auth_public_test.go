@@ -364,7 +364,7 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 			},
 		},
 	}
-	testutil.RunTests(t, authHandler.HandleGet, mock, tests)
+	testutil.RunHandlerTests(t, authHandler.HandleGet, mock, tests)
 }
 
 func TestAuthHandlerHandlePost(t *testing.T) {
@@ -707,7 +707,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 				}`,
 		},
 	}
-	testutil.RunTests(t, authHandler.HandlePost, mock, tests)
+	testutil.RunHandlerTests(t, authHandler.HandlePost, mock, tests)
 }
 
 func TestAuthHandlerHandlePut(t *testing.T) {
@@ -1383,7 +1383,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			ExpectedJSON:   jsonSimulatedDbError,
 		},
 	}
-	testutil.RunTests(t, authHandler.HandlePut, mock, tests)
+	testutil.RunHandlerTests(t, authHandler.HandlePut, mock, tests)
 }
 
 func TestAuthHandlerHandleDelete(t *testing.T) {
@@ -1446,7 +1446,7 @@ func TestAuthHandlerHandleDelete(t *testing.T) {
 			ExpectedJSON:   jsonSimulatedDbError,
 		},
 	}
-	testutil.RunTests(t, authHandler.HandleDelete, mock, tests)
+	testutil.RunHandlerTests(t, authHandler.HandleDelete, mock, tests)
 }
 
 func TestAuthHandlerHandleLogin(t *testing.T) {
@@ -1675,5 +1675,5 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			ExpectedJSON:    jsonSimulatedDbError,
 		},
 	}
-	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
+	testutil.RunHandlerTests(t, authHandler.HandleLogin, mock, tests)
 }
