@@ -253,6 +253,9 @@ var (
 		"MAGPIE_JWT_SECRET": `RyA4diC7nVdi39Isb9UlujsKN6/qyEjPFVHeLA9VakA=`,
 		"MAGPIE_JWT_EXPIRY": `168h`,
 	}
+	jwtSecretMissingEnv = map[string]string{
+		"MAGPIE_JWT_EXPIRY": `168h`,
+	}
 )
 
 func TestAuthHandlerHandleGet(t *testing.T) {
@@ -459,7 +462,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			},
 			ExpectedStatus: http.StatusBadRequest,
 			ExpectedError:  errors.Payload.InvalidPayloadUserError.ErrorMsg,
-			ExpectedJSON: jsonInvalidUserPayloadError,
+			ExpectedJSON:   jsonInvalidUserPayloadError,
 		},
 		{
 			Name:      "Username missing",
@@ -1135,7 +1138,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			ExpectedStatus: http.StatusBadRequest,
 			ExpectedError:  errors.Payload.InvalidPayloadUserError.ErrorMsg,
-			ExpectedJSON: jsonInvalidUserPayloadError,
+			ExpectedJSON:   jsonInvalidUserPayloadError,
 		},
 		{
 			Name:      "Password too long",
@@ -1584,8 +1587,8 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByUsername).
-				WithArgs(username).
-				WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
 			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusUnauthorized,
@@ -1600,13 +1603,28 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
-				WithArgs(email).
-				WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
 			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
 			ExpectedJSON:    jsonWrongCredentialsError,
+		},
+		{
+			Name:      "JWT Secret missing",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       jwtSecretMissingEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedError:   errors.Internal.JwtSecretMissingError.ErrorMsg,
 		},
 	}
 	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
