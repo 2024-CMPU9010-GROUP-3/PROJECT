@@ -167,6 +167,11 @@ const (
 				"Password": "%s"
 			}`
 
+	jsonLoginUserWithUsernameInvalid = `{
+				"Username": "%s",
+				"Password": "%s"
+			`
+
 	jsonLoginUserWithUsernamePasswordMissing = `{
 				"Username": "%s"
 			}`
@@ -223,6 +228,14 @@ const (
 						"errorCode": 1201,
 						"errorMsg": "One or more required parameters are missing",
 						"cause":"Username or Email is required"
+					},
+					"response": null
+				}`
+
+	jsonInvalidUserPayloadError = `{
+					"error": {
+						"errorCode": 1212,
+						"errorMsg": "Payload (User) not valid"
 					},
 					"response": null
 				}`
@@ -446,13 +459,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			},
 			ExpectedStatus: http.StatusBadRequest,
 			ExpectedError:  errors.Payload.InvalidPayloadUserError.ErrorMsg,
-			ExpectedJSON: `{
-					"error": {
-						"errorCode": 1212,
-						"errorMsg": "Payload (User) not valid"
-					},
-					"response": null
-				}`,
+			ExpectedJSON: jsonInvalidUserPayloadError,
 		},
 		{
 			Name:      "Username missing",
@@ -1128,13 +1135,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			ExpectedStatus: http.StatusBadRequest,
 			ExpectedError:  errors.Payload.InvalidPayloadUserError.ErrorMsg,
-			ExpectedJSON: `{
-				"error": {
-					"code: 1212,
-					"errorMsg": "Payload (User) not valid"
-				},
-				"response": null
-			}`,
+			ExpectedJSON: jsonInvalidUserPayloadError,
 		},
 		{
 			Name:      "Password too long",
@@ -1562,6 +1563,20 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
 			ExpectedJSON:    jsonUsernameOrEmailRequiredError,
+		},
+		{
+			Name:      "Invalid payload",
+			Method:    "POST",
+			Route:     loginRoute,
+			Env:       defaultEnv,
+			InputJSON: fmt.Sprintf(jsonLoginUserWithUsernameInvalid, username, pw),
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// should return before any database calls are made
+			},
+			ExpectedCookies: []*http.Cookie{},
+			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedError:   errors.Payload.InvalidPayloadUserError.ErrorMsg,
+			ExpectedJSON:    jsonInvalidUserPayloadError,
 		},
 	}
 	testutil.RunTests(t, authHandler.HandleLogin, mock, tests)
