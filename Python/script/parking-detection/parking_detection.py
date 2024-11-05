@@ -394,8 +394,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -416,7 +416,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
 
     empty_spots = detect_empty_spots(all_detections)
     draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude)
-    all_detections.extend(empty_spots)
+    empty_spots_coords = [spot for spot, _ in empty_spots]
+    all_detections.extend(empty_spots_coords)
 
     return all_detections
 
@@ -515,9 +516,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
     model = YOLO("finaltrain_weights.pt")
 
-    get_parking_coords_in_image(model, top_left_longitude, top_left_latitude)
-
-    '''centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
+    centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
 
     all_detections = []
 
@@ -529,8 +528,16 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
     df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
-    '''
+    
 
 if __name__ == "__main__":
-    main(-6.302440063476553, 53.360968490496255, -6.1553, 53.4153)
+    #main(-6.302440063476553, 53.360968490496255, -6.1553, 53.4153)
     #main(-6.285960571289053, 53.360968490496255, -6.1553, 53.4153)
+    #main(-6.302440063476553, 53.36178802374502, -6.1553, 53.4153)
+    #main(-6.303813354492178, 53.360148941485626, -6.1553, 53.4153)
+    #main(-6.303813354492178, 53.36178802374502, -6.1553, 53.4153)
+    #main(-6.303813354492178, 53.3683437223242, -6.1553, 53.4153)
+    main(-6.2903, 53.3121, -6.2881, 53.3133)
+    #main(-6.2968, 53.3123, -6.2909, 53.3158)
+    #main(-6.2816, 53.3176, -6.2756, 53.3212)
+    main(-6.2673, 53.3516, -6.2605, 53.3556)
