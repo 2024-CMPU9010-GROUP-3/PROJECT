@@ -295,7 +295,7 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
-def detect_empty_spots(cars, row_threshold_meters= 3, spot_width_meters= 1.8, spot_length_meters= 4.5):
+def detect_empty_spots(cars, row_threshold_meters= 5, spot_width_meters= 1.5, spot_length_meters= 4.5):
     """
     Detects empty spots in a row of parked cars based on the detected car bounding boxes and returns their coordinates
     
