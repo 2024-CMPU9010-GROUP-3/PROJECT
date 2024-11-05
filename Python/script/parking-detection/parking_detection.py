@@ -306,7 +306,7 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_width_meters=2, spot_l
         spot_length_meters (float): Average length of a parking spot in meters
         
     Returns:
-        list: Coordinates of estimated empty parking spots
+        list: Coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
     """
     cars = sorted(cars, key=lambda point: (point[1], point[0])) 
     empty_spots = []
@@ -325,8 +325,7 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_width_meters=2, spot_l
                 for j in range(1, num_spots + 1):
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                    empty_spots.append([empty_x_center, empty_y_center])
-                    #print('horizontal')
+                    empty_spots.append(([empty_x_center, empty_y_center], 'horizontal'))
 
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
@@ -338,14 +337,13 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_width_meters=2, spot_l
                     empty_x_center = x_current
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                    empty_spots.append([empty_x_center, empty_y_center])
-                    print("vertical")
+                    empty_spots.append(([empty_x_center, empty_y_center], 'vertical'))
 
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
     return empty_spots
 
-def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=20, spot_length =35):
+def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=18, spot_length =32):
     """
     Draws the empty parking spots on the image
 
@@ -359,13 +357,19 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
     """
     image = cv2.imread(image_path)
 
-    for spot in empty_spots:
+    for spot, orientation in empty_spots:
         x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
         
-        x1 = int(x_pixel - spot_width // 2)
-        y1 = int(y_pixel - spot_length // 2)
-        x2 = int(x_pixel + spot_width // 2)
-        y2 = int(y_pixel + spot_length // 2)
+        if orientation == 'horizontal':
+            x1 = int(x_pixel - spot_width // 2)
+            y1 = int(y_pixel - spot_length // 2)
+            x2 = int(x_pixel + spot_width // 2)
+            y2 = int(y_pixel + spot_length // 2)
+        else: 
+            x1 = int(x_pixel - spot_length // 2)
+            y1 = int(y_pixel - spot_width // 2)
+            x2 = int(x_pixel + spot_length // 2)
+            y2 = int(y_pixel + spot_width // 2)
         
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
