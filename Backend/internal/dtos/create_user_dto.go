@@ -18,29 +18,29 @@ type CreateUserDto struct {
 	ProfilePicture pgtype.Text `json:"profilepicture"`
 }
 
-func (self *CreateUserDto) Decode(r io.Reader) *customErrors.CustomError {
+func (self *CreateUserDto) Decode(r io.Reader) error {
 	err := json.NewDecoder(r).Decode(&self)
 	if err != nil {
-		return &customErrors.Payload.InvalidPayloadUserError
+		return customErrors.Payload.InvalidPayloadUserError
 	}
 
 	return self.Validate()
 }
 
-func (self *CreateUserDto) Validate() *customErrors.CustomError {
+func (self *CreateUserDto) Validate() error {
 	if len(self.Username) == 0 {
 		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required"))
-		return &err
+		return err
 	}
 
 	if len(self.Email) == 0 {
 		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Email is required"))
-		return &err
+		return err
 	}
 
 	if len(self.Password) == 0 {
 		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required"))
-		return &err
+		return err
 	}
 	return nil
 }

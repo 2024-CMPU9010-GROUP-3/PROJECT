@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+type TokenKey string
+
 type placeholder struct {
 	IsPlaceholder bool
 	Endpoint      string

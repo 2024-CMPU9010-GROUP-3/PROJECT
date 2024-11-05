@@ -56,8 +56,14 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	e := userDto.Decode(r.Body)
 	if e != nil {
-		resp.SendError(*e, w)
-		return
+		ce, ok := e.(customErrors.CustomError)
+		if !ok {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(e), w)
+			return
+		} else {
+			resp.SendError(ce, w)
+			return
+		}
 	}
 
 	_, err := db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
@@ -133,8 +139,14 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 
 	e := userDto.Decode(r.Body)
 	if e != nil {
-		resp.SendError(*e, w)
-		return
+		ce, ok := e.(customErrors.CustomError)
+		if !ok {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(e), w)
+			return
+		} else {
+			resp.SendError(ce, w)
+			return
+		}
 	}
 
 	var passwordHash []byte
@@ -229,8 +241,14 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	e := loginDto.Decode(r.Body)
 	if e != nil {
-		resp.SendError(*e, w)
-		return
+		ce, ok := e.(customErrors.CustomError)
+		if !ok {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(e), w)
+			return
+		} else {
+			resp.SendError(ce, w)
+			return
+		}
 	}
 
 	// get user login from db

@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util"
 )
 
 type MiddlewareTestDefinition struct {
@@ -34,7 +36,7 @@ type LoggingTestDefinition struct {
 func executeMiddlewareTest(t *testing.T, test MiddlewareTestDefinition, middleware func(http.Handler) http.Handler) {
 	req := httptest.NewRequest(http.MethodGet, "/some-path", nil)
 
-	req = req.WithContext(context.WithValue(req.Context(), "token_user_id", test.TokenUserId))
+	req = req.WithContext(context.WithValue(req.Context(), util.TokenKey("token_user_id"), test.TokenUserId))
 	req.SetPathValue("id", test.IdPathParam)
 
 	if test.AuthCookieValue != "" {
@@ -122,7 +124,7 @@ func RunMiddlewareTests(t *testing.T, middleware func(http.Handler) http.Handler
 
 func mockNextHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("next handler called"))
+	_,_ = w.Write([]byte("next handler called"))
 }
 
 func captureLogs(f func()) string {

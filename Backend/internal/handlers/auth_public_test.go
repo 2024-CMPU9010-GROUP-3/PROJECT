@@ -284,7 +284,10 @@ func TestAuthHandlerHandleGet(t *testing.T) {
 	}
 
 	userId := pgtype.UUID{}
-	userId.Scan(userIdString)
+	err = userId.Scan(userIdString)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	tests := []testutil.HandlerTestDefinition{
 		{
@@ -381,7 +384,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 	authHandler := &AuthHandler{}
 
 	userId := pgtype.UUID{}
-	userId.Scan(userIdString)
+	err = userId.Scan(userIdString)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	pfpLinkPG := pgtype.Text{}
 	err = pfpLinkPG.Scan(pfpLink)
@@ -724,10 +730,16 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 	authHandler := &AuthHandler{}
 
 	userId := pgtype.UUID{}
-	userId.Scan(userIdString)
+	err = userId.Scan(userIdString)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	userIdAlt := pgtype.UUID{}
-	userIdAlt.Scan(userIdStringAlt)
+	err = userIdAlt.Scan(userIdStringAlt)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	pfpLinkPG := pgtype.Text{}
 	err = pfpLinkPG.Scan(pfpLink)
@@ -1400,7 +1412,10 @@ func TestAuthHandlerHandleDelete(t *testing.T) {
 	authHandler := &AuthHandler{}
 
 	userId := pgtype.UUID{}
-	userId.Scan(userIdString)
+	err = userId.Scan(userIdString)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	tests := []testutil.HandlerTestDefinition{
 		{
@@ -1463,7 +1478,10 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 	authHandler := &AuthHandler{}
 
 	userId := pgtype.UUID{}
-	userId.Scan(userIdString)
+	err = userId.Scan(userIdString)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	duration, err := time.ParseDuration(`168h`)
 	if err != nil {

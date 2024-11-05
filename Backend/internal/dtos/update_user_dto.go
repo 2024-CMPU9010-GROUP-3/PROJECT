@@ -17,15 +17,15 @@ type UpdateUserDto struct {
 	ProfilePicture pgtype.Text `json:"profilepicture"`
 }
 
-func (self *UpdateUserDto) Decode(r io.Reader) *customErrors.CustomError {
+func (self *UpdateUserDto) Decode(r io.Reader) error {
 	err := json.NewDecoder(r).Decode(&self)
 	if err != nil {
-		return &customErrors.Payload.InvalidPayloadUserError
+		return customErrors.Payload.InvalidPayloadUserError
 	}
 
 	return self.Validate()
 }
 
-func (self *UpdateUserDto) Validate() *customErrors.CustomError {
+func (self *UpdateUserDto) Validate() error {
 	return nil
 }

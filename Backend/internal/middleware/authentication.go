@@ -11,6 +11,7 @@ import (
 
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util"
 )
 
 func accessAuthenticated(next http.Handler) http.Handler {
@@ -47,7 +48,7 @@ func accessAuthenticated(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(request.Context(), "token_user_id", subject)
+		ctx := context.WithValue(request.Context(), util.TokenKey("token_user_id"), subject)
 
 		next.ServeHTTP(w, request.WithContext(ctx))
 
