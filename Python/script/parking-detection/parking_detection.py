@@ -295,20 +295,20 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
-def detect_empty_spots(cars, gap_threshold_meters=8, spot_size_meters=2.5):
+def detect_empty_spots(cars, gap_threshold_meters=8, spot_width_meters=2, spot_length_meters=3):
     """
-    Detects empty spots in a row of parked cars based on the detected car bounding boxes and returns their coordinates
+    Detects empty spots in rows of parked cars based on detected car bounding box centers
     
     Params:
-        cars (list): List of car bounding boxes centers
+        cars (list): List of car bounding box center coordinates
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
-        spot_size_meters (float): Average size of a parking spot in meters
+        spot_width_meters (float): Average width of a parking spot in meters
+        spot_length_meters (float): Average length of a parking spot in meters
         
     Returns:
-        list: Coordinates of empty parking spots
+        list: Coordinates of estimated empty parking spots
     """
     cars = sorted(cars, key=lambda point: (point[1], point[0])) 
-    
     empty_spots = []
 
     for i in range(len(cars) - 1):
@@ -316,17 +316,33 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_size_meters=2.5):
         x_next, y_next = cars[i + 1]
         
         gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
-
-        if gap_distance <= gap_threshold_meters and gap_distance > spot_size_meters:
-            num_spots = int(gap_distance // spot_size_meters)
-            
-            for j in range(1, num_spots + 1):
-                empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
-                empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                empty_spots.append([empty_x_center, empty_y_center])
+        angle = math.atan2(y_next - y_current, x_next - x_current)
+        
+        if abs(math.cos(angle)) > 0.5:  #Horizontally placed cars
+            if gap_distance <= gap_threshold_meters and gap_distance > spot_width_meters:
+                num_spots = int(gap_distance // spot_width_meters)
                 
-                print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
+                for j in range(1, num_spots + 1):
+                    empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
+                    empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
+                    empty_spots.append([empty_x_center, empty_y_center])
+                    #print('horizontal')
 
+                    print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
+                    
+        elif abs(math.sin(angle)) > 0.5:  #Vertically placed cars
+            if gap_distance <= gap_threshold_meters and gap_distance > spot_length_meters:
+                num_spots = int(gap_distance // spot_length_meters)
+                
+                for j in range(1, num_spots + 1):
+                    empty_x_center = x_current
+                    empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
+                    empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
+                    empty_spots.append([empty_x_center, empty_y_center])
+                    print("vertical")
+
+                    print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
+                    
     return empty_spots
 
 def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=20, spot_length =35):
@@ -512,5 +528,5 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     '''
 
 if __name__ == "__main__":
-    #main(-6.302440063476553, 53.360968490496255, -6.1553, 53.4153)
-    main(-6.285960571289053, 53.360968490496255, -6.1553, 53.4153)
+    main(-6.302440063476553, 53.360968490496255, -6.1553, 53.4153)
+    #main(-6.285960571289053, 53.360968490496255, -6.1553, 53.4153)
