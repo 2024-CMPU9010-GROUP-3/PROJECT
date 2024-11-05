@@ -301,13 +301,11 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_size_meters=2.5):
     
     Params:
         cars (list): List of car bounding boxes centers
-        gap_threshold_meters (float): Maximum allowed gap to consider it as an empty parking spot
-        spot_width_meters (float): Average width of a parking spot in meters
-        spot_length_meters (float): Average length of a parking spot in meters
-
+        gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
+        spot_size_meters (float): Average size of a parking spot in meters
         
     Returns:
-        list: Coordinates of estimated empty parking spots
+        list: Coordinates of empty parking spots
     """
     cars = sorted(cars, key=lambda point: (point[1], point[0])) 
     
@@ -318,7 +316,6 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_size_meters=2.5):
         x_next, y_next = cars[i + 1]
         
         gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
-        angle = math.atan2(y_next - y_current, x_next - x_current)  
 
         if gap_distance <= gap_threshold_meters and gap_distance > spot_size_meters:
             num_spots = int(gap_distance // spot_size_meters)
@@ -348,18 +345,13 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
 
     for spot in empty_spots:
         x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
-        print(x_pixel, y_pixel)
-
-
+        
         x1 = int(x_pixel - spot_width // 2)
         y1 = int(y_pixel - spot_length // 2)
         x2 = int(x_pixel + spot_width // 2)
         y2 = int(y_pixel + spot_length // 2)
-
-        print(x1, y1, x2, y2)
         
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        print("bounding box drawn")
 
     cv2.imwrite(image_path, image)
 
@@ -520,4 +512,5 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     '''
 
 if __name__ == "__main__":
-    main(-6.302440063476553, 53.36178802374502, -6.1553, 53.4153)
+    #main(-6.302440063476553, 53.360968490496255, -6.1553, 53.4153)
+    main(-6.285960571289053, 53.360968490496255, -6.1553, 53.4153)
