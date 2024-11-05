@@ -295,13 +295,13 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
-def detect_empty_spots(cars, row_threshold_meters= 5, spot_width_meters= 1.5, spot_length_meters= 4.5):
+def detect_empty_spots(cars, gap_threshold_meters=8, spot_size_meters=2.5):
     """
     Detects empty spots in a row of parked cars based on the detected car bounding boxes and returns their coordinates
     
     Params:
         cars (list): List of car bounding boxes centers
-        row_threshold_meters (float): Maximum allowed y-axis distance to consider boxes in the same row (in meters), we could have cars in a slanted line
+        gap_threshold_meters (float): Maximum allowed gap to consider it as an empty parking spot
         spot_width_meters (float): Average width of a parking spot in meters
         spot_length_meters (float): Average length of a parking spot in meters
 
@@ -309,39 +309,28 @@ def detect_empty_spots(cars, row_threshold_meters= 5, spot_width_meters= 1.5, sp
     Returns:
         list: Coordinates of estimated empty parking spots
     """
-    cars = sorted(cars, key=lambda point: point[0])
-
-    average_latitude = sum(car[1] for car in cars) / len(cars)
-    spot_width_degrees = spot_width_meters / (111320 * math.cos(math.radians(average_latitude)))
-    spot_length_degrees = spot_length_meters / 111320
+    cars = sorted(cars, key=lambda point: (point[1], point[0])) 
+    
     empty_spots = []
 
     for i in range(len(cars) - 1):
         x_current, y_current = cars[i]
         x_next, y_next = cars[i + 1]
         
-        gap_longitude = geodesic((y_current, x_current), (y_current, x_next)).meters
-        print(f"Horizontal gap between car {i} and car {i + 1}: {gap_longitude:.2f} meters")
+        gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
+        angle = math.atan2(y_next - y_current, x_next - x_current)  
 
-        if gap_longitude > spot_width_meters:
-            print("in first if")
-            num_spots = int(gap_longitude // spot_width_meters)
-            gap_latitude = geodesic((y_current, x_current), (y_next, x_current)).meters
-            print(gap_latitude)
+        if gap_distance <= gap_threshold_meters and gap_distance > spot_size_meters:
+            num_spots = int(gap_distance // spot_size_meters)
+            
+            for j in range(1, num_spots + 1):
+                empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
+                empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
+                empty_spots.append([empty_x_center, empty_y_center])
+                
+                print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
 
-            if gap_latitude < row_threshold_meters:
-
-                print("in second if")
-
-                for j in range(1, num_spots + 1):
-                    empty_x_center = x_current + j * spot_width_degrees
-                    long = empty_x_center - (spot_width_degrees / 2)
-                    lat = y_current - (spot_length_degrees / 2)
-                    empty_spots.append([long, lat])
-                    print(f"Empty parking spot coordinates: ({long}, {lat})")
-        
     return empty_spots
-
 
 def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=20, spot_length =35):
     """
