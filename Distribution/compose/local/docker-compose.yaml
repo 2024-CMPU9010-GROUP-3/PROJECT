@@ -1,37 +1,75 @@
 name: magpie
 
-version: "1.0"
-
 services:
+  postgis-service:
+    image: postgis/postgis:17-3.5-alpine
+    container_name: postgis
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=magpie
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "magpie", "-u", "postgres"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
   private-service:
     build:
       context: ../../../Backend
       dockerfile: Dockerfile.private
-    container_name: private-service
+    container_name: private-backend
+    depends_on:
+      postgis-service:
+        condition: service_healthy
     ports:
       - "8081:8080"
     networks:
       - app-network
+    environment:
+      - MAGPIE_DB_URL=postgres://postgres:${POSTGRES_PASSWORD}@postgis:5432/magpie?sslmode=disable
+      - MAGPIE_JWT_SECRET=${MAGPIE_JWT_SECRET}
+      - MAGPIE_JWT_EXPIRY=24h
+      - MAGPIE_CORS_ALLOWED_ORIGINS=http://localhost:3000 https://localhost:3000 http://example.com
+      - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   public-service:
     build:
       context: ../../../Backend
       dockerfile: Dockerfile.public
-    container_name: public-service
+    container_name: public-backend
+    depends_on:
+      postgis-service:
+        condition: service_healthy
     ports:
       - "8082:8080"
     networks:
       - app-network
+    environment:
+      - MAGPIE_DB_URL=postgres://postgres:${POSTGRES_PASSWORD}@postgis:5432/magpie?sslmode=disable
+      - MAGPIE_JWT_SECRET=${MAGPIE_JWT_SECRET}
+      - MAGPIE_JWT_EXPIRY=24h
+      - MAGPIE_CORS_ALLOWED_ORIGINS=http://localhost:3000 https://localhost:3000 http://example.com
+      - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   frontend-service:
     build:
       context: ../../../Frontend
-    container_name: frontend-service
+      dockerfile: Dockerfile
+    container_name: frontend
+    depends_on:
+      - private-service
+      - public-service
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN={MAPBOX_ACCESS_TOKEN}
+      - NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
     networks:
       - app-network
 

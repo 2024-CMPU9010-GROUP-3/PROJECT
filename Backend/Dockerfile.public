@@ -19,6 +19,8 @@ WORKDIR /
 
 COPY --from=build-stage /app/bin/main /app/bin/main
 
+COPY --from=build-stage /app/sql/migrations/ ./sql/migrations/
+
 EXPOSE 8080
 
 USER nonroot:nonroot

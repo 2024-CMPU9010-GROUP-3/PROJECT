@@ -17,7 +17,19 @@ import (
 type PointType string
 
 const (
-	PointTypeParking PointType = "parking"
+	PointTypeParking               PointType = "parking"
+	PointTypeUnknown               PointType = "unknown"
+	PointTypeCoachParking          PointType = "coach_parking"
+	PointTypeBikeSharingStation    PointType = "bike_sharing_station"
+	PointTypeBikeStand             PointType = "bike_stand"
+	PointTypeDrinkingWaterFountain PointType = "drinking_water_fountain"
+	PointTypePublicToilet          PointType = "public_toilet"
+	PointTypeAccessibleParking     PointType = "accessible_parking"
+	PointTypePublicWifiAccessPoint PointType = "public_wifi_access_point"
+	PointTypeLibrary               PointType = "library"
+	PointTypeMultistoreyCarParking PointType = "multistorey_car_parking"
+	PointTypeParkingMeter          PointType = "parking_meter"
+	PointTypePublicBins            PointType = "public_bins"
 )
 
 func (e *PointType) Scan(src interface{}) error {

@@ -6,7 +6,11 @@ import {
     UserRoundX,
   } from "lucide-react";
   
-  import { useState } from "react"; // Import useState to manage login status
+  import { useAuth } from "@/app/context/AuthContext"; // Import useAuth to get auth context
+  import { logout } from "@/app/components/serverActions/actions"; // Import logout action
+  import { useRouter } from "next/navigation";
+  import { useEffect } from "react";
+  import { getSession } from "@/lib/session";
   
   import {
     DropdownMenu,
@@ -22,17 +26,29 @@ import {
   import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
   
   export function DropdownMenuDemo() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // State to check if the user is logged in
+    const { isLoggedIn, setIsLoggedIn } = useAuth(); // Use useAuth to get isLoggedIn state
+    const router = useRouter();
   
-    // Function to simulate login (replace with real login logic)
+    useEffect(() => {
+      // check session
+      const checkSession = async () => {
+        const session = await getSession();
+        if (session) {
+          setIsLoggedIn(true);
+        }
+      };
+      checkSession();
+    }, [setIsLoggedIn]);
+  
+    // Function to handle login
     const handleLogin = () => {
-      setIsLoggedIn(true);
-      console.log("Logged in!");
+      router.push("/login");
+      console.log("Login clicked!");
     };
   
     // Function to handle logout
-    const handleLogout = () => {
-      setIsLoggedIn(false);
+    const handleLogout = async () => {
+      await logout(); // Call logout action
       console.log("Logged out!");
     };
   
@@ -89,7 +105,6 @@ import {
                   <span>Log in</span>
                   <DropdownMenuShortcut>⇧⌘L</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                {/* You can add more login/signup related options here */}
               </DropdownMenuGroup>
             </>
           )}
