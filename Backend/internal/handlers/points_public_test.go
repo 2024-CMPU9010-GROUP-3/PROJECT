@@ -42,18 +42,15 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 				"long":   "-6.269925",
 				"lat":    "53.345474",
 				"radius": "5000",
+				"types":  "parking",
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
-				mock.ExpectQuery(`SELECT Id, LongLat::geometry, Type from points
-                      WHERE ST_DWithin\(
-                          LongLat::geography,
-                          ST_SetSRID\(ST_MakePoint\(\$1::float, \$2::float\), 4326\)::geography,
-                          \$3::float
-                      \)`).
+				mock.ExpectQuery(`SELECT Id, LongLat::geometry, Type from points WHERE ST_DWithin`).
 					WithArgs(
 						float64(-6.269925),
 						float64(53.345474),
-						float64(5000)).
+						float64(5000),
+						[]db.PointType{db.PointType("parking")}).
 					WillReturnRows(pgxmock.NewRows([]string{"id", "longlat", "type"}).
 						AddRow(int64(236), validPoint, db.PointTypeParking))
 			},
@@ -150,18 +147,15 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 				"long":   "-6.269925",
 				"lat":    "53.345474",
 				"radius": "5000",
+				"types":   "parking",
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
-				mock.ExpectQuery(`SELECT Id, LongLat::geometry, Type from points
-                      WHERE ST_DWithin\(
-                          LongLat::geography,
-                          ST_SetSRID\(ST_MakePoint\(\$1::float, \$2::float\), 4326\)::geography,
-                          \$3::float
-                      \)`).
+				mock.ExpectQuery(`SELECT Id, LongLat::geometry, Type from points WHERE ST_DWithin`).
 					WithArgs(
 						float64(-6.269925),
 						float64(53.345474),
-						float64(5000)).
+						float64(5000),
+						[]db.PointType{db.PointType("parking")}).
 					WillReturnError(fmt.Errorf("Simulate Database Error"))
 			},
 			ExpectedStatus: http.StatusInternalServerError,
