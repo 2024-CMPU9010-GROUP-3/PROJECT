@@ -89,24 +89,37 @@ func main() {
 
 	ctx := context.Background()
 
-	poolConfig, err := pgxpool.ParseConfig(dbUrl)
+	dbConfig, err := pgxpool.ParseConfig(dbUrl)
 	if err != nil {
 		log.Fatalf("Could not parse pool config: %+v\n", err)
 		os.Exit(1)
 	}
+	
+	initialDbPool, err := pgxpool.NewWithConfig(ctx, dbConfig)
+	if err != nil {
+		log.Fatalf("Could not create database pool: %+v\n", err)
+		os.Exit(1)
+	}
+	customTypes, err := util.GetCustomDataTypes(ctx, initialDbPool)
+	if err != nil {
+		log.Fatalf("Could not get custom types from database pool: %+v\n", err)
+		os.Exit(1)
+	}
 
-	poolConfig.AfterConnect = func(ctx context.Context, c *pgx.Conn) error {
-		log.Printf("After connect called\n")
-		err = pgxgeom.Register(ctx, c)
+	dbConfig.AfterConnect = func(ctx context.Context, conn *pgx.Conn) error {
+		for _, t := range customTypes {
+			conn.TypeMap().RegisterType(t)
+		}
+
+		err = pgxgeom.Register(ctx, conn)
 		if err != nil {
-			log.Fatalf("Could not register geo datatype: %v\n", err)
-		} else {
-			log.Printf("Registered geom data types on database connection")
+			log.Fatalf("Could not register custom datatypes: %v\n", err)
 		}
 		return err
 	}
+	initialDbPool.Close() // close and reopen
 
-	dbPool, err := pgxpool.NewWithConfig(ctx, poolConfig)
+	dbPool, err := pgxpool.NewWithConfig(ctx, dbConfig)
 	if err != nil {
 		log.Fatalf("Could not connect to database: %v\n", err)
 		os.Exit(1)

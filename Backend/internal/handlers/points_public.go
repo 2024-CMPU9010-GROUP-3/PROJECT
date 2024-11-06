@@ -5,8 +5,10 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
@@ -24,6 +26,7 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 	long, err_long := strconv.ParseFloat(params.Get("long"), floatPrecision)
 	lat, err_lat := strconv.ParseFloat(params.Get("lat"), floatPrecision)
 	radius, err_radius := strconv.ParseFloat(params.Get("radius"), floatPrecision)
+	typesString := params.Get("types")
 
 	// bad request if any parameters can't be parsed to float
 	if err_long != nil || err_lat != nil || err_radius != nil {
@@ -31,7 +34,21 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	points, err := db.New(dbConn).GetPointsInRadius(*dbCtx, db.GetPointsInRadiusParams{Latitude: lat, Longitude: long, Radius: radius})
+	var types []db.PointType
+	if len(typesString) != 0 {
+		typesSplit := strings.Split(typesString, ",")
+		for _, t := range typesSplit {
+			parsedType := db.PointType(t)
+			if parsedType.IsValid() {
+				types = append(types, parsedType)
+			} else {
+				resp.SendError(customErrors.Parameter.InvalidPointTypeError.WithCause(fmt.Errorf("Type '%s' is not supported", t)), w)
+				return
+			}
+		}
+	}
+
+	points, err := db.New(dbConn).GetPointsInRadius(*dbCtx, db.GetPointsInRadiusParams{Latitude: lat, Longitude: long, Radius: radius, Types: types})
 	if err != nil {
 		if !errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
