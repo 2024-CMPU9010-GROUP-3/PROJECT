@@ -42,5 +42,10 @@ func (self *CreateUserDto) Validate() error {
 		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required"))
 		return err
 	}
+
+	if len(self.Password) > 72 {
+		err := customErrors.Payload.PasswordTooLongError
+		return err
+	}
 	return nil
 }

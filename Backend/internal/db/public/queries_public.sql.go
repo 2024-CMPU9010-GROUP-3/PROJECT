@@ -71,6 +71,24 @@ func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
+const emailExists = `-- name: EmailExists :one
+SELECT EXISTS(
+  SELECT 1 FROM logins WHERE Email = $1 AND Id <> $2
+) AS "exists"
+`
+
+type EmailExistsParams struct {
+	Email string      `json:"email"`
+	ID    pgtype.UUID `json:"id"`
+}
+
+func (q *Queries) EmailExists(ctx context.Context, arg EmailExistsParams) (bool, error) {
+	row := q.db.QueryRow(ctx, emailExists, arg.Email, arg.ID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const getLoginByEmail = `-- name: GetLoginByEmail :one
 SELECT Id, Username, Email, PasswordHash
 FROM logins
@@ -314,4 +332,22 @@ func (q *Queries) UpdateUserDetails(ctx context.Context, arg UpdateUserDetailsPa
 		arg.Profilepicture,
 	)
 	return err
+}
+
+const usernameExists = `-- name: UsernameExists :one
+SELECT EXISTS(
+  SELECT 1 FROM logins WHERE Username = $1 AND Id <> $2
+) AS "exists"
+`
+
+type UsernameExistsParams struct {
+	Username string      `json:"username"`
+	ID       pgtype.UUID `json:"id"`
+}
+
+func (q *Queries) UsernameExists(ctx context.Context, arg UsernameExistsParams) (bool, error) {
+	row := q.db.QueryRow(ctx, usernameExists, arg.Username, arg.ID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }

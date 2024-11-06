@@ -40,6 +40,16 @@ FROM user_details
 WHERE Id = $1
 LIMIT 1;
 
+-- name: EmailExists :one
+SELECT EXISTS(
+  SELECT 1 FROM logins WHERE Email = @email AND Id <> @id
+) AS "exists";
+
+-- name: UsernameExists :one
+SELECT EXISTS(
+  SELECT 1 FROM logins WHERE Username = @username AND Id <> @id
+) AS "exists";
+
 -- name: CreateUser :one
 INSERT INTO logins (
   Username, Email, PasswordHash

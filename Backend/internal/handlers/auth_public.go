@@ -66,14 +66,22 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	_, err := db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
-	if !errors.Is(err, pgx.ErrNoRows) {
+	emailExists, err := db.New(dbConn).EmailExists(*dbCtx, db.EmailExistsParams{Email: userDto.Email, ID: pgtype.UUID{}})
+	if err != nil {
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+	if emailExists {
 		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
 		return
 	}
 
-	_, err = db.New(dbConn).GetLoginByUsername(*dbCtx, userDto.Username)
-	if !errors.Is(err, pgx.ErrNoRows) {
+	usernameExists, err := db.New(dbConn).UsernameExists(*dbCtx, db.UsernameExistsParams{Username: userDto.Username, ID: pgtype.UUID{}})
+	if err != nil {
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+	if usernameExists {
 		resp.SendError(customErrors.Payload.UsernameAlreadyExistsError, w)
 		return
 	}

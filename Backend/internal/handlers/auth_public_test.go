@@ -51,17 +51,17 @@ const (
 		`WHERE Username = \$1 ` +
 		`LIMIT 1`
 
-	queryGetEmailExists = `SELECT EXISTS(` +
+	queryGetEmailExists = `SELECT EXISTS\( ` +
 		`SELECT 1 ` +
 		`FROM logins ` +
 		`WHERE Email = \$1 ` +
-		`AND Id <> \$2) AS "exists"`
+		`AND Id <> \$2 \) AS \"exists\"`
 
-	queryGetUsernameExists = `SELECT EXISTS(` +
+	queryGetUsernameExists = `SELECT EXISTS\( ` +
 		`SELECT 1 ` +
 		`FROM logins ` +
 		`WHERE Username = \$1 ` +
-		`AND Id <> \$2) AS "exists"`
+		`AND Id <> \$2 \) AS \"exists\"`
 
 	queryGetUserDetailsById = `SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
 		`FROM user_details ` +
@@ -403,11 +403,11 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -434,11 +434,11 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUserFieldOrder, firstname, pw, pfpLink, username, email, lastname),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -534,7 +534,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(true))
 			},
 			ExpectedStatus: http.StatusBadRequest,
@@ -554,10 +554,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(true))
 			},
 			ExpectedStatus: http.StatusBadRequest,
@@ -576,14 +576,9 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			Route:     userRoute,
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pwLong, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
-				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
+				// no queries expected
 			},
-			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedStatus: http.StatusBadRequest,
 			ExpectedError:  errors.Payload.PasswordTooLongError.ErrorMsg,
 			ExpectedJSON: `{
 					"error": {
@@ -600,10 +595,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin().WillReturnError(fmt.Errorf("Could not start database transaction"))
@@ -625,10 +620,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -650,10 +645,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -680,10 +675,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -770,11 +765,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -812,11 +807,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -859,7 +854,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
 
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUserDetailsById).
@@ -892,7 +887,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -930,11 +925,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -973,11 +968,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1016,11 +1011,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1059,11 +1054,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1101,11 +1096,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1183,11 +1178,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(true))
 
 			},
@@ -1211,7 +1206,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(true))
 
 			},
@@ -1235,11 +1230,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1274,11 +1269,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1314,11 +1309,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1358,11 +1353,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
