@@ -20,7 +20,7 @@ services:
       - app-network
 
   private-service:
-    image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.7.0
+    image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.8.0
     container_name: private-backend
     depends_on:
       postgis-service:
