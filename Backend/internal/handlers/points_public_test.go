@@ -33,6 +33,8 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	var nilPointTypeSlice []db.PointType
+
 	tests := []testutil.HandlerTestDefinition{
 		{
 			Name:   "Valid input",
@@ -51,6 +53,83 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 						float64(53.345474),
 						float64(5000),
 						[]db.PointType{db.PointType("parking")}).
+					WillReturnRows(pgxmock.NewRows([]string{"id", "longlat", "type"}).
+						AddRow(int64(236), validPoint, db.PointTypeParking))
+			},
+			ExpectedStatus: http.StatusOK,
+			ExpectedJSON: `{
+				"error": null,
+				"response": {
+					"content": [
+						{
+							"Id": 236,
+							"Longlat": {
+								"type": "Point",
+								"coordinates": [
+									-6.268726783812387,
+									53.3484472329815
+								]
+							},
+							"Type": "parking"
+						}]
+					}
+				}`,
+		},
+		{
+			Name:   "No types input",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			QueryParams: map[string]string{
+				"long":   "-6.269925",
+				"lat":    "53.345474",
+				"radius": "5000",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(`SELECT Id, LongLat::geometry, Type from points WHERE ST_DWithin`).
+					WithArgs(
+						float64(-6.269925),
+						float64(53.345474),
+						float64(5000),
+						nilPointTypeSlice).
+					WillReturnRows(pgxmock.NewRows([]string{"id", "longlat", "type"}).
+						AddRow(int64(236), validPoint, db.PointTypeParking))
+			},
+			ExpectedStatus: http.StatusOK,
+			ExpectedJSON: `{
+				"error": null,
+				"response": {
+					"content": [
+						{
+							"Id": 236,
+							"Longlat": {
+								"type": "Point",
+								"coordinates": [
+									-6.268726783812387,
+									53.3484472329815
+								]
+							},
+							"Type": "parking"
+						}]
+					}
+				}`,
+		},
+		{
+			Name:   "Types input is parsed correctly",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			QueryParams: map[string]string{
+				"long":   "-6.269925",
+				"lat":    "53.345474",
+				"radius": "5000",
+				"types":  `parking,coach_parking,public_bins,parking_meter`,
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(`SELECT Id, LongLat::geometry, Type from points WHERE ST_DWithin`).
+					WithArgs(
+						float64(-6.269925),
+						float64(53.345474),
+						float64(5000),
+						[]db.PointType{db.PointTypeParking, db.PointTypeCoachParking, db.PointTypePublicBins, db.PointTypeParkingMeter}).
 					WillReturnRows(pgxmock.NewRows([]string{"id", "longlat", "type"}).
 						AddRow(int64(236), validPoint, db.PointTypeParking))
 			},
@@ -140,6 +219,30 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 				}`,
 		},
 		{
+			Name:   "Unsupported Type",
+			Method: "GET",
+			Route:  "/points/inRadius",
+			QueryParams: map[string]string{
+				"long":   "-6.269925",
+				"lat":    "53.345474",
+				"radius": "5000",
+				"types":  "hello",
+			},
+			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				// Handler should return error before db call is made
+			},
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.InvalidPointTypeError.ErrorMsg,
+			ExpectedJSON: `{
+					"error": {
+						"errorCode": 1207,
+						"errorMsg": "Parameter invalid, point type invalid",
+						"cause": "Type 'hello' is not supported"
+					},
+					"response": null
+				}`,
+		},
+		{
 			Name:   "Database error",
 			Method: "GET",
 			Route:  "/points/inRadius",
@@ -147,7 +250,7 @@ func TestPointsHandlerHandleGetByRadius(t *testing.T) {
 				"long":   "-6.269925",
 				"lat":    "53.345474",
 				"radius": "5000",
-				"types":   "parking",
+				"types":  "parking",
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(`SELECT Id, LongLat::geometry, Type from points WHERE ST_DWithin`).

@@ -42,7 +42,7 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 			if parsedType.IsValid() {
 				types = append(types, parsedType)
 			} else {
-				resp.SendError(customErrors.Parameter.InvalidPointTypeError.WithCause(fmt.Errorf("Type %s is not supported", t)), w)
+				resp.SendError(customErrors.Parameter.InvalidPointTypeError.WithCause(fmt.Errorf("Type '%s' is not supported", t)), w)
 				return
 			}
 		}
