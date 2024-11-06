@@ -295,7 +295,7 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
-def detect_empty_spots(cars, gap_threshold_meters=8, spot_width_meters=2, spot_length_meters=3):
+def detect_empty_spots(cars, gap_threshold_meters=12, spot_width_meters=5.5, spot_length_meters=6.5):
     """
     Detects empty spots in rows of parked cars based on detected car bounding box centers
     
@@ -315,7 +315,7 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_width_meters=2, spot_l
         x_current, y_current = cars[i]
         x_next, y_next = cars[i + 1]
         
-        gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
+        gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters #gap between both centers
         angle = math.atan2(y_next - y_current, x_next - x_current)
         
         if abs(math.cos(angle)) > 0.5:  #Horizontally placed cars
@@ -326,6 +326,8 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_width_meters=2, spot_l
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], 'horizontal'))
+                    print('horizontal')
+
 
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
@@ -338,12 +340,13 @@ def detect_empty_spots(cars, gap_threshold_meters=8, spot_width_meters=2, spot_l
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], 'vertical'))
+                    print('vertical')
 
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
     return empty_spots
 
-def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=18, spot_length =32):
+def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, spot_width=28, spot_length =38):
     """
     Draws the empty parking spots on the image
 
@@ -361,15 +364,15 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
         x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
         
         if orientation == 'horizontal':
+            x1 = int(x_pixel - spot_length // 2)
+            y1 = int(y_pixel - spot_width // 2)
+            x2 = int(x_pixel + spot_length // 2)
+            y2 = int(y_pixel + spot_width // 2)            
+        else: 
             x1 = int(x_pixel - spot_width // 2)
             y1 = int(y_pixel - spot_length // 2)
             x2 = int(x_pixel + spot_width // 2)
             y2 = int(y_pixel + spot_length // 2)
-        else: 
-            x1 = int(x_pixel - spot_length // 2)
-            y1 = int(y_pixel - spot_width // 2)
-            x2 = int(x_pixel + spot_length // 2)
-            y2 = int(y_pixel + spot_width // 2)
         
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
@@ -531,4 +534,9 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    main(-6.3065, 53.3827, -6.3043, 53.3839)
+    #main(-6.2576, 53.3388, -6.2566, 53.3394)
+    #main(-6.2608, 53.3464, -6.2598, 53.347)
+    #main(-6.2617, 53.3462, -6.2606, 53.3469)
+    main(-6.2854, 53.3511, -6.2843, 53.3517)
+    #main(-6.2893, 53.3486, -6.2883, 53.3492)
+    #main(-6.2899, 53.3473, -6.2889, 53.3479)
