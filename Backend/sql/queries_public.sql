@@ -72,17 +72,17 @@ WHERE Id = $1;
 -- name: UpdateLogin :exec
 UPDATE logins
 SET 
-  Username = COALESCE($2, Username),
-  Email = COALESCE($3, Email),
-  PasswordHash = COALESCE(NULLIF(@PasswordHash::VARCHAR(72), ''), PasswordHash)
+  Username = @username,
+  Email = @email,
+  PasswordHash = @passwordhash
 WHERE Id = $1;
 
 -- name: UpdateUserDetails :exec
 UPDATE user_details
 SET
-  FirstName = COALESCE(NULLIF(@FirstName::VARCHAR(64), ''), FirstName),
-  LastName = COALESCE(NULLIF(@LastName::VARCHAR(64), ''), LastName),
-  ProfilePicture = COALESCE(NULLIF(@ProfilePicture::VARCHAR(512), ''), ProfilePicture)
+  FirstName = @firstname,
+  LastName = @lastname,
+  ProfilePicture = @profilepicture::TEXT
 WHERE Id = $1;
 
 -- name: DeleteUser :exec

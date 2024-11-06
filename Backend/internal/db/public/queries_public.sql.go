@@ -285,9 +285,9 @@ func (q *Queries) UpdateLastLogin(ctx context.Context, id pgtype.UUID) error {
 const updateLogin = `-- name: UpdateLogin :exec
 UPDATE logins
 SET 
-  Username = COALESCE($2, Username),
-  Email = COALESCE($3, Email),
-  PasswordHash = COALESCE(NULLIF($4::VARCHAR(72), ''), PasswordHash)
+  Username = $2,
+  Email = $3,
+  PasswordHash = $4
 WHERE Id = $1
 `
 
@@ -311,9 +311,9 @@ func (q *Queries) UpdateLogin(ctx context.Context, arg UpdateLoginParams) error 
 const updateUserDetails = `-- name: UpdateUserDetails :exec
 UPDATE user_details
 SET
-  FirstName = COALESCE(NULLIF($2::VARCHAR(64), ''), FirstName),
-  LastName = COALESCE(NULLIF($3::VARCHAR(64), ''), LastName),
-  ProfilePicture = COALESCE(NULLIF($4::VARCHAR(512), ''), ProfilePicture)
+  FirstName = $2,
+  LastName = $3,
+  ProfilePicture = $4::TEXT
 WHERE Id = $1
 `
 
