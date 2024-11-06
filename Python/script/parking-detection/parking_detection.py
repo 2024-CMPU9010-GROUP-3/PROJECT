@@ -171,7 +171,7 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         A lsit of the bounding boxes for the cars not on the road
     """
     img = cv2.imread(image_path)
-    results = model.predict(img)
+    results = model([img])
 
     detections_parking = []
 
@@ -182,7 +182,7 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         return detections_parking
 
     for result in results:
-        detections = result.boxes
+        detections = result.obb
 
         for box in detections:
             x_min, y_min, x_max, y_max = box.xyxy[0] 
@@ -514,7 +514,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     if not os.path.exists("image_output"):
         os.makedirs("image_output")
 
-    model = YOLO("finaltrain_weights.pt")
+    model = YOLO("best - obb.pt")
 
     centers = get_image_center_coords_from_bb(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_right_latitude)
 
@@ -531,13 +531,4 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    #main(-6.302440063476553, 53.360968490496255, -6.1553, 53.4153)
-    #main(-6.285960571289053, 53.360968490496255, -6.1553, 53.4153)
-    #main(-6.302440063476553, 53.36178802374502, -6.1553, 53.4153)
-    #main(-6.303813354492178, 53.360148941485626, -6.1553, 53.4153)
-    #main(-6.303813354492178, 53.36178802374502, -6.1553, 53.4153)
-    #main(-6.303813354492178, 53.3683437223242, -6.1553, 53.4153)
-    main(-6.2903, 53.3121, -6.2881, 53.3133)
-    #main(-6.2968, 53.3123, -6.2909, 53.3158)
-    #main(-6.2816, 53.3176, -6.2756, 53.3212)
-    main(-6.2673, 53.3516, -6.2605, 53.3556)
+    main(-6.3065, 53.3827, -6.3043, 53.3839)
