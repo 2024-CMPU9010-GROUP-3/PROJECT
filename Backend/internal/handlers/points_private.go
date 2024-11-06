@@ -4,43 +4,29 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/private"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 	"github.com/twpayne/go-geom"
-	"github.com/twpayne/go-geom/encoding/geojson"
-	// geos "github.com/twpayne/go-geom"
 )
-
-type PointDto struct {
-	Longlat geojson.Geometry `json:"longlat"`
-	Type    string           `json:"type"`
-	Details any              `json:"details"` // potentially unsafe, but we need to accept any json object here
-}
-
-type PointIdDto struct {
-	Id int64 `json:"id"`
-}
 
 func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 	dbQueries := db.New(dbConn)
 
-	var point PointDto
-	err := json.NewDecoder(r.Body).Decode(&point)
-	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
+	var point dtos.CreatePointDto
+
+  e := point.Decode(r.Body)
+  if e != nil {
+		resp.SendError(customErrors.Internal.UnknownError.WithCause(e), w)
 		return
 	}
 
-	encodedJson, err := json.Marshal(point.Details)
-	if err != nil {
-		resp.SendError(customErrors.Internal.JsonEncodingError, w)
-		return
-	}
+	// cannot result in error if decoding above was successful
+	encodedJson, _ := json.Marshal(point.Details)
 
 	geometry, err := point.Longlat.Decode()
 	if err != nil {
@@ -50,6 +36,12 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	pt, ok := geometry.(*geom.Point)
 	if !ok {
+		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
+		return
+	}
+
+	pointType := db.PointType(point.Type)
+	if !pointType.IsValid() {
 		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
 		return
 	}
@@ -66,7 +58,7 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: PointIdDto{pointId}, HttpStatus: http.StatusCreated}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusCreated}, w)
 }
 
 func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
@@ -79,29 +71,21 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 
 	// bad request if id can't be parsed to int
 	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		resp.SendError(customErrors.Parameter.InvalidIntError, w)
 		return
 	}
 
 	dbQueries := db.New(dbConn)
 
-	var point PointDto
-	err = json.NewDecoder(r.Body).Decode(&point)
-	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadPointError, w)
+	var point dtos.CreatePointDto
+	err = point.Decode(r.Body)
+  if err != nil {
+		resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
 		return
 	}
 
-	if len(point.Type) == 0 {
-		resp.SendError(customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Field \"Type\" cannot be empty")), w)
-		return
-	}
-
-	encodedJson, err := json.Marshal(point.Details)
-	if err != nil {
-		resp.SendError(customErrors.Internal.JsonEncodingError, w)
-		return
-	}
+	// cannot result in error if decoding above was successful
+	encodedJson, _ := json.Marshal(point.Details)
 
 	geometry, err := point.Longlat.Decode()
 	if err != nil {
@@ -128,7 +112,7 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: PointIdDto{pointId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
@@ -150,5 +134,5 @@ func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: PointIdDto{pointId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusAccepted}, w)
 }

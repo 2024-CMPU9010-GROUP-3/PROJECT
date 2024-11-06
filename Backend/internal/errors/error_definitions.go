@@ -26,6 +26,7 @@ const (
 	codeInvalidPayloadPointError       = 1211
 	codeInvalidPayloadUserError        = 1212
 	codeInvalidPayloadLoginError       = 1213
+	codePasswordTooLongError           = 1214
 	codeUsernameAlreadyExistsError     = 1221
 	codeEmailAlreadyExistsError        = 1222
 
@@ -164,6 +165,12 @@ var invalidPayloadLoginError = CustomError{
 	ErrorMsg:   "Payload (Login) not valid",
 }
 
+var passwordTooLongError = CustomError{
+	HttpStatus: http.StatusBadRequest,
+	ErrorCode:  codePasswordTooLongError,
+	ErrorMsg:   "Password too long (max. 72 bytes)",
+}
+
 var usernameAlreadyExistsError = CustomError{
 	HttpStatus: http.StatusBadRequest,
 	ErrorCode:  codeUsernameAlreadyExistsError,
@@ -264,12 +271,14 @@ var Payload = struct {
 	InvalidPayloadPointError   CustomError
 	InvalidPayloadUserError    CustomError
 	InvalidPayloadLoginError   CustomError
+	PasswordTooLongError       CustomError
 	UsernameAlreadyExistsError CustomError
 	EmailAlreadyExistsError    CustomError
 }{
 	InvalidPayloadPointError:   invalidPayloadPointError,
 	InvalidPayloadUserError:    invalidPayloadUserError,
 	InvalidPayloadLoginError:   invalidPayloadLoginError,
+	PasswordTooLongError:       passwordTooLongError,
 	UsernameAlreadyExistsError: usernameAlreadyExistsError,
 	EmailAlreadyExistsError:    emailAlreadyExistsError,
 }

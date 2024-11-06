@@ -3,18 +3,40 @@
 package routes
 
 import (
-	"fmt"
+	"net/http"
 	"testing"
+
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util/testutil"
 )
 
-func TestA(t *testing.T) {
-	t.Error("failing test")
-}
 
-func TestB(t *testing.T) {
-	t.Skip("skipping test")
-}
+func TestPrivateRoutes(t *testing.T) {
+	tests := []testutil.RouterTestDefinition{
+		{
+			Name:               "Test POST /points/",
+			Path:               "/points/",
+			Method:             "POST",
+			ExpectedStatusCode: http.StatusBadRequest,
+		},
+		{
+			Name:               "Test PUT /points/{id}",
+			Path:               "/points/123",
+			Method:             "PUT",
+			ExpectedStatusCode: http.StatusBadRequest,
+		},
+		{
+			Name:               "Test DELETE /points/{id}",
+			Path:               "/points/123",
+			Method:             "DELETE",
+			ExpectedStatusCode: http.StatusBadRequest,
+		},
+		{
+			Name:               "Test non-existing private route",
+			Path:               "/points/nonexistent",
+			Method:             "GET",
+			ExpectedStatusCode: http.StatusNotFound,
+		},
+	}
 
-func TestC(t *testing.T) {
-	fmt.Println("succeeding test")
+	testutil.RunRouterTests(t, tests, private())
 }

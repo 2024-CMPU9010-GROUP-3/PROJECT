@@ -11,9 +11,8 @@ import (
 
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util"
 )
-
-type tokenKey string
 
 func accessAuthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, request *http.Request) {
@@ -44,14 +43,12 @@ func accessAuthenticated(next http.Handler) http.Handler {
 		}
 
 		subject, err := token.Claims.GetSubject()
-		if err != nil {
+		if err != nil || len(subject) == 0 {
 			resp.SendError(customErrors.Internal.JwtParseError, w)
 			return
 		}
 
-		key := tokenKey("token_user_id")
-
-		ctx := context.WithValue(request.Context(), key, subject)
+		ctx := context.WithValue(request.Context(), util.TokenKey("token_user_id"), subject)
 
 		next.ServeHTTP(w, request.WithContext(ctx))
 
@@ -70,9 +67,7 @@ func accessOwnerOnly(next http.Handler) http.Handler {
 			return
 		}
 
-		key := tokenKey("token_user_id")
-
-		tokenUserId := request.Context().Value(key)
+		tokenUserId := request.Context().Value("token_user_id")
 		if tokenUserId == nil {
 			resp.SendError(customErrors.Auth.IdMissingInContextError, w)
 			return
