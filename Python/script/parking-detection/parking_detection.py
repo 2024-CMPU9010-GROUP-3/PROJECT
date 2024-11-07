@@ -306,9 +306,11 @@ def calculate_avg_spot_dimensions(cars):
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels (float): Average width and length of the cars identified in meters and in pixels
     """
     widths = [car[2] for car in cars]
+    print(widths)
     lengths = [car[3] for car in cars]
-    avg_width_pixels = np.mean(widths)
-    avg_length_pixels = np.mean(lengths)
+    print(lengths)
+    avg_width_pixels = np.median(widths)
+    avg_length_pixels = np.median(lengths)
 
     #previous spot_width_meters=2, spot_length_meters=3, spot_width=18, spot_length =32
 
@@ -338,33 +340,37 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         x_current, y_current = cars[i]
         x_next, y_next = cars[i + 1]
         
-        gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters #gap between both centers
+        gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
         angle = math.atan2(y_next - y_current, x_next - x_current)
         print(f'gap distance: {gap_distance}, angle: {math.degrees(angle)}')
         
+        avg_half_width = avg_spot_width / 2
+        avg_half_length = avg_spot_length / 2
+        
         if abs(math.cos(angle)) > 0.5:  #Horizontally placed cars
-            if gap_distance <= gap_threshold_meters and gap_distance > avg_spot_width:
-                num_spots = int(gap_distance // avg_spot_width)
+            adjusted_gap = gap_distance - 2 * avg_half_width
+            
+            if adjusted_gap <= gap_threshold_meters and adjusted_gap > avg_spot_width:
+                num_spots = int(adjusted_gap // avg_spot_width)
                 
                 for j in range(1, num_spots + 1):
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], 'horizontal'))
                     print('horizontal')
-
-
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
         elif abs(math.sin(angle)) > 0.5:  #Vertically placed cars
-            if gap_distance <= gap_threshold_meters and gap_distance > avg_spot_length:
-                num_spots = int(gap_distance // avg_spot_length)
+            adjusted_gap = gap_distance - 2 * avg_half_length
+            
+            if adjusted_gap <= gap_threshold_meters and adjusted_gap > avg_spot_length:
+                num_spots = int(adjusted_gap // avg_spot_length)
                 
                 for j in range(1, num_spots + 1):
                     empty_x_center = x_current
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], 'vertical'))
                     print('vertical')
-
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
     return empty_spots
@@ -576,3 +582,4 @@ if __name__ == "__main__":
     main(-6.2893, 53.3486, -6.2883, 53.3492)
     main(-6.2899, 53.3473, -6.2889, 53.3479)
     main(-6.2903, 53.349, -6.2893, 53.3496)
+    main(-6.2657, 53.3567, -6.2646, 53.3574)
