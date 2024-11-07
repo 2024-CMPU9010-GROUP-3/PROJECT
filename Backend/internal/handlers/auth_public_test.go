@@ -80,7 +80,7 @@ const (
 
 	queryUpdateUserDetails = `UPDATE user_details`
 
-	queryDeleteFromUsers = `DELETE FROM logins WHERE Id = \$1 CASCADE`
+	queryDeleteFromUsers = `DELETE FROM logins WHERE Id = \$1`
 
 	jsonCreateUser = `{
 				"Username": "%s",
@@ -1253,12 +1253,12 @@ func TestAuthHandlerHandleDelete(t *testing.T) {
 			Route:     userRoute,
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			PathParams: map[string]string{
-				"id": userIdString[1:],
+				"id": userIdString,
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectExec(queryDeleteFromUsers).WithArgs(userId).WillReturnError(simulatedDbError)
 			},
-			ExpectedStatus: http.StatusBadRequest,
+			ExpectedStatus: http.StatusInternalServerError,
 			ExpectedJSON:   jsonSimulatedDbError,
 		},
 	}
