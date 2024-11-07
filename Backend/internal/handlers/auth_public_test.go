@@ -115,30 +115,6 @@ const (
 				"ProfilePicture": "%s"
 			}`
 
-	jsonCreateUserFirstNameMissing = `{
-				"Email": "%s",
-				"Username": "%s",
-				"Password": "%s",
-				"LastName": "%s",
-				"ProfilePicture": "%s"
-			}`
-
-	jsonCreateUserLastNameMissing = `{
-				"Email": "%s",
-				"Username": "%s",
-				"Password": "%s",
-				"FirstName": "%s",
-				"ProfilePicture": "%s"
-			}`
-
-	jsonCreateUserProfilePictureMissing = `{
-				"Email": "%s",
-				"Username": "%s",
-				"Password": "%s",
-				"FirstName": "%s",
-				"LastName": "%s"
-			}`
-
 	jsonCreateUserFieldOrder = `{
 				"FirstName": "%s",
 				"Password": "%s",
