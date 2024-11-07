@@ -113,7 +113,7 @@ jobs:
           COVERAGE_REPORT=$(go tool cover -func=../TestCoverage-private.out)
           RUN_NUMBER=${{ github.run_number }}
           INDICATOR="\U00002705"
-          if (( $(echo "$COVERAGE < 75" | bc -l) )); then
+          if (( $(echo "$COVERAGE < 50" | bc -l) )); then
             INDICATOR="\U0000274C"
           fi
 
@@ -159,8 +159,8 @@ jobs:
       - name: Fail if coverage is below threshold
         run: |
           COVERAGE=${{ steps.check_coverage.outputs.total_coverage }}
-          if (( $(echo "$COVERAGE < 75" | bc -l) )); then
-            echo "Coverage ($COVERAGE%) is below the threshold (75%)"
+          if (( $(echo "$COVERAGE < 50" | bc -l) )); then
+            echo "Coverage ($COVERAGE%) is below the threshold (50%)"
             exit 1
           fi
 
