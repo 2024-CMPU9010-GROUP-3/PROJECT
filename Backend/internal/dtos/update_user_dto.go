@@ -1,3 +1,5 @@
+//go:build public
+
 package dtos
 
 import (
