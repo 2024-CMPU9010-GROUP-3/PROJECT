@@ -295,6 +295,23 @@ def get_center_bounding_box(x_min, y_min, x_max, y_max):
 
     return x, y
 
+def calculate_meters_per_pixel(latitude, zoom_level=18):
+    """
+    Calculates how many meters per pixel at a certain latitude and zoom level
+    
+    Params:
+        latitude (float): The latitude value
+        zoom_level (int): The zoom level of the mapbox image
+        
+    Returns:
+        adjusted_meters_per_pixel (float): Returns the adjusted_meters_per_pixel at the latitude and zoom level
+    """
+    earth_circumference = 40075017
+    meters_per_pixel = earth_circumference / (256 * 2**zoom_level)
+    adjusted_meters_per_pixel = meters_per_pixel * math.cos(math.radians(latitude))
+
+    return adjusted_meters_per_pixel
+
 def calculate_avg_spot_dimensions(cars):
     """
     Calculates average parking spot width and length from the bounding box found as it is very variable
@@ -307,14 +324,17 @@ def calculate_avg_spot_dimensions(cars):
     """
     widths = [car[2] for car in cars]
     lengths = [car[3] for car in cars]
-    avg_width = np.mean(widths)
-    avg_length = np.mean(lengths)
+    latitudes = [car[1] for car in cars]
+    avg_width_pixels = np.mean(widths)
+    avg_length_pixels = np.mean(lengths)
+    avg_latitude = np.mean(latitudes)
 
-    avg_width_meters = 0
-    avg_length_meters = 0
-    avg_width_pixels = 0
-    avg_length_pixels = 0
-    
+    adjusted_meters_per_pixel = calculate_meters_per_pixel(avg_latitude)
+
+    avg_width_meters = avg_width_pixels * adjusted_meters_per_pixel
+    avg_length_meters = avg_length_pixels * adjusted_meters_per_pixel
+
+    print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
 def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
@@ -419,8 +439,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -441,9 +461,16 @@ def get_parking_coords_in_image(model, longitude, latitude):
 
     img = cv2.imread(output_path_satelite_image)
     results = model([img])
-    results.obb.xywh
+    cars = []
 
-    avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(results)
+    for result in results:
+        detections = result.obb
+
+        for box in detections:
+            x_center, y_center, width, height, rotation = box.xywhr[0]
+            cars.append((x_center, y_center, width, height))
+
+    avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(cars)
     empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
     draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude, avg_width_pixels, avg_length_pixels)
     empty_spots_coords = [spot for spot, _ in empty_spots]
@@ -566,5 +593,5 @@ if __name__ == "__main__":
     #main(-6.2617, 53.3462, -6.2606, 53.3469)
     #main(-6.2854, 53.3511, -6.2843, 53.3517)
     #main(-6.2893, 53.3486, -6.2883, 53.3492)
-    #main(-6.2899, 53.3473, -6.2889, 53.3479)
-    main(-6.2903, 53.349, -6.2893, 53.3496)
+    main(-6.2899, 53.3473, -6.2889, 53.3479)
+    #main(-6.2903, 53.349, -6.2893, 53.3496)
