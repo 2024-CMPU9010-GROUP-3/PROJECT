@@ -308,9 +308,13 @@ def calculate_meters_per_pixel(latitude, zoom_level=18):
     """
     earth_circumference = 40075017
     meters_per_pixel = earth_circumference / (256 * 2**zoom_level)
-    adjusted_meters_per_pixel = meters_per_pixel * math.cos(math.radians(latitude))
 
-    return adjusted_meters_per_pixel
+    cos_latitude = math.cos(math.radians(latitude))
+    if cos_latitude < 0:
+        cos_latitude = abs(cos_latitude)
+
+    adjusted_meters_per_pixel = meters_per_pixel * cos_latitude
+    return abs(adjusted_meters_per_pixel)
 
 def calculate_avg_spot_dimensions(cars):
     """
@@ -330,6 +334,7 @@ def calculate_avg_spot_dimensions(cars):
     avg_latitude = np.mean(latitudes)
 
     adjusted_meters_per_pixel = calculate_meters_per_pixel(avg_latitude)
+    print(adjusted_meters_per_pixel)
 
     avg_width_meters = avg_width_pixels * adjusted_meters_per_pixel
     avg_length_meters = avg_length_pixels * adjusted_meters_per_pixel
@@ -593,5 +598,5 @@ if __name__ == "__main__":
     #main(-6.2617, 53.3462, -6.2606, 53.3469)
     #main(-6.2854, 53.3511, -6.2843, 53.3517)
     #main(-6.2893, 53.3486, -6.2883, 53.3492)
-    main(-6.2899, 53.3473, -6.2889, 53.3479)
-    #main(-6.2903, 53.349, -6.2893, 53.3496)
+    #main(-6.2899, 53.3473, -6.2889, 53.3479)
+    main(-6.2903, 53.349, -6.2893, 53.3496)
