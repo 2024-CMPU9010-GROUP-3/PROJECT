@@ -15,6 +15,7 @@
 ### **1. Mad**
 
 - **Prototype not good enough**: A team member has expressed their frustration with the development of the front-end prototypes, especially in adding the new features and improving usability and user-friendliness. They hope to discuss it in a group and reach a consensus on the way forward because it involves both front-end and back-end.
+- **Slow Frontend Progress**: Another team member has expressed their frustration with the slow pace of the frontend development.
 
 ### **2. Sad**
 
