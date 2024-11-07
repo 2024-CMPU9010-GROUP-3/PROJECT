@@ -69,7 +69,7 @@ const (
 		`LIMIT 1`
 
 	queryUpdateLastLogin = `UPDATE user_details ` +
-		`SET LastLoggedIn = (NOW() AT TIME ZONE 'utc') ` +
+		`SET LastLoggedIn = \(NOW\(\) AT TIME ZONE \'utc\'\) ` +
 		`WHERE Id = \$1`
 
 	queryInsertIntoLogins = `INSERT INTO logins`
@@ -1366,7 +1366,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 				// should return before any database calls are made
 			},
 			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
 			ExpectedJSON:    jsonPasswordRequiredError,
 		},
@@ -1380,7 +1380,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 				// should return before any database calls are made
 			},
 			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
 			ExpectedJSON:    jsonUsernameOrEmailRequiredError,
 		},
@@ -1394,7 +1394,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 				// should return before any database calls are made
 			},
 			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Payload.InvalidPayloadUserError.ErrorMsg,
 			ExpectedJSON:    jsonInvalidUserPayloadError,
 		},
@@ -1439,10 +1439,11 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
+					AddRow(userId, username, email, pwHash))
 			},
 			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedStatus:  http.StatusInternalServerError,
 			ExpectedError:   errors.Internal.JwtSecretMissingError.ErrorMsg,
 		},
 		{
