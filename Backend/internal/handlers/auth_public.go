@@ -179,7 +179,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 
 	userLogin, err := db.New(dbConn).GetLoginById(*dbCtx, userId)
 	if err != nil {
-		if errors.Is(err, pgx.ErrNoRows){
+		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.NotFound.UserNotFoundError, w)
 			return
 		} else {
@@ -284,7 +284,14 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	// get user login from db
 	var userLogin db.Login
-	userLogin, err := db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
+	var err error
+
+	if len(loginDto.Username) != 0 {
+		userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
+	} else {
+		userLogin, err = db.New(dbConn).GetLoginByEmail(*dbCtx, loginDto.Email)
+	}
+	
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Auth.WrongCredentialsError, w)
