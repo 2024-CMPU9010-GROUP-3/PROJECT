@@ -29,7 +29,7 @@
     "clsx": "^2.1.1",
     "deck.gl": "^9.0.30",
     "framer-motion": "^11.8.0",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^0.456.0",
     "mapbox-gl": "^3.6.0",
     "next": "14.2.16",
     "react": "^18.3.1",
