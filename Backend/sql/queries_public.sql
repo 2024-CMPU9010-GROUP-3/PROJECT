@@ -8,6 +8,8 @@ WHERE ST_DWithin(
   LongLat::geography,
   ST_SetSRID(ST_MakePoint(@longitude::float, @latitude::float), 4326)::geography,
   @radius::float
+) AND (
+  @types::point_type[] IS NULL OR Type = ANY(@types::point_type[])
 );
 
 -- name: GetPointDetails :one

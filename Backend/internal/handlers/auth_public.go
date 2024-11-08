@@ -3,7 +3,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 	"github.com/golang-jwt/jwt/v5"
@@ -22,26 +22,6 @@ import (
 
 const secretEnv = "MAGPIE_JWT_SECRET"
 const expiryEnv = "MAGPIE_JWT_EXPIRY"
-
-// these dtos need to be refactored into their own package in the future
-type createUserDto struct {
-	Username       string `json:"username"`
-	Email          string `json:"email"`
-	Password       string `json:"password"`
-	FirstName      string `json:"firstname"`
-	LastName       string `json:"lastname"`
-	ProfilePicture string `json:"profilepicture"`
-}
-
-type userLoginDto struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type userIdDto struct {
-	UserId pgtype.UUID `json:"userid"`
-}
 
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	userIdPathParam := r.PathValue("id")
@@ -65,28 +45,28 @@ func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	resp.SendResponse(resp.Response{
+	resp.SendResponse(dtos.ResponseContentDto{
 		HttpStatus: http.StatusOK,
 		Content:    userDetails,
 	}, w)
 }
 
 func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
-	var userDto createUserDto
+	var userDto dtos.CreateUserDto
 
-	err := json.NewDecoder(r.Body).Decode(&userDto)
-	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadUserError, w)
-		return
+	e := userDto.Decode(r.Body)
+	if e != nil {
+		ce, ok := e.(customErrors.CustomError)
+		if !ok {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(e), w)
+			return
+		} else {
+			resp.SendError(ce, w)
+			return
+		}
 	}
 
-	// check the required parameters are present
-	if len(userDto.Username) == 0 || len(userDto.Email) == 0 || len(userDto.Password) == 0 {
-		resp.SendError(customErrors.Parameter.RequiredParameterMissingError, w)
-		return
-	}
-
-	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
+	_, err := db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
 	if !errors.Is(err, pgx.ErrNoRows) {
 		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
 		return
@@ -124,7 +104,7 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	createUserDetailParams := db.CreateUserDetailsParams{ID: userId, Firstname: userDto.FirstName, Lastname: userDto.LastName}
+	createUserDetailParams := db.CreateUserDetailsParams{ID: userId, Firstname: userDto.FirstName, Lastname: userDto.LastName, Profilepicture: userDto.ProfilePicture}
 	userId, err = db.New(dbConn).WithTx(tx).CreateUserDetails(*dbCtx, createUserDetailParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
@@ -138,14 +118,14 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	idDto := userIdDto{UserId: userId}
+	idDto := dtos.UserIdDto{UserId: userId}
 
-	resp.SendResponse(resp.Response{Content: idDto, HttpStatus: http.StatusCreated}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: idDto, HttpStatus: http.StatusCreated}, w)
 }
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	var userId pgtype.UUID
-	var userDto createUserDto
+	var userDto dtos.UpdateUserDto
 
 	userIdPathParam := r.PathValue("id")
 
@@ -157,20 +137,24 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = json.NewDecoder(r.Body).Decode(&userDto)
-	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadUserError, w)
-		return
+	e := userDto.Decode(r.Body)
+	if e != nil {
+		ce, ok := e.(customErrors.CustomError)
+		if !ok {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(e), w)
+			return
+		} else {
+			resp.SendError(ce, w)
+			return
+		}
 	}
 
 	var passwordHash []byte
 
-	if len(userDto.Password) != 0 {
-		passwordHash, err = bcrypt.GenerateFromPassword([]byte(userDto.Password), 12)
-		if err != nil {
-			resp.SendError(customErrors.Internal.HashingError, w)
-			return
-		}
+	passwordHash, err = bcrypt.GenerateFromPassword([]byte(userDto.Password), 12)
+	if err != nil {
+		resp.SendError(customErrors.Internal.HashingError, w)
+		return
 	}
 
 	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
@@ -196,7 +180,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		ID:             userId,
 		Firstname:      userDto.FirstName,
 		Lastname:       userDto.LastName,
-		Profilepicture: userDto.ProfilePicture,
+		Profilepicture: userDto.ProfilePicture.String,
 	}
 
 	tx, err := dbConn.Begin(*dbCtx)
@@ -230,7 +214,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(resp.Response{Content: userIdDto{userId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.UserIdDto{UserId: userId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
@@ -248,31 +232,28 @@ func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
-	resp.SendResponse(resp.Response{Content: userIdDto{userId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.UserIdDto{UserId: userId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 // this method is very big and needs to be refactored in the future
 func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
-	var loginDto userLoginDto
-	err := json.NewDecoder(r.Body).Decode(&loginDto)
-	if err != nil {
-		resp.SendError(customErrors.Payload.InvalidPayloadLoginError, w)
-		return
-	}
+	var loginDto dtos.UserLoginDto
 
-	if len(loginDto.Password) == 0 {
-		resp.SendError(customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required")), w)
-		return
-	}
-
-	if len(loginDto.Username) == 0 {
-		resp.SendError(customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required")), w)
-		return
+	e := loginDto.Decode(r.Body)
+	if e != nil {
+		ce, ok := e.(customErrors.CustomError)
+		if !ok {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(e), w)
+			return
+		} else {
+			resp.SendError(ce, w)
+			return
+		}
 	}
 
 	// get user login from db
 	var userLogin db.Login
-	userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
+	userLogin, err := db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Auth.WrongCredentialsError, w)
@@ -339,9 +320,9 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, &cookie)
 
-	tokenDto := userIdDto{
+	tokenDto := dtos.UserIdDto{
 		UserId: userLogin.ID,
 	}
 
-	resp.SendResponse(resp.Response{Content: tokenDto, HttpStatus: http.StatusOK}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: tokenDto, HttpStatus: http.StatusOK}, w)
 }

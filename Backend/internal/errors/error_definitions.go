@@ -23,11 +23,14 @@ const (
 	codeInvalidParameterIntError       = 1204
 	codeInvalidParameterLongitudeError = 1205
 	codeInvalidParameterLatitudeError  = 1206
-	codeInvalidPayloadPointError       = 1211
-	codeInvalidPayloadUserError        = 1212
-	codeInvalidPayloadLoginError       = 1213
-	codeUsernameAlreadyExistsError     = 1221
-	codeEmailAlreadyExistsError        = 1222
+	codeInvalidParameterPointTypeError = 1207
+
+	codeInvalidPayloadPointError   = 1211
+	codeInvalidPayloadUserError    = 1212
+	codeInvalidPayloadLoginError   = 1213
+	codePasswordTooLongError       = 1214
+	codeUsernameAlreadyExistsError = 1221
+	codeEmailAlreadyExistsError    = 1222
 
 	codeUserNotFoundError  = 1301
 	codePointNotFoundError = 1302
@@ -146,6 +149,12 @@ var invalidParameterLatitudeError = CustomError{
 	ErrorMsg:   "Parameter invalid, expected Latitude",
 }
 
+var invalidParameterPointTypeError = CustomError{
+	HttpStatus: http.StatusBadRequest,
+	ErrorCode:  codeInvalidParameterPointTypeError,
+	ErrorMsg:   "Parameter invalid, point type invalid",
+}
+
 var invalidPayloadPointError = CustomError{
 	HttpStatus: http.StatusBadRequest,
 	ErrorCode:  codeInvalidPayloadPointError,
@@ -162,6 +171,12 @@ var invalidPayloadLoginError = CustomError{
 	HttpStatus: http.StatusBadRequest,
 	ErrorCode:  codeInvalidPayloadLoginError,
 	ErrorMsg:   "Payload (Login) not valid",
+}
+
+var passwordTooLongError = CustomError{
+	HttpStatus: http.StatusBadRequest,
+	ErrorCode:  codePasswordTooLongError,
+	ErrorMsg:   "Password too long (max. 72 bytes)",
 }
 
 var usernameAlreadyExistsError = CustomError{
@@ -251,6 +266,7 @@ var Parameter = struct {
 	InvalidIntError               CustomError
 	InvalidLongitudeError         CustomError
 	InvalidLatitudeError          CustomError
+	InvalidPointTypeError         CustomError
 }{
 	RequiredParameterMissingError: requiredParameterMissingError,
 	InvalidUUIDError:              invalidParameterUUIDError,
@@ -258,18 +274,21 @@ var Parameter = struct {
 	InvalidIntError:               invalidParameterIntError,
 	InvalidLongitudeError:         invalidParameterLongitudeError,
 	InvalidLatitudeError:          invalidParameterLatitudeError,
+	InvalidPointTypeError:         invalidParameterPointTypeError,
 }
 
 var Payload = struct {
 	InvalidPayloadPointError   CustomError
 	InvalidPayloadUserError    CustomError
 	InvalidPayloadLoginError   CustomError
+	PasswordTooLongError       CustomError
 	UsernameAlreadyExistsError CustomError
 	EmailAlreadyExistsError    CustomError
 }{
 	InvalidPayloadPointError:   invalidPayloadPointError,
 	InvalidPayloadUserError:    invalidPayloadUserError,
 	InvalidPayloadLoginError:   invalidPayloadLoginError,
+	PasswordTooLongError:       passwordTooLongError,
 	UsernameAlreadyExistsError: usernameAlreadyExistsError,
 	EmailAlreadyExistsError:    emailAlreadyExistsError,
 }

@@ -189,13 +189,16 @@ WHERE ST_DWithin(
   LongLat::geography,
   ST_SetSRID(ST_MakePoint($1::float, $2::float), 4326)::geography,
   $3::float
+) AND (
+  $4::point_type[] IS NULL OR Type = ANY($4::point_type[])
 )
 `
 
 type GetPointsInRadiusParams struct {
-	Longitude float64 `json:"longitude"`
-	Latitude  float64 `json:"latitude"`
-	Radius    float64 `json:"radius"`
+	Longitude float64     `json:"longitude"`
+	Latitude  float64     `json:"latitude"`
+	Radius    float64     `json:"radius"`
+	Types     []PointType `json:"types"`
 }
 
 type GetPointsInRadiusRow struct {
@@ -205,7 +208,12 @@ type GetPointsInRadiusRow struct {
 }
 
 func (q *Queries) GetPointsInRadius(ctx context.Context, arg GetPointsInRadiusParams) ([]GetPointsInRadiusRow, error) {
-	rows, err := q.db.Query(ctx, getPointsInRadius, arg.Longitude, arg.Latitude, arg.Radius)
+	rows, err := q.db.Query(ctx, getPointsInRadius,
+		arg.Longitude,
+		arg.Latitude,
+		arg.Radius,
+		arg.Types,
+	)
 	if err != nil {
 		return nil, err
 	}
