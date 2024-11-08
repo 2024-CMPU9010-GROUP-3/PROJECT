@@ -40,6 +40,16 @@ FROM user_details
 WHERE Id = $1
 LIMIT 1;
 
+-- name: EmailExists :one
+SELECT EXISTS(
+  SELECT 1 FROM logins WHERE Email = @email AND Id <> @id
+) AS "exists";
+
+-- name: UsernameExists :one
+SELECT EXISTS(
+  SELECT 1 FROM logins WHERE Username = @username AND Id <> @id
+) AS "exists";
+
 -- name: CreateUser :one
 INSERT INTO logins (
   Username, Email, PasswordHash
@@ -62,17 +72,17 @@ WHERE Id = $1;
 -- name: UpdateLogin :exec
 UPDATE logins
 SET 
-  Username = COALESCE($2, Username),
-  Email = COALESCE($3, Email),
-  PasswordHash = COALESCE(NULLIF(@PasswordHash::VARCHAR(72), ''), PasswordHash)
+  Username = @username,
+  Email = @email,
+  PasswordHash = @passwordhash
 WHERE Id = $1;
 
 -- name: UpdateUserDetails :exec
 UPDATE user_details
 SET
-  FirstName = COALESCE(NULLIF(@FirstName::VARCHAR(64), ''), FirstName),
-  LastName = COALESCE(NULLIF(@LastName::VARCHAR(64), ''), LastName),
-  ProfilePicture = COALESCE(NULLIF(@ProfilePicture::VARCHAR(512), ''), ProfilePicture)
+  FirstName = @firstname,
+  LastName = @lastname,
+  ProfilePicture = @profilepicture::TEXT
 WHERE Id = $1;
 
 -- name: DeleteUser :exec

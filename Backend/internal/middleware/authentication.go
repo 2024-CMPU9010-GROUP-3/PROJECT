@@ -67,7 +67,7 @@ func accessOwnerOnly(next http.Handler) http.Handler {
 			return
 		}
 
-		tokenUserId := request.Context().Value("token_user_id")
+		tokenUserId := request.Context().Value(util.TokenKey("token_user_id"))
 		if tokenUserId == nil {
 			resp.SendError(customErrors.Auth.IdMissingInContextError, w)
 			return

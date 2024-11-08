@@ -1,3 +1,5 @@
+//go:build public
+
 package dtos
 
 import (
@@ -29,8 +31,8 @@ func (self *UserLoginDto) Validate() error {
 		return err
 	}
 
-	if len(self.Username) == 0 {
-		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required"))
+	if len(self.Username) == 0 && len(self.Email) == 0 {
+		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username or Email is required"))
 		return err
 	}
 

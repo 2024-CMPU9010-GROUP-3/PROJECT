@@ -124,7 +124,7 @@ func RunMiddlewareTests(t *testing.T, middleware func(http.Handler) http.Handler
 
 func mockNextHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	_,_ = w.Write([]byte("next handler called"))
+	_, _ = w.Write([]byte("next handler called"))
 }
 
 func captureLogs(f func()) string {

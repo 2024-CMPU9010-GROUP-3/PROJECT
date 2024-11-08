@@ -51,17 +51,17 @@ const (
 		`WHERE Username = \$1 ` +
 		`LIMIT 1`
 
-	queryGetEmailExists = `SELECT EXISTS(` +
+	queryGetEmailExists = `SELECT EXISTS\( ` +
 		`SELECT 1 ` +
 		`FROM logins ` +
 		`WHERE Email = \$1 ` +
-		`AND Id <> \$2) AS "exists"`
+		`AND Id <> \$2 \) AS \"exists\"`
 
-	queryGetUsernameExists = `SELECT EXISTS(` +
+	queryGetUsernameExists = `SELECT EXISTS\( ` +
 		`SELECT 1 ` +
 		`FROM logins ` +
 		`WHERE Username = \$1 ` +
-		`AND Id <> \$2) AS "exists"`
+		`AND Id <> \$2 \) AS \"exists\"`
 
 	queryGetUserDetailsById = `SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
 		`FROM user_details ` +
@@ -69,7 +69,7 @@ const (
 		`LIMIT 1`
 
 	queryUpdateLastLogin = `UPDATE user_details ` +
-		`SET LastLoggedIn = (NOW() AT TIME ZONE 'utc') ` +
+		`SET LastLoggedIn = \(NOW\(\) AT TIME ZONE \'utc\'\) ` +
 		`WHERE Id = \$1`
 
 	queryInsertIntoLogins = `INSERT INTO logins`
@@ -80,7 +80,7 @@ const (
 
 	queryUpdateUserDetails = `UPDATE user_details`
 
-	queryDeleteFromUsers = `DELETE FROM logins WHERE Id = \$1 CASCADE`
+	queryDeleteFromUsers = `DELETE FROM logins WHERE Id = \$1`
 
 	jsonCreateUser = `{
 				"Username": "%s",
@@ -113,30 +113,6 @@ const (
 				"FirstName": "%s",
 				"LastName": "%s",
 				"ProfilePicture": "%s"
-			}`
-
-	jsonCreateUserFirstNameMissing = `{
-				"Email": "%s",
-				"Username": "%s",
-				"Password": "%s",
-				"LastName": "%s",
-				"ProfilePicture": "%s"
-			}`
-
-	jsonCreateUserLastNameMissing = `{
-				"Email": "%s",
-				"Username": "%s",
-				"Password": "%s",
-				"FirstName": "%s",
-				"ProfilePicture": "%s"
-			}`
-
-	jsonCreateUserProfilePictureMissing = `{
-				"Email": "%s",
-				"Username": "%s",
-				"Password": "%s",
-				"FirstName": "%s",
-				"LastName": "%s"
 			}`
 
 	jsonCreateUserFieldOrder = `{
@@ -219,6 +195,24 @@ const (
 						"errorCode": 1201,
 						"errorMsg": "One or more required parameters are missing",
 						"cause":"Password is required"
+					},
+					"response": null
+				}`
+
+	jsonUsernameRequiredError = `{
+					"error": {
+						"errorCode": 1201,
+						"errorMsg": "One or more required parameters are missing",
+						"cause":"Username is required"
+					},
+					"response": null
+				}`
+
+	jsonEmailRequiredError = `{
+					"error": {
+						"errorCode": 1201,
+						"errorMsg": "One or more required parameters are missing",
+						"cause":"Email is required"
 					},
 					"response": null
 				}`
@@ -403,11 +397,11 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -434,11 +428,11 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUserFieldOrder, firstname, pw, pfpLink, username, email, lastname),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -534,7 +528,7 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(true))
 			},
 			ExpectedStatus: http.StatusBadRequest,
@@ -554,10 +548,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(true))
 			},
 			ExpectedStatus: http.StatusBadRequest,
@@ -576,14 +570,9 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			Route:     userRoute,
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pwLong, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
-				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
+				// no queries expected
 			},
-			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedStatus: http.StatusBadRequest,
 			ExpectedError:  errors.Payload.PasswordTooLongError.ErrorMsg,
 			ExpectedJSON: `{
 					"error": {
@@ -600,10 +589,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin().WillReturnError(fmt.Errorf("Could not start database transaction"))
@@ -625,10 +614,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -650,10 +639,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -680,10 +669,10 @@ func TestAuthHandlerHandlePost(t *testing.T) {
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, pgtype.UUID{}).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectBegin()
@@ -770,22 +759,17 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -812,22 +796,17 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -845,7 +824,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
 		},
 		{
-			Name:      "No error when username is missing",
+			Name:      "Error when username is missing",
 			Method:    "PUT",
 			Route:     userRoute,
 			InputJSON: fmt.Sprintf(jsonCreateUserUsernameMissing, email, pw, firstname, lastname, pfpLink),
@@ -853,37 +832,13 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"id": userIdString,
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
-				mock.ExpectQuery(queryGetLoginById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
-						AddRow(userId, usernameAlt, emailAlt, pwHash))
-
-				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
-
-				mock.ExpectBegin()
-
-				mock.ExpectExec(queryUpdateLogins).
-					WithArgs(userId, usernameAlt, email, testutil.BcryptArg(pw)).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectExec(queryUpdateUserDetails).
-					WithArgs(userId, firstname, lastname, pfpLink).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectCommit()
+				// no database calls expected
 			},
-			ExpectedStatus: http.StatusAccepted,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedJSON:   jsonUsernameRequiredError,
 		},
 		{
-			Name:      "No error when email is missing",
+			Name:      "Error when email is missing",
 			Method:    "PUT",
 			Route:     userRoute,
 			InputJSON: fmt.Sprintf(jsonCreateUserEmailMissing, username, pw, firstname, lastname, pfpLink),
@@ -891,34 +846,10 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 				"id": userIdString,
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
-				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
-
-				mock.ExpectQuery(queryGetLoginById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
-						AddRow(userId, usernameAlt, emailAlt, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
-
-				mock.ExpectBegin()
-
-				mock.ExpectExec(queryUpdateLogins).
-					WithArgs(userId, username, emailAlt, testutil.BcryptArg(pw)).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectExec(queryUpdateUserDetails).
-					WithArgs(userId, firstname, lastname, pfpLink).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectCommit()
+				// no database calls expected
 			},
-			ExpectedStatus: http.StatusAccepted,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedJSON:   jsonEmailRequiredError,
 		},
 		{
 			Name:      "No error when password is missing",
@@ -930,22 +861,17 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, usernameAlt, emailAlt, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -955,135 +881,6 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateUserDetails).
 					WithArgs(userId, firstname, lastname, pfpLink).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectCommit()
-			},
-			ExpectedStatus: http.StatusAccepted,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
-		},
-		{
-			Name:      "No error when first name is missing",
-			Method:    "PUT",
-			Route:     userRoute,
-			InputJSON: fmt.Sprintf(jsonCreateUserFirstNameMissing, email, username, pw, lastname, pfpLink),
-			PathParams: map[string]string{
-				"id": userIdString,
-			},
-			MockSetup: func(mock pgxmock.PgxPoolIface) {
-
-				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-
-				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-
-				mock.ExpectQuery(queryGetLoginById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
-						AddRow(userId, usernameAlt, emailAlt, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstnameAlt, lastnameAlt, pfpLinkAlt, lastLoginDate))
-
-				mock.ExpectBegin()
-
-				mock.ExpectExec(queryUpdateLogins).
-					WithArgs(userId, username, email, pwHash).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectExec(queryUpdateUserDetails).
-					WithArgs(userId, firstnameAlt, lastname, pfpLink).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectCommit()
-			},
-			ExpectedStatus: http.StatusAccepted,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
-		},
-		{
-			Name:      "No error when last name is missing",
-			Method:    "PUT",
-			Route:     userRoute,
-			InputJSON: fmt.Sprintf(jsonCreateUserLastNameMissing, email, username, pw, firstname, pfpLink),
-			PathParams: map[string]string{
-				"id": userIdString,
-			},
-			MockSetup: func(mock pgxmock.PgxPoolIface) {
-
-				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-
-				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-
-				mock.ExpectQuery(queryGetLoginById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
-						AddRow(userId, usernameAlt, emailAlt, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstnameAlt, lastnameAlt, pfpLinkAlt, lastLoginDate))
-
-				mock.ExpectBegin()
-
-				mock.ExpectExec(queryUpdateLogins).
-					WithArgs(userId, username, email, pwHash).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectExec(queryUpdateUserDetails).
-					WithArgs(userId, firstname, lastnameAlt, pfpLink).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectCommit()
-			},
-			ExpectedStatus: http.StatusAccepted,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
-		},
-		{
-			Name:      "No error when profile picture link is missing",
-			Method:    "PUT",
-			Route:     userRoute,
-			InputJSON: fmt.Sprintf(jsonCreateUserProfilePictureMissing, email, username, pw, firstname, lastname),
-			PathParams: map[string]string{
-				"id": userIdString,
-			},
-			MockSetup: func(mock pgxmock.PgxPoolIface) {
-
-				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-
-				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
-					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
-
-				mock.ExpectQuery(queryGetLoginById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
-						AddRow(userId, usernameAlt, emailAlt, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstnameAlt, lastnameAlt, pfpLinkAlt, lastLoginDate))
-
-				mock.ExpectBegin()
-
-				mock.ExpectExec(queryUpdateLogins).
-					WithArgs(userId, username, email, pwHash).
-					WillReturnResult(resultUpdated)
-
-				mock.ExpectExec(queryUpdateUserDetails).
-					WithArgs(userId, firstname, lastname, pfpLinkAlt).
 					WillReturnResult(resultUpdated)
 
 				mock.ExpectCommit()
@@ -1101,11 +898,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1116,7 +913,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			ExpectedError:  errors.NotFound.UserNotFoundError.ErrorMsg,
 			ExpectedJSON: `{
 				"error": {
-					"code: 1301,
+					"errorCode": 1301,
 					"errorMsg": "User not found"
 				},
 				"response": null
@@ -1167,7 +964,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			ExpectedError:  errors.Payload.PasswordTooLongError.ErrorMsg,
 			ExpectedJSON: `{
 				"error": {
-					"code: 1214,
+					"errorCode": 1214,
 					"errorMsg": "Password too long (max. 72 bytes)"
 				},
 				"response": null
@@ -1183,11 +980,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(true))
 
 			},
@@ -1195,7 +992,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			ExpectedError:  errors.Payload.UsernameAlreadyExistsError.ErrorMsg,
 			ExpectedJSON: `{
 				"error": {
-					"code: 1221,
+					"errorCode": 1221,
 					"errorMsg": "Username already exists"
 				},
 				"response": null
@@ -1211,15 +1008,15 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(true))
 
 			},
 			ExpectedStatus: http.StatusBadRequest,
-			ExpectedError:  errors.Payload.UsernameAlreadyExistsError.ErrorMsg,
+			ExpectedError:  errors.Payload.EmailAlreadyExistsError.ErrorMsg,
 			ExpectedJSON: `{
 				"error": {
-					"code: 1222,
+					"errorCode": 1222,
 					"errorMsg": "Email already exists"
 				},
 				"response": null
@@ -1235,11 +1032,11 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
@@ -1247,18 +1044,13 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
 
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
-
 				mock.ExpectBegin().WillReturnError(fmt.Errorf("Simulate database errror"))
 			},
 			ExpectedStatus: http.StatusInternalServerError,
 			ExpectedError:  errors.Database.TransactionStartError.ErrorMsg,
 			ExpectedJSON: `{
 				"error": {
-					"code: 1102,
+					"errorCode": 1102,
 					"errorMsg": "Could not start database transaction"
 				},
 				"response": null
@@ -1274,22 +1066,17 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -1301,7 +1088,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 
 			},
 			ExpectedStatus: http.StatusInternalServerError,
-			ExpectedError:  errors.Database.TransactionStartError.ErrorMsg,
+			ExpectedError:  errors.Database.UnknownDatabaseError.ErrorMsg,
 			ExpectedJSON:   jsonSimulatedDbError,
 		},
 		{
@@ -1314,22 +1101,17 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -1345,7 +1127,7 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 
 			},
 			ExpectedStatus: http.StatusInternalServerError,
-			ExpectedError:  errors.Database.TransactionStartError.ErrorMsg,
+			ExpectedError:  errors.Database.UnknownDatabaseError.ErrorMsg,
 			ExpectedJSON:   jsonSimulatedDbError,
 		},
 		{
@@ -1358,22 +1140,17 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetEmailExists).
-					WithArgs(email).
+					WithArgs(email, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetUsernameExists).
-					WithArgs(username).
+					WithArgs(username, userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetExists).AddRow(false))
 
 				mock.ExpectQuery(queryGetLoginById).
 					WithArgs(userId).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 						AddRow(userId, username, email, pwHash))
-
-				mock.ExpectQuery(queryGetUserDetailsById).
-					WithArgs(userId).
-					WillReturnRows(pgxmock.NewRows(rowsGetUserDetails).
-						AddRow(userId, registerDate, firstname, lastname, pfpLink, lastLoginDate))
 
 				mock.ExpectBegin()
 
@@ -1391,8 +1168,8 @@ func TestAuthHandlerHandlePut(t *testing.T) {
 
 			},
 			ExpectedStatus: http.StatusInternalServerError,
-			ExpectedError:  errors.Database.TransactionStartError.ErrorMsg,
-			ExpectedJSON:   jsonSimulatedDbError,
+			ExpectedError:  errors.Database.TransactionCommitError.ErrorMsg,
+			ExpectedJSON:   `{"error":{"errorCode":1103,"errorMsg":"Could not commit database transaction"},"response":null}`,
 		},
 	}
 	testutil.RunHandlerTests(t, authHandler.HandlePut, mock, tests)
@@ -1452,12 +1229,12 @@ func TestAuthHandlerHandleDelete(t *testing.T) {
 			Route:     userRoute,
 			InputJSON: fmt.Sprintf(jsonCreateUser, username, email, pw, firstname, lastname, pfpLink),
 			PathParams: map[string]string{
-				"id": userIdString[1:],
+				"id": userIdString,
 			},
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectExec(queryDeleteFromUsers).WithArgs(userId).WillReturnError(simulatedDbError)
 			},
-			ExpectedStatus: http.StatusBadRequest,
+			ExpectedStatus: http.StatusInternalServerError,
 			ExpectedJSON:   jsonSimulatedDbError,
 		},
 	}
@@ -1565,7 +1342,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 				// should return before any database calls are made
 			},
 			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
 			ExpectedJSON:    jsonPasswordRequiredError,
 		},
@@ -1579,7 +1356,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 				// should return before any database calls are made
 			},
 			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
 			ExpectedJSON:    jsonUsernameOrEmailRequiredError,
 		},
@@ -1593,7 +1370,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 				// should return before any database calls are made
 			},
 			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Payload.InvalidPayloadUserError.ErrorMsg,
 			ExpectedJSON:    jsonInvalidUserPayloadError,
 		},
@@ -1638,10 +1415,11 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
-					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
+					AddRow(userId, username, email, pwHash))
 			},
 			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
+			ExpectedStatus:  http.StatusInternalServerError,
 			ExpectedError:   errors.Internal.JwtSecretMissingError.ErrorMsg,
 		},
 		{
