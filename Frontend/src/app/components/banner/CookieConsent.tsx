@@ -29,10 +29,11 @@ export function CookieConsent() {
   const handleDeny = async () => {
     try {
       // call logout operation
-      await logout();
-
+      // await logout();
+      console.log('user denied cookie consent')
       // redirect to login page
-      router.push('/login')
+      // router.push('/login')
+      setShow(false)
     } catch (error) {
       console.error("Error during logout:", error)
     }
@@ -46,7 +47,7 @@ export function CookieConsent() {
         <div className="flex-1">
           <AlertDescription className="text-sm">
             We use cookies to enhance your experience on our website. By continuing to use our site, you agree to our use of cookies.
-            <Link href="/terms&privacy" className="underline mx-1">
+            <Link href="/terms" className="underline mx-1">
               Privacy Policy and Terms of Service
             </Link>
           </AlertDescription>
