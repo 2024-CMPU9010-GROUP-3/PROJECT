@@ -64,7 +64,7 @@ export function LoginForm() {
           setErrorMessage(null); // clear any error message
           console.log("Redirecting to home..."); // add debug information
           console.log("router:", router);
-          router?.push("/"); // safely check if router is defined before pushing to home
+          router.push("/"); // 
         } else {
           setErrorMessage("Login failed: No user id received"); // if no user id, display error message
         }
