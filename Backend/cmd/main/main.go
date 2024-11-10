@@ -111,6 +111,10 @@ func main() {
 
 	log.Printf("Checking for new database migrations")
 	latestMigration, err := util.GetLatestMigrationVersion(migrationsPath)
+	if err != nil {
+		log.Fatalf("An error occurred while searching for newest migration version: %v", err)
+		os.Exit(1)
+	}
 
 	if latestMigration > currentMigration {
 		log.Printf("Found newer database migrations (current: V%d, latest: V%d), attemping upgrade...", currentMigration, latestMigration)
