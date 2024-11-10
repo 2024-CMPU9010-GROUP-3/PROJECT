@@ -27,6 +27,7 @@ import {
   carParkLayer,
   coachParkingLayer,
   libraryLayer,
+  parkingClusterStyles,
   parkingMeterLayer,
   publicBinLayer,
   publicToiletLayer,
@@ -315,36 +316,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 clusterMaxZoom={14} // Max zoom to cluster points on
                 clusterRadius={50}
               >
-                <Layer
-                  id="clusters"
-                  type="symbol"
-                  layout={{
-                    "icon-image": "parking-garage",
-                    "icon-size": 1.5,
-                    "icon-allow-overlap": true,
-                  }}
-                />
-                <Layer
-                  id="cluster-count"
-                  type="symbol"
-                  layout={{
-                    "text-field": "{point_count_abbreviated}",
-                    "text-font": [
-                      "DIN Offc Pro Medium",
-                      "Arial Unicode MS Bold",
-                    ],
-                    "text-size": 12,
-                  }}
-                />
-                <Layer
-                  id="unclustered-point"
-                  type="symbol"
-                  layout={{
-                    "icon-image": "parking-garage",
-                    "icon-size": 1.5,
-                    "icon-allow-overlap": true,
-                  }}
-                />
+                <Layer {...parkingClusterStyles.symbol} />
+                <Layer {...parkingClusterStyles.count} />
+                <Layer {...parkingClusterStyles.unclustered} />
               </Source>
               {/* Parking Meter Source */}
               <Source

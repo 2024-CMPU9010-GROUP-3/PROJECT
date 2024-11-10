@@ -1,26 +1,8 @@
 import { LayerProps } from "react-map-gl";
 
-// Updating all icon sizes with larger values
+// Update commonIconLayout to have single standard size
 const commonIconLayout = {
-  small: ["interpolate", ["linear"], ["zoom"], 12, 0.6, 16, 1.0] as [
-    string,
-    [string],
-    [string],
-    number,
-    number,
-    number,
-    number
-  ],
-  medium: ["interpolate", ["linear"], ["zoom"], 12, 0.8, 16, 1.2] as [
-    string,
-    [string],
-    [string],
-    number,
-    number,
-    number,
-    number
-  ],
-  large: ["interpolate", ["linear"], ["zoom"], 12, 1.0, 16, 1.4] as [
+  standard: ["interpolate", ["linear"], ["zoom"], 12, 0.8, 16, 1.2] as [
     string,
     [string],
     [string],
@@ -31,25 +13,67 @@ const commonIconLayout = {
   ],
 };
 
+// Modern color palette
+const colors = {
+  primary: "#2563EB", // Royal Blue
+  secondary: "#059669", // Emerald
+  accent: "#D97706", // Amber
+  danger: "#DC2626", // Red
+  info: "#6366F1", // Indigo
+  neutral: "#4B5563", // Gray
+  water: "#0EA5E9", // Sky Blue
+};
+
+export const parkingClusterStyles = {
+  symbol: {
+    id: "clusters",
+    type: "symbol" as const,
+    layout: {
+      "icon-image": "parking-garage",
+      "icon-size": commonIconLayout.standard,
+      "icon-allow-overlap": true,
+    },
+  },
+  count: {
+    id: "cluster-count",
+    type: "symbol" as const,
+    layout: {
+      "text-field": "{point_count_abbreviated}",
+      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
+      "text-size": 12,
+    },
+  },
+  unclustered: {
+    id: "unclustered-point",
+    type: "symbol" as const,
+    layout: {
+      "icon-image": "parking-garage",
+      "icon-size": commonIconLayout.standard,
+      "icon-allow-overlap": true,
+    },
+  },
+};
+
 export const parkingMeterLayer: LayerProps = {
   id: "parking-meters",
   type: "symbol",
   layout: {
-    "icon-image": "parking", // Using Mapbox's built-in parking icon
-    "icon-size": commonIconLayout.medium,
-    "icon-allow-overlap": false,
+    "icon-image": "parking",
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     "icon-ignore-placement": false,
     visibility: "visible",
-    // Optional text label
     "text-field": ["get", "name"],
-    "text-size": 12,
-    "text-offset": [0, 1.5],
+    "text-size": 11,
+    "text-offset": [0, 1.2],
     "text-optional": true,
+    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
   },
   paint: {
-    "text-color": "#4264FB",
+    "text-color": colors.primary,
     "text-halo-color": "#ffffff",
-    "text-halo-width": 1,
+    "text-halo-width": 2,
+    "icon-opacity": 0.9,
   },
   filter: ["!=", ["get", "id"], ""],
 };
@@ -58,80 +82,91 @@ export const bikeStandLayer: LayerProps = {
   id: "bike-stands",
   type: "symbol",
   layout: {
-    "icon-image": "bicycle", // Using Mapbox's built-in bicycle icon
-    "icon-size": commonIconLayout.medium,
-    "icon-allow-overlap": false,
+    "icon-image": "bicycle",
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     "icon-ignore-placement": false,
     visibility: "visible",
-    // Optional text label
     "text-field": ["get", "name"],
-    "text-size": 12,
-    "text-offset": [0, 1.5],
+    "text-size": 11,
+    "text-offset": [0, 1.2],
     "text-optional": true,
+    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
   },
   paint: {
-    "text-color": "#FFAA00", // Contrasting color
+    "text-color": colors.accent,
     "text-halo-color": "#ffffff",
-    "text-halo-width": 1,
+    "text-halo-width": 2,
+    "icon-opacity": 0.9,
   },
 };
 
-// Bike Sharing Station Layer
 export const bikeSharingLayer: LayerProps = {
   id: "bike-sharing",
   type: "symbol",
   layout: {
-    "icon-image": "bicycle", // Using Mapbox's built-in bicycle icon
-    "icon-size": commonIconLayout.medium,
-    "icon-allow-overlap": false,
+    "icon-image": "bicycle-share",
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     "icon-ignore-placement": false,
     visibility: "visible",
-    // Optional text label
     "text-field": ["get", "name"],
-    "text-size": 12,
-    "text-offset": [0, 1.5],
+    "text-size": 11,
+    "text-offset": [0, 1.2],
     "text-optional": true,
+    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
   },
   paint: {
-    "text-color": "#FF6B6B",
+    "text-color": colors.secondary,
     "text-halo-color": "#ffffff",
-    "text-halo-width": 1,
+    "text-halo-width": 2,
+    "icon-opacity": 0.9,
   },
 };
 
-// Accessible Parking Layer
 export const accessibleParkingLayer: LayerProps = {
   id: "accessible-parking",
   type: "symbol",
   layout: {
     "icon-image": "disabled",
-    "icon-size": commonIconLayout.large,
-    "icon-allow-overlap": false,
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     visibility: "visible",
+    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
+  },
+  paint: {
+    "icon-opacity": 0.9,
+    "icon-color": colors.primary,
   },
 };
 
-// Public Bins Layer
 export const publicBinLayer: LayerProps = {
   id: "public-bins",
   type: "symbol",
   layout: {
     "icon-image": "waste-basket",
-    "icon-size": commonIconLayout.small,
-    "icon-allow-overlap": false,
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     visibility: "visible",
+  },
+  paint: {
+    "icon-opacity": 0.8,
+    "icon-color": colors.neutral,
   },
 };
 
-// Coach Parking Layer
 export const coachParkingLayer: LayerProps = {
   id: "coach-parking",
   type: "symbol",
   layout: {
     "icon-image": "bus",
-    "icon-size": commonIconLayout.large,
-    "icon-allow-overlap": false,
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     visibility: "visible",
+  },
+  paint: {
+    "icon-opacity": 0.9,
+    "icon-color": colors.primary,
   },
 };
 
@@ -140,9 +175,13 @@ export const publicWifiLayer: LayerProps = {
   type: "symbol",
   layout: {
     "icon-image": "wifi",
-    "icon-size": commonIconLayout.small,
-    "icon-allow-overlap": false,
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     visibility: "visible",
+  },
+  paint: {
+    "icon-opacity": 0.8,
+    "icon-color": colors.info,
   },
   filter: ["!=", ["get", "id"], ""],
 };
@@ -152,9 +191,13 @@ export const libraryLayer: LayerProps = {
   type: "symbol",
   layout: {
     "icon-image": "library",
-    "icon-size": commonIconLayout.large,
-    "icon-allow-overlap": false,
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     visibility: "visible",
+  },
+  paint: {
+    "icon-opacity": 0.9,
+    "icon-color": colors.secondary,
   },
   filter: ["!=", ["get", "id"], ""],
 };
@@ -164,12 +207,12 @@ export const carParkLayer: LayerProps = {
   type: "symbol",
   layout: {
     "icon-image": "car",
-    "icon-size": commonIconLayout.large,
-    "icon-allow-overlap": false,
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     visibility: "visible",
   },
   paint: {
-    "icon-color": "#E74C3C", // Bright red
+    "icon-color": colors.primary,
     "icon-opacity": 0.9,
   },
   filter: ["!=", ["get", "id"], ""],
@@ -180,12 +223,12 @@ export const waterFountainLayer: LayerProps = {
   type: "symbol",
   layout: {
     "icon-image": "drinking-water",
-    "icon-size": commonIconLayout.small,
-    "icon-allow-overlap": false,
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     visibility: "visible",
   },
   paint: {
-    "icon-color": "#3498DB", // Blue
+    "icon-color": colors.water,
     "icon-opacity": 0.9,
   },
   filter: ["!=", ["get", "id"], ""],
@@ -196,12 +239,12 @@ export const publicToiletLayer: LayerProps = {
   type: "symbol",
   layout: {
     "icon-image": "toilet",
-    "icon-size": commonIconLayout.medium,
-    "icon-allow-overlap": false,
+    "icon-size": commonIconLayout.standard,
+    "icon-allow-overlap": true,
     visibility: "visible",
   },
   paint: {
-    "icon-color": "#2ECC71", // Green
+    "icon-color": colors.info,
     "icon-opacity": 0.9,
   },
   filter: ["!=", ["get", "id"], ""],
