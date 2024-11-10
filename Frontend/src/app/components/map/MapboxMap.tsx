@@ -12,20 +12,42 @@ import {
 } from "@/lib/interfaces/types";
 import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
 import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
-import { GeoJSON, FeatureCollection } from "geojson";
+import { GeoJSON } from "geojson";
+
 // import { FloatingDock } from "@/components/ui/floating-dock";
 // import { IconHome } from "@tabler/icons-react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { Grid } from "react-loader-spinner";
 import { Badge } from "@/components/ui/badge";
+import {
+  accessibleParkingLayer,
+  bikeSharingLayer,
+  bikeStandLayer,
+  carParkLayer,
+  coachParkingLayer,
+  libraryLayer,
+  parkingMeterLayer,
+  publicBinLayer,
+  publicToiletLayer,
+  publicWifiLayer,
+  waterFountainLayer,
+} from "./utils/MapboxLayers";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
-
-const initialGeoJson: GeoJSON = {
-  type: "FeatureCollection",
-  features: [],
-};
+type GeoJsonCollection =
+  | "parking_meter"
+  | "bike_stand"
+  | "public_wifi_access_point"
+  | "library"
+  | "multistorey_car_parking"
+  | "drinking_water_fountain"
+  | "public_toilet"
+  | "bike_sharing_station"
+  | "parking"
+  | "accessible_parking"
+  | "public_bins"
+  | "coach_parking";
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
@@ -34,8 +56,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     latitude: 0,
     longitude: 0,
   });
-  const [pointsGeoJson, setPointsGeoJson] =
-    useState<FeatureCollection>(initialGeoJson);
+  const [pointsGeoJson, setPointsGeoJson] = useState<Record<
+    string,
+    GeoJSON
+  > | null>(null);
   // const [markerSquareSize, setMarkerSquareSize] = useState<number>(0.027);
   const [currentPositionCords, setCurrentPositionCords] = useState<Coordinates>(
     { latitude: 0, longitude: 0 }
@@ -70,10 +94,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     return coordinates;
   });
 
-  // Checkbox code begins
-
-  // Checkbox code ends
-
   useEffect(() => {
     console.log("Slider Value Commit>>>>>", sliderValue);
     console.log("Slider Value Display>>>>", sliderValueDisplay);
@@ -89,26 +109,47 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     }
   };
 
-  function convertToGeoJson(points: Point[]): GeoJSON {
-    console.log("Points>>>", points);
+  function convertToGeoJson(points: Point[]): Record<string, GeoJSON> {
+    const featureTypes: GeoJsonCollection[] = [
+      "parking_meter",
+      "bike_stand",
+      "public_wifi_access_point",
+      "library",
+      "multistorey_car_parking",
+      "drinking_water_fountain",
+      "public_toilet",
+      "bike_sharing_station",
+      "parking",
+      "accessible_parking",
+      "public_bins",
+      "coach_parking",
+    ];
 
-    return {
-      type: "FeatureCollection",
-      features: points?.map((point) => ({
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [
-            (point?.Longlat as CoordinatesForGeoJson)?.coordinates[0],
-            (point?.Longlat as CoordinatesForGeoJson)?.coordinates[1],
-          ],
-        },
-        properties: {
-          Id: point.Id,
-          Type: point.Type,
-        },
-      })),
-    };
+    const geoJsonCollection: Record<string, GeoJSON> = {};
+
+    featureTypes.forEach((type: string) => {
+      geoJsonCollection[type] = {
+        type: "FeatureCollection",
+        features: points
+          ?.filter((point) => point.Type === type)
+          .map((point) => ({
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [
+                (point?.Longlat as CoordinatesForGeoJson)?.coordinates[0],
+                (point?.Longlat as CoordinatesForGeoJson)?.coordinates[1],
+              ],
+            },
+            properties: {
+              Id: point.Id,
+              Type: point.Type,
+            },
+          })),
+      };
+    });
+
+    return geoJsonCollection;
   }
 
   const fetchPointsFromDB = async (
@@ -129,8 +170,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     const data = await response.json();
     const geoJson = convertToGeoJson(data?.response?.content);
 
-    setPointsGeoJson(geoJson as FeatureCollection);
-    console.log("GeoJson>>>", geoJson);
+    setPointsGeoJson(geoJson);
+    console.log("Points GeoJson>>>", pointsGeoJson);
   };
 
   useEffect(() => {
@@ -174,14 +215,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       coordinates?.latitude,
       sliderValue
     );
-    console.log(coordinates, sliderValue);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coordinates, sliderValue]);
-
-  useEffect(() => {
-    console.log(currentPositionCords);
-  }, [currentPositionCords]);
 
   const options = {
     enableHighAccuracy: true,
@@ -270,47 +306,144 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               >
                 <Layer {...layerStyle} />
               </Source>
-              <Suspense fallback={<div>Loading...</div>}>
-                <Source
-                  id="points"
-                  type="geojson"
-                  data={pointsGeoJson}
-                  cluster={true}
-                  clusterMaxZoom={14} // Max zoom to cluster points on
-                  clusterRadius={50}
-                >
-                  <Layer
-                    id="clusters"
-                    type="symbol"
-                    layout={{
-                      "icon-image": "parking-garage",
-                      "icon-size": 1.5,
-                      "icon-allow-overlap": true,
-                    }}
-                  />
-                  <Layer
-                    id="cluster-count"
-                    type="symbol"
-                    layout={{
-                      "text-field": "{point_count_abbreviated}",
-                      "text-font": [
-                        "DIN Offc Pro Medium",
-                        "Arial Unicode MS Bold",
-                      ],
-                      "text-size": 12,
-                    }}
-                  />
-                  <Layer
-                    id="unclustered-point"
-                    type="symbol"
-                    layout={{
-                      "icon-image": "parking-garage",
-                      "icon-size": 1.5,
-                      "icon-allow-overlap": true,
-                    }}
-                  />
-                </Source>
-              </Suspense>
+              {/* Parking Source */}
+              <Source
+                id="points"
+                type="geojson"
+                data={pointsGeoJson?.parking}
+                cluster={true}
+                clusterMaxZoom={14} // Max zoom to cluster points on
+                clusterRadius={50}
+              >
+                <Layer
+                  id="clusters"
+                  type="symbol"
+                  layout={{
+                    "icon-image": "parking-garage",
+                    "icon-size": 1.5,
+                    "icon-allow-overlap": true,
+                  }}
+                />
+                <Layer
+                  id="cluster-count"
+                  type="symbol"
+                  layout={{
+                    "text-field": "{point_count_abbreviated}",
+                    "text-font": [
+                      "DIN Offc Pro Medium",
+                      "Arial Unicode MS Bold",
+                    ],
+                    "text-size": 12,
+                  }}
+                />
+                <Layer
+                  id="unclustered-point"
+                  type="symbol"
+                  layout={{
+                    "icon-image": "parking-garage",
+                    "icon-size": 1.5,
+                    "icon-allow-overlap": true,
+                  }}
+                />
+              </Source>
+              {/* Parking Meter Source */}
+              <Source
+                id="parking-meters"
+                type="geojson"
+                data={pointsGeoJson?.parking_meter}
+              >
+                <Layer {...parkingMeterLayer} />
+              </Source>
+
+              {/* Bike Stand Source */}
+              <Source
+                id="bike-stands"
+                type="geojson"
+                data={pointsGeoJson?.bike_stand}
+              >
+                <Layer {...bikeStandLayer} />
+              </Source>
+
+              {/* Public Wifi Source */}
+              <Source
+                id="public-wifi"
+                type="geojson"
+                data={pointsGeoJson?.public_wifi_access_point}
+              >
+                <Layer {...publicWifiLayer} />
+              </Source>
+
+              {/* Library Source */}
+              <Source
+                id="libraries"
+                type="geojson"
+                data={pointsGeoJson?.library}
+              >
+                <Layer {...libraryLayer} />
+              </Source>
+
+              {/* Multi Storey Car Park Source */}
+              <Source
+                id="car-parks"
+                type="geojson"
+                data={pointsGeoJson?.multistorey_car_parking}
+              >
+                <Layer {...carParkLayer} />
+              </Source>
+
+              {/* Drinking Water Fountain Source */}
+              <Source
+                id="water-fountains"
+                type="geojson"
+                data={pointsGeoJson?.drinking_water_fountain}
+              >
+                <Layer {...waterFountainLayer} />
+              </Source>
+
+              {/* Public Toilet Source */}
+              <Source
+                id="public-toilets"
+                type="geojson"
+                data={pointsGeoJson?.public_toilet}
+              >
+                <Layer {...publicToiletLayer} />
+              </Source>
+
+              {/* Bike Sharing Station Source */}
+              <Source
+                id="bike-sharing"
+                type="geojson"
+                data={pointsGeoJson?.bike_sharing_station}
+              >
+                <Layer {...bikeSharingLayer} />
+              </Source>
+
+              {/* Accessible Parking Source */}
+              <Source
+                id="accessible-parking"
+                type="geojson"
+                data={pointsGeoJson?.accessible_parking}
+              >
+                <Layer {...accessibleParkingLayer} />
+              </Source>
+
+              {/* Public Bins Source */}
+              <Source
+                id="public-bins"
+                type="geojson"
+                data={pointsGeoJson?.public_bins}
+              >
+                <Layer {...publicBinLayer} />
+              </Source>
+
+              {/* Coach Parking Source*/}
+              <Source
+                id="coach-parking"
+                type="geojson"
+                data={pointsGeoJson?.coach_parking}
+              >
+                <Layer {...coachParkingLayer} />
+              </Source>
             </Map>
           </DeckGL>
         ) : (
@@ -385,7 +518,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                       variant="secondary"
                       className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
                     >
-                      {pointsGeoJson?.features?.length || 0} Spots
+                      {(pointsGeoJson as unknown as GeoJSON.FeatureCollection)
+                        ?.features?.length || 0}{" "}
+                      Spots
                     </Badge>
                   </div>
                 </Suspense>
