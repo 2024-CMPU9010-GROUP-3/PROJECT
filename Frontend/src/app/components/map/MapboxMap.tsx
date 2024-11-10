@@ -34,6 +34,9 @@ import {
   publicWifiLayer,
   waterFountainLayer,
 } from "./utils/MapboxLayers";
+import MultipleSelector, {
+  Option,
+} from "@/components/ui/registry/multiple-select";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -49,6 +52,21 @@ type GeoJsonCollection =
   | "accessible_parking"
   | "public_bins"
   | "coach_parking";
+
+const MultiSelectOptions: Option[] = [
+  { label: "Parking Meter", value: "parking_meter" },
+  { label: "Bike Stand", value: "bike_stand" },
+  { label: "Public Wifi", value: "public_wifi_access_point" },
+  { label: "Library", value: "library" },
+  { label: "Multi Storey Car Park", value: "multistorey_car_parking" },
+  { label: "Drinking Water Fountain", value: "drinking_water_fountain" },
+  { label: "Public Toilet", value: "public_toilet" },
+  { label: "Bike Sharing Station", value: "bike_sharing_station" },
+  { label: "Parking", value: "parking" },
+  { label: "Accessible Parking", value: "accessible_parking" },
+  { label: "Public Bins", value: "public_bins" },
+  { label: "Coach Parking", value: "coach_parking" },
+];
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
@@ -95,10 +113,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     return coordinates;
   });
 
-  useEffect(() => {
-    console.log("Slider Value Commit>>>>>", sliderValue);
-    console.log("Slider Value Display>>>>", sliderValueDisplay);
-  }, [sliderValue, sliderValueDisplay]);
+  const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
+
+  const handleAmenitiesFilterChange = (selectedOptions: Option[]) => {
+    setAmenitiesFilter(selectedOptions.map((option) => option.value));
+  };
 
   // Handle map click event
   const handleMapClick = (event: unknown) => {
@@ -156,13 +175,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const fetchPointsFromDB = async (
     longitude: number,
     latitude: number,
-    sliderValue: number
+    sliderValue: number,
+    amenitiesFilter: string[] = []
   ) => {
-    console.log("fetchPointsFromDB>>>", longitude, latitude, sliderValue);
     const response = await fetch(
       `/api/points?long=${longitude}&lat=${latitude}&radius=${
         sliderValue * 100
-      }`,
+      }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
         credentials: "include",
@@ -172,7 +191,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     const geoJson = convertToGeoJson(data?.response?.content);
 
     setPointsGeoJson(geoJson);
-    console.log("Points GeoJson>>>", pointsGeoJson);
   };
 
   useEffect(() => {
@@ -214,11 +232,12 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     fetchPointsFromDB(
       coordinates?.longitude,
       coordinates?.latitude,
-      sliderValue
+      sliderValue,
+      amenitiesFilter
     );
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coordinates, sliderValue]);
+  }, [coordinates, sliderValue, amenitiesFilter]);
 
   const options = {
     enableHighAccuracy: true,
@@ -507,38 +526,23 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </div>
 
           {/* Filter Options Card */}
-          {mapBoxApiKey && (
-            <div className="px-2 sm:px-3 lg:px-4">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
-                <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
-                  Filter Options
-                </h2>
-                <div className="space-y-2">
-                  {[
-                    "Coach Parking",
-                    "Bike Stand",
-                    "Public Toilet",
-                    "Parking Meter",
-                    "Parking",
-                  ].map((option, index) => (
-                    <label
-                      key={index}
-                      className="flex items-center space-x-3 group cursor-pointer hover:bg-gray-50 p-2 rounded-md transition-colors min-h-[44px] touch-manipulation"
-                    >
-                      <input
-                        type="checkbox"
-                        id={`option${index + 1}`}
-                        name={`option${index + 1}`}
-                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-colors"
-                      />
-                      <span className="text-sm sm:text-base text-gray-700 group-hover:text-gray-900">
-                        {option}
-                      </span>
-                    </label>
-                  ))}
-                </div>
+          {mapBoxApiKey ? (
+            <>
+              <div className="w-[90%] mx-auto bg-white">
+                <MultipleSelector
+                  defaultOptions={MultiSelectOptions}
+                  onChange={handleAmenitiesFilterChange}
+                  placeholder="Select your amenities"
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no results found.
+                    </p>
+                  }
+                />
               </div>
-            </div>
+            </>
+          ) : (
+            ""
           )}
         </div>
       </div>
