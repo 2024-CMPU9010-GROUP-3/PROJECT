@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import type { CardComponentProps } from "onborda";
 import { useOnborda } from "onborda";
+import confetti from "canvas-confetti";
 
 // Shadcn
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,36 @@ export const TourCard: React.FC<CardComponentProps> = ({
 
   function handleConfetti() {
     closeOnborda();
-  }
+    
+    // Run confetti once immediately
+    confetti({
+        particleCount: 100,
+        startVelocity: 30,
+        spread: 360,
+        origin: {
+            x: Math.random(),
+            y: Math.random() - 0.2
+        }
+    });
+
+    // Set up interval to run confetti 5 times, once per second
+    let count = 0;
+    const interval = setInterval(() => {
+        confetti({
+            particleCount: 100,
+            startVelocity: 30,
+            spread: 360,
+            origin: {
+                x: Math.random(),
+                y: Math.random() - 0.2
+            }
+        });
+        count++;
+        if (count === 4) {
+            clearInterval(interval);
+        }
+    }, 500);
+}
 
   function handleNextStep() {
     setCurrentStep((prev) => Math.min(prev + 1, totalSteps - 1));
