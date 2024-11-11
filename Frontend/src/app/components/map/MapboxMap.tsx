@@ -102,7 +102,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
+        Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -178,8 +178,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${
-        sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
@@ -204,7 +203,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
+        Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
