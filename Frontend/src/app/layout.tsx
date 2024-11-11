@@ -29,7 +29,7 @@ export default function RootLayout({
                 shadowRgb="0,0,0"
                 shadowOpacity="0.8"
                 cardComponent={TourCard}
-                cardTransition={{ duration: 2, type: "tween" }}
+                cardTransition={{ duration: 0.5, type: "spring" }}
               >
                 {children}
               </Onborda>
