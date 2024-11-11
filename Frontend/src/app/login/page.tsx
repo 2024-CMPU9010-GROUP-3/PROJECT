@@ -58,7 +58,7 @@ export default function LoginPage() {
 
       {/* Desktop and Tablet Version */}
       <div className="container relative hidden md:grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-        <Link
+        {/* <Link
           href="/examples/authentication"
           className={cn(
             buttonVariants({ variant: "ghost" }),
@@ -66,7 +66,7 @@ export default function LoginPage() {
           )}
         >
           Test
-        </Link>
+        </Link> */}
 
         <div className="relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
           {/* Desktop Side Section */}
@@ -105,14 +105,7 @@ export default function LoginPage() {
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Privacy Policy
+                Terms and Privacy Policy
               </Link>
               .
             </p>

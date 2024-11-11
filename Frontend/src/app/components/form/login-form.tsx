@@ -64,7 +64,7 @@ export function LoginForm() {
           setErrorMessage(null); // clear any error message
           console.log("Redirecting to home..."); // add debug information
           console.log("router:", router);
-          router?.push("/"); // safely check if router is defined before pushing to home
+          router.push("/"); // safely check if router is defined before pushing to home
         } else {
           setErrorMessage("Login failed: No user id received"); // if no user id, display error message
         }
@@ -108,12 +108,12 @@ export function LoginForm() {
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link
+                {/* <Link
                   href="#"
                   className="ml-auto inline-block text-sm underline"
                 >
                   Forgot your password?
-                </Link>
+                </Link> */}
               </div>
               <Input
                 id="password"
