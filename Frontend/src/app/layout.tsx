@@ -4,6 +4,8 @@ import "./globals.css";
 import { AuthProvider } from '@/app/context/AuthContext';
 import { Onborda, OnbordaProvider } from "onborda";
 import { steps } from "./components/onboarding/steps";
+import { TourCard } from "./components/onboarding/card";
+
 
 export const metadata: Metadata = {
   title: "Magpie - Services at a glance",
@@ -21,7 +23,14 @@ export default function RootLayout({
         <AuthProvider>
           <Providers>
             <OnbordaProvider>
-              <Onborda steps={steps}>
+              <Onborda
+                steps={steps}
+                showOnborda={true}
+                shadowRgb="0,0,0"
+                shadowOpacity="0.8"
+                cardComponent={TourCard}
+                cardTransition={{ duration: 2, type: "tween" }}
+              >
                 {children}
               </Onborda>
             </OnbordaProvider>
