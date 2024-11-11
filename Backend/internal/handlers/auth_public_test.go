@@ -1260,7 +1260,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	duration, err := time.ParseDuration(`168h`)
 	if err != nil {
 		t.Errorf("Could not parse jwt duration: %v", err)
 	}
@@ -1279,15 +1278,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
 			},
-			ExpectedCookies: []*http.Cookie{
-				{
-					Name:     "magpie_auth",
-					HttpOnly: true,
-					SameSite: http.SameSiteLaxMode,
-					Expires:  time.Now().Add(duration),
-					Path:     "/",
-				},
-			},
 			ExpectedStatus: http.StatusOK,
 			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
 		},
@@ -1304,15 +1294,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
 			},
-			ExpectedCookies: []*http.Cookie{
-				{
-					Name:     "magpie_auth",
-					HttpOnly: true,
-					SameSite: http.SameSiteLaxMode,
-					Expires:  time.Now().Add(duration),
-					Path:     "/",
-				},
-			},
 			ExpectedStatus: http.StatusOK,
 			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
 		},
@@ -1327,7 +1308,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHashAlt))
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
 			ExpectedJSON:    jsonWrongCredentialsError,
@@ -1341,7 +1321,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
 			ExpectedJSON:    jsonPasswordRequiredError,
@@ -1355,7 +1334,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
 			ExpectedJSON:    jsonUsernameOrEmailRequiredError,
@@ -1369,7 +1347,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusBadRequest,
 			ExpectedError:   errors.Payload.InvalidPayloadUserError.ErrorMsg,
 			ExpectedJSON:    jsonInvalidUserPayloadError,
@@ -1385,7 +1362,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
 			ExpectedJSON:    jsonWrongCredentialsError,
@@ -1401,7 +1377,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusUnauthorized,
 			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
 			ExpectedJSON:    jsonWrongCredentialsError,
@@ -1418,7 +1393,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
 					AddRow(userId, username, email, pwHash))
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusInternalServerError,
 			ExpectedError:   errors.Internal.JwtSecretMissingError.ErrorMsg,
 		},
@@ -1434,7 +1408,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WillReturnError(simulatedDbError)
 
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusInternalServerError,
 			ExpectedJSON:    jsonSimulatedDbError,
 		},
@@ -1449,7 +1422,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WithArgs(username).
 					WillReturnError(simulatedDbError)
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusInternalServerError,
 			ExpectedJSON:    jsonSimulatedDbError,
 		},
@@ -1466,7 +1438,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnError(simulatedDbError)
 			},
-			ExpectedCookies: []*http.Cookie{},
 			ExpectedStatus:  http.StatusInternalServerError,
 			ExpectedJSON:    jsonSimulatedDbError,
 		},

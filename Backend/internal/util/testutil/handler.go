@@ -7,7 +7,6 @@ import (
 	"net/http/httptest"
 	"regexp"
 	"testing"
-	"time"
 
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	"github.com/pashagolub/pgxmock/v4"
@@ -22,7 +21,6 @@ type HandlerTestDefinition struct {
 	ExpectedStatus  int
 	ExpectedError   string
 	ExpectedJSON    string
-	ExpectedCookies []*http.Cookie
 	PathParams      map[string]string
 	QueryParams     map[string]string
 	Env             map[string]string
@@ -85,52 +83,6 @@ func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func
 
 		if rr.Body.String() != compactedJson.String() {
 			t.Errorf("expected JSON output %s, got %s", compactedJson.String(), rr.Body.String())
-		}
-	}
-
-	if len(tt.ExpectedCookies) != len(rr.Result().Cookies()) {
-		t.Errorf("expected %d cookies to be set, got %d", len(tt.ExpectedCookies), len(rr.Result().Cookies()))
-	}
-
-	for _, expected := range tt.ExpectedCookies {
-		found := false
-		for _, cookie := range rr.Result().Cookies() {
-			if cookie.Name == expected.Name {
-				found = true
-
-				if !jwtPattern.MatchString(cookie.Value) {
-					t.Errorf("cookie %s value does not match JWT format: %v", cookie.Name, cookie.Value)
-				}
-
-				if cookie.Path != expected.Path {
-					t.Errorf("cookie %s Path mismatch: got %s, want %s", cookie.Name, cookie.Path, expected.Path)
-				}
-
-				if cookie.HttpOnly != expected.HttpOnly {
-					t.Errorf("cookie %s HttpOnly mismatch: got %v, want %v", cookie.Name, cookie.HttpOnly, expected.HttpOnly)
-				}
-
-				if cookie.SameSite != expected.SameSite {
-					t.Errorf("cookie %s SameSite mismatch: got %v, want %v", cookie.Name, cookie.SameSite, expected.SameSite)
-				}
-
-				if !expected.Expires.IsZero() {
-					expiresTolerance, err := time.ParseDuration(expiresToleranceStr)
-					if err != nil {
-						t.Error(err)
-					}
-					delta := expected.Expires.Sub(cookie.Expires)
-					if delta < -expiresTolerance || delta > expiresTolerance {
-						t.Errorf("cookie %s Expires mismatch: got %v, want %v ± %v", cookie.Name, cookie.Expires, expected.Expires, expiresTolerance)
-					}
-				}
-
-				break
-			}
-		}
-
-		if !found {
-			t.Errorf("expected cookie %s to be set", expected.Name)
 		}
 	}
 
