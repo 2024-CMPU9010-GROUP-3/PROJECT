@@ -37,6 +37,7 @@ import {
 import MultipleSelector, {
   Option,
 } from "@/components/ui/registry/multiple-select";
+import { useOnborda } from "onborda";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -191,6 +192,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     setPointsGeoJson(geoJson);
   };
 
+  const { startOnborda } = useOnborda();
+  const handleStartOnborda = () => {
+    console.log(startOnborda("general-onboarding"));
+  };
+
   useEffect(() => {
     const radiusInMeters = sliderValueDisplay * 100; // Convert slider value to meters
     const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
@@ -278,7 +284,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Map Container - Taller on mobile */}
-      <div className="w-full lg:w-[75%] h-[60vh] sm:h-[70vh] lg:h-screen relative">
+      <div className="w-full lg:w-[75%] h-[60vh] sm:h-[70vh] lg:h-screen relative" id="onboarding-step-5">
         {mapBoxApiKey ? (
           <DeckGL
             effects={[lightingEffect]}
@@ -456,15 +462,15 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
           {mapBoxApiKey ? (
             <>
-              <div className="px-2 sm:px-3 lg:px-4">
+              <div className="px-2 sm:px-3 lg:px-4" id="onboarding-step-1">
                 <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
                   Magpie Dashboard
                 </h1>
               </div>
 
               {/* Search Radius Card */}
-              <div className="px-2 sm:px-3 lg:px-4">
-                <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
+              <div className="px-2 sm:px-3 lg:px-4" id="onboarding-step-2" >
+                <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4">
                   <div className="space-y-2 sm:space-y-3">
                     <div>
                       <label className="text-sm lg:text-base font-medium text-gray-700 mb-2 block">
@@ -485,6 +491,12 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                     <div className="text-sm lg:text-base font-medium text-gray-600">
                       {sliderValueDisplay * 100} meters
                     </div>
+                    <button
+                      onClick={handleStartOnborda}
+                      className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    >
+                      Start Onboarding
+                    </button>
                   </div>
                 </div>
               </div>
@@ -492,7 +504,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           ) : null}
 
           {/* Marker Data Card */}
-          <div className="px-2 sm:px-3 lg:px-4">
+          <div className="px-2 sm:px-3 lg:px-4" id="onboarding-step-3">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
               <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
                 Marker Data
@@ -704,7 +716,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           {/* Filter Options Card */}
           {mapBoxApiKey ? (
             <>
-              <div className="w-[90%] mx-auto bg-white">
+              <div className="w-[90%] mx-auto bg-white" id="onboarding-step-4">
                 <MultipleSelector
                   defaultOptions={MultiSelectOptions}
                   onChange={handleAmenitiesFilterChange}
