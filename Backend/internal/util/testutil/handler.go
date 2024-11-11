@@ -13,17 +13,18 @@ import (
 )
 
 type HandlerTestDefinition struct {
-	Name            string
-	Method          string
-	Route           string
-	InputJSON       string
-	MockSetup       func(mock pgxmock.PgxPoolIface)
-	ExpectedStatus  int
-	ExpectedError   string
-	ExpectedJSON    string
-	PathParams      map[string]string
-	QueryParams     map[string]string
-	Env             map[string]string
+	Name                   string
+	Method                 string
+	Route                  string
+	InputJSON              string
+	MockSetup              func(mock pgxmock.PgxPoolIface)
+	ExpectedStatus         int
+	ExpectedError          string
+	ExpectedJSON           string
+	PathParams             map[string]string
+	QueryParams            map[string]string
+	Env                    map[string]string
+	ExpectedResponseFields map[string]string
 }
 
 var jwtPattern = regexp.MustCompile(`^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$`)
@@ -60,14 +61,34 @@ func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func
 		t.Errorf("handler returned wrong status code: got %v want %v", status, tt.ExpectedStatus)
 	}
 
-	if tt.ExpectedError != "" {
-		var responseBody dtos.ResponseDto
-		if err := json.Unmarshal(rr.Body.Bytes(), &responseBody); err != nil {
-			t.Fatalf("failed to unmarshal response: %v", err)
-		}
+	var responseBody dtos.ResponseDto
+	if err := json.Unmarshal(rr.Body.Bytes(), &responseBody); err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
 
+	if tt.ExpectedError != "" {
 		if responseBody.Error.ErrorMsg != tt.ExpectedError {
 			t.Errorf("expected error message \"%v\", got \"%v\"", tt.ExpectedError, responseBody.Error.ErrorMsg)
+		}
+	}
+
+	if len(tt.ExpectedResponseFields) != 0 {
+		content, ok := responseBody.Response.Content.(map[string]interface{})
+		if !ok {
+			t.Errorf("could not decode response content")
+		}
+
+		for k, v := range tt.ExpectedResponseFields {
+			if _, exists := content[k]; !exists {
+				t.Errorf("expected field %s to be present in response", k)
+			}
+			if v != "" {
+				expectedPattern := regexp.MustCompile(v)
+				valueStr, ok := content[k].(string)
+				if !ok || !expectedPattern.MatchString(valueStr) {
+						t.Errorf("expected field %s to match pattern \"%v\", got type %T and value %q", k, v, content[k], valueStr)
+				}
+			}
 		}
 	}
 

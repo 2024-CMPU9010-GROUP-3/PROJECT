@@ -318,7 +318,7 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	expiry := os.Getenv(expiryEnv)
 	if len(expiry) == 0 {
 		log.Printf("Warning: MAGPIE_JWT_EXPIRY not set, defaulting to 7d expiry")
-		expiry = "24h"
+		expiry = "168h"
 	}
 
 	parsedExpiry, err := time.ParseDuration(expiry)

@@ -233,6 +233,10 @@ const (
 					},
 					"response": null
 				}`
+
+	jwtPattern = `^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$`
+
+	uuidPattern = `[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}`
 )
 
 var (
@@ -1278,8 +1282,8 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
 			},
-			ExpectedStatus: http.StatusOK,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+			ExpectedStatus:         http.StatusOK,
+			ExpectedResponseFields: map[string]string{"token": jwtPattern, "userid": uuidPattern},
 		},
 		{
 			Name:      "Positive testcase (username)",
@@ -1294,8 +1298,8 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
 			},
-			ExpectedStatus: http.StatusOK,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+			ExpectedStatus:         http.StatusOK,
+			ExpectedResponseFields: map[string]string{"token": jwtPattern, "userid": uuidPattern},
 		},
 		{
 			Name:      "Wrong password",
@@ -1308,9 +1312,9 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHashAlt))
 			},
-			ExpectedStatus:  http.StatusUnauthorized,
-			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
-			ExpectedJSON:    jsonWrongCredentialsError,
+			ExpectedStatus: http.StatusUnauthorized,
+			ExpectedError:  errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:   jsonWrongCredentialsError,
 		},
 		{
 			Name:      "Password missing",
@@ -1321,9 +1325,9 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedStatus:  http.StatusBadRequest,
-			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
-			ExpectedJSON:    jsonPasswordRequiredError,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.RequiredParameterMissingError.ErrorMsg,
+			ExpectedJSON:   jsonPasswordRequiredError,
 		},
 		{
 			Name:      "Both username and email missing",
@@ -1334,9 +1338,9 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedStatus:  http.StatusBadRequest,
-			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
-			ExpectedJSON:    jsonUsernameOrEmailRequiredError,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.RequiredParameterMissingError.ErrorMsg,
+			ExpectedJSON:   jsonUsernameOrEmailRequiredError,
 		},
 		{
 			Name:      "Invalid payload",
@@ -1347,9 +1351,9 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedStatus:  http.StatusBadRequest,
-			ExpectedError:   errors.Payload.InvalidPayloadUserError.ErrorMsg,
-			ExpectedJSON:    jsonInvalidUserPayloadError,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Payload.InvalidPayloadUserError.ErrorMsg,
+			ExpectedJSON:   jsonInvalidUserPayloadError,
 		},
 		{
 			Name:      "User not found (username)",
@@ -1362,9 +1366,9 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
-			ExpectedStatus:  http.StatusUnauthorized,
-			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
-			ExpectedJSON:    jsonWrongCredentialsError,
+			ExpectedStatus: http.StatusUnauthorized,
+			ExpectedError:  errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:   jsonWrongCredentialsError,
 		},
 		{
 			Name:      "User not found (email)",
@@ -1377,9 +1381,9 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
-			ExpectedStatus:  http.StatusUnauthorized,
-			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
-			ExpectedJSON:    jsonWrongCredentialsError,
+			ExpectedStatus: http.StatusUnauthorized,
+			ExpectedError:  errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:   jsonWrongCredentialsError,
 		},
 		{
 			Name:      "JWT Secret missing",
@@ -1391,10 +1395,10 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
-					AddRow(userId, username, email, pwHash))
+						AddRow(userId, username, email, pwHash))
 			},
-			ExpectedStatus:  http.StatusInternalServerError,
-			ExpectedError:   errors.Internal.JwtSecretMissingError.ErrorMsg,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError:  errors.Internal.JwtSecretMissingError.ErrorMsg,
 		},
 		{
 			Name:      "Error during get query (email)",
@@ -1408,8 +1412,8 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WillReturnError(simulatedDbError)
 
 			},
-			ExpectedStatus:  http.StatusInternalServerError,
-			ExpectedJSON:    jsonSimulatedDbError,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON:   jsonSimulatedDbError,
 		},
 		{
 			Name:      "Error during get query (username)",
@@ -1422,8 +1426,8 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 					WithArgs(username).
 					WillReturnError(simulatedDbError)
 			},
-			ExpectedStatus:  http.StatusInternalServerError,
-			ExpectedJSON:    jsonSimulatedDbError,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON:   jsonSimulatedDbError,
 		},
 		{
 			Name:      "Error during set last logged in query",
@@ -1438,8 +1442,8 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnError(simulatedDbError)
 			},
-			ExpectedStatus:  http.StatusInternalServerError,
-			ExpectedJSON:    jsonSimulatedDbError,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON:   jsonSimulatedDbError,
 		},
 	}
 	testutil.RunHandlerTests(t, authHandler.HandleLogin, mock, tests)
