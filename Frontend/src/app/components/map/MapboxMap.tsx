@@ -512,9 +512,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           {/* Marker Data Card */}
           <div className="px-2 sm:px-3 lg:px-4">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4" id="onboarding-step-3">
-              <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
+              {/* <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
                 Marker Data
-              </h2>
+              </h2> */}
               {isMarkerVisible ? (
                 <Suspense
                   fallback={<div className="animate-pulse">Loading...</div>}
