@@ -310,12 +310,11 @@ def calculate_avg_spot_dimensions(cars):
     avg_width_pixels = np.median(widths)
     avg_length_pixels = np.median(lengths)
 
-    #previous spot_width_meters=2, spot_length_meters=3, spot_width=18, spot_length =32
-
+    #cross product based on optimal values found previously
     avg_width_meters = 2 * avg_width_pixels / 18
-    avg_length_meters = 3* avg_length_pixels / 32
+    avg_length_meters = 3.2 * avg_length_pixels / 18
 
-    #print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
+    print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
 def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
@@ -395,11 +394,9 @@ def detect_empty_spots_all_cases(cars, avg_spot_width, avg_spot_length, gap_thre
     cars_sorted_long = sorted(cars, key=lambda point: (point[0], point[1]))
     empty_spots_long = detect_empty_spots(cars_sorted_long, avg_spot_width, avg_spot_length, gap_threshold_meters)
 
-    # Sort by latitude first, then detect empty spots
     cars_sorted_lat = sorted(cars, key=lambda point: (point[1], point[0]))
     empty_spots_lat = detect_empty_spots(cars_sorted_lat, avg_spot_width, avg_spot_length, gap_threshold_meters)
 
-    # Combine both lists and remove duplicates
     all_spots = empty_spots_long + empty_spots_lat
     unique_spots = list({(tuple(spot[0]), spot[1]): spot for spot in all_spots}.values())
     
@@ -605,11 +602,11 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    main(-6.2576, 53.3388, -6.2566, 53.3394)
+    #main(-6.2576, 53.3388, -6.2566, 53.3394)
     main(-6.2608, 53.3464, -6.2598, 53.347)
     main(-6.2617, 53.3462, -6.2606, 53.3469)
     main(-6.2854, 53.3511, -6.2843, 53.3517)
     main(-6.2893, 53.3486, -6.2883, 53.3492)
     main(-6.2899, 53.3473, -6.2889, 53.3479)
     main(-6.2903, 53.349, -6.2893, 53.3496) 
-    main(-6.2657, 53.3567, -6.2646, 53.3574)
+    #main(-6.2657, 53.3567, -6.2646, 53.3574)
