@@ -1,6 +1,8 @@
 \documentclass{report}
 \usepackage{titling} % For subtitle
 \usepackage{tocloft} % For customizing TOC formatting
+\usepackage{soul} % For highlighting text
+\usepackage{xcolor}
 
 % Manually setting the margins
 \setlength{\textwidth}{\dimexpr 15.4cm}  % Width of text area
@@ -15,6 +17,9 @@
 % Set the main font to Helvetica
 \usepackage[scaled]{helvet}
 \renewcommand{\rmdefault}{phv}
+
+% Set highlight colour
+\sethlcolor{yellow}
 
 \begin{document}
 
@@ -37,20 +42,21 @@
 % Main Body
 \chapter{Introduction}
 \section{Proposed Hypothesis}
-Our project goal is to develop an app to provide “services at a glance” in Dublin county. In our research, we couldn’t find a singular system that allows users to gain a general overview of public amenities, for example, parking, bike infrastructure, or public transport. In Ireland and the United Kingdom, the prevalence of proper digitised records in county administrations varies wildly (Lynn et al., 2023). Some make use of state-of-the-art geographical information systems (GIS) while others rely on spreadsheets which are manually kept up to date. (McGuirk and MacLaran, 2001) A system that would allow users to quickly inspect a combined dataset grounded in automatically generated, real-world data could accelerate processes like planning permissions, urban development, or resource allocation.\\
+Our project goal is to develop an application that provides “services at a glance” in county Dublin. In our preliminary research, we couldn’t find a singular system that allowed users to gain a general overview of public amenities, for example, parking, bike infrastructure, or public transport. In Ireland and the United Kingdom, the prevalence of proper digitised records in county administrations varies wildly (Lynn et al., 2023). Some make use of state-of-the-art geographical information systems (GIS) while others rely on spreadsheets which are manually kept up to date. (McGuirk and MacLaran, 2001) A system that would allow users to quickly inspect a combined dataset grounded in automatically generated, real-world data could accelerate processes like planning permissions, urban development, or resource allocation.\\ \\
 Prior to user evaluation, exploratory work was conducted in the forms of a market research survey to answer key demographic \& product questions:
-\begin{itemize}
+\begin{enumerate}
     \item Who is our primary target user?
     \item What kind of amenity data do they access and how?
     \item What devices/tools do they primarily use?
     \item Are they satisfied with those tools?
     \item Would they consider Magpie useful in filling the gaps in their toolset?
-\end{itemize}
-Responses from the survey further cemented our user personas created beforehand, and helped implement additional features prior to the user evaluation.
-User persona – urban planner (include sector charts, device chart, tool satisfaction chart, magpie usefulness chart)
+\end{enumerate}
+Responses from the survey further cemented the need of Magpie \hl{(figure A)} for both professionals \& regular users; it also helped us polish our user personas created beforehand \hl{(figure B)} in addition to helping us implement additional features \hl{(figure C)} prior to the user evaluation such as a dashboard with search functionality and filters.\\ \\
+Magpie has remedied the first issue of fragmented information on amenities, and through this user evaluation, we hope to address the second issue which is making the access to this information easy, quick \& accessible.
 
 \chapter{Experimental Methods}
-\section{Method 1}
+The user experience evaluation of Magpie uses qualitative and quantitative data collected through mixed methods.
+\section{Uncontrolled Usability Testing}
 % Details of the first method
 \section{Method 2}
 % Details of the second method
