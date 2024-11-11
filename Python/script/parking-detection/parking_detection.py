@@ -320,7 +320,7 @@ def calculate_avg_spot_dimensions(cars):
     print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
-def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
+def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12, angle_threshold=20):
     """
     Detects empty spots in rows of parked cars based on detected car bounding box centers
     
@@ -329,7 +329,9 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         avg_spot_width (float): Average width of a parking spot in meters
         avg_spot_length (float): Average length of a parking spot in meters
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
-        
+        angle_threshold (float): Maximum angle difference (in degrees) to classify as horizontal or vertical.
+
+
     Returns:
         list: Coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
     """
@@ -341,13 +343,16 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         x_next, y_next = cars[i + 1]
         
         gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
-        angle = math.atan2(y_next - y_current, x_next - x_current)
-        print(f'gap distance: {gap_distance}, angle: {math.degrees(angle)}')
+        angle = math.degrees(math.atan2(y_next - y_current, x_next - x_current))
+        adjusted_angle = abs(angle % 180) 
+
+        print(f'gap distance: {gap_distance}, angle: {adjusted_angle}')
         
         avg_half_width = avg_spot_width / 2
         avg_half_length = avg_spot_length / 2
         
-        if abs(math.cos(angle)) > 0.9:  #Horizontally placed cars
+        if abs(adjusted_angle) < angle_threshold or abs(adjusted_angle - 180) < angle_threshold:  #Horizontally placed cars
+
             adjusted_gap = gap_distance - 2 * avg_half_width
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > avg_spot_width:
@@ -360,7 +365,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     print('horizontal')
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
-        elif abs(math.sin(angle)) > 0.9:  #Vertically placed cars
+        elif abs(adjusted_angle - 90) < angle_threshold:  #Vertically placed cars
+
             adjusted_gap = gap_distance - 2 * avg_half_length
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > avg_spot_length:
