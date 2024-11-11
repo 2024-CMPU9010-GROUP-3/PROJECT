@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Providers from "./providers";
 import "./globals.css";
 import { AuthProvider } from '@/app/context/AuthContext';
+import { Onborda, OnbordaProvider } from "onborda";
+import { steps } from "./components/onboarding/steps";
+import { TourCard } from "./components/onboarding/card";
 
 
 export const metadata: Metadata = {
@@ -11,14 +14,27 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body className={`antialiased min-h-screen`}>
+      <body className="antialiased min-h-screen">
         <AuthProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            <OnbordaProvider>
+              <Onborda
+                steps={steps}
+                showOnborda={true}
+                shadowRgb="0,0,0"
+                shadowOpacity="0.8"
+                cardComponent={TourCard}
+                cardTransition={{ duration: 1, type: "spring" }}
+              >
+                {children}
+              </Onborda>
+            </OnbordaProvider>
+          </Providers>
         </AuthProvider>
       </body>
     </html>
