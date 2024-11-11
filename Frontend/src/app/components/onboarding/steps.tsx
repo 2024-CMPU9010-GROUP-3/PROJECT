@@ -25,7 +25,7 @@ export const steps: Tour[] = [
                     When you&apos;re ready, hit <strong>next!</strong>
                 </>,
                 selector: "#onboarding-step-1",
-                side: "bottom",
+                side: "left-top",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,
@@ -40,7 +40,7 @@ export const steps: Tour[] = [
                     Note, the larger the radius- the longer it&apos;ll take to load the data!
                 </>,
                 selector: "#onboarding-step-2",
-                side: "bottom",
+                side: "left-top",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,
@@ -101,8 +101,8 @@ export const steps: Tour[] = [
                     <br /> <br />
                     Enjoy using <i>Magpie</i>!
                 </>,
-                selector: "#onboarding-step-1",
-                side: "bottom",
+                selector: "#onboarding-step-6",
+                side: "right-bottom",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,
