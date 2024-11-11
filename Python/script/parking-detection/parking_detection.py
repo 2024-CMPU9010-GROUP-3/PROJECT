@@ -306,9 +306,7 @@ def calculate_avg_spot_dimensions(cars):
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels (float): Average width and length of the cars identified in meters and in pixels
     """
     widths = [car[2] for car in cars]
-    print(widths)
     lengths = [car[3] for car in cars]
-    print(lengths)
     avg_width_pixels = np.median(widths)
     avg_length_pixels = np.median(lengths)
 
@@ -317,7 +315,7 @@ def calculate_avg_spot_dimensions(cars):
     avg_width_meters = 2 * avg_width_pixels / 18
     avg_length_meters = 3* avg_length_pixels / 32
 
-    print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
+    #print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
 def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
@@ -333,7 +331,6 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
     Returns:
         list: Coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
     """
-    cars = sorted(cars, key=lambda point: (point[1], point[0])) 
     empty_spots = []
 
     for i in range(len(cars) - 1):
@@ -341,13 +338,12 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         x_next, y_next = cars[i + 1]
         
         gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
-        print(f'gap distance: {gap_distance}')
+        #print(f'gap distance: {gap_distance}')
 
         x_shift = abs(x_next - x_current)
         y_shift = abs(y_next - y_current)
-        print(f'x_shift: {x_shift}, y_shift: {y_shift}')
+        #print(f'x_shift: {x_shift}, y_shift: {y_shift}')
 
-        
         avg_half_width = avg_spot_width / 2
         avg_half_length = avg_spot_length / 2
         
@@ -377,10 +373,37 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], 'vertical'))
                     print('vertical')
-                    print(adjusted_gap, avg_spot_length, num_spots)
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
     return empty_spots
+
+def detect_empty_spots_all_cases(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
+    """
+    Detects empty spots in rows of parked cars based on detected car bounding box centers.
+    We do the detection twice sorting by longitude and then latitude, as vertical spots were not being identified
+    correctly in the inital method as the rows weren't grouped together. So this allows to identify all the different empty parking spots in both orientations
+    
+    Params:
+        cars (list): List of car bounding box center coordinates
+        avg_spot_width (float): Average width of a parking spot in meters
+        avg_spot_length (float): Average length of a parking spot in meters
+        gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
+
+    Returns:
+        list: Coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
+    """
+    cars_sorted_long = sorted(cars, key=lambda point: (point[0], point[1]))
+    empty_spots_long = detect_empty_spots(cars_sorted_long, avg_spot_width, avg_spot_length, gap_threshold_meters)
+
+    # Sort by latitude first, then detect empty spots
+    cars_sorted_lat = sorted(cars, key=lambda point: (point[1], point[0]))
+    empty_spots_lat = detect_empty_spots(cars_sorted_lat, avg_spot_width, avg_spot_length, gap_threshold_meters)
+
+    # Combine both lists and remove duplicates
+    all_spots = empty_spots_long + empty_spots_lat
+    unique_spots = list({(tuple(spot[0]), spot[1]): spot for spot in all_spots}.values())
+    
+    return unique_spots
 
 def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
     """
@@ -465,7 +488,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
             cars.append((x_center, y_center, width, height))
 
     avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(cars)
-    empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
+    empty_spots = detect_empty_spots_all_cases(all_detections, avg_width_meters, avg_length_meters)
     draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude, avg_width_pixels, avg_length_pixels)
     empty_spots_coords = [spot for spot, _ in empty_spots]
     all_detections.extend(empty_spots_coords)
