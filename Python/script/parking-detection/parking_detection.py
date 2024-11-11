@@ -347,7 +347,7 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         avg_half_width = avg_spot_width / 2
         avg_half_length = avg_spot_length / 2
         
-        if abs(math.cos(angle)) > 0.5:  #Horizontally placed cars
+        if abs(math.cos(angle)) > 0.9:  #Horizontally placed cars
             adjusted_gap = gap_distance - 2 * avg_half_width
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > avg_spot_width:
@@ -360,22 +360,23 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     print('horizontal')
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
-        elif abs(math.sin(angle)) > 0.5:  #Vertically placed cars
+        elif abs(math.sin(angle)) > 0.9:  #Vertically placed cars
             adjusted_gap = gap_distance - 2 * avg_half_length
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > avg_spot_length:
                 num_spots = int(adjusted_gap // avg_spot_length)
                 
                 for j in range(1, num_spots + 1):
-                    empty_x_center = x_current
+                    empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], 'vertical'))
                     print('vertical')
+                    print(adjusted_gap, avg_spot_length, num_spots)
                     print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
                     
     return empty_spots
 
-def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length,):
+def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
     """
     Draws the empty parking spots on the image
 
@@ -581,5 +582,5 @@ if __name__ == "__main__":
     main(-6.2854, 53.3511, -6.2843, 53.3517)
     main(-6.2893, 53.3486, -6.2883, 53.3492)
     main(-6.2899, 53.3473, -6.2889, 53.3479)
-    main(-6.2903, 53.349, -6.2893, 53.3496)
+    main(-6.2903, 53.349, -6.2893, 53.3496) # vertical 
     main(-6.2657, 53.3567, -6.2646, 53.3574)
