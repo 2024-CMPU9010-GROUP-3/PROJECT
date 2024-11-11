@@ -133,23 +133,18 @@ const (
 				"ProfilePicture": "%s"
 			`
 
-	jsonLoginUserWithEmail = `{
-				"Email": "%s",
-				"Password": "%s"
-			}`
-
-	jsonLoginUserWithUsername = `{
-				"Username": "%s",
+	jsonLoginValid = `{
+				"UsernameOrEmail": "%s",
 				"Password": "%s"
 			}`
 
 	jsonLoginUserWithUsernameInvalid = `{
-				"Username": "%s",
+				"UsernameOrEmail": "%s",
 				"Password": "%s"
 			`
 
 	jsonLoginUserWithUsernamePasswordMissing = `{
-				"Username": "%s"
+				"UsernameOrEmail": "%s"
 			}`
 
 	jsonLoginUserUsernameAndEmailMissing = `{
@@ -1274,7 +1269,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
@@ -1290,8 +1285,12 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHash))
@@ -1306,8 +1305,12 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHashAlt))
@@ -1360,8 +1363,12 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
@@ -1375,9 +1382,13 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
+				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
@@ -1390,7 +1401,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       jwtSecretMissingEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
@@ -1405,9 +1416,13 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(email).
+					WillReturnError(simulatedDbError)
+
+				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(email).
 					WillReturnError(simulatedDbError)
 
@@ -1420,8 +1435,12 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
 					WillReturnError(simulatedDbError)
@@ -1434,7 +1453,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).

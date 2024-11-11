@@ -286,10 +286,10 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var userLogin db.Login
 	var err error
 
-	if len(loginDto.Username) != 0 {
-		userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
-	} else {
-		userLogin, err = db.New(dbConn).GetLoginByEmail(*dbCtx, loginDto.Email)
+	userLogin, err = db.New(dbConn).GetLoginByEmail(*dbCtx, loginDto.UsernameOrEmail)
+	if err != nil {
+		// try again with username
+		userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.UsernameOrEmail)
 	}
 
 	if err != nil {
