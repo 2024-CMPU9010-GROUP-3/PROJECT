@@ -27,8 +27,6 @@ type HandlerTestDefinition struct {
 	ExpectedResponseFields map[string]string
 }
 
-var jwtPattern = regexp.MustCompile(`^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$`)
-
 func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
 	tt.MockSetup(mock)
 

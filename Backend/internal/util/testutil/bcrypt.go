@@ -14,8 +14,6 @@ type bcryptArgument struct {
 
 var bcryptHashPattern = regexp.MustCompile(`^\$2[ayb]\$.{56}$`)
 
-var expiresToleranceStr = `5s`
-
 func (b bcryptArgument) Match(arg interface{}) bool {
 	hash, ok := arg.(string)
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(b.expected))
