@@ -12,20 +12,61 @@ import {
 } from "@/lib/interfaces/types";
 import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
 import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
-import { GeoJSON, FeatureCollection } from "geojson";
+import { GeoJSON } from "geojson";
+
 // import { FloatingDock } from "@/components/ui/floating-dock";
 // import { IconHome } from "@tabler/icons-react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { Grid } from "react-loader-spinner";
 import { Badge } from "@/components/ui/badge";
+import {
+  accessibleParkingLayer,
+  bikeSharingLayer,
+  bikeStandLayer,
+  carParkLayer,
+  coachParkingLayer,
+  libraryLayer,
+  parkingClusterStyles,
+  parkingMeterLayer,
+  publicBinLayer,
+  publicToiletLayer,
+  publicWifiLayer,
+  waterFountainLayer,
+} from "./utils/MapboxLayers";
+import MultipleSelector, {
+  Option,
+} from "@/components/ui/registry/multiple-select";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
+type GeoJsonCollection =
+  | "parking_meter"
+  | "bike_stand"
+  | "public_wifi_access_point"
+  | "library"
+  | "multistorey_car_parking"
+  | "drinking_water_fountain"
+  | "public_toilet"
+  | "bike_sharing_station"
+  | "parking"
+  | "accessible_parking"
+  | "public_bins"
+  | "coach_parking";
 
-const initialGeoJson: GeoJSON = {
-  type: "FeatureCollection",
-  features: [],
-};
+const MultiSelectOptions: Option[] = [
+  { label: "Parking Meter", value: "parking_meter" },
+  { label: "Bike Stand", value: "bike_stand" },
+  { label: "Public Wifi", value: "public_wifi_access_point" },
+  { label: "Library", value: "library" },
+  { label: "Multi Storey Car Park", value: "multistorey_car_parking" },
+  { label: "Drinking Water Fountain", value: "drinking_water_fountain" },
+  { label: "Public Toilet", value: "public_toilet" },
+  { label: "Bike Sharing Station", value: "bike_sharing_station" },
+  { label: "Parking", value: "parking" },
+  { label: "Accessible Parking", value: "accessible_parking" },
+  { label: "Public Bins", value: "public_bins" },
+  { label: "Coach Parking", value: "coach_parking" },
+];
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
@@ -34,8 +75,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     latitude: 0,
     longitude: 0,
   });
-  const [pointsGeoJson, setPointsGeoJson] =
-    useState<FeatureCollection>(initialGeoJson);
+  const [pointsGeoJson, setPointsGeoJson] = useState<Record<
+    string,
+    GeoJSON
+  > | null>(null);
   // const [markerSquareSize, setMarkerSquareSize] = useState<number>(0.027);
   const [currentPositionCords, setCurrentPositionCords] = useState<Coordinates>(
     { latitude: 0, longitude: 0 }
@@ -70,14 +113,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     return coordinates;
   });
 
-  // Checkbox code begins
+  const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
 
-  // Checkbox code ends
-
-  useEffect(() => {
-    console.log("Slider Value Commit>>>>>", sliderValue);
-    console.log("Slider Value Display>>>>", sliderValueDisplay);
-  }, [sliderValue, sliderValueDisplay]);
+  const handleAmenitiesFilterChange = (selectedOptions: Option[]) => {
+    setAmenitiesFilter(selectedOptions.map((option) => option.value));
+  };
 
   // Handle map click event
   const handleMapClick = (event: unknown) => {
@@ -89,38 +129,58 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     }
   };
 
-  function convertToGeoJson(points: Point[]): GeoJSON {
-    console.log("Points>>>", points);
+  function convertToGeoJson(points: Point[]): Record<string, GeoJSON> {
+    const featureTypes: GeoJsonCollection[] = [
+      "parking_meter",
+      "bike_stand",
+      "public_wifi_access_point",
+      "library",
+      "multistorey_car_parking",
+      "drinking_water_fountain",
+      "public_toilet",
+      "bike_sharing_station",
+      "parking",
+      "accessible_parking",
+      "public_bins",
+      "coach_parking",
+    ];
 
-    return {
-      type: "FeatureCollection",
-      features: points?.map((point) => ({
-        type: "Feature",
-        geometry: {
-          type: "Point",
-          coordinates: [
-            (point?.Longlat as CoordinatesForGeoJson)?.coordinates[0],
-            (point?.Longlat as CoordinatesForGeoJson)?.coordinates[1],
-          ],
-        },
-        properties: {
-          Id: point.Id,
-          Type: point.Type,
-        },
-      })),
-    };
+    const geoJsonCollection: Record<string, GeoJSON> = {};
+    featureTypes.forEach((type: string) => {
+      geoJsonCollection[type] = {
+        type: "FeatureCollection",
+        features: points
+          ?.filter((point) => point.Type === type)
+          .map((point) => ({
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [
+                (point?.Longlat as CoordinatesForGeoJson)?.coordinates[0],
+                (point?.Longlat as CoordinatesForGeoJson)?.coordinates[1],
+              ],
+            },
+            properties: {
+              Id: point.Id,
+              Type: point.Type,
+            },
+          })),
+      };
+    });
+
+    return geoJsonCollection;
   }
 
   const fetchPointsFromDB = async (
     longitude: number,
     latitude: number,
-    sliderValue: number
+    sliderValue: number,
+    amenitiesFilter: string[] = []
   ) => {
-    console.log("fetchPointsFromDB>>>", longitude, latitude, sliderValue);
     const response = await fetch(
       `/api/points?long=${longitude}&lat=${latitude}&radius=${
         sliderValue * 100
-      }`,
+      }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
         credentials: "include",
@@ -129,8 +189,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     const data = await response.json();
     const geoJson = convertToGeoJson(data?.response?.content);
 
-    setPointsGeoJson(geoJson as FeatureCollection);
-    console.log("GeoJson>>>", geoJson);
+    setPointsGeoJson(geoJson);
   };
 
   useEffect(() => {
@@ -172,16 +231,12 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     fetchPointsFromDB(
       coordinates?.longitude,
       coordinates?.latitude,
-      sliderValue
+      sliderValue,
+      amenitiesFilter
     );
-    console.log(coordinates, sliderValue);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [coordinates, sliderValue]);
-
-  useEffect(() => {
-    console.log(currentPositionCords);
-  }, [currentPositionCords]);
+  }, [coordinates, sliderValue, amenitiesFilter]);
 
   const options = {
     enableHighAccuracy: true,
@@ -270,47 +325,117 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               >
                 <Layer {...layerStyle} />
               </Source>
-              <Suspense fallback={<div>Loading...</div>}>
-                <Source
-                  id="points"
-                  type="geojson"
-                  data={pointsGeoJson}
-                  cluster={true}
-                  clusterMaxZoom={14} // Max zoom to cluster points on
-                  clusterRadius={50}
-                >
-                  <Layer
-                    id="clusters"
-                    type="symbol"
-                    layout={{
-                      "icon-image": "parking-garage",
-                      "icon-size": 1.5,
-                      "icon-allow-overlap": true,
-                    }}
-                  />
-                  <Layer
-                    id="cluster-count"
-                    type="symbol"
-                    layout={{
-                      "text-field": "{point_count_abbreviated}",
-                      "text-font": [
-                        "DIN Offc Pro Medium",
-                        "Arial Unicode MS Bold",
-                      ],
-                      "text-size": 12,
-                    }}
-                  />
-                  <Layer
-                    id="unclustered-point"
-                    type="symbol"
-                    layout={{
-                      "icon-image": "parking-garage",
-                      "icon-size": 1.5,
-                      "icon-allow-overlap": true,
-                    }}
-                  />
-                </Source>
-              </Suspense>
+              {/* Parking Source */}
+              <Source
+                id="points"
+                type="geojson"
+                data={pointsGeoJson?.parking}
+                cluster={true}
+                clusterMaxZoom={14} // Max zoom to cluster points on
+                clusterRadius={50}
+              >
+                <Layer {...parkingClusterStyles.symbol} />
+                <Layer {...parkingClusterStyles.count} />
+                <Layer {...parkingClusterStyles.unclustered} />
+              </Source>
+              {/* Parking Meter Source */}
+              <Source
+                id="parking-meters"
+                type="geojson"
+                data={pointsGeoJson?.parking_meter}
+              >
+                <Layer {...parkingMeterLayer} />
+              </Source>
+
+              {/* Bike Stand Source */}
+              <Source
+                id="bike-stands"
+                type="geojson"
+                data={pointsGeoJson?.bike_stand}
+              >
+                <Layer {...bikeStandLayer} />
+              </Source>
+
+              {/* Public Wifi Source */}
+              <Source
+                id="public-wifi"
+                type="geojson"
+                data={pointsGeoJson?.public_wifi_access_point}
+              >
+                <Layer {...publicWifiLayer} />
+              </Source>
+
+              {/* Library Source */}
+              <Source
+                id="libraries"
+                type="geojson"
+                data={pointsGeoJson?.library}
+              >
+                <Layer {...libraryLayer} />
+              </Source>
+
+              {/* Multi Storey Car Park Source */}
+              <Source
+                id="car-parks"
+                type="geojson"
+                data={pointsGeoJson?.multistorey_car_parking}
+              >
+                <Layer {...carParkLayer} />
+              </Source>
+
+              {/* Drinking Water Fountain Source */}
+              <Source
+                id="water-fountains"
+                type="geojson"
+                data={pointsGeoJson?.drinking_water_fountain}
+              >
+                <Layer {...waterFountainLayer} />
+              </Source>
+
+              {/* Public Toilet Source */}
+              <Source
+                id="public-toilets"
+                type="geojson"
+                data={pointsGeoJson?.public_toilet}
+              >
+                <Layer {...publicToiletLayer} />
+              </Source>
+
+              {/* Bike Sharing Station Source */}
+              <Source
+                id="bike-sharing"
+                type="geojson"
+                data={pointsGeoJson?.bike_sharing_station}
+              >
+                <Layer {...bikeSharingLayer} />
+              </Source>
+
+              {/* Accessible Parking Source */}
+              <Source
+                id="accessible-parking"
+                type="geojson"
+                data={pointsGeoJson?.accessible_parking}
+              >
+                <Layer {...accessibleParkingLayer} />
+              </Source>
+
+              {/* Public Bins Source */}
+              <Source
+                id="public-bins"
+                type="geojson"
+                data={pointsGeoJson?.public_bins}
+              >
+                <Layer {...publicBinLayer} />
+              </Source>
+
+              {/* Coach Parking Source*/}
+              <Source
+                id="coach-parking"
+                type="geojson"
+                data={pointsGeoJson?.coach_parking}
+              >
+                <Layer {...coachParkingLayer} />
+              </Source>
             </Map>
           </DeckGL>
         ) : (
@@ -377,16 +502,196 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Suspense
                   fallback={<div className="animate-pulse">Loading...</div>}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                      Parking
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                    >
-                      {pointsGeoJson?.features?.length || 0} Spots
-                    </Badge>
+                  <div className="space-y-2">
+                    {/* Parking */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Parking
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(pointsGeoJson?.parking as GeoJSON.FeatureCollection)
+                          ?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
+
+                    {/* Parking Meters */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Parking Meters
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.parking_meter as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
+
+                    {/* Bike Stands */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Bike Stands
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.bike_stand as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
+
+                    {/* Public WiFi */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Public WiFi
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.public_wifi_access_point as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Points
+                      </Badge>
+                    </div>
+
+                    {/* Libraries */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Libraries
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(pointsGeoJson?.library as GeoJSON.FeatureCollection)
+                          ?.features?.length || 0}{" "}
+                        Locations
+                      </Badge>
+                    </div>
+
+                    {/* Multi-storey Car Parks */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Car Parks
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.multistorey_car_parking as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Locations
+                      </Badge>
+                    </div>
+
+                    {/* Water Fountains */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Water Fountains
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.drinking_water_fountain as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Fountains
+                      </Badge>
+                    </div>
+
+                    {/* Public Toilets */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Public Toilets
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.public_toilet as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Locations
+                      </Badge>
+                    </div>
+
+                    {/* Bike Sharing */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Bike Sharing
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.bike_sharing_station as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Stations
+                      </Badge>
+                    </div>
+
+                    {/* Accessible Parking */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Accessible Parking
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.accessible_parking as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
+
+                    {/* Public Bins */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Public Bins
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.public_bins as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Bins
+                      </Badge>
+                    </div>
+
+                    {/* Coach Parking */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Coach Parking
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.coach_parking as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
                   </div>
                 </Suspense>
               ) : (
@@ -398,38 +703,23 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </div>
 
           {/* Filter Options Card */}
-          {mapBoxApiKey && (
-            <div className="px-2 sm:px-3 lg:px-4">
-              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
-                <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
-                  Filter Options
-                </h2>
-                <div className="space-y-2">
-                  {[
-                    "Coach Parking",
-                    "Bike Stand",
-                    "Public Toilet",
-                    "Parking Meter",
-                    "Parking",
-                  ].map((option, index) => (
-                    <label
-                      key={index}
-                      className="flex items-center space-x-3 group cursor-pointer hover:bg-gray-50 p-2 rounded-md transition-colors min-h-[44px] touch-manipulation"
-                    >
-                      <input
-                        type="checkbox"
-                        id={`option${index + 1}`}
-                        name={`option${index + 1}`}
-                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-colors"
-                      />
-                      <span className="text-sm sm:text-base text-gray-700 group-hover:text-gray-900">
-                        {option}
-                      </span>
-                    </label>
-                  ))}
-                </div>
+          {mapBoxApiKey ? (
+            <>
+              <div className="w-[90%] mx-auto bg-white">
+                <MultipleSelector
+                  defaultOptions={MultiSelectOptions}
+                  onChange={handleAmenitiesFilterChange}
+                  placeholder="Select your amenities"
+                  emptyIndicator={
+                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                      no results found.
+                    </p>
+                  }
+                />
               </div>
-            </div>
+            </>
+          ) : (
+            ""
           )}
         </div>
       </div>
