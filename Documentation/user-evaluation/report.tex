@@ -1,14 +1,24 @@
 \documentclass{report}
-\usepackage{fontspec} % For modern fonts
 \usepackage{titling} % For subtitle
 \usepackage{tocloft} % For customizing TOC formatting
 
+% Manually setting the margins
+\setlength{\textwidth}{\dimexpr 15.4cm}  % Width of text area
+\setlength{\textheight}{\dimexpr 23.4cm} % Height of text area
+\setlength{\oddsidemargin}{-0.25in}      % Left margin (negative value reduces margin)
+\setlength{\evensidemargin}{-0.25in}     % Even page left margin (for two-sided printing)
+\setlength{\topmargin}{-0.5in}           % Top margin
+\setlength{\headheight}{14pt}            % Space for header (optional)
+\setlength{\headsep}{25pt}               % Space between header and text
+\setlength{\footskip}{30pt}              % Distance from bottom of text to footer
+
 % Set the main font to Helvetica
-\setmainfont{Helvetica}
+\usepackage[scaled]{helvet}
+\renewcommand{\rmdefault}{phv}
 
 \begin{document}
 
-% Title Page Formatting - need to figure out subtitle bullshit
+% Title Page Formatting
 \title{MSc in Computing - Team Project}
 \title{User Evaluation Report - Magpie (Group 3)}
 \author{Anais Blenet\\Saul Burgess\\Yuanshuo Du\\Jessica Fornetti\\Andreas Kraus}
@@ -27,7 +37,17 @@
 % Main Body
 \chapter{Introduction}
 \section{Proposed Hypothesis}
-% Write hypothesis here
+Our project goal is to develop an app to provide “services at a glance” in Dublin county. In our research, we couldn’t find a singular system that allows users to gain a general overview of public amenities, for example, parking, bike infrastructure, or public transport. In Ireland and the United Kingdom, the prevalence of proper digitised records in county administrations varies wildly (Lynn et al., 2023). Some make use of state-of-the-art geographical information systems (GIS) while others rely on spreadsheets which are manually kept up to date. (McGuirk and MacLaran, 2001) A system that would allow users to quickly inspect a combined dataset grounded in automatically generated, real-world data could accelerate processes like planning permissions, urban development, or resource allocation.\\
+Prior to user evaluation, exploratory work was conducted in the forms of a market research survey to answer key demographic \& product questions:
+\begin{itemize}
+    \item Who is our primary target user?
+    \item What kind of amenity data do they access and how?
+    \item What devices/tools do they primarily use?
+    \item Are they satisfied with those tools?
+    \item Would they consider Magpie useful in filling the gaps in their toolset?
+\end{itemize}
+Responses from the survey further cemented our user personas created beforehand, and helped implement additional features prior to the user evaluation.
+User persona – urban planner (include sector charts, device chart, tool satisfaction chart, magpie usefulness chart)
 
 \chapter{Experimental Methods}
 \section{Method 1}
