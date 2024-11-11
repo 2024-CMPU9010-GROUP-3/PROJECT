@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Providers from "./providers";
 import "./globals.css";
 import { AuthProvider } from '@/app/context/AuthContext';
+import { Onborda, OnbordaProvider } from "onborda";
+import { steps } from "./components/onboarding/steps";
 
 
 export const metadata: Metadata = {
@@ -18,7 +20,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`antialiased min-h-screen`}>
         <AuthProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            <OnbordaProvider>
+              <Onborda steps={steps}>
+                {children}
+              </Onborda>
+            </OnbordaProvider>
+          </Providers>
         </AuthProvider>
       </body>
     </html>
