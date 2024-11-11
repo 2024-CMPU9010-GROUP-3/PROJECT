@@ -291,7 +291,7 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	} else {
 		userLogin, err = db.New(dbConn).GetLoginByEmail(*dbCtx, loginDto.Email)
 	}
-	
+
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Auth.WrongCredentialsError, w)
@@ -347,19 +347,9 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := http.Cookie{
-		Name:     "magpie_auth",
-		Value:    tokenString,
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-		Expires:  time.Now().Add(parsedExpiry),
-		Path:     "/",
-	}
-
-	http.SetCookie(w, &cookie)
-
-	tokenDto := dtos.UserIdDto{
+	tokenDto := dtos.UserLoginResponseDto{
 		UserId: userLogin.ID,
+		Token:  tokenString,
 	}
 
 	resp.SendResponse(dtos.ResponseContentDto{Content: tokenDto, HttpStatus: http.StatusOK}, w)
