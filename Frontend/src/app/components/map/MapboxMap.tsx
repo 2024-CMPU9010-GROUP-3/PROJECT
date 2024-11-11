@@ -146,7 +146,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     ];
 
     const geoJsonCollection: Record<string, GeoJSON> = {};
-
     featureTypes.forEach((type: string) => {
       geoJsonCollection[type] = {
         type: "FeatureCollection",
@@ -503,18 +502,196 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Suspense
                   fallback={<div className="animate-pulse">Loading...</div>}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                      Parking
-                    </span>
-                    <Badge
-                      variant="secondary"
-                      className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                    >
-                      {(pointsGeoJson as unknown as GeoJSON.FeatureCollection)
-                        ?.features?.length || 0}{" "}
-                      Spots
-                    </Badge>
+                  <div className="space-y-2">
+                    {/* Parking */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Parking
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(pointsGeoJson?.parking as GeoJSON.FeatureCollection)
+                          ?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
+
+                    {/* Parking Meters */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Parking Meters
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.parking_meter as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
+
+                    {/* Bike Stands */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Bike Stands
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.bike_stand as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
+
+                    {/* Public WiFi */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Public WiFi
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.public_wifi_access_point as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Points
+                      </Badge>
+                    </div>
+
+                    {/* Libraries */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Libraries
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(pointsGeoJson?.library as GeoJSON.FeatureCollection)
+                          ?.features?.length || 0}{" "}
+                        Locations
+                      </Badge>
+                    </div>
+
+                    {/* Multi-storey Car Parks */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Car Parks
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.multistorey_car_parking as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Locations
+                      </Badge>
+                    </div>
+
+                    {/* Water Fountains */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Water Fountains
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.drinking_water_fountain as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Fountains
+                      </Badge>
+                    </div>
+
+                    {/* Public Toilets */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Public Toilets
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.public_toilet as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Locations
+                      </Badge>
+                    </div>
+
+                    {/* Bike Sharing */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Bike Sharing
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.bike_sharing_station as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Stations
+                      </Badge>
+                    </div>
+
+                    {/* Accessible Parking */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Accessible Parking
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.accessible_parking as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
+
+                    {/* Public Bins */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Public Bins
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.public_bins as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Bins
+                      </Badge>
+                    </div>
+
+                    {/* Coach Parking */}
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
+                        Coach Parking
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
+                      >
+                        {(
+                          pointsGeoJson?.coach_parking as GeoJSON.FeatureCollection
+                        )?.features?.length || 0}{" "}
+                        Spots
+                      </Badge>
+                    </div>
                   </div>
                 </Suspense>
               ) : (
