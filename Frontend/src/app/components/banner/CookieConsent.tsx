@@ -4,15 +4,12 @@ import { useEffect, useState } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import Link from "next/link";
-import { useRouter } from "next/navigation"
-import { X } from "lucide-react"
-import { logout } from '@/app/components/serverActions/actions';
-import './animate.css'
+import { getCookiesAccepted, setCookiesAccepted } from '@/lib/cookies';
+import { deleteSessionFromCookies } from '@/lib/session';
 
 export function CookieConsent() {
   const [show, setShow] = useState(false)
   const [isPageLoaded, setIsPageLoaded] = useState(false)
-  const router = useRouter()
 
   useEffect(() => {
     const handlePageLoad = () => {
@@ -27,54 +24,39 @@ export function CookieConsent() {
   }, [])
 
   useEffect(() => {
+    const checkCookiesAndSession = async () => {
+      const cookiesAccepted = await getCookiesAccepted();
+      setShow(!cookiesAccepted);
+    };
+
     if (isPageLoaded) {
-      // get cookie
-      const cookieString = document.cookie;
-      const cookies = cookieString.split('; ').reduce((acc, cookie) => {
-        const [name, value] = cookie.split('=');
-        acc[name] = value;
-        return acc;
-      }, {} as Record<string, string>);
-
-      // check if cookie exists or expired
-      const hasCookie = cookies['magpie_auth'];
-      const expiryTime = cookies['magpie_auth_expiry']; 
-
-      if (hasCookie && expiryTime) {
-        const expiryDate = new Date(parseInt(expiryTime, 10));
-        const now = new Date();
-        if (now < expiryDate) {
-          setShow(false);
-        } else {
-          setShow(true);
-        }
-      } else {
-        setShow(true);
-      }
+      checkCookiesAndSession();
     }
   }, [isPageLoaded])
 
-  const handleAccept = () => {
-    setShow(false)
+  const handleAccept = async () => {
+    await setCookiesAccepted();
+    setShow(false);
   }
 
   const handleDeny = async () => {
     try {
-      // call logout operation
-      // await logout();
-      console.log('user denied cookie consent')
-      // redirect to login page
-      // router.push('/login')
-      setShow(false)
+      // delete session info
+      await deleteSessionFromCookies();
+      // record user denied cookie consent
+      console.log('User denied cookie consent');
+      // router.push('/login'); // uncomment to redirect to login page
+      // hide cookie banner
+      setShow(false);
     } catch (error) {
-      console.error("Error during logout:", error)
+      console.error("Error during handling deny:", error);
     }
   }
 
   if (!show) return null
 
   return (
-    <Alert className="fixed bottom-8 left-10 max-w-lg mx-auto bg-white dark:bg-gray-800 shadow-lg p-3 animate-slide-in">
+    <Alert className="fixed bottom-8 left-8 max-w-lg mx-auto bg-white dark:bg-gray-800 shadow-lg p-3 animate-slide-in">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <AlertDescription className="text-sm">
