@@ -189,6 +189,8 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
             cls = int(box.cls[0])
 
             if cls == 0:
+                orientation = "horizontal" if width >= height else "vertical"
+
                 rect = ((x_center, y_center), (width, height), angle_degrees)
                 box_points = cv2.boxPoints(rect)
                 box_points = np.int32(box_points)
@@ -211,7 +213,7 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
                     cv2.polylines(img, [box_points], isClosed=True, color=(255, 0, 0), thickness=2) #blue if on the road
                 else:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
-                    detections_parking.append([x_center, y_center, width, height, angle_degrees])
+                    detections_parking.append([x_center, y_center, width, height, angle_degrees, orientation])
                     cv2.polylines(img, [box_points], isClosed=True, color=(0, 0, 255), thickness=2) #red if parked
 
     cv2.imwrite(output_image_path, img)
@@ -339,14 +341,14 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
     """
     empty_spots = []
     
-    horizontal_cars = sorted([car for car in cars if car[4] == 'horizontal'], key=lambda point: point[0]) # Sort by x for horizontal alignment
-    vertical_cars = sorted([car for car in cars if car[4] == 'vertical'], key=lambda point: point[1])   # Sort by y for vertical alignment
+    horizontal_cars = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[0]) 
+    vertical_cars = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[1]) 
 
     def find_empty_spots(sorted_cars, alignment):
-        """ Detect empty spots in the provided sorted list of cars for a specific alignment """
+        """ Detect empty spots in the sorted list of cars for a specific alignment (horizontal or vertical) """
         for i in range(len(sorted_cars) - 1):
-            x_current, y_current = sorted_cars[i]
-            x_next, y_next = sorted_cars[i + 1]
+            x_current, y_current, _, _, _, _ = sorted_cars[i]
+            x_next, y_next, _, _, _, _ = sorted_cars[i + 1]
 
             gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
             avg_half_dim = avg_spot_width / 2 if alignment == 'horizontal' else avg_spot_length / 2
@@ -359,6 +361,7 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], alignment))
+                    print(f"Empty parking spot at {empty_x_center}, {empty_y_center}, {alignment}")
 
     find_empty_spots(horizontal_cars, 'horizontal')
     find_empty_spots(vertical_cars, 'vertical')
@@ -425,7 +428,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
     all_detections = []
 
     for detection in detections:
-        x_center, y_center, width, height, angle = detection
+        x_center, y_center, width, height, angle, orientation = detection
         long, lat = convert_bounding_box_to_coordinates(x_center, y_center, longitude, latitude)
 
         if isinstance(long, torch.Tensor):
@@ -434,7 +437,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
             lat = lat.item()
 
         print(f"Car coordinates: ({long}, {lat})")
-        all_detections.append([long, lat, width, height, angle]) 
+        all_detections.append([long, lat, width, height, angle, orientation]) 
 
     avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
     empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
