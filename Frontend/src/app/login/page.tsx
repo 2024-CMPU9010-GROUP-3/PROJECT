@@ -5,7 +5,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/registry/button";
 import { LoginForm } from "@/app/components/form/login-form";
-import ProtectedRoute from "@/app/components/ProtectedRoute";
 
 
 

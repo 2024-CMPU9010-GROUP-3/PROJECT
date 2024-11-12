@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation"; // useRouter
-import {commitSessionToCookies, getToken, getUUID, setToken, setUUID} from "@/lib/session";
+import {commitSessionToCookies, getToken, setToken, setUUID} from "@/lib/session";
 import {getCookiesAccepted} from "@/lib/cookies";
 
 export function LoginForm() {

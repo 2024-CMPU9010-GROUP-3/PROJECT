@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import {getToken, getUUID} from "@/lib/session";
+import { getToken } from "@/lib/session";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const router = useRouter();

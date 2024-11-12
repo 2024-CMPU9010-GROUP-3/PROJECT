@@ -5,7 +5,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/registry/button";
 import { UserAuthForm } from "@/app/components/form/user-auth-form";
-import ProtectedRoute from "@/app/components/ProtectedRoute";
 
 export const metadata: Metadata = {
   title: "Sign Up",
