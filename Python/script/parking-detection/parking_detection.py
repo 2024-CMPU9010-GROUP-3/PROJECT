@@ -156,7 +156,6 @@ def new_mask(image_path, save_path, threshold=240):
 
     cv2.imwrite(save_path, combined_mask)
 
-
 def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
     """
     Detect cars in the image using the retrained YOLO model and remove those on the road
@@ -168,7 +167,7 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         model : YOLO model.
         
     Returns:
-        A lsit of the bounding boxes for the cars not on the road
+        detections_parking (list): List of the bounding boxes for the cars not on the road [x_center, y_center, width, height, angle_degrees]
     """
     img = cv2.imread(image_path)
     results = model([img])
@@ -185,12 +184,21 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         detections = result.obb
 
         for box in detections:
-            x_min, y_min, x_max, y_max = box.xyxy[0] 
-            conf = box.conf[0] 
+            x_center, y_center, width, height, angle_radians = map(float, box.xywhr[0])
+            angle_degrees = angle_radians * (180 / math.pi) 
             cls = int(box.cls[0])
 
             if cls == 0:
-                car_region = road_mask[int(y_min):int(y_max), int(x_min):int(x_max)]
+                rect = ((x_center, y_center), (width, height), angle_degrees)
+                box_points = cv2.boxPoints(rect)
+                box_points = np.int32(box_points)
+
+                x_min = int(x_center - width / 2)
+                x_max = int(x_center + width / 2)
+                y_min = int(y_center - height / 2)
+                y_max = int(y_center + height / 2)
+
+                car_region = road_mask[y_min:y_max, x_min:x_max]
 
                 if car_region.size == 0:
                     continue
@@ -200,12 +208,11 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
 
                 if road_pixels / total_pixels > 0.5:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is on the road")
-                    cv2.rectangle(img, (int(x_min), int(y_min)), (int(x_max), int(y_max)), (255, 0, 0), 2)  #blue if on the road
+                    cv2.polylines(img, [box_points], isClosed=True, color=(255, 0, 0), thickness=2) #blue if on the road
                 else:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
-                    detections_parking.append([x_min, y_min, x_max, y_max])
-                    print(x_min, y_min, x_max, y_max)
-                    cv2.rectangle(img, (int(x_min), int(y_min)), (int(x_max), int(y_max)), (0, 0, 255), 2)  #red if parked
+                    detections_parking.append([x_center, y_center, width, height, angle_degrees])
+                    cv2.polylines(img, [box_points], isClosed=True, color=(0, 0, 255), thickness=2) #red if parked
 
     cv2.imwrite(output_image_path, img)
     return detections_parking
@@ -317,53 +324,12 @@ def calculate_avg_spot_dimensions(cars):
     print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
-def group_cars(cars, avg_spot_width, avg_spot_length, group_threshold=8):
-    """
-    Groups cars into rows or columns based on their alignment
-
-    Params:
-        groups (list): List of car bounding box center coordinates
-        avg_spot_width (float): Average width of a parking spot in meters
-        avg_spot_length (float): Average length of a parking spot in meters
-        group_threshold (float): 
-
-    Returns:
-        rows, columns (list): lists of car bounding box center coordinates that have been grouped by rows and columns
-    """
-    rows, columns = [], []
-
-    for car in cars:
-        x, y = car
-        placed = False
-
-        for group in rows + columns:
-            x_group, y_group = group[0]
-
-            if abs(x - x_group) <= avg_spot_width * 1.5:  #Row
-                group.append(car)
-                placed = True
-                break
-
-            elif abs(y - y_group) <= avg_spot_length * 1.5:  #Column
-                group.append(car)
-                placed = True
-                break
-
-        if not placed:
-            if len(rows) <= len(columns):
-                rows.append([car])
-
-            else:
-                columns.append([car])
-                
-    return rows, columns
-
-def detect_empty_spots(groups, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
+def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
     """
     Detects empty spots in rows of parked cars based on detected car bounding box centers
     
     Params:
-        groups (list): List of car bounding box center coordinates that have been grouped by rows or columns
+        cars (list): List of car bounding box centers with orientation horizontal or vertical
         avg_spot_width (float): Average width of a parking spot in meters
         avg_spot_length (float): Average length of a parking spot in meters
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
@@ -372,58 +338,32 @@ def detect_empty_spots(groups, avg_spot_width, avg_spot_length, gap_threshold_me
        empty_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
     """
     empty_spots = []
+    
+    horizontal_cars = sorted([car for car in cars if car[4] == 'horizontal'], key=lambda point: point[0]) # Sort by x for horizontal alignment
+    vertical_cars = sorted([car for car in cars if car[4] == 'vertical'], key=lambda point: point[1])   # Sort by y for vertical alignment
 
-    for group in groups:
-        for i in range(len(group) - 1):
-            x_current, y_current = group[i]
-            x_next, y_next = group[i + 1]
+    def find_empty_spots(sorted_cars, alignment):
+        """ Detect empty spots in the provided sorted list of cars for a specific alignment """
+        for i in range(len(sorted_cars) - 1):
+            x_current, y_current = sorted_cars[i]
+            x_next, y_next = sorted_cars[i + 1]
 
             gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
-
-            if abs(x_next - x_current) > abs(y_next - y_current):  #Horizontal case
-                adjusted_gap = gap_distance - avg_spot_width
-                spot_orientation = 'horizontal'
-                spot_dimension = avg_spot_width
-
-            else:  #Vertical case
-                adjusted_gap = gap_distance - avg_spot_length
-                spot_orientation = 'vertical'
-                spot_dimension = avg_spot_length
-
-            if adjusted_gap > spot_dimension and adjusted_gap <= gap_threshold_meters:
-                num_spots = int(adjusted_gap // spot_dimension)
+            avg_half_dim = avg_spot_width / 2 if alignment == 'horizontal' else avg_spot_length / 2
+            adjusted_gap = gap_distance - 2 * avg_half_dim
+            
+            if adjusted_gap <= gap_threshold_meters and adjusted_gap > (avg_spot_width if alignment == 'horizontal' else avg_spot_length):
+                num_spots = int(adjusted_gap // (avg_spot_width if alignment == 'horizontal' else avg_spot_length))
 
                 for j in range(1, num_spots + 1):
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                    empty_spots.append(([empty_x_center, empty_y_center], spot_orientation))
-                    print(f"{spot_orientation} spot at ({empty_x_center}, {empty_y_center})")
+                    empty_spots.append(([empty_x_center, empty_y_center], alignment))
 
-    return empty_spots
+    find_empty_spots(horizontal_cars, 'horizontal')
+    find_empty_spots(vertical_cars, 'vertical')
 
-def detect_empty_spots_all_cases(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
-    """
-    Detects empty spots in rows of parked cars based on detected car bounding box centers.
-    We do the detection on the cars grouped in rows and then columns.
-
-    Params:
-        cars (list): List of car bounding box center coordinates
-        avg_spot_width (float): Average width of a parking spot in meters
-        avg_spot_length (float): Average length of a parking spot in meters
-        gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
-
-    Returns:
-        unique_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
-    """
-    rows, columns = group_cars(cars, avg_spot_width, avg_spot_length)
-
-    empty_spots_rows = detect_empty_spots(rows, avg_spot_width, avg_spot_length, gap_threshold_meters)
-    empty_spots_columns = detect_empty_spots(columns, avg_spot_width, avg_spot_length, gap_threshold_meters)
-
-    all_spots = empty_spots_rows + empty_spots_columns
-    unique_spots = list({(tuple(spot[0]), spot[1]): spot for spot in all_spots}.values())
-    
-    return unique_spots
+    return empty_spots  
 
 def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
     """
@@ -468,7 +408,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
         latitude (float): Latitude value
 
     Returns: 
-        all_detections (list): List of all coordinates of parking spots found in the image
+        all_detections (list): List of all coordinates of parking spots found in the image in the format log, lat, width, height, angle
     """
     output_folder = 'image_output'
     output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
@@ -485,8 +425,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     all_detections = []
 
     for detection in detections:
-        x, y = get_center_bounding_box(detection[0], detection[1], detection[2], detection[3])
-        long, lat = convert_bounding_box_to_coordinates(x, y, longitude, latitude)
+        x_center, y_center, width, height, angle = detection
+        long, lat = convert_bounding_box_to_coordinates(x_center, y_center, longitude, latitude)
 
         if isinstance(long, torch.Tensor):
             long = long.item()
@@ -494,21 +434,10 @@ def get_parking_coords_in_image(model, longitude, latitude):
             lat = lat.item()
 
         print(f"Car coordinates: ({long}, {lat})")
-        all_detections.append([long, lat])
+        all_detections.append([long, lat, width, height, angle]) 
 
-    img = cv2.imread(output_path_satelite_image)
-    results = model([img])
-    cars = []
-
-    for result in results:
-        detections = result.obb
-
-        for box in detections:
-            x_center, y_center, width, height, rotation = box.xywhr[0]
-            cars.append((x_center, y_center, width, height))
-
-    avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(cars)
-    empty_spots = detect_empty_spots_all_cases(all_detections, avg_width_meters, avg_length_meters)
+    avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
+    empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
     draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude, avg_width_pixels, avg_length_pixels)
     empty_spots_coords = [spot for spot, _ in empty_spots]
     all_detections.extend(empty_spots_coords)
@@ -617,7 +546,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     for long, lat in centers:
         detections = get_parking_coords_in_image(model, long, lat)
         for detection in detections:
-            all_detections.append(detection) #as we don't want a list of lists but rather a normal list
+            all_detections.append([detection[0], detection[1]])
 
     df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
@@ -625,14 +554,14 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    #main(-6.2576, 53.3388, -6.2566, 53.3394)
-    #main(-6.2608, 53.3464, -6.2598, 53.347)
-    #main(-6.2617, 53.3462, -6.2606, 53.3469)
-    #main(-6.2854, 53.3511, -6.2843, 53.3517)
-    #main(-6.2893, 53.3486, -6.2883, 53.3492)
-    #main(-6.2899, 53.3473, -6.2889, 53.3479)
-    #main(-6.2903, 53.349, -6.2893, 53.3496) 
-    #main(-6.2657, 53.3567, -6.2646, 53.3574)
+    main(-6.2576, 53.3388, -6.2566, 53.3394)
+    main(-6.2608, 53.3464, -6.2598, 53.347)
+    main(-6.2617, 53.3462, -6.2606, 53.3469)
+    main(-6.2854, 53.3511, -6.2843, 53.3517)
+    main(-6.2893, 53.3486, -6.2883, 53.3492)
+    main(-6.2899, 53.3473, -6.2889, 53.3479)
+    main(-6.2903, 53.349, -6.2893, 53.3496) 
+    main(-6.2657, 53.3567, -6.2646, 53.3574)
 
     main(-6.2853, 53.353, -6.2845, 53.3533)#hor
     main(-6.2847, 53.3526, -6.2839, 53.3529)
