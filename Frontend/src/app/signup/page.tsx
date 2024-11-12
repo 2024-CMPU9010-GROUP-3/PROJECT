@@ -5,6 +5,8 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/registry/button";
 import { UserAuthForm } from "@/app/components/form/user-auth-form";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
+import MagpieLogo from "../components/logo/magpie";
 
 export const metadata: Metadata = {
   title: "Sign Up",
@@ -48,14 +50,7 @@ export default function SignupPage() {
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Privacy Policy
+                Terms and Privacy Policy
               </Link>
               .
             </p>
@@ -78,10 +73,9 @@ export default function SignupPage() {
         <div className="relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
           {/* Desktop Side Section */}
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-700 to-zinc-950" />
-          <Link href="/" className="relative inline-flex items-center gap-2 z-20">
-            <Image src="/images/BKlogo.svg" alt="Logo" width={30} height={30} className="mr-2 h-12 w-12" />
-            <span className="text-lg font-medium">Magpie</span>
-          </Link>
+          <div className="absolute top-8 left-6" style={{ zIndex: 99 }}>
+                <MagpieLogo />
+              </div>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
@@ -109,14 +103,7 @@ export default function SignupPage() {
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/terms"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Privacy Policy
+                Terms and Privacy Policy
               </Link>
               .
             </p>
