@@ -40,6 +40,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image for arm64 and amd64
+      - name: Build Docker image for amd64
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t frontend-test-image ./Frontend
+          docker buildx build --platform linux/amd64 -t frontend-test-image ./Frontend
