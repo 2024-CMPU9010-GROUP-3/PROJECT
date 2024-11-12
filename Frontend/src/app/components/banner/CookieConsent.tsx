@@ -74,7 +74,7 @@ export function CookieConsent() {
   if (!show) return null
 
   return (
-    <Alert className="fixed bottom-8 left-8 max-w-lg mx-auto bg-white dark:bg-gray-800 shadow-lg p-3 animate-slide-in">
+    <Alert className="fixed bottom-8 left-10 max-w-lg mx-auto bg-white dark:bg-gray-800 shadow-lg p-3 animate-slide-in">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <AlertDescription className="text-sm">
