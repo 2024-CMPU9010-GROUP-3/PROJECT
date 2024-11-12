@@ -9,7 +9,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
-        const unprotectedPaths = ['/signup', '/forgot-password']; // add unprotected paths
+        const unprotectedPaths = ['/signup', '/forgot-password', '/terms']; // add unprotected paths
 
         if (!userId && !unprotectedPaths.includes(pathname)) {
             router.push('/login'); // if no token, and not in unprotected paths, redirect to login page
