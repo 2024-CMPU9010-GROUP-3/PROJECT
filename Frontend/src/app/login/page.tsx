@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <ProtectedRoute>
+    <>
       <div className="md:hidden relative min-h-screen flex flex-col items-center justify-center">
         {/* Mobile version */}
         <Image
@@ -123,7 +123,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </ProtectedRoute >
+    </>
   );
 }
 

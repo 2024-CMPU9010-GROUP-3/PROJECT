@@ -35,6 +35,7 @@ import MultipleSelector, {
   Option,
 } from "@/components/ui/registry/multiple-select";
 import { useOnborda } from "onborda";
+import {getToken} from "@/lib/session";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -182,8 +183,12 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       {
         method: "GET",
         credentials: "include",
+        headers: {
+          authorization: "Bearer " + await getToken(),
+        }
       }
     );
+
     const data = await response.json();
     const geoJson = convertToGeoJson(data?.response?.content);
 
