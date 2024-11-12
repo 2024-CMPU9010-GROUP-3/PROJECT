@@ -7,20 +7,52 @@ import Link from "next/link";
 import { useRouter } from "next/navigation"
 import { X } from "lucide-react"
 import { logout } from '@/app/components/serverActions/actions';
+import './animate.css'
 
 export function CookieConsent() {
-  const [show, setShow] = useState(true)
+  const [show, setShow] = useState(false)
+  const [isPageLoaded, setIsPageLoaded] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
-    // check if cookie exists
-    const hasCookie = document.cookie.includes('magpie_auth')
-    if (!hasCookie) {
-      setShow(true)
-    } else {
-      setShow(false)
+    const handlePageLoad = () => {
+      setIsPageLoaded(true)
+    }
+
+    window.addEventListener('load', handlePageLoad)
+
+    return () => {
+      window.removeEventListener('load', handlePageLoad)
     }
   }, [])
+
+  useEffect(() => {
+    if (isPageLoaded) {
+      // get cookie
+      const cookieString = document.cookie;
+      const cookies = cookieString.split('; ').reduce((acc, cookie) => {
+        const [name, value] = cookie.split('=');
+        acc[name] = value;
+        return acc;
+      }, {} as Record<string, string>);
+
+      // check if cookie exists or expired
+      const hasCookie = cookies['magpie_auth'];
+      const expiryTime = cookies['magpie_auth_expiry']; 
+
+      if (hasCookie && expiryTime) {
+        const expiryDate = new Date(parseInt(expiryTime, 10));
+        const now = new Date();
+        if (now < expiryDate) {
+          setShow(false);
+        } else {
+          setShow(true);
+        }
+      } else {
+        setShow(true);
+      }
+    }
+  }, [isPageLoaded])
 
   const handleAccept = () => {
     setShow(false)
@@ -42,33 +74,38 @@ export function CookieConsent() {
   if (!show) return null
 
   return (
-    <Alert className="fixed bottom-4 left-4 right-4 max-w-xl mx-auto bg-white dark:bg-gray-800 shadow-lg">
+    <Alert className="fixed bottom-8 left-8 max-w-lg mx-auto bg-white dark:bg-gray-800 shadow-lg p-3 animate-slide-in">
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <AlertDescription className="text-sm">
             We use cookies to enhance your experience on our website. By continuing to use our site, you agree to our use of cookies.
-            <Link href="/terms" className="underline mx-1">
-              Privacy Policy and Terms of Service
-            </Link>
           </AlertDescription>
-          <div className="mt-3 flex gap-2">
-            <Button size="sm" onClick={handleAccept}>
-              Accept
-            </Button>
-            <Button size="sm" variant="outline" onClick={handleDeny}>
-              Deny
-            </Button>
+          <div className="mt-3 flex justify-between">
+            <div>
+              <Link href="/terms" className="flex items-left underline mx-1">
+                Terms and Privacy
+              </Link>
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={handleAccept}>
+                Accept
+              </Button>
+              <Button size="sm" variant="outline" onClick={handleDeny}>
+                Deny
+              </Button>
+            </div>
           </div>
         </div>
-        <Button
+        {/* <Button
           variant="ghost"
           size="icon"
           className="h-6 w-6"
           onClick={() => setShow(false)}
         >
           <X className="h-4 w-4" />
-        </Button>
+        </Button> */}
       </div>
     </Alert>
   )
 } 
+
