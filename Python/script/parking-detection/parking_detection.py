@@ -317,71 +317,95 @@ def calculate_avg_spot_dimensions(cars):
     print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
-def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
+def group_cars(cars, avg_spot_width, avg_spot_length, group_threshold=8):
+    """
+    Groups cars into rows or columns based on their alignment
+
+    Params:
+        groups (list): List of car bounding box center coordinates
+        avg_spot_width (float): Average width of a parking spot in meters
+        avg_spot_length (float): Average length of a parking spot in meters
+        group_threshold (float): 
+
+    Returns:
+        rows, columns (list): lists of car bounding box center coordinates that have been grouped by rows and columns
+    """
+    rows, columns = [], []
+
+    for car in cars:
+        x, y = car
+        placed = False
+
+        for group in rows + columns:
+            x_group, y_group = group[0]
+
+            if abs(x - x_group) <= avg_spot_width * 1.5:  #Row
+                group.append(car)
+                placed = True
+                break
+
+            elif abs(y - y_group) <= avg_spot_length * 1.5:  #Column
+                group.append(car)
+                placed = True
+                break
+
+        if not placed:
+            if len(rows) <= len(columns):
+                rows.append([car])
+
+            else:
+                columns.append([car])
+                
+    return rows, columns
+
+def detect_empty_spots(groups, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
     """
     Detects empty spots in rows of parked cars based on detected car bounding box centers
     
     Params:
-        cars (list): List of car bounding box center coordinates
+        groups (list): List of car bounding box center coordinates that have been grouped by rows or columns
         avg_spot_width (float): Average width of a parking spot in meters
         avg_spot_length (float): Average length of a parking spot in meters
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
 
     Returns:
-        list: Coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
+       empty_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
     """
     empty_spots = []
 
-    for i in range(len(cars) - 1):
-        x_current, y_current = cars[i]
-        x_next, y_next = cars[i + 1]
-        
-        gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
-        #print(f'gap distance: {gap_distance}')
+    for group in groups:
+        for i in range(len(group) - 1):
+            x_current, y_current = group[i]
+            x_next, y_next = group[i + 1]
 
-        x_shift = abs(x_next - x_current)
-        y_shift = abs(y_next - y_current)
-        #print(f'x_shift: {x_shift}, y_shift: {y_shift}')
+            gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
 
-        avg_half_width = avg_spot_width / 2
-        avg_half_length = avg_spot_length / 2
-        
-        if x_shift >= y_shift:  #Horizontally placed cars
+            if abs(x_next - x_current) > abs(y_next - y_current):  #Horizontal case
+                adjusted_gap = gap_distance - avg_spot_width
+                spot_orientation = 'horizontal'
+                spot_dimension = avg_spot_width
 
-            adjusted_gap = gap_distance - 2 * avg_half_width
-            
-            if adjusted_gap <= gap_threshold_meters and adjusted_gap > avg_spot_width:
-                num_spots = int(adjusted_gap // avg_spot_width)
-                
+            else:  #Vertical case
+                adjusted_gap = gap_distance - avg_spot_length
+                spot_orientation = 'vertical'
+                spot_dimension = avg_spot_length
+
+            if adjusted_gap > spot_dimension and adjusted_gap <= gap_threshold_meters:
+                num_spots = int(adjusted_gap // spot_dimension)
+
                 for j in range(1, num_spots + 1):
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                    empty_spots.append(([empty_x_center, empty_y_center], 'horizontal'))
-                    print('horizontal')
-                    print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
-                    
-        else:  #Vertically placed cars
+                    empty_spots.append(([empty_x_center, empty_y_center], spot_orientation))
+                    print(f"{spot_orientation} spot at ({empty_x_center}, {empty_y_center})")
 
-            adjusted_gap = gap_distance - 2 * avg_half_length
-            
-            if adjusted_gap <= gap_threshold_meters and adjusted_gap > avg_spot_length:
-                num_spots = int(adjusted_gap // avg_spot_length)
-                
-                for j in range(1, num_spots + 1):
-                    empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
-                    empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                    empty_spots.append(([empty_x_center, empty_y_center], 'vertical'))
-                    print('vertical')
-                    print(f"Empty parking spot coordinates: ({empty_x_center}, {empty_y_center}) ")
-                    
     return empty_spots
 
 def detect_empty_spots_all_cases(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12):
     """
     Detects empty spots in rows of parked cars based on detected car bounding box centers.
-    We do the detection twice sorting by longitude and then latitude, as vertical spots were not being identified
-    correctly in the inital method as the rows weren't grouped together. So this allows to identify all the different empty parking spots in both orientations
-    
+    We do the detection on the cars grouped in rows and then columns.
+
     Params:
         cars (list): List of car bounding box center coordinates
         avg_spot_width (float): Average width of a parking spot in meters
@@ -389,15 +413,14 @@ def detect_empty_spots_all_cases(cars, avg_spot_width, avg_spot_length, gap_thre
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
 
     Returns:
-        list: Coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
+        unique_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
     """
-    cars_sorted_long = sorted(cars, key=lambda point: (point[0], point[1]))
-    empty_spots_long = detect_empty_spots(cars_sorted_long, avg_spot_width, avg_spot_length, gap_threshold_meters)
+    rows, columns = group_cars(cars, avg_spot_width, avg_spot_length)
 
-    cars_sorted_lat = sorted(cars, key=lambda point: (point[1], point[0]))
-    empty_spots_lat = detect_empty_spots(cars_sorted_lat, avg_spot_width, avg_spot_length, gap_threshold_meters)
+    empty_spots_rows = detect_empty_spots(rows, avg_spot_width, avg_spot_length, gap_threshold_meters)
+    empty_spots_columns = detect_empty_spots(columns, avg_spot_width, avg_spot_length, gap_threshold_meters)
 
-    all_spots = empty_spots_long + empty_spots_lat
+    all_spots = empty_spots_rows + empty_spots_columns
     unique_spots = list({(tuple(spot[0]), spot[1]): spot for spot in all_spots}.values())
     
     return unique_spots
@@ -603,10 +626,28 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
 
 if __name__ == "__main__":
     #main(-6.2576, 53.3388, -6.2566, 53.3394)
-    main(-6.2608, 53.3464, -6.2598, 53.347)
-    main(-6.2617, 53.3462, -6.2606, 53.3469)
-    main(-6.2854, 53.3511, -6.2843, 53.3517)
-    main(-6.2893, 53.3486, -6.2883, 53.3492)
-    main(-6.2899, 53.3473, -6.2889, 53.3479)
-    main(-6.2903, 53.349, -6.2893, 53.3496) 
+    #main(-6.2608, 53.3464, -6.2598, 53.347)
+    #main(-6.2617, 53.3462, -6.2606, 53.3469)
+    #main(-6.2854, 53.3511, -6.2843, 53.3517)
+    #main(-6.2893, 53.3486, -6.2883, 53.3492)
+    #main(-6.2899, 53.3473, -6.2889, 53.3479)
+    #main(-6.2903, 53.349, -6.2893, 53.3496) 
     #main(-6.2657, 53.3567, -6.2646, 53.3574)
+
+    main(-6.2853, 53.353, -6.2845, 53.3533)#hor
+    main(-6.2847, 53.3526, -6.2839, 53.3529)
+    main(-6.2845, 53.3524, -6.2837, 53.3527)
+    main(-6.2821, 53.3492, -6.2814, 53.3495)#vert
+    main(-6.2735, 53.3473, -6.2727, 53.3476)
+    main(-6.2723, 53.3478, -6.2719, 53.3479 )#parking
+    main(-6.2548, 53.3274, -6.2541, 53.3277)
+    main(-6.2705, 53.3466, -6.2698, 53.3468)#vert
+    main(-6.2646, 53.3432, -6.2641, 53.3434)
+    main(-6.2649, 53.3385, -6.2641, 53.3388)
+    main(-6.2611, 53.3308, -6.2604, 53.3311)
+    main(-6.2512, 53.3252, -6.2506, 53.3254)
+    main(-6.2708, 53.3456, -6.27, 53.3459)#hor
+    main(-6.2653, 53.3392, -6.2645, 53.3395)#mix
+    main(-6.2461, 53.3198, -6.2453, 53.3201)
+    main(-6.2463, 53.3195, -6.2455, 53.3198)
+    main(-6.2465, 53.3193, -6.2457, 53.3196)
