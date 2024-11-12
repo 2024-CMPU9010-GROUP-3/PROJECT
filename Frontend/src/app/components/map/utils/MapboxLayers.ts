@@ -2,7 +2,25 @@ import { LayerProps } from "react-map-gl";
 
 // Update commonIconLayout to have single standard size
 const commonIconLayout = {
+  small: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 14, 0.8] as [
+    string,
+    [string],
+    [string],
+    number,
+    number,
+    number,
+    number
+  ],
   standard: ["interpolate", ["linear"], ["zoom"], 12, 0.8, 16, 1.2] as [
+    string,
+    [string],
+    [string],
+    number,
+    number,
+    number,
+    number
+  ],
+  large: ["interpolate", ["linear"], ["zoom"], 14, 1.2, 18, 1.6] as [
     string,
     [string],
     [string],
@@ -34,15 +52,6 @@ export const parkingClusterStyles = {
       "icon-allow-overlap": true,
     },
   },
-  count: {
-    id: "cluster-count",
-    type: "symbol" as const,
-    layout: {
-      "text-field": "{point_count_abbreviated}",
-      "text-font": ["DIN Offc Pro Medium", "Arial Unicode MS Bold"],
-      "text-size": 12,
-    },
-  },
   unclustered: {
     id: "unclustered-point",
     type: "symbol" as const,
@@ -54,198 +63,188 @@ export const parkingClusterStyles = {
   },
 };
 
-export const parkingMeterLayer: LayerProps = {
-  id: "parking-meters",
-  type: "symbol",
-  layout: {
-    "icon-image": "parking",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    "icon-ignore-placement": false,
-    visibility: "visible",
-    "text-field": ["get", "name"],
-    "text-size": 11,
-    "text-offset": [0, 1.2],
-    "text-optional": true,
-    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
+export const parkingMeterLayers: Record<string, LayerProps> = {
+  far: {
+    id: "parking-meters-far",
+    type: "symbol",
+    layout: {
+      "icon-image": "parking",
+      "icon-size": commonIconLayout.small,
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": true,
+      visibility: "visible",
+    },
+    paint: {
+      "icon-opacity": 0.7,
+    },
+    filter: ["all", ["!=", ["get", "id"], ""], ["<=", ["zoom"], 14]],
   },
-  paint: {
-    "text-color": colors.primary,
-    "text-halo-color": "#ffffff",
-    "text-halo-width": 2,
-    "icon-opacity": 0.9,
+  medium: {
+    id: "parking-meters-medium",
+    type: "symbol",
+    layout: {
+      "icon-image": "parking",
+      "icon-size": commonIconLayout.standard,
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": false,
+      visibility: "visible",
+    },
+    paint: {
+      "icon-opacity": 0.8,
+    },
+    filter: [
+      "all",
+      ["!=", ["get", "id"], ""],
+      [">", ["zoom"], 14],
+      ["<=", ["zoom"], 16],
+    ],
   },
-  filter: ["!=", ["get", "id"], ""],
-};
-
-export const bikeStandLayer: LayerProps = {
-  id: "bike-stands",
-  type: "symbol",
-  layout: {
-    "icon-image": "bicycle",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    "icon-ignore-placement": false,
-    visibility: "visible",
-    "text-field": ["get", "name"],
-    "text-size": 11,
-    "text-offset": [0, 1.2],
-    "text-optional": true,
-    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
-  },
-  paint: {
-    "text-color": colors.accent,
-    "text-halo-color": "#ffffff",
-    "text-halo-width": 2,
-    "icon-opacity": 0.9,
-  },
-};
-
-export const bikeSharingLayer: LayerProps = {
-  id: "bike-sharing",
-  type: "symbol",
-  layout: {
-    "icon-image": "bicycle-share",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    "icon-ignore-placement": false,
-    visibility: "visible",
-    "text-field": ["get", "name"],
-    "text-size": 11,
-    "text-offset": [0, 1.2],
-    "text-optional": true,
-    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
-  },
-  paint: {
-    "text-color": colors.secondary,
-    "text-halo-color": "#ffffff",
-    "text-halo-width": 2,
-    "icon-opacity": 0.9,
+  close: {
+    id: "parking-meters-close",
+    type: "symbol",
+    layout: {
+      "icon-image": "parking",
+      "icon-size": commonIconLayout.large,
+      "icon-allow-overlap": true,
+      "icon-ignore-placement": false,
+      visibility: "visible",
+      "text-field": ["get", "name"],
+      "text-size": 11,
+      "text-offset": [0, 1.2],
+      "text-optional": true,
+      "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
+    },
+    paint: {
+      "text-color": colors.primary,
+      "text-halo-color": "#ffffff",
+      "text-halo-width": 2,
+      "icon-opacity": 0.9,
+    },
+    filter: ["all", ["!=", ["get", "id"], ""], [">", ["zoom"], 16]],
   },
 };
 
-export const accessibleParkingLayer: LayerProps = {
-  id: "accessible-parking",
-  type: "symbol",
-  layout: {
-    "icon-image": "disabled",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    visibility: "visible",
-    "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
-  },
-  paint: {
-    "icon-opacity": 0.9,
-    "icon-color": colors.primary,
-  },
+const createZoomBasedLayers = (
+  baseId: string,
+  iconImage: string,
+  color: string,
+  showLabel: boolean = false
+): Record<string, LayerProps> => {
+  return {
+    far: {
+      id: `${baseId}-far`,
+      type: "symbol",
+      layout: {
+        "icon-image": iconImage,
+        "icon-size": commonIconLayout.small,
+        "icon-allow-overlap": true,
+        visibility: "visible",
+      },
+      paint: {
+        "icon-opacity": 0.7,
+        "icon-color": color,
+      },
+      filter: ["all", ["!=", ["get", "id"], ""], ["<=", ["zoom"], 14]],
+    },
+    medium: {
+      id: `${baseId}-medium`,
+      type: "symbol",
+      layout: {
+        "icon-image": iconImage,
+        "icon-size": commonIconLayout.standard,
+        "icon-allow-overlap": true,
+        visibility: "visible",
+      },
+      paint: {
+        "icon-opacity": 0.8,
+        "icon-color": color,
+      },
+      filter: [
+        "all",
+        ["!=", ["get", "id"], ""],
+        [">", ["zoom"], 14],
+        ["<=", ["zoom"], 16],
+      ],
+    },
+    close: {
+      id: `${baseId}-close`,
+      type: "symbol",
+      layout: {
+        "icon-image": iconImage,
+        "icon-size": commonIconLayout.large,
+        "icon-allow-overlap": true,
+        visibility: "visible",
+        ...(showLabel && {
+          "text-field": ["get", "name"],
+          "text-size": 11,
+          "text-offset": [0, 1.2],
+          "text-optional": true,
+          "text-font": ["DIN Pro Medium", "Arial Unicode MS Bold"],
+        }),
+      },
+      paint: {
+        "icon-opacity": 0.9,
+        "icon-color": color,
+        ...(showLabel && {
+          "text-color": color,
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 2,
+        }),
+      },
+      filter: ["all", ["!=", ["get", "id"], ""], [">", ["zoom"], 16]],
+    },
+  };
 };
 
-export const publicBinLayer: LayerProps = {
-  id: "public-bins",
-  type: "symbol",
-  layout: {
-    "icon-image": "waste-basket",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    visibility: "visible",
-  },
-  paint: {
-    "icon-opacity": 0.8,
-    "icon-color": colors.neutral,
-  },
-};
-
-export const coachParkingLayer: LayerProps = {
-  id: "coach-parking",
-  type: "symbol",
-  layout: {
-    "icon-image": "bus",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    visibility: "visible",
-  },
-  paint: {
-    "icon-opacity": 0.9,
-    "icon-color": colors.primary,
-  },
-};
-
-export const publicWifiLayer: LayerProps = {
-  id: "public-wifi",
-  type: "symbol",
-  layout: {
-    "icon-image": "wifi",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    visibility: "visible",
-  },
-  paint: {
-    "icon-opacity": 0.8,
-    "icon-color": colors.info,
-  },
-  filter: ["!=", ["get", "id"], ""],
-};
-
-export const libraryLayer: LayerProps = {
-  id: "libraries",
-  type: "symbol",
-  layout: {
-    "icon-image": "library",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    visibility: "visible",
-  },
-  paint: {
-    "icon-opacity": 0.9,
-    "icon-color": colors.secondary,
-  },
-  filter: ["!=", ["get", "id"], ""],
-};
-
-export const carParkLayer: LayerProps = {
-  id: "car-parks",
-  type: "symbol",
-  layout: {
-    "icon-image": "car",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    visibility: "visible",
-  },
-  paint: {
-    "icon-color": colors.primary,
-    "icon-opacity": 0.9,
-  },
-  filter: ["!=", ["get", "id"], ""],
-};
-
-export const waterFountainLayer: LayerProps = {
-  id: "water-fountains",
-  type: "symbol",
-  layout: {
-    "icon-image": "drinking-water",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    visibility: "visible",
-  },
-  paint: {
-    "icon-color": colors.water,
-    "icon-opacity": 0.9,
-  },
-  filter: ["!=", ["get", "id"], ""],
-};
-
-export const publicToiletLayer: LayerProps = {
-  id: "public-toilets",
-  type: "symbol",
-  layout: {
-    "icon-image": "toilet",
-    "icon-size": commonIconLayout.standard,
-    "icon-allow-overlap": true,
-    visibility: "visible",
-  },
-  paint: {
-    "icon-color": colors.info,
-    "icon-opacity": 0.9,
-  },
-  filter: ["!=", ["get", "id"], ""],
-};
+export const bikeStandLayers = createZoomBasedLayers(
+  "bike-stands",
+  "bicycle",
+  colors.accent,
+  true
+);
+export const bikeSharingLayers = createZoomBasedLayers(
+  "bike-sharing",
+  "bicycle-share",
+  colors.secondary,
+  true
+);
+export const accessibleParkingLayers = createZoomBasedLayers(
+  "accessible-parking",
+  "disabled",
+  colors.primary
+);
+export const publicBinLayers = createZoomBasedLayers(
+  "public-bins",
+  "waste-basket",
+  colors.neutral
+);
+export const coachParkingLayers = createZoomBasedLayers(
+  "coach-parking",
+  "bus",
+  colors.primary
+);
+export const publicWifiLayers = createZoomBasedLayers(
+  "public-wifi",
+  "wifi",
+  colors.info
+);
+export const libraryLayers = createZoomBasedLayers(
+  "libraries",
+  "library",
+  colors.secondary
+);
+export const carParkLayers = createZoomBasedLayers(
+  "car-parks",
+  "car",
+  colors.primary
+);
+export const waterFountainLayers = createZoomBasedLayers(
+  "water-fountains",
+  "drinking-water",
+  colors.water
+);
+export const publicToiletLayers = createZoomBasedLayers(
+  "public-toilets",
+  "toilet",
+  colors.info
+);
