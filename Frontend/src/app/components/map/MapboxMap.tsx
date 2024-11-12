@@ -21,18 +21,18 @@ import { cn } from "@/lib/utils";
 import { Grid } from "react-loader-spinner";
 import { Badge } from "@/components/ui/badge";
 import {
-  accessibleParkingLayer,
-  bikeSharingLayer,
-  bikeStandLayer,
-  carParkLayer,
-  coachParkingLayer,
-  libraryLayer,
+  accessibleParkingLayers,
+  bikeSharingLayers,
+  bikeStandLayers,
+  carParkLayers,
+  coachParkingLayers,
+  libraryLayers,
   parkingClusterStyles,
-  parkingMeterLayer,
-  publicBinLayer,
-  publicToiletLayer,
-  publicWifiLayer,
-  waterFountainLayer,
+  parkingMeterLayers,
+  publicBinLayers,
+  publicToiletLayers,
+  publicWifiLayers,
+  waterFountainLayers,
 } from "./utils/MapboxLayers";
 import MultipleSelector, {
   Option,
@@ -103,7 +103,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(markerCoords[1] * (Math.PI / 180));
+          Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -179,7 +179,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${
+        sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
@@ -209,7 +210,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(markerCoords[1] * (Math.PI / 180));
+          Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -296,7 +297,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         </div>
       </div>
       {/* Map Container - Taller on mobile */}
-      <div className="w-full lg:w-[75%] h-[60vh] sm:h-[70vh] lg:h-screen relative" id="onboarding-step-5">
+      <div
+        className="w-full lg:w-[75%] h-[60vh] sm:h-[70vh] lg:h-screen relative"
+        id="onboarding-step-5"
+      >
         {mapBoxApiKey ? (
           <DeckGL
             effects={[lightingEffect]}
@@ -352,7 +356,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 clusterRadius={50}
               >
                 <Layer {...parkingClusterStyles.symbol} />
-                <Layer {...parkingClusterStyles.count} />
                 <Layer {...parkingClusterStyles.unclustered} />
               </Source>
               {/* Parking Meter Source */}
@@ -361,7 +364,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.parking_meter}
               >
-                <Layer {...parkingMeterLayer} />
+                <Layer {...parkingMeterLayers?.close} />
+                <Layer {...parkingMeterLayers?.medium} />
+                <Layer {...parkingMeterLayers?.far} />
               </Source>
 
               {/* Bike Stand Source */}
@@ -370,7 +375,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.bike_stand}
               >
-                <Layer {...bikeStandLayer} />
+                <Layer {...bikeStandLayers?.close} />
+                <Layer {...bikeStandLayers?.medium} />
+                <Layer {...bikeStandLayers?.far} />
               </Source>
 
               {/* Public Wifi Source */}
@@ -379,7 +386,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.public_wifi_access_point}
               >
-                <Layer {...publicWifiLayer} />
+                <Layer {...publicWifiLayers?.close} />
+                <Layer {...publicWifiLayers?.medium} />
+                <Layer {...publicWifiLayers?.far} />
               </Source>
 
               {/* Library Source */}
@@ -388,7 +397,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.library}
               >
-                <Layer {...libraryLayer} />
+                <Layer {...libraryLayers?.close} />
+                <Layer {...libraryLayers?.medium} />
+                <Layer {...libraryLayers?.far} />
               </Source>
 
               {/* Multi Storey Car Park Source */}
@@ -397,7 +408,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.multistorey_car_parking}
               >
-                <Layer {...carParkLayer} />
+                <Layer {...carParkLayers?.close} />
+                <Layer {...carParkLayers?.medium} />
+                <Layer {...carParkLayers?.far} />
               </Source>
 
               {/* Drinking Water Fountain Source */}
@@ -406,7 +419,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.drinking_water_fountain}
               >
-                <Layer {...waterFountainLayer} />
+                <Layer {...waterFountainLayers?.close} />
+                <Layer {...waterFountainLayers?.medium} />
+                <Layer {...waterFountainLayers?.far} />
               </Source>
 
               {/* Public Toilet Source */}
@@ -415,7 +430,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.public_toilet}
               >
-                <Layer {...publicToiletLayer} />
+                <Layer {...publicToiletLayers?.close} />
+                <Layer {...publicToiletLayers?.medium} />
+                <Layer {...publicToiletLayers?.far} />
               </Source>
 
               {/* Bike Sharing Station Source */}
@@ -424,7 +441,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.bike_sharing_station}
               >
-                <Layer {...bikeSharingLayer} />
+                <Layer {...bikeSharingLayers?.close} />
+                <Layer {...bikeSharingLayers?.medium} />
+                <Layer {...bikeSharingLayers?.far} />
               </Source>
 
               {/* Accessible Parking Source */}
@@ -433,7 +452,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.accessible_parking}
               >
-                <Layer {...accessibleParkingLayer} />
+                <Layer {...accessibleParkingLayers?.close} />
+                <Layer {...accessibleParkingLayers?.medium} />
+                <Layer {...accessibleParkingLayers?.far} />
               </Source>
 
               {/* Public Bins Source */}
@@ -442,7 +463,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.public_bins}
               >
-                <Layer {...publicBinLayer} />
+                <Layer {...publicBinLayers?.close} />
+                <Layer {...publicBinLayers?.medium} />
+                <Layer {...publicBinLayers?.far} />
               </Source>
 
               {/* Coach Parking Source*/}
@@ -451,7 +474,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 type="geojson"
                 data={pointsGeoJson?.coach_parking}
               >
-                <Layer {...coachParkingLayer} />
+                <Layer {...coachParkingLayers?.close} />
+                <Layer {...coachParkingLayers?.medium} />
+                <Layer {...coachParkingLayers?.far} />
               </Source>
             </Map>
           </DeckGL>
@@ -481,8 +506,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               </div>
 
               {/* Search Radius Card */}
-              <div className="px-2 sm:px-3 lg:px-4" >
-                <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4" id="onboarding-step-2">
+              <div className="px-2 sm:px-3 lg:px-4">
+                <div
+                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
+                  id="onboarding-step-2"
+                >
                   <div className="space-y-2 sm:space-y-3">
                     <div>
                       <label className="text-sm lg:text-base font-medium text-gray-700 mb-2 block">
@@ -511,7 +539,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
           {/* Marker Data Card */}
           <div className="px-2 sm:px-3 lg:px-4">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4" id="onboarding-step-3">
+            <div
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
+              id="onboarding-step-3"
+            >
               {/* <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
                 Marker Data
               </h2> */}
