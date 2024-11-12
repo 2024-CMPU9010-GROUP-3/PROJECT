@@ -1,3 +1,5 @@
+//go:build private
+
 package dtos
 
 type PointIdDto struct {

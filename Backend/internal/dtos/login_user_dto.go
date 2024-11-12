@@ -1,3 +1,5 @@
+//go:build public
+
 package dtos
 
 import (
@@ -9,8 +11,7 @@ import (
 )
 
 type UserLoginDto struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	UsernameOrEmail string `json:"usernameOrEmail"`
 	Password string `json:"password"`
 }
 
@@ -29,8 +30,8 @@ func (self *UserLoginDto) Validate() error {
 		return err
 	}
 
-	if len(self.Username) == 0 {
-		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username is required"))
+	if len(self.UsernameOrEmail) == 0 {
+		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Username or Email is required"))
 		return err
 	}
 
