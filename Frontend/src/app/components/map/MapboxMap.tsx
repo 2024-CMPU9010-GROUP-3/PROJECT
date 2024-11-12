@@ -13,9 +13,6 @@ import {
 import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
 import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
 import { GeoJSON } from "geojson";
-
-// import { FloatingDock } from "@/components/ui/floating-dock";
-// import { IconHome } from "@tabler/icons-react";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { Grid } from "react-loader-spinner";
@@ -103,7 +100,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(markerCoords[1] * (Math.PI / 180));
+          Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -179,7 +176,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${
+        sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
@@ -209,7 +207,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(markerCoords[1] * (Math.PI / 180));
+          Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -296,7 +294,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         </div>
       </div>
       {/* Map Container - Taller on mobile */}
-      <div className="w-full lg:w-[75%] h-[60vh] sm:h-[70vh] lg:h-screen relative" id="onboarding-step-5">
+      <div
+        className="w-full lg:w-[75%] h-[60vh] sm:h-[70vh] lg:h-screen relative"
+        id="onboarding-step-5"
+      >
         {mapBoxApiKey ? (
           <DeckGL
             effects={[lightingEffect]}
@@ -343,116 +344,122 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Layer {...layerStyle} />
               </Source>
               {/* Parking Source */}
-              <Source
-                id="points"
-                type="geojson"
-                data={pointsGeoJson?.parking}
-                cluster={true}
-                clusterMaxZoom={14} // Max zoom to cluster points on
-                clusterRadius={50}
-              >
-                <Layer {...parkingClusterStyles.symbol} />
-                <Layer {...parkingClusterStyles.count} />
-                <Layer {...parkingClusterStyles.unclustered} />
-              </Source>
-              {/* Parking Meter Source */}
-              <Source
-                id="parking-meters"
-                type="geojson"
-                data={pointsGeoJson?.parking_meter}
-              >
-                <Layer {...parkingMeterLayer} />
-              </Source>
+              {pointsGeoJson ? (
+                <>
+                  <Source
+                    id="points"
+                    type="geojson"
+                    data={pointsGeoJson?.parking}
+                    cluster={true}
+                    clusterMaxZoom={14} // Max zoom to cluster points on
+                    clusterRadius={50}
+                  >
+                    <Layer {...parkingClusterStyles.symbol} />
+                    <Layer {...parkingClusterStyles.count} />
+                    <Layer {...parkingClusterStyles.unclustered} />
+                  </Source>
+                  {/* Parking Meter Source */}
+                  <Source
+                    id="parking-meters"
+                    type="geojson"
+                    data={pointsGeoJson?.parking_meter}
+                  >
+                    <Layer {...parkingMeterLayer} />
+                  </Source>
 
-              {/* Bike Stand Source */}
-              <Source
-                id="bike-stands"
-                type="geojson"
-                data={pointsGeoJson?.bike_stand}
-              >
-                <Layer {...bikeStandLayer} />
-              </Source>
+                  {/* Bike Stand Source */}
+                  <Source
+                    id="bike-stands"
+                    type="geojson"
+                    data={pointsGeoJson?.bike_stand}
+                  >
+                    <Layer {...bikeStandLayer} />
+                  </Source>
 
-              {/* Public Wifi Source */}
-              <Source
-                id="public-wifi"
-                type="geojson"
-                data={pointsGeoJson?.public_wifi_access_point}
-              >
-                <Layer {...publicWifiLayer} />
-              </Source>
+                  {/* Public Wifi Source */}
+                  <Source
+                    id="public-wifi"
+                    type="geojson"
+                    data={pointsGeoJson?.public_wifi_access_point}
+                  >
+                    <Layer {...publicWifiLayer} />
+                  </Source>
 
-              {/* Library Source */}
-              <Source
-                id="libraries"
-                type="geojson"
-                data={pointsGeoJson?.library}
-              >
-                <Layer {...libraryLayer} />
-              </Source>
+                  {/* Library Source */}
+                  <Source
+                    id="libraries"
+                    type="geojson"
+                    data={pointsGeoJson?.library}
+                  >
+                    <Layer {...libraryLayer} />
+                  </Source>
 
-              {/* Multi Storey Car Park Source */}
-              <Source
-                id="car-parks"
-                type="geojson"
-                data={pointsGeoJson?.multistorey_car_parking}
-              >
-                <Layer {...carParkLayer} />
-              </Source>
+                  {/* Multi Storey Car Park Source */}
+                  <Source
+                    id="car-parks"
+                    type="geojson"
+                    data={pointsGeoJson?.multistorey_car_parking}
+                  >
+                    <Layer {...carParkLayer} />
+                  </Source>
 
-              {/* Drinking Water Fountain Source */}
-              <Source
-                id="water-fountains"
-                type="geojson"
-                data={pointsGeoJson?.drinking_water_fountain}
-              >
-                <Layer {...waterFountainLayer} />
-              </Source>
+                  {/* Drinking Water Fountain Source */}
+                  <Source
+                    id="water-fountains"
+                    type="geojson"
+                    data={pointsGeoJson?.drinking_water_fountain}
+                  >
+                    <Layer {...waterFountainLayer} />
+                  </Source>
 
-              {/* Public Toilet Source */}
-              <Source
-                id="public-toilets"
-                type="geojson"
-                data={pointsGeoJson?.public_toilet}
-              >
-                <Layer {...publicToiletLayer} />
-              </Source>
+                  {/* Public Toilet Source */}
+                  <Source
+                    id="public-toilets"
+                    type="geojson"
+                    data={pointsGeoJson?.public_toilet}
+                  >
+                    <Layer {...publicToiletLayer} />
+                  </Source>
 
-              {/* Bike Sharing Station Source */}
-              <Source
-                id="bike-sharing"
-                type="geojson"
-                data={pointsGeoJson?.bike_sharing_station}
-              >
-                <Layer {...bikeSharingLayer} />
-              </Source>
+                  {/* Bike Sharing Station Source */}
+                  <Source
+                    id="bike-sharing"
+                    type="geojson"
+                    data={pointsGeoJson?.bike_sharing_station}
+                  >
+                    <Layer {...bikeSharingLayer} />
+                  </Source>
 
-              {/* Accessible Parking Source */}
-              <Source
-                id="accessible-parking"
-                type="geojson"
-                data={pointsGeoJson?.accessible_parking}
-              >
-                <Layer {...accessibleParkingLayer} />
-              </Source>
+                  {/* Accessible Parking Source */}
+                  <Source
+                    id="accessible-parking"
+                    type="geojson"
+                    data={pointsGeoJson?.accessible_parking}
+                  >
+                    <Layer {...accessibleParkingLayer} />
+                  </Source>
 
-              {/* Public Bins Source */}
-              <Source
-                id="public-bins"
-                type="geojson"
-                data={pointsGeoJson?.public_bins}
-              >
-                <Layer {...publicBinLayer} />
-              </Source>
+                  {/* Public Bins Source */}
+                  <Source
+                    id="public-bins"
+                    type="geojson"
+                    data={pointsGeoJson?.public_bins}
+                  >
+                    <Layer {...publicBinLayer} />
+                  </Source>
 
-              {/* Coach Parking Source*/}
-              <Source
-                id="coach-parking"
-                type="geojson"
-                data={pointsGeoJson?.coach_parking}
-              >
-                <Layer {...coachParkingLayer} />
-              </Source>
+                  {/* Coach Parking Source*/}
+                  <Source
+                    id="coach-parking"
+                    type="geojson"
+                    data={pointsGeoJson?.coach_parking}
+                  >
+                    <Layer {...coachParkingLayer} />
+                  </Source>
+                </>
+              ) : (
+                ""
+              )}
             </Map>
           </DeckGL>
         ) : (
@@ -481,8 +488,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               </div>
 
               {/* Search Radius Card */}
-              <div className="px-2 sm:px-3 lg:px-4" >
-                <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4" id="onboarding-step-2">
+              <div className="px-2 sm:px-3 lg:px-4">
+                <div
+                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
+                  id="onboarding-step-2"
+                >
                   <div className="space-y-2 sm:space-y-3">
                     <div>
                       <label className="text-sm lg:text-base font-medium text-gray-700 mb-2 block">
@@ -511,7 +521,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
           {/* Marker Data Card */}
           <div className="px-2 sm:px-3 lg:px-4">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4" id="onboarding-step-3">
+            <div
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
+              id="onboarding-step-3"
+            >
               {/* <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
                 Marker Data
               </h2> */}
