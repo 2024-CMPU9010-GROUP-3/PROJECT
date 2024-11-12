@@ -10,7 +10,7 @@ import { useAuth } from "@/app/context/AuthContext"; // Import useAuth to get au
 import { logout } from "@/app/components/serverActions/actions"; // Import logout action
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { getSession } from "@/lib/session";
+import { getToken } from "@/lib/session";
 
 import {
   DropdownMenu,
@@ -32,8 +32,8 @@ export function DropdownMenuDemo() {
   useEffect(() => {
     // check session
     const checkSession = async () => {
-      const session = await getSession();
-      if (session) {
+      const token = await getToken();
+      if (token) {
         setIsLoggedIn(true);
       }
     };
