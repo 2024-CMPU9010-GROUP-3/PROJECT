@@ -133,23 +133,18 @@ const (
 				"ProfilePicture": "%s"
 			`
 
-	jsonLoginUserWithEmail = `{
-				"Email": "%s",
-				"Password": "%s"
-			}`
-
-	jsonLoginUserWithUsername = `{
-				"Username": "%s",
+	jsonLoginValid = `{
+				"UsernameOrEmail": "%s",
 				"Password": "%s"
 			}`
 
 	jsonLoginUserWithUsernameInvalid = `{
-				"Username": "%s",
+				"UsernameOrEmail": "%s",
 				"Password": "%s"
 			`
 
 	jsonLoginUserWithUsernamePasswordMissing = `{
-				"Username": "%s"
+				"UsernameOrEmail": "%s"
 			}`
 
 	jsonLoginUserUsernameAndEmailMissing = `{
@@ -233,6 +228,10 @@ const (
 					},
 					"response": null
 				}`
+
+	jwtPattern = `^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$`
+
+	uuidPattern = `[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}`
 )
 
 var (
@@ -1260,7 +1259,6 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	duration, err := time.ParseDuration(`168h`)
 	if err != nil {
 		t.Errorf("Could not parse jwt duration: %v", err)
 	}
@@ -1271,7 +1269,7 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
@@ -1279,58 +1277,47 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
 			},
-			ExpectedCookies: []*http.Cookie{
-				{
-					Name:     "magpie_auth",
-					HttpOnly: true,
-					SameSite: http.SameSiteLaxMode,
-					Expires:  time.Now().Add(duration),
-					Path:     "/",
-				},
-			},
-			ExpectedStatus: http.StatusOK,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+			ExpectedStatus:         http.StatusOK,
+			ExpectedResponseFields: map[string]string{"token": jwtPattern, "userid": uuidPattern},
 		},
 		{
 			Name:      "Positive testcase (username)",
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHash))
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnResult(resultUpdated)
 			},
-			ExpectedCookies: []*http.Cookie{
-				{
-					Name:     "magpie_auth",
-					HttpOnly: true,
-					SameSite: http.SameSiteLaxMode,
-					Expires:  time.Now().Add(duration),
-					Path:     "/",
-				},
-			},
-			ExpectedStatus: http.StatusOK,
-			ExpectedJSON:   fmt.Sprintf(jsonResponseUserId, userIdString),
+			ExpectedStatus:         http.StatusOK,
+			ExpectedResponseFields: map[string]string{"token": jwtPattern, "userid": uuidPattern},
 		},
 		{
 			Name:      "Wrong password",
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).AddRow(userId, username, email, pwHashAlt))
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
-			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
-			ExpectedJSON:    jsonWrongCredentialsError,
+			ExpectedStatus: http.StatusUnauthorized,
+			ExpectedError:  errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:   jsonWrongCredentialsError,
 		},
 		{
 			Name:      "Password missing",
@@ -1341,10 +1328,9 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusBadRequest,
-			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
-			ExpectedJSON:    jsonPasswordRequiredError,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.RequiredParameterMissingError.ErrorMsg,
+			ExpectedJSON:   jsonPasswordRequiredError,
 		},
 		{
 			Name:      "Both username and email missing",
@@ -1355,10 +1341,9 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusBadRequest,
-			ExpectedError:   errors.Parameter.RequiredParameterMissingError.ErrorMsg,
-			ExpectedJSON:    jsonUsernameOrEmailRequiredError,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Parameter.RequiredParameterMissingError.ErrorMsg,
+			ExpectedJSON:   jsonUsernameOrEmailRequiredError,
 		},
 		{
 			Name:      "Invalid payload",
@@ -1369,96 +1354,106 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				// should return before any database calls are made
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusBadRequest,
-			ExpectedError:   errors.Payload.InvalidPayloadUserError.ErrorMsg,
-			ExpectedJSON:    jsonInvalidUserPayloadError,
+			ExpectedStatus: http.StatusBadRequest,
+			ExpectedError:  errors.Payload.InvalidPayloadUserError.ErrorMsg,
+			ExpectedJSON:   jsonInvalidUserPayloadError,
 		},
 		{
 			Name:      "User not found (username)",
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
-			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
-			ExpectedJSON:    jsonWrongCredentialsError,
+			ExpectedStatus: http.StatusUnauthorized,
+			ExpectedError:  errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:   jsonWrongCredentialsError,
 		},
 		{
 			Name:      "User not found (email)",
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
+				mock.ExpectQuery(queryGetLoginByUsername).
+					WithArgs(email).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusUnauthorized,
-			ExpectedError:   errors.Auth.WrongCredentialsError.ErrorMsg,
-			ExpectedJSON:    jsonWrongCredentialsError,
+			ExpectedStatus: http.StatusUnauthorized,
+			ExpectedError:  errors.Auth.WrongCredentialsError.ErrorMsg,
+			ExpectedJSON:   jsonWrongCredentialsError,
 		},
 		{
 			Name:      "JWT Secret missing",
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       jwtSecretMissingEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
 					WillReturnRows(pgxmock.NewRows(rowsGetLogin).
-					AddRow(userId, username, email, pwHash))
+						AddRow(userId, username, email, pwHash))
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusInternalServerError,
-			ExpectedError:   errors.Internal.JwtSecretMissingError.ErrorMsg,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedError:  errors.Internal.JwtSecretMissingError.ErrorMsg,
 		},
 		{
 			Name:      "Error during get query (email)",
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
 					WillReturnError(simulatedDbError)
 
+				mock.ExpectQuery(queryGetLoginByUsername).
+					WithArgs(email).
+					WillReturnError(simulatedDbError)
+
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusInternalServerError,
-			ExpectedJSON:    jsonSimulatedDbError,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON:   jsonSimulatedDbError,
 		},
 		{
 			Name:      "Error during get query (username)",
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithUsername, username, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, username, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
+				mock.ExpectQuery(queryGetLoginByEmail).
+					WithArgs(username).
+					WillReturnRows(pgxmock.NewRows(rowsGetLogin))
+
 				mock.ExpectQuery(queryGetLoginByUsername).
 					WithArgs(username).
 					WillReturnError(simulatedDbError)
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusInternalServerError,
-			ExpectedJSON:    jsonSimulatedDbError,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON:   jsonSimulatedDbError,
 		},
 		{
 			Name:      "Error during set last logged in query",
 			Method:    "POST",
 			Route:     loginRoute,
 			Env:       defaultEnv,
-			InputJSON: fmt.Sprintf(jsonLoginUserWithEmail, email, pw),
+			InputJSON: fmt.Sprintf(jsonLoginValid, email, pw),
 			MockSetup: func(mock pgxmock.PgxPoolIface) {
 				mock.ExpectQuery(queryGetLoginByEmail).
 					WithArgs(email).
@@ -1466,9 +1461,8 @@ func TestAuthHandlerHandleLogin(t *testing.T) {
 
 				mock.ExpectExec(queryUpdateLastLogin).WithArgs(userId).WillReturnError(simulatedDbError)
 			},
-			ExpectedCookies: []*http.Cookie{},
-			ExpectedStatus:  http.StatusInternalServerError,
-			ExpectedJSON:    jsonSimulatedDbError,
+			ExpectedStatus: http.StatusInternalServerError,
+			ExpectedJSON:   jsonSimulatedDbError,
 		},
 	}
 	testutil.RunHandlerTests(t, authHandler.HandleLogin, mock, tests)

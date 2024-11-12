@@ -286,12 +286,12 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var userLogin db.Login
 	var err error
 
-	if len(loginDto.Username) != 0 {
-		userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
-	} else {
-		userLogin, err = db.New(dbConn).GetLoginByEmail(*dbCtx, loginDto.Email)
+	userLogin, err = db.New(dbConn).GetLoginByEmail(*dbCtx, loginDto.UsernameOrEmail)
+	if err != nil {
+		// try again with username
+		userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.UsernameOrEmail)
 	}
-	
+
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Auth.WrongCredentialsError, w)
@@ -318,7 +318,7 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	expiry := os.Getenv(expiryEnv)
 	if len(expiry) == 0 {
 		log.Printf("Warning: MAGPIE_JWT_EXPIRY not set, defaulting to 7d expiry")
-		expiry = "24h"
+		expiry = "168h"
 	}
 
 	parsedExpiry, err := time.ParseDuration(expiry)
@@ -347,19 +347,9 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := http.Cookie{
-		Name:     "magpie_auth",
-		Value:    tokenString,
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-		Expires:  time.Now().Add(parsedExpiry),
-		Path:     "/",
-	}
-
-	http.SetCookie(w, &cookie)
-
-	tokenDto := dtos.UserIdDto{
+	tokenDto := dtos.UserLoginResponseDto{
 		UserId: userLogin.ID,
+		Token:  tokenString,
 	}
 
 	resp.SendResponse(dtos.ResponseContentDto{Content: tokenDto, HttpStatus: http.StatusOK}, w)

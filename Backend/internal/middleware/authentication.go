@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -17,8 +18,14 @@ import (
 func accessAuthenticated(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, request *http.Request) {
 
-		auth_cookie, err := request.Cookie("magpie_auth")
-		if err != nil {
+		authTokenWithPrefix := request.Header.Get("Authorization")
+		if len(authTokenWithPrefix) <= len("Bearer ") {
+			resp.SendError(customErrors.Auth.UnauthorizedError, w)
+			return
+		}
+
+		authToken, found := strings.CutPrefix(authTokenWithPrefix,"Bearer ")
+		if !found {
 			resp.SendError(customErrors.Auth.UnauthorizedError, w)
 			return
 		}
@@ -29,7 +36,7 @@ func accessAuthenticated(next http.Handler) http.Handler {
 			return
 		}
 
-		token, err := jwt.Parse(auth_cookie.Value, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(authToken, func(token *jwt.Token) (interface{}, error) {
 			// Don't forget to validate the alg is what you expect:
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
