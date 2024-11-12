@@ -89,6 +89,46 @@ func main() {
 
 	ctx := context.Background()
 
+	m, err := migrate.New(fmt.Sprintf("file://%s", migrationsPath), dbUrl)
+	if err != nil {
+		log.Fatalf("Could not create database migration client: %v\n", err)
+		os.Exit(1)
+	}
+
+	currentMigration, dirty, err := m.Version()
+	if err != nil {
+		if errors.Is(err, migrate.ErrNilVersion) {
+			log.Printf("No migration version found in database\n")
+		} else {
+			log.Fatalf("Could not read migration version from database: %v\n", err)
+			os.Exit(1)
+		}
+	}
+
+	if dirty {
+		log.Printf("WARNING: The database migration state is currently considered dirty")
+	}
+
+	log.Printf("Checking for new database migrations")
+	latestMigration, err := util.GetLatestMigrationVersion(migrationsPath)
+	if err != nil {
+		log.Fatalf("An error occurred while searching for newest migration version: %v", err)
+		os.Exit(1)
+	}
+
+	if latestMigration > currentMigration {
+		log.Printf("Found newer database migrations (current: V%d, latest: V%d), attemping upgrade...", currentMigration, latestMigration)
+		err = m.Up()
+		if err != nil {
+			log.Fatalf("An error occurred during database migration: %v", err)
+			os.Exit(1)
+		}
+		log.Printf("Successfully migrated database: V%d => V%d", currentMigration, latestMigration)
+	} else {
+		log.Printf("Database is up to date")
+	}
+
+	
 	dbConfig, err := pgxpool.ParseConfig(dbUrl)
 	if err != nil {
 		log.Fatalf("Could not parse pool config: %+v\n", err)
@@ -127,41 +167,6 @@ func main() {
 		log.Println("Successfully connected to database")
 	}
 	defer dbPool.Close()
-
-	m, err := migrate.New(fmt.Sprintf("file://%s", migrationsPath), dbUrl)
-	if err != nil {
-		log.Fatalf("Could not create database migration client: %v\n", err)
-		os.Exit(1)
-	}
-
-	currentMigration, dirty, err := m.Version()
-	if err != nil {
-		if errors.Is(err, migrate.ErrNilVersion) {
-			log.Printf("No migration version found in database\n")
-		} else {
-			log.Fatalf("Could not read migration version from database: %v\n", err)
-			os.Exit(1)
-		}
-	}
-
-	if dirty {
-		log.Printf("WARNING: The database migration state is currently considered dirty")
-	}
-
-	log.Printf("Checking for new database migrations")
-	latestMigration, err := util.GetLatestMigrationVersion(migrationsPath)
-
-	if latestMigration > currentMigration {
-		log.Printf("Found newer database migrations (current: V%d, latest: V%d), attemping upgrade...", currentMigration, latestMigration)
-		err = m.Up()
-		if err != nil {
-			log.Fatalf("An error occurred during database migration: %v", err)
-			os.Exit(1)
-		}
-		log.Printf("Successfully migrated database: V%d => V%d", currentMigration, latestMigration)
-	} else {
-		log.Printf("Database is up to date")
-	}
 
 	handlers.RegisterDatabaseConnection(&ctx, dbPool)
 

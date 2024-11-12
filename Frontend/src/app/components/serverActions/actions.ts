@@ -3,21 +3,24 @@
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { SignupFormSchema, FormState } from '@/lib/interfaces/definitions';
-import { deleteSession, createSession } from '@/lib/session';
+import { setToken, setUUID, getToken, deleteSessionFromCookies } from '@/lib/session';
 
 // define the input schema
 const loginSchema = z.object({
-  username: z.string().min(1, { message: "Username is required" }),
+  usernameOrEmail: z.string().min(1, { message: "Username or Email is required" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters" }), // ensure consistent with backend
 });
 
 // public function: handle API request
 async function handleApiRequest(url: string, method: string, body: Record<string, unknown> ) {
   try {
+
+    console.log("bearer token: ", await getToken())
     const res = await fetch(url, {
       method,
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${await getToken()}`
       },
       body: JSON.stringify(body),
       credentials: 'include', // send and receive cookies
@@ -25,6 +28,12 @@ async function handleApiRequest(url: string, method: string, body: Record<string
 
     if (!res.ok) {
       const errorText = await res.text();
+
+      // logout if 401 (unauthorized)
+      if (res.status === 401){
+        console.log("LOGOUT CALLED")
+        await logout();
+      }
       throw new Error(errorText);
     }
 
@@ -38,7 +47,7 @@ async function handleApiRequest(url: string, method: string, body: Record<string
 // Login Server Action
 export async function login(formData: FormData) {
   const parsedData = loginSchema.safeParse({
-    username: formData.get('username'),
+    usernameOrEmail: formData.get('username'),
     password: formData.get('password'),
   });
 
@@ -46,13 +55,13 @@ export async function login(formData: FormData) {
     return { errors: parsedData.error.flatten().fieldErrors };
   }
 
-  const { username, password } = parsedData.data;
+  const { usernameOrEmail, password } = parsedData.data;
 
   try {
     const data = await handleApiRequest(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`,
       'POST',
-      { username, password }
+      { username: usernameOrEmail, password }
     );
 
     if (data.errors) {
@@ -60,7 +69,8 @@ export async function login(formData: FormData) {
     }
 
     // create session
-    await createSession(data.token);
+    await setToken(data.token);
+    await setUUID(data.userId);
 
     // login successful, redirect to home page
     redirect('/');
@@ -115,12 +125,15 @@ export async function signup(prevState: FormState, formData: FormData) {
 }
 
 export async function logout() {
-  try {
-    await handleApiRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/auth/logout`, 'POST', {});
-  } catch (error) {
-    console.error('logout error:', error);
-  }
+  // backend does not implement logout route yet
+  // try {
+  //   await handleApiRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/auth/logout`, 'POST', {});
+  // } catch (error) {
+  //   console.error('logout error:', error);
+  // }
 
-  // whether the backend request is successful, clear the local session
-  await deleteSession()
+  await deleteSessionFromCookies();
+  await setToken('');
+  await setUUID('');
+  redirect('/');
 }

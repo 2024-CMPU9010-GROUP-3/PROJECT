@@ -7,28 +7,25 @@ import (
 	"net/http/httptest"
 	"regexp"
 	"testing"
-	"time"
 
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	"github.com/pashagolub/pgxmock/v4"
 )
 
 type HandlerTestDefinition struct {
-	Name            string
-	Method          string
-	Route           string
-	InputJSON       string
-	MockSetup       func(mock pgxmock.PgxPoolIface)
-	ExpectedStatus  int
-	ExpectedError   string
-	ExpectedJSON    string
-	ExpectedCookies []*http.Cookie
-	PathParams      map[string]string
-	QueryParams     map[string]string
-	Env             map[string]string
+	Name                   string
+	Method                 string
+	Route                  string
+	InputJSON              string
+	MockSetup              func(mock pgxmock.PgxPoolIface)
+	ExpectedStatus         int
+	ExpectedError          string
+	ExpectedJSON           string
+	PathParams             map[string]string
+	QueryParams            map[string]string
+	Env                    map[string]string
+	ExpectedResponseFields map[string]string
 }
-
-var jwtPattern = regexp.MustCompile(`^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$`)
 
 func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
 	tt.MockSetup(mock)
@@ -62,14 +59,34 @@ func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func
 		t.Errorf("handler returned wrong status code: got %v want %v", status, tt.ExpectedStatus)
 	}
 
-	if tt.ExpectedError != "" {
-		var responseBody dtos.ResponseDto
-		if err := json.Unmarshal(rr.Body.Bytes(), &responseBody); err != nil {
-			t.Fatalf("failed to unmarshal response: %v", err)
-		}
+	var responseBody dtos.ResponseDto
+	if err := json.Unmarshal(rr.Body.Bytes(), &responseBody); err != nil {
+		t.Fatalf("failed to unmarshal response: %v", err)
+	}
 
+	if tt.ExpectedError != "" {
 		if responseBody.Error.ErrorMsg != tt.ExpectedError {
 			t.Errorf("expected error message \"%v\", got \"%v\"", tt.ExpectedError, responseBody.Error.ErrorMsg)
+		}
+	}
+
+	if len(tt.ExpectedResponseFields) != 0 {
+		content, ok := responseBody.Response.Content.(map[string]interface{})
+		if !ok {
+			t.Errorf("could not decode response content")
+		}
+
+		for k, v := range tt.ExpectedResponseFields {
+			if _, exists := content[k]; !exists {
+				t.Errorf("expected field %s to be present in response", k)
+			}
+			if v != "" {
+				expectedPattern := regexp.MustCompile(v)
+				valueStr, ok := content[k].(string)
+				if !ok || !expectedPattern.MatchString(valueStr) {
+						t.Errorf("expected field %s to match pattern \"%v\", got type %T and value %q", k, v, content[k], valueStr)
+				}
+			}
 		}
 	}
 
@@ -85,52 +102,6 @@ func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func
 
 		if rr.Body.String() != compactedJson.String() {
 			t.Errorf("expected JSON output %s, got %s", compactedJson.String(), rr.Body.String())
-		}
-	}
-
-	if len(tt.ExpectedCookies) != len(rr.Result().Cookies()) {
-		t.Errorf("expected %d cookies to be set, got %d", len(tt.ExpectedCookies), len(rr.Result().Cookies()))
-	}
-
-	for _, expected := range tt.ExpectedCookies {
-		found := false
-		for _, cookie := range rr.Result().Cookies() {
-			if cookie.Name == expected.Name {
-				found = true
-
-				if !jwtPattern.MatchString(cookie.Value) {
-					t.Errorf("cookie %s value does not match JWT format: %v", cookie.Name, cookie.Value)
-				}
-
-				if cookie.Path != expected.Path {
-					t.Errorf("cookie %s Path mismatch: got %s, want %s", cookie.Name, cookie.Path, expected.Path)
-				}
-
-				if cookie.HttpOnly != expected.HttpOnly {
-					t.Errorf("cookie %s HttpOnly mismatch: got %v, want %v", cookie.Name, cookie.HttpOnly, expected.HttpOnly)
-				}
-
-				if cookie.SameSite != expected.SameSite {
-					t.Errorf("cookie %s SameSite mismatch: got %v, want %v", cookie.Name, cookie.SameSite, expected.SameSite)
-				}
-
-				if !expected.Expires.IsZero() {
-					expiresTolerance, err := time.ParseDuration(expiresToleranceStr)
-					if err != nil {
-						t.Error(err)
-					}
-					delta := expected.Expires.Sub(cookie.Expires)
-					if delta < -expiresTolerance || delta > expiresTolerance {
-						t.Errorf("cookie %s Expires mismatch: got %v, want %v ± %v", cookie.Name, cookie.Expires, expected.Expires, expiresTolerance)
-					}
-				}
-
-				break
-			}
-		}
-
-		if !found {
-			t.Errorf("expected cookie %s to be set", expected.Name)
 		}
 	}
 

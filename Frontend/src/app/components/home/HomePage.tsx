@@ -6,14 +6,16 @@ import { CookieConsent } from "../banner/CookieConsent";
 
 const HomePage = () => {
   return (
-      <ProtectedRoute>
-        <LocationAggregatorMap />
-        <div className="nav-container">
+    <ProtectedRoute>
+      <LocationAggregatorMap />
+      <div className="nav-container">
+        <div className="absolute top-5 left-5 z-[999]">
             
   <CookieConsent />
           <Nav />
         </div>
-      </ProtectedRoute>
+      </div>
+    </ProtectedRoute>
   );
 };
 
