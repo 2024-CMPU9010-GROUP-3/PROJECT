@@ -101,7 +101,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
           Math.cos(markerCoords[1] * (Math.PI / 180));
-          Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -476,18 +475,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Layer {...coachParkingLayers?.medium} />
                 <Layer {...coachParkingLayers?.far} />
               </Source>
-                  {/* Coach Parking Source*/}
-                  <Source
-                    id="coach-parking"
-                    type="geojson"
-                    data={pointsGeoJson?.coach_parking}
-                  >
-                    <Layer {...coachParkingLayer} />
-                  </Source>
-                </>
-              ) : (
-                ""
-              )}
             </Map>
           </DeckGL>
         ) : (
@@ -521,11 +508,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
                   id="onboarding-step-2"
                 >
-              <div className="px-2 sm:px-3 lg:px-4">
-                <div
-                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
-                  id="onboarding-step-2"
-                >
                   <div className="space-y-2 sm:space-y-3">
                     <div>
                       <label className="text-sm lg:text-base font-medium text-gray-700 mb-2 block">
@@ -554,10 +536,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
           {/* Marker Data Card */}
           <div className="px-2 sm:px-3 lg:px-4">
-            <div
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
-              id="onboarding-step-3"
-            >
             <div
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
               id="onboarding-step-3"
