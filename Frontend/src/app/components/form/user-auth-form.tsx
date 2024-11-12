@@ -74,7 +74,7 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
         console.error("Registration failed:", result.errors);
         setFormErrors(result.errors);
       } else {
-        alert("Sign up successful");
+        alert("Sign up successful in user form");
         router.push("/");
       }
     } catch (error) {

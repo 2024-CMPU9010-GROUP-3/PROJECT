@@ -66,14 +66,22 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	_, err := db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
-	if !errors.Is(err, pgx.ErrNoRows) {
+	emailExists, err := db.New(dbConn).EmailExists(*dbCtx, db.EmailExistsParams{Email: userDto.Email, ID: pgtype.UUID{}})
+	if err != nil {
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+	if emailExists {
 		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
 		return
 	}
 
-	_, err = db.New(dbConn).GetLoginByUsername(*dbCtx, userDto.Username)
-	if !errors.Is(err, pgx.ErrNoRows) {
+	usernameExists, err := db.New(dbConn).UsernameExists(*dbCtx, db.UsernameExistsParams{Username: userDto.Username, ID: pgtype.UUID{}})
+	if err != nil {
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+	if usernameExists {
 		resp.SendError(customErrors.Payload.UsernameAlreadyExistsError, w)
 		return
 	}
@@ -149,24 +157,47 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var passwordHash []byte
-
-	passwordHash, err = bcrypt.GenerateFromPassword([]byte(userDto.Password), 12)
+	emailExists, err := db.New(dbConn).EmailExists(*dbCtx, db.EmailExistsParams{Email: userDto.Email, ID: userId})
 	if err != nil {
-		resp.SendError(customErrors.Internal.HashingError, w)
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
-
-	_, err = db.New(dbConn).GetLoginByEmail(*dbCtx, userDto.Email)
-	if !errors.Is(err, pgx.ErrNoRows) {
+	if emailExists {
 		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
 		return
 	}
 
-	_, err = db.New(dbConn).GetLoginByUsername(*dbCtx, userDto.Username)
-	if !errors.Is(err, pgx.ErrNoRows) {
+	usernameExists, err := db.New(dbConn).UsernameExists(*dbCtx, db.UsernameExistsParams{Username: userDto.Username, ID: userId})
+	if err != nil {
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+	if usernameExists {
 		resp.SendError(customErrors.Payload.UsernameAlreadyExistsError, w)
 		return
+	}
+
+	userLogin, err := db.New(dbConn).GetLoginById(*dbCtx, userId)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			resp.SendError(customErrors.NotFound.UserNotFoundError, w)
+			return
+		} else {
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+			return
+		}
+	}
+
+	var passwordHash []byte
+
+	if userDto.Password != nil {
+		passwordHash, err = bcrypt.GenerateFromPassword([]byte(*userDto.Password), 12)
+		if err != nil {
+			resp.SendError(customErrors.Internal.HashingError, w)
+			return
+		}
+	} else {
+		passwordHash = []byte(userLogin.Passwordhash)
 	}
 
 	updateLoginParams := db.UpdateLoginParams{
@@ -253,7 +284,14 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 
 	// get user login from db
 	var userLogin db.Login
-	userLogin, err := db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.Username)
+	var err error
+
+	userLogin, err = db.New(dbConn).GetLoginByEmail(*dbCtx, loginDto.UsernameOrEmail)
+	if err != nil {
+		// try again with username
+		userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.UsernameOrEmail)
+	}
+
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Auth.WrongCredentialsError, w)
@@ -280,7 +318,7 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	expiry := os.Getenv(expiryEnv)
 	if len(expiry) == 0 {
 		log.Printf("Warning: MAGPIE_JWT_EXPIRY not set, defaulting to 7d expiry")
-		expiry = "24h"
+		expiry = "168h"
 	}
 
 	parsedExpiry, err := time.ParseDuration(expiry)
@@ -309,19 +347,9 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie := http.Cookie{
-		Name:     "magpie_auth",
-		Value:    tokenString,
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-		Expires:  time.Now().Add(parsedExpiry),
-		Path:     "/",
-	}
-
-	http.SetCookie(w, &cookie)
-
-	tokenDto := dtos.UserIdDto{
+	tokenDto := dtos.UserLoginResponseDto{
 		UserId: userLogin.ID,
+		Token:  tokenString,
 	}
 
 	resp.SendResponse(dtos.ResponseContentDto{Content: tokenDto, HttpStatus: http.StatusOK}, w)

@@ -1,3 +1,5 @@
+//go:build public
+
 package dtos
 
 import (
@@ -40,6 +42,11 @@ func (self *CreateUserDto) Validate() error {
 
 	if len(self.Password) == 0 {
 		err := customErrors.Parameter.RequiredParameterMissingError.WithCause(fmt.Errorf("Password is required"))
+		return err
+	}
+
+	if len(self.Password) > 72 {
+		err := customErrors.Payload.PasswordTooLongError
 		return err
 	}
 	return nil

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/registry/button";
 import { LoginForm } from "@/app/components/form/login-form";
-import ProtectedRoute from "@/app/components/ProtectedRoute";
 import MagpieLogo from "../components/logo/magpie";
 
 
@@ -17,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <ProtectedRoute>
+    <>
       <div className="md:hidden relative min-h-screen flex flex-col items-center justify-center">
         {/* Mobile version */}
         <Image
@@ -43,16 +42,8 @@ export default function LoginPage() {
               href="/terms"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Privacy Policy
+              Terms and Privacy Policy
             </Link>
-            .
           </p>
         </div>
       </div>
@@ -107,7 +98,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </ProtectedRoute >
+    </>
   );
 }
 

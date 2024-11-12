@@ -3,7 +3,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getSession } from '@/lib/session';
+import { getToken, getUUID } from '@/lib/session';
 
 interface AuthContextType {
   isLoggedIn: boolean;
@@ -20,8 +20,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     const checkSession = async () => {
-      const session = await getSession();
-      setIsLoggedIn(!!session);
+      const token = await getToken();
+      const uuid = await getUUID();
+      setIsLoggedIn(!!token && !!uuid);
       setLoading(false);
     };
 

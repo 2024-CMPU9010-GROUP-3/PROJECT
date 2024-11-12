@@ -21,7 +21,7 @@ type MiddlewareTestDefinition struct {
 	ExpectedStatusCode   int
 	ExpectedBody         string
 	ExpectedBodyContains string
-	AuthCookieValue      string
+	AuthHeaderValue      string
 	EnvJwtSecret         string
 }
 
@@ -39,11 +39,8 @@ func executeMiddlewareTest(t *testing.T, test MiddlewareTestDefinition, middlewa
 	req = req.WithContext(context.WithValue(req.Context(), util.TokenKey("token_user_id"), test.TokenUserId))
 	req.SetPathValue("id", test.IdPathParam)
 
-	if test.AuthCookieValue != "" {
-		req.AddCookie(&http.Cookie{
-			Name:  "magpie_auth",
-			Value: test.AuthCookieValue,
-		})
+	if test.AuthHeaderValue != "" {
+		req.Header.Add("Authorization", "Bearer "+test.AuthHeaderValue)
 	}
 
 	if test.EnvJwtSecret != "" {
@@ -124,7 +121,7 @@ func RunMiddlewareTests(t *testing.T, middleware func(http.Handler) http.Handler
 
 func mockNextHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	_,_ = w.Write([]byte("next handler called"))
+	_, _ = w.Write([]byte("next handler called"))
 }
 
 func captureLogs(f func()) string {

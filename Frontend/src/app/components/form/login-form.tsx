@@ -13,6 +13,8 @@ import {
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation"; // useRouter
+import {commitSessionToCookies, getToken, setToken, setUUID} from "@/lib/session";
+import {getCookiesAccepted} from "@/lib/cookies";
 
 export function LoginForm() {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // allow login with username or email
@@ -23,11 +25,13 @@ export function LoginForm() {
 
   // check if user is already logged in
   useEffect(() => {
-    const token = localStorage.getItem("token"); // check user login status
+    (async () => {
+    const token = await getToken(); // check user login status
     if (token) {
       // if user is already logged in, redirect to home
       router.push("/"); // redirect to home
     }
+  })()
   }, [router]);
 
   const onSubmit = async (event: React.SyntheticEvent) => {
@@ -49,8 +53,7 @@ export function LoginForm() {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", // TEST:ensure request includes credentials (cookies)
-          body: JSON.stringify({ username: usernameOrEmail, password }), // send username/email and password
+          body: JSON.stringify({ usernameOrEmail: usernameOrEmail, password }), // send username/email and password
         }
       );
 
@@ -59,12 +62,18 @@ export function LoginForm() {
         const data = await response.json();
         console.log("Login successful:", data); // print success response
         if (data.response.content.userid) {
-          // ensure bearerToken exists, note the key name
-          localStorage.setItem("userId", data.response.content.userid); // store user id
+         
+          await setUUID(data.response.content.userid);
+          await setToken(data.response.content.token);
+
+          if(await getCookiesAccepted()) {
+            await commitSessionToCookies();
+          }
+
           setErrorMessage(null); // clear any error message
-          console.log("Redirecting to home..."); // add debug information
-          console.log("router:", router);
-          router.push("/"); // safely check if router is defined before pushing to home
+
+          router.push("/")
+
         } else {
           setErrorMessage("Login failed: No user id received"); // if no user id, display error message
         }
