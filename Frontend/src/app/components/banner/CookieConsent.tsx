@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import Link from "next/link";
 import { getCookiesAccepted, setCookiesAccepted } from '@/lib/cookies';
-import { deleteSessionFromCookies } from '@/lib/session';
+import { deleteSessionFromCookies, commitSessionToCookies } from '@/lib/session';
 
 export function CookieConsent() {
   const [show, setShow] = useState(false)
@@ -36,6 +36,7 @@ export function CookieConsent() {
 
   const handleAccept = async () => {
     await setCookiesAccepted();
+    await commitSessionToCookies();
     setShow(false);
   }
 
