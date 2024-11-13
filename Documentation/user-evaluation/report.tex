@@ -208,20 +208,20 @@ insights to improve the Magpie user experience.
 \begin{table}[h!]
     \centering
     \caption{Metrics for Controlled Usability testing}
-    \label{tab:table2}
+    \label{tab:table1}
     \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
         \hline
-        \textbf{Metric}    & \textbf{Threshold} \\ \hline
-        Task Success Rate  & 50\%               \\ \hline
-        Time on Task       & Custom             \\ \hline
-        Error Rate         & Custom             \\ \hline
-        Difficulty of task & Custom             \\ \hline
+        \textbf{Metric}    & \textbf{Threshold}         \\ \hline
+        Task Success Rate  & 50\%                       \\ \hline
+        Time on Task       & Custom - Dependent on task \\ \hline
+        Error Rate         & \hl{look online}           \\ \hline
+        Difficulty of task & Custom - Dependent on task \\ \hline
     \end{tabularx}
 \end{table}
 \begin{table}[h!]
     \centering
     \caption{Tasks for Controlled Usability testing}
-    \label{tab:table3}
+    \label{tab:table2}
     \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
         \hline
         \textbf{Task - chronological}                                                                                                                  & \textbf{Completion} & \textbf{Time taken} \\ \hline
@@ -261,7 +261,7 @@ insights to improve the Magpie user experience.
               \item Analyse responses \& present results
           \end{enumerate}
     \item \underline{Baseline \& Evaluation metrics:} No baseline; user
-          experience will be evaluated on their feedback through user experience survey and observational analysis (\hl{figure 2.3})
+          experience will be evaluated on their feedback through the user experience survey in figure 2.1, complemented by observational analysis.
 \end{enumerate}
 \section{Expert Review}
 We have requested an expert review from a UI/UX professional named Andrea Curley. The goal of this review is to evaluate the user interface of Magpie, rate its user-friendliness in regards to UI/UX general guidelines and the application's compliance with the EAA (European Accessibility Act).\\
@@ -272,11 +272,11 @@ The expert review will be conducted online through a videoconference meeting on 
     \item Questionnaire
     \item Discussion \& end of review
 \end{enumerate}
-The questionnaire will include questions on visual design, information architecture, data quality \& integration, technical performance, compliance and overall assessment of Magpie as shown in Table 2.1.
+The questionnaire includes questions on visual design, information architecture, data quality \& integration, technical performance, compliance and overall assessment of Magpie as shown in Table 2.3.
 \begin{table}[h!]
     \centering
     \caption{Expert Review Questionnaire}
-    \label{tab:table1}
+    \label{tab:table3}
     \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
         \hline
         \textbf{Question}                                                                                                                                                                                                                & \textbf{Question type} & \textbf{Answer type} \\ \hline
@@ -288,25 +288,54 @@ The questionnaire will include questions on visual design, information architect
         Rate the following features from Worst (1) to Best (5) = Onboarding, Radius scaling, filter options completeness, profile menu                                                                                                   & Closed                 & Scale                \\ \hline
         How comprehensive is the amenity data coverage for Dublin city?                                                                                                                                                                  & Closed                 & Multiple choice      \\ \hline
         How valuable do you think this tool would be for the following use cases - 1: Not valuable at all, 5: Extremely valuable = Urban planning, Resource allocation, Planning permissions, Event planning, Education, Travel planning & Closed                 & Scale                \\ \hline
-        Any additional comments on why this tool would useful/impractical for the above use cases?                                                                                                                                       & Open-ended             & Textbox              \\ \hline
+        Any additional comments on why this tool would useful/impractical for the above use cases?                                                                                                                                       & Open-ended             & Text                 \\ \hline
         Evaluate the following technical aspects from Worst (1) to Best (5) = Loading speed, System responsiveness, Data update frequency, Filter functionality, Radius selection                                                        & Closed                 & Scale                \\ \hline
         Rate the application's compliance with the items below from Worst (1) to Best (5) = Accessibility, GIS data standards, GDPR                                                                                                      & Closed                 & Scale                \\ \hline
-        Any additional comments regarding our application?                                                                                                                                                                               & Open-ended             & Textbox
+        Any additional comments regarding our application?                                                                                                                                                                               & Open-ended             & Text
     \end{tabularx}
 \end{table}
 
 \chapter{Results}
 \section{Usability testing}
-\subsection{Casual feedback}
+\subsection{Casual Think-Aloud Protocol}
 \begin{itemize}
     \item Onboarding feature implementation \hl{SAUL}
     \item Dashboard implementation \hl{KAUSTUBH}
     \item Avatar implementation \hl{YUANSHUO}
 \end{itemize}
 \subsection{Uncontrolled (Remote)}
+In Progress
 \subsection{Controlled (Remote)}
+In Progress
 \subsection{Field-test (Remote)}
+In Progress
+
 \section{Expert review}
+The review provided very valuable insights on Magpie's workflow, user interface and technical components. These were the main takeways:
+\begin{itemize}
+    \item Andrea was directly taken to the mapview, which was not supposed to happen. After the review, we investigated the cause of this event and uncovered a bug in the authentication
+    \item Andrea suggested a landing page introducing Magpie because she felt lost just being taken to the page and nothing happening. Due to the bug explained above, the onboarding did not automatically start.
+    \item Regarding onboarding, the user intuitively wants to press on the items being highlighted during the tutorial, which is not possible. That is a current limitation of the way the frontend has been developed.
+    \item Still regarding onboarding, Andrea suggested there should be an option to exit the tutorial at any time for users who don't want to sit through it.
+    \item Still about onboarding, maybe reduce text but make it more interesting, visually appealing and engaging.
+    \item RECOGNITION OVER RECALL
+    \item prioritise the items that can be done during this month, and the rest is to be included in the "future work" of the report
+    \item currently, its not intuitive where to choose the amenity in the dropdown + icons were not visible enough
+    \item zooming into the map!! can we have buttons?
+    \item need a connection between the map and the dashboard, especially with the icons, add them to the dashboard
+    \item make sure we test magpie on different devices
+    \item the hierarchy of items on the dashboard does not make sense, is not intuitive to use. why are all amenities displayed when one is selected and their count displays zero?
+    \item looking at the points inside the radius, its currently not obvious what amenity is displaying = the icons are too small and dont stand out enough.
+    \item we explained our workflow idea of the design of the dashboard, and when we explained it to her she said "oooh" but it was not obvious and not very intuitive. same for the numbers on the side of each amenity displaying the count. --> we move from bottom up approach (pyramid) instead of the current top down (upside down) approach to the dashboard.
+    \item if we want simple clean aesthetic, we need to design the user interface in a way that there is as little room as possible for ambiguity and confusion and guessing games = the user needs to find it easy to move from one feature to another and understand the triggers. currently its looks so slick that the user might not be able to see what they want.
+    \item found the parking meter information very useful!
+    \item if there are no amenities found in the radius, a message should pop up to tell the user because its not always clear to let the user inspect until their eyes get tired
+    \item log out was fine
+    \item when trying to log in with credentials that dont exist, a proper error should be returned that "username" doesn't exist, and it should be properly visible
+    \item create an account went smoothly
+    \item the alert thing for success shouldn't be an alert (my own opinion)
+    \item what are the benefits of logging in? we (group) answered that since its a service for professionals, logging in will keep their search, any files they have exported, etc
+\end{itemize}
 
 
 % References & Table of Figures Page
