@@ -43,22 +43,34 @@ const colors = {
 };
 
 export const parkingClusterStyles = {
-  symbol: {
-    id: "clusters",
+  far: {
+    id: "parking-clusters-far",
     type: "symbol" as const,
     layout: {
-      "icon-image": "parking-garage",
-      "icon-size": commonIconLayout.standard,
-      "icon-allow-overlap": true,
+      "icon-image": "custom_parking",
+      "icon-size": commonIconLayout.small,
+      "icon-allow-overlap": false,
+      filter: ["all", ["<=", ["zoom"], 14]],
     },
   },
-  unclustered: {
-    id: "unclustered-point",
+  medium: {
+    id: "parking-clusters-medium",
     type: "symbol" as const,
     layout: {
-      "icon-image": "parking-garage",
+      "icon-image": "custom_parking",
       "icon-size": commonIconLayout.standard,
-      "icon-allow-overlap": true,
+      "icon-allow-overlap": false,
+      filter: ["all", [">", ["zoom"], 14], ["<=", ["zoom"], 16]],
+    },
+  },
+  close: {
+    id: "parking-clusters-close",
+    type: "symbol" as const,
+    layout: {
+      "icon-image": "custom_parking",
+      "icon-size": commonIconLayout.large,
+      "icon-allow-overlap": false,
+      filter: ["all", [">", ["zoom"], 16]],
     },
   },
 };

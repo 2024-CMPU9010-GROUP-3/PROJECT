@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Fragment, Suspense, useEffect, useMemo, useState } from "react";
+
 import { FaLocationDot } from "react-icons/fa6";
 import DeckGL from "@deck.gl/react";
 import "mapbox-gl/dist/mapbox-gl.css";
@@ -36,6 +37,7 @@ import MultipleSelector, {
 } from "@/components/ui/registry/multiple-select";
 import { useOnborda } from "onborda";
 import {getToken} from "@/lib/session";
+
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -89,6 +91,12 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     [coordinates]
   );
 
+  // Images state
+  const [imagesLoaded, setImagesLoaded] = useState({
+    custom_parking: false,
+    // Add entries for other icons
+  });
+
   const [circleCoordinates, setCircleCoordinates] = useState<number[][]>(() => {
     const radiusInMeters = sliderValue * 100; // Convert slider value to meters
     const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
@@ -111,6 +119,31 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
     return coordinates;
   });
+
+  interface MapLoadEvent {
+    target: mapboxgl.Map;
+  }
+
+  const handleMapLoad = (event: MapLoadEvent) => {
+    const map = event.target;
+    // setMapInstance(map);
+
+    const loadImages = async () => {
+      if (!map.hasImage('custom_parking')) {
+        map.loadImage(window.location.origin+'/images/parking.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_parking', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_parking": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_parking": true }));
+        });
+      }
+      // Repeat for other custom icons
+    };
+
+    loadImages();
+  };
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
 
@@ -316,6 +349,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               mapStyle="mapbox://styles/mapbox/streets-v12"
               antialias={true}
               style={{ width: "100%", height: "100%" }}
+              onLoad={handleMapLoad}
             >
               {/* Map content remains the same */}
               <Marker
@@ -349,8 +383,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Layer {...layerStyle} />
               </Source>
               {/* Parking Source */}
+              {imagesLoaded.custom_parking && (
               <Source
-                id="points"
+                id="custom_parking"
                 type="geojson"
                 data={pointsGeoJson?.parking}
                 cluster={true}
@@ -360,6 +395,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Layer {...parkingClusterStyles.symbol} />
                 <Layer {...parkingClusterStyles.unclustered} />
               </Source>
+              )}
               {/* Parking Meter Source */}
               <Source
                 id="parking-meters"
