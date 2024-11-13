@@ -189,8 +189,11 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
             cls = int(box.cls[0])
 
             if cls == 0:
-                orientation = "horizontal" if width >= height else "vertical"
-
+                if -45 <= angle_degrees <= 45 or 135 <= angle_degrees <= 225:
+                    orientation = "horizontal"
+                else:
+                    orientation = "vertical"
+                    
                 rect = ((x_center, y_center), (width, height), angle_degrees)
                 box_points = cv2.boxPoints(rect)
                 box_points = np.int32(box_points)
@@ -210,9 +213,11 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
 
                 if road_pixels / total_pixels > 0.5:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is on the road")
+                    print(orientation)
                     cv2.polylines(img, [box_points], isClosed=True, color=(255, 0, 0), thickness=2) #blue if on the road
                 else:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
+                    print(orientation)
                     detections_parking.append([x_center, y_center, width, height, angle_degrees, orientation])
                     cv2.polylines(img, [box_points], isClosed=True, color=(0, 0, 255), thickness=2) #red if parked
 
@@ -419,8 +424,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -439,11 +444,12 @@ def get_parking_coords_in_image(model, longitude, latitude):
         print(f"Car coordinates: ({long}, {lat})")
         all_detections.append([long, lat, width, height, angle, orientation]) 
 
-    avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
-    empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
-    draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude, avg_width_pixels, avg_length_pixels)
-    empty_spots_coords = [spot for spot, _ in empty_spots]
-    all_detections.extend(empty_spots_coords)
+    if all_detections:
+        avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
+        empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
+        draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude, avg_width_pixels, avg_length_pixels)
+        empty_spots_coords = [spot for spot, _ in empty_spots]
+        all_detections.extend(empty_spots_coords)
 
     return all_detections
 
@@ -557,7 +563,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    main(-6.2576, 53.3388, -6.2566, 53.3394)
+    '''main(-6.2576, 53.3388, -6.2566, 53.3394)
     main(-6.2608, 53.3464, -6.2598, 53.347)
     main(-6.2617, 53.3462, -6.2606, 53.3469)
     main(-6.2854, 53.3511, -6.2843, 53.3517)
@@ -583,3 +589,9 @@ if __name__ == "__main__":
     main(-6.2461, 53.3198, -6.2453, 53.3201)
     main(-6.2463, 53.3195, -6.2455, 53.3198)
     main(-6.2465, 53.3193, -6.2457, 53.3196)
+    '''
+    main(-6.2749, 53.3409, -6.2743, 53.3411)#only vertical(2 cars) works
+    main(-6.2755, 53.3434, -6.2749, 53.3436)#slanted(5 cars) weird cars on the road horizontal, parked vertical
+    main(-6.2756, 53.3441, -6.2751, 53.3443)#only horizontal(4 cars) works
+    main(-6.2757, 53.3443, -6.2752, 53.3445)#mix hor and vert works
+    main(-6.2765, 53.3445, -6.276, 53.3447)#vertical slanted works
