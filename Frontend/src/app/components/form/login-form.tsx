@@ -13,32 +13,55 @@ import {
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation"; // useRouter
-import {commitSessionToCookies, getToken, setToken, setUUID} from "@/lib/session";
-import {getCookiesAccepted} from "@/lib/cookies";
+import { getToken, setSession } from "@/lib/session";
+import { getCookiesAccepted } from "@/lib/cookies";
+import { useAuth } from "@/app/context/AuthContext";
+
+interface LoginData {
+  token: string;
+  userid: string;
+}
 
 export function LoginForm() {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // allow login with username or email
   const [password, setPassword] = useState(""); // password state
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
   const [isLoading, setIsLoading] = useState(false); // loading state
+  const [sessionData, setSessionData] = useState<LoginData | null>(null); // session data
   const router = useRouter(); // router
+
+  const authContext = useAuth();
+
+  async function handleSession(sessionData: { token: string; userid: string }) {
+    // Save session data to local storage
+
+    setSessionData(sessionData);
+    // Set session in the application (e.g., cookies, context, etc.)
+    if (await getCookiesAccepted()) {
+      await setSession(sessionData.token, sessionData.userid);
+    } else {
+      authContext.setSessionData({
+        token: sessionData.token,
+        userid: sessionData.userid,
+      });
+    }
+  }
 
   // check if user is already logged in
   useEffect(() => {
     (async () => {
-    const token = await getToken(); // check user login status
-    if (token) {
-      // if user is already logged in, redirect to home
-      router.push("/"); // redirect to home
-    }
-  })()
+      const token = await getToken(); // check user login status
+      if (token) {
+        // if user is already logged in, redirect to home
+        router.push("/"); // redirect to home
+      }
+    })();
   }, [router]);
 
   const onSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault(); // prevent default form submission behavior
-    setIsLoading(true); // set loading state
+    event.preventDefault();
+    setIsLoading(true);
 
-    // check if fields are empty
     if (!usernameOrEmail.trim() || !password.trim()) {
       setErrorMessage("Fields cannot be empty");
       setIsLoading(false);
@@ -46,49 +69,53 @@ export function LoginForm() {
     }
 
     try {
-      const response = await fetch(
-        "/api/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ usernameOrEmail: usernameOrEmail, password }), // send username/email and password
-        }
-      );
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ usernameOrEmail: usernameOrEmail, password }),
+      });
 
       if (response.ok) {
-        // login success, handle logic
         const data = await response.json();
-        console.log("Login successful:", data); // print success response
+        console.log("Login successful:", data);
+
         if (data.response.content.userid) {
-         
-          await setUUID(data.response.content.userid);
-          await setToken(data.response.content.token);
+          const sessionData = {
+            token: data.response.content.token,
+            userid: data.response.content.userid,
+          };
 
-          if(await getCookiesAccepted()) {
-            await commitSessionToCookies();
-          }
-
-          setErrorMessage(null); // clear any error message
-
-          router.push("/")
-
+          await handleSession(sessionData);
+          setErrorMessage(null);
+          router.push("/");
         } else {
-          setErrorMessage("Login failed: No user id received"); // if no user id, display error message
+          setErrorMessage("Login failed: No user id received");
         }
       } else {
-        // handle error case
-        const errorData = await response.text(); // get error data
-        setErrorMessage("Login failed: " + errorData); // display original error message
+        const errorData = await response.text();
+        setErrorMessage("Login failed: " + errorData);
       }
     } catch (error) {
       console.error("An error occurred", error);
       setErrorMessage("An error occurred during login");
     } finally {
-      setIsLoading(false); // reset loading state
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "session",
+        JSON.stringify({
+          token: sessionData?.token,
+          userId: sessionData?.userid,
+        })
+      );
+    }
+  }, [sessionData]);
 
   return (
     <Card className="mx-auto max-w-sm">

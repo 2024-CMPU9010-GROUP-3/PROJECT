@@ -17,7 +17,10 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
   email?: string;
 }
 
-export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps>) {
+export function UserAuthForm({
+  className,
+  ...props
+}: Readonly<UserAuthFormProps>) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
@@ -32,7 +35,8 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
     password?: string[];
   }>({});
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    React.useState<boolean>(false);
   const router = useRouter();
 
   async function onSubmit(event: React.SyntheticEvent) {
@@ -75,7 +79,7 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
         setFormErrors(result.errors);
       } else {
         alert("Sign up successful in user form");
-        router.push("/");
+        router.push("/login");
       }
     } catch (error) {
       console.error("An error occurred", error);
@@ -103,7 +107,6 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
               />
-              
             </div>
             <div className="flex-1">
               <Label className="sr-only" htmlFor="last-name">
@@ -117,7 +120,6 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
               />
-              
             </div>
           </div>
           <div className="grid gap-1">
@@ -135,7 +137,6 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-            
           </div>
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="password">
@@ -187,19 +188,19 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
           </div>
           {errorMessage && <div className="text-red-500">{errorMessage}</div>}
           {formErrors.firstName && (
-              <ul className="text-red-500 text-sm mt-1">
-                {formErrors.firstName.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            )}
+            <ul className="text-red-500 text-sm mt-1">
+              {formErrors.firstName.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          )}
           {formErrors.lastName && (
-              <ul className="text-red-500 text-sm mt-1">
-                {formErrors.lastName.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            )}
+            <ul className="text-red-500 text-sm mt-1">
+              {formErrors.lastName.map((error, index) => (
+                <li key={index}>{error}</li>
+              ))}
+            </ul>
+          )}
           {formErrors.email && (
             <ul className="text-red-500 text-sm mt-1">
               {formErrors.email.map((error, index) => (
@@ -213,8 +214,8 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
                 <li key={index}>{error}</li>
               ))}
             </ul>
-          )}       
-          
+          )}
+
           <Button disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

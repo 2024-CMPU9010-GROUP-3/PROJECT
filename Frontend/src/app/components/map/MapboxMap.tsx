@@ -35,7 +35,7 @@ import MultipleSelector, {
   Option,
 } from "@/components/ui/registry/multiple-select";
 import { useOnborda } from "onborda";
-import {getToken} from "@/lib/session";
+import { getToken } from "@/lib/session";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -176,23 +176,25 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     sliderValue: number,
     amenitiesFilter: string[] = []
   ) => {
-    const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${
-        sliderValue * 100
-      }&types=${amenitiesFilter.join(",")}`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: {
-          authorization: "Bearer " + await getToken(),
+    if (typeof window !== "undefined") {
+      const response = await fetch(
+        `/api/points?long=${longitude}&lat=${latitude}&radius=${
+          sliderValue * 100
+        }&types=${amenitiesFilter.join(",")}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            authorization: "Bearer " + (await getToken()),
+          },
         }
-      }
-    );
+      );
 
-    const data = await response.json();
-    const geoJson = convertToGeoJson(data?.response?.content);
+      const data = await response.json();
+      const geoJson = convertToGeoJson(data?.response?.content);
 
-    setPointsGeoJson(geoJson);
+      setPointsGeoJson(geoJson);
+    }
   };
 
   const { startOnborda } = useOnborda();
