@@ -4,6 +4,7 @@
 \usepackage{soul} % For highlighting text
 \usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{tabularx} % for automatic column width adjustment
 
 
 % Manually setting the margins
@@ -212,7 +213,28 @@ The expert review will be conducted online through a videoconference meeting on 
     \item Questionnaire
     \item Discussion \& end of review
 \end{enumerate}
-The questionnaire will include questions on visual design, information architecture, data quality \& integration, technical performance, compliance and overall assessment of Magpie (\hl{figure below}).
+The questionnaire will include questions on visual design, information architecture, data quality \& integration, technical performance, compliance and overall assessment of Magpie as shown in Table 2.1.
+\begin{table}[h!]
+    \centering
+    \caption{Expert Review Questionnaire}
+    \label{tab:table1}
+    \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
+        \hline
+        \textbf{Question}                                                                                                                                                                                                                & \textbf{Question type} & \textbf{Answer type} \\ \hline
+        How user friendly is the log-in/sign up page?                                                                                                                                                                                    & Closed                 & Multiple choice      \\ \hline
+        How user-friendly is the on-boarding process                                                                                                                                                                                     & Closed                 & Multiple choice      \\ \hline
+        How effective is the visual hierarchy of the information on the dashboard?                                                                                                                                                       & Closed                 & Multiple choice      \\ \hline
+        Rate the clarity of the map visualization                                                                                                                                                                                        & Closed                 & Multiple choice      \\ \hline
+        How intuitive is the organization of amenity data categories?                                                                                                                                                                    & Closed                 & Multiple choice      \\ \hline
+        Rate the following features from Worst (1) to Best (5) = Onboarding, Radius scaling, filter options completeness, profile menu                                                                                                   & Closed                 & Scale                \\ \hline
+        How comprehensive is the amenity data coverage for Dublin city?                                                                                                                                                                  & Closed                 & Multiple choice      \\ \hline
+        How valuable do you think this tool would be for the following use cases - 1: Not valuable at all, 5: Extremely valuable = Urban planning, Resource allocation, Planning permissions, Event planning, Education, Travel planning & Closed                 & Scale                \\ \hline
+        Any additional comments on why this tool would useful/impractical for the above use cases?                                                                                                                                       & Open-ended             & Textbox              \\ \hline
+        Evaluate the following technical aspects from Worst (1) to Best (5) = Loading speed, System responsiveness, Data update frequency, Filter functionality, Radius selection                                                        & Closed                 & Scale                \\ \hline
+        Rate the application's compliance with the items below from Worst (1) to Best (5) = Accessibility, GIS data standards, GDPR                                                                                                      & Closed                 & Scale                \\ \hline
+        Any additional comments regarding our application?                                                                                                                                                                               & Open-ended             & Textbox
+    \end{tabularx}
+\end{table}
 
 \chapter{Results}
 \section{Usability testing}
