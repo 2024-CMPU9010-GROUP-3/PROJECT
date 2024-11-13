@@ -1,6 +1,6 @@
 # Users participating in Usability testing
 ## Casual users (remote & controlled)
-* C21459946@mytudublin.ie = Waiting
+* C21459946@mytudublin.ie = Agreed
 * c24394486@mytudublin.ie = Waiting
 * D22125503@mytudublin.ie = Waiting
 * debemeh06@gmail.com = Waiting
