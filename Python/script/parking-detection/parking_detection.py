@@ -352,8 +352,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
     def find_empty_spots(sorted_cars, alignment):
         """ Detect empty spots in the sorted list of cars for a specific alignment (horizontal or vertical) """
         for i in range(len(sorted_cars) - 1):
-            x_current, y_current, _, _, _, _ = sorted_cars[i]
-            x_next, y_next, _, _, _, _ = sorted_cars[i + 1]
+            x_current, y_current, _, _, rotation_current, _ = sorted_cars[i]
+            x_next, y_next, _, _, rotation_next, _ = sorted_cars[i + 1]
 
             gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
             avg_half_dim = avg_spot_width / 2 if alignment == 'horizontal' else avg_spot_length / 2
@@ -361,12 +361,14 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > (avg_spot_width if alignment == 'horizontal' else avg_spot_length):
                 num_spots = int(adjusted_gap // (avg_spot_width if alignment == 'horizontal' else avg_spot_length))
+                
+                rotation = (rotation_current + rotation_next) / 2
 
                 for j in range(1, num_spots + 1):
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                    empty_spots.append(([empty_x_center, empty_y_center], alignment))
-                    print(f"Empty parking spot at {empty_x_center}, {empty_y_center}, {alignment}")
+                    empty_spots.append(([empty_x_center, empty_y_center], rotation, alignment))
+                    print(f"Empty parking spot at {empty_x_center}, {empty_y_center}, {alignment}, {rotation}")
 
     find_empty_spots(horizontal_cars, 'horizontal')
     find_empty_spots(vertical_cars, 'vertical')
@@ -379,29 +381,26 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
 
     Params:
         image_path (str): Path to the image
-        empty_spots (list): List of empty parking spots' center coordinates
+        empty_spots (list): List of empty parking spots' center coordinates, roation and alignment
         center_long (float): Longitude of the center of the image
         center_lat (float): Latitude of the center of the image.
         avg_spot_width (float): Average width of a parking spot in pixels
         avg_spot_length (float): Average length of a parking spot in pixels
     """
+    
     image = cv2.imread(image_path)
 
-    for spot, orientation in empty_spots:
+    for spot, rotation, orientation in empty_spots:
         x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
         
-        if orientation == 'horizontal':
-            x1 = int(x_pixel - avg_spot_width // 2)
-            y1 = int(y_pixel - avg_spot_length // 2)
-            x2 = int(x_pixel + avg_spot_width // 2)
-            y2 = int(y_pixel + avg_spot_length // 2)
-        else: 
-            x1 = int(x_pixel - avg_spot_length // 2)
-            y1 = int(y_pixel - avg_spot_width // 2)
-            x2 = int(x_pixel + avg_spot_length // 2)
-            y2 = int(y_pixel + avg_spot_width // 2)  
+        width = avg_spot_width if orientation == 'horizontal' else avg_spot_length
+        height = avg_spot_length if orientation == 'horizontal' else avg_spot_width
         
-        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        rect = ((x_pixel, y_pixel), (width, height), rotation)
+        box_points = cv2.boxPoints(rect)
+        box_points = np.int32(box_points)
+
+        cv2.polylines(image, [box_points], isClosed=True, color=(0, 255, 0), thickness=2)
 
     cv2.imwrite(image_path, image)
 
@@ -424,8 +423,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -448,7 +447,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
         empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
         draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude, avg_width_pixels, avg_length_pixels)
-        empty_spots_coords = [spot for spot, _ in empty_spots]
+        empty_spots_coords = [spot for spot, _, _ in empty_spots]
         all_detections.extend(empty_spots_coords)
 
     return all_detections
@@ -563,7 +562,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    '''main(-6.2576, 53.3388, -6.2566, 53.3394)
+    main(-6.2576, 53.3388, -6.2566, 53.3394)
     main(-6.2608, 53.3464, -6.2598, 53.347)
     main(-6.2617, 53.3462, -6.2606, 53.3469)
     main(-6.2854, 53.3511, -6.2843, 53.3517)
@@ -589,9 +588,4 @@ if __name__ == "__main__":
     main(-6.2461, 53.3198, -6.2453, 53.3201)
     main(-6.2463, 53.3195, -6.2455, 53.3198)
     main(-6.2465, 53.3193, -6.2457, 53.3196)
-    '''
-    main(-6.2749, 53.3409, -6.2743, 53.3411)#only vertical(2 cars) works
-    main(-6.2755, 53.3434, -6.2749, 53.3436)#slanted(5 cars) weird cars on the road horizontal, parked vertical
-    main(-6.2756, 53.3441, -6.2751, 53.3443)#only horizontal(4 cars) works
-    main(-6.2757, 53.3443, -6.2752, 53.3445)#mix hor and vert works
-    main(-6.2765, 53.3445, -6.276, 53.3447)#vertical slanted works
+    
