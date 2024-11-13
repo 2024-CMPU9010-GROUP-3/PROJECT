@@ -1,9 +1,6 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/registry/button";
 import { LoginForm } from "@/app/components/form/login-form";
 import MagpieLogo from "../components/logo/magpie";
 
@@ -50,15 +47,7 @@ export default function LoginPage() {
 
       {/* Desktop and Tablet Version */}
       <div className="container relative hidden md:grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-        {/* <Link
-          href="/examples/authentication"
-          className={cn(
-            buttonVariants({ variant: "ghost" }),
-            "absolute right-4 top-4 md:right-8 md:top-8"
-          )}
-        >
-          Test
-        </Link> */}
+
 
         <div className="relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
           {/* Desktop Side Section */}
@@ -89,7 +78,6 @@ export default function LoginPage() {
               >
                 Terms and Privacy Policy
               </Link>
-              .
             </p>
             
             

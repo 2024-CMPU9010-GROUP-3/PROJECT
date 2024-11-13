@@ -1,7 +1,6 @@
 import LocationAggregatorMap from "../map/MapboxMap";
 import ProtectedRoute from "../ProtectedRoute";
 import Nav from "@/app/nav/page";
-import { CookieConsent } from "../banner/CookieConsent";
 
 
 const HomePage = () => {
