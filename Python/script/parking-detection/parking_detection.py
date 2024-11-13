@@ -350,25 +350,26 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
     vertical_cars = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[1]) 
 
     def find_empty_spots(sorted_cars, alignment):
-        """ Detect empty spots in the sorted list of cars for a specific alignment (horizontal or vertical) """
+        """ Detects empty spots in the sorted list of cars for a specific alignment (horizontal or vertical) """
         for i in range(len(sorted_cars) - 1):
-            x_current, y_current, _, _, rotation_current, _ = sorted_cars[i]
-            x_next, y_next, _, _, rotation_next, _ = sorted_cars[i + 1]
+            x_current, y_current, _, _, _, _ = sorted_cars[i]
+            x_next, y_next, _, _, _, _ = sorted_cars[i + 1]
 
             gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
             avg_half_dim = avg_spot_width / 2 if alignment == 'horizontal' else avg_spot_length / 2
             adjusted_gap = gap_distance - 2 * avg_half_dim
+
+            angle_radians = math.atan2(y_next - y_current, x_next - x_current)
+            angle_degrees = math.degrees(angle_radians)
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > (avg_spot_width if alignment == 'horizontal' else avg_spot_length):
                 num_spots = int(adjusted_gap // (avg_spot_width if alignment == 'horizontal' else avg_spot_length))
                 
-                rotation = (rotation_current + rotation_next) / 2
-
                 for j in range(1, num_spots + 1):
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                    empty_spots.append(([empty_x_center, empty_y_center], rotation, alignment))
-                    print(f"Empty parking spot at {empty_x_center}, {empty_y_center}, {alignment}, {rotation}")
+                    empty_spots.append(([empty_x_center, empty_y_center], angle_degrees, alignment))
+                    print(f"Empty parking spot at {empty_x_center}, {empty_y_center}, {alignment}, {angle_degrees}")
 
     find_empty_spots(horizontal_cars, 'horizontal')
     find_empty_spots(vertical_cars, 'vertical')
@@ -390,12 +391,21 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
     
     image = cv2.imread(image_path)
 
-    for spot, rotation, orientation in empty_spots:
+    for i, (spot, rotation, orientation) in enumerate(empty_spots):
         x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
-        
+
         width = avg_spot_width if orientation == 'horizontal' else avg_spot_length
         height = avg_spot_length if orientation == 'horizontal' else avg_spot_width
         
+        if i > 0:
+            prev_rotation = empty_spots[i - 1][1]
+            rotation_diff = abs(rotation - prev_rotation)
+
+            if rotation_diff < 15:
+                rotation = prev_rotation
+            elif abs(rotation % 90) < 10:
+                rotation = round(rotation / 90) * 90
+
         rect = ((x_pixel, y_pixel), (width, height), rotation)
         box_points = cv2.boxPoints(rect)
         box_points = np.int32(box_points)
