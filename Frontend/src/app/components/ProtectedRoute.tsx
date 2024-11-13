@@ -2,18 +2,19 @@
 
 import { useEffect } from "react";
 import { useRouter, usePathname } from 'next/navigation';
-import { getToken } from "@/lib/session";
+import { useSession } from "@/app/context/SessionContext"
+
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const router = useRouter();
-    const pathname = usePathname();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { sessionToken } = useSession();
 
     useEffect(() => {
       const checkAuthentication = async () => {
         try {
-            const token = await getToken();
             // Redirect to login if not authenticated and not on an unprotected path
-            if (!token) {
+            if (!sessionToken) {
                 router.push('/login');
             }
         } catch (error) {
@@ -22,7 +23,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
     };
 
     checkAuthentication();
-    }, [router, pathname]);
+    }, [router, pathname, sessionToken]);
 
     return <>{children}</>;
 };

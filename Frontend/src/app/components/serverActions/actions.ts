@@ -1,26 +1,24 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
 import { SignupFormSchema, FormState } from '@/lib/interfaces/definitions';
-import { setToken, setUUID, getToken, deleteSessionFromCookies } from '@/lib/session';
+import {cookies} from 'next/headers';
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
-// define the input schema
-const loginSchema = z.object({
-  usernameOrEmail: z.string().min(1, { message: "Username or Email is required" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }), // ensure consistent with backend
-});
+const tokenCookieName = "magpie_token";
+const uuidCookieName = "magpie_uuid";
 
 // public function: handle API request
 async function handleApiRequest(url: string, method: string, body: Record<string, unknown> ) {
+  console.log("HANDLE API REQUEST")
   try {
 
-    console.log("bearer token: ", await getToken())
+    // console.log("bearer token: ", await getToken())
     const res = await fetch(url, {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${await getToken()}`
+        // 'Authorization': `Bearer ${await getToken()}`
       },
       body: JSON.stringify(body),
       credentials: 'include', // send and receive cookies
@@ -41,46 +39,6 @@ async function handleApiRequest(url: string, method: string, body: Record<string
   } catch (error) {
     console.error('API request error:', error);
     throw error;
-  }
-}
-
-// Login Server Action
-export async function login(formData: FormData) {
-  const parsedData = loginSchema.safeParse({
-    usernameOrEmail: formData.get('username'),
-    password: formData.get('password'),
-  });
-
-  if (!parsedData.success) {
-    return { errors: parsedData.error.flatten().fieldErrors };
-  }
-
-  const { usernameOrEmail, password } = parsedData.data;
-
-  try {
-    const data = await handleApiRequest(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/auth/User/login`,
-      'POST',
-      { username: usernameOrEmail, password }
-    );
-
-    if (data.errors) {
-      return { errors: data.errors };
-    }
-
-    // create session
-    await setToken(data.token);
-    await setUUID(data.userId);
-
-    // login successful, redirect to home page
-    redirect('/');
-  } catch (error) {
-    console.error('Login error:', error); 
-    return {
-      errors: {
-        username: ['login error, please try again later'],
-      },
-    };
   }
 }
 
@@ -125,15 +83,24 @@ export async function signup(prevState: FormState, formData: FormData) {
 }
 
 export async function logout() {
-  // backend does not implement logout route yet
-  // try {
-  //   await handleApiRequest(`${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/auth/logout`, 'POST', {});
-  // } catch (error) {
-  //   console.error('logout error:', error);
-  // }
-
-  await deleteSessionFromCookies();
-  await setToken('');
-  await setUUID('');
   redirect('/');
+}
+
+export async function saveSessionToCookies(sessionToken: string, sessionUUID: string) {
+  const cookieStore = cookies();
+
+  // Set cookies to store sessionToken and sessionUUID
+  let expiryDate = new Date(Date.now() + 86400 * 1000); // 1 day expiry default
+  const decoded = jwtDecode<JwtPayload>(sessionToken)
+  if(decoded.exp){
+    expiryDate = new Date(decoded.exp * 1000);
+  }
+  cookieStore.set(tokenCookieName, sessionToken, { expires: expiryDate });
+  cookieStore.set(uuidCookieName, sessionUUID, { expires: expiryDate });
+}
+
+export async function deleteSessionFromCookies() {
+  const cookieStore = cookies();
+  cookieStore.delete(tokenCookieName);
+  cookieStore.delete(uuidCookieName);
 }

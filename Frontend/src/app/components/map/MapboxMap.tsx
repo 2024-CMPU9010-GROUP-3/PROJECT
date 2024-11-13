@@ -35,7 +35,8 @@ import MultipleSelector, {
   Option,
 } from "@/components/ui/registry/multiple-select";
 import { useOnborda } from "onborda";
-import {getToken} from "@/lib/session";
+
+import { useSession } from '@/app/context/SessionContext';
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -114,6 +115,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
 
+  const {sessionToken} = useSession()
+
   const handleAmenitiesFilterChange = (selectedOptions: Option[]) => {
     setAmenitiesFilter(selectedOptions.map((option) => option.value));
   };
@@ -184,7 +187,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         method: "GET",
         credentials: "include",
         headers: {
-          authorization: "Bearer " + await getToken(),
+          authorization: "Bearer " + sessionToken,
         }
       }
     );

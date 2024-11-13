@@ -6,11 +6,8 @@ import {
   UserRoundX,
 } from "lucide-react";
 
-import { useAuth } from "@/app/context/AuthContext"; // Import useAuth to get auth context
 import { logout } from "@/app/components/serverActions/actions"; // Import logout action
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { getToken } from "@/lib/session";
 
 import {
   DropdownMenu,
@@ -24,21 +21,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {useSession} from "@/app/context/SessionContext";
 
 export function DropdownMenuDemo() {
-  const { isLoggedIn, setIsLoggedIn } = useAuth(); // Use useAuth to get isLoggedIn state
+  const { sessionToken, setSessionToken, setSessionUUID } = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    // check session
-    const checkSession = async () => {
-      const token = await getToken();
-      if (token) {
-        setIsLoggedIn(true);
-      }
-    };
-    checkSession();
-  }, [setIsLoggedIn]);
 
   // Function to handle login
   const handleLogin = () => {
@@ -49,6 +36,8 @@ export function DropdownMenuDemo() {
   // Function to handle logout
   const handleLogout = async () => {
     await logout(); // Call logout action
+    setSessionToken('');
+    setSessionUUID('');
     console.log("Logged out!");
   };
 
@@ -56,7 +45,7 @@ export function DropdownMenuDemo() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         {/* Conditionally render Avatar or UserRoundX icon based on isLoggedIn state */}
-        {isLoggedIn ? (
+        {sessionToken ? (
           <Avatar>
             <AvatarImage src="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=home" alt="@shadcn" />
             <AvatarFallback>
@@ -69,7 +58,7 @@ export function DropdownMenuDemo() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         {/* Show different dropdown items based on login status */}
-        {isLoggedIn ? (
+        {sessionToken ? (
           <>
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />

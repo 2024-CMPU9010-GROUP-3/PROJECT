@@ -16,10 +16,10 @@ export async function getCookiesAccepted() {
 
 export async function setCookiesAccepted(){
   const cookieStore = cookies();
-  await cookieStore.set(cookiesAcceptedName, "true");
+  cookieStore.set(cookiesAcceptedName, "true");
 }
 
 export async function unsetCookiesAccepted() {
   const cookieStore = cookies();
-  await cookieStore.delete(cookiesAcceptedName);
+  cookieStore.delete(cookiesAcceptedName);
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Providers from "./providers";
 import "./globals.css";
-import { AuthProvider } from '@/app/context/AuthContext';
+import { SessionProvider } from './context/SessionContext';
 import { Onborda, OnbordaProvider } from "onborda";
 import { steps } from "./components/onboarding/steps";
 import { TourCard } from "./components/onboarding/card";
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased min-h-screen">
-        <AuthProvider>
+        <SessionProvider>
           <Providers>
             <OnbordaProvider>
               <Onborda
@@ -35,7 +35,7 @@ export default function RootLayout({
               </Onborda>
             </OnbordaProvider>
           </Providers>
-        </AuthProvider>
+        </SessionProvider>
       </body>
     </html>
   );
