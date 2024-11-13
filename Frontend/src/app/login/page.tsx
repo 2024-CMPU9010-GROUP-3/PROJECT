@@ -1,8 +1,10 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/registry/button";
 import { LoginForm } from "@/app/components/form/login-form";
-import MagpieLogo from "../components/logo/magpie";
 
 
 
@@ -39,22 +41,48 @@ export default function LoginPage() {
               href="/terms"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Terms and Privacy Policy
+              Terms of Service
+            </Link>{" "}
+            and{" "}
+            <Link
+              href="/privacy"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Privacy Policy
             </Link>
+            .
           </p>
         </div>
       </div>
 
       {/* Desktop and Tablet Version */}
       <div className="container relative hidden md:grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-
+        <Link
+          href="/examples/authentication"
+          className={cn(
+            buttonVariants({ variant: "ghost" }),
+            "absolute right-4 top-4 md:right-8 md:top-8"
+          )}
+        >
+          Test
+        </Link>
 
         <div className="relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
           {/* Desktop Side Section */}
           <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 to-zinc-700" />
-              <div className="absolute top-8 left-6" style={{ zIndex: 99 }}>
-                <MagpieLogo />
-              </div>
+          <Link
+            href="/"
+            className="relative inline-flex items-center gap-2 z-20"
+          >
+            <Image
+              src="/images/BKlogo.svg"
+              alt="Logo"
+              width={30}
+              height={30}
+              className="mr-2 h-12 w-12"
+            />
+            <span className="text-lg font-medium">Magpie</span>
+          </Link>
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
@@ -76,8 +104,16 @@ export default function LoginPage() {
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Terms and Privacy Policy
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                className="underline underline-offset-4 hover:text-primary"
+              >
+                Privacy Policy
               </Link>
+              .
             </p>
             
             
