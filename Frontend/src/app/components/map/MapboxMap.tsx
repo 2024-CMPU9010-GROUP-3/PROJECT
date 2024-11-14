@@ -22,7 +22,6 @@ import {
   accessibleParkingLayers,
   bikeSharingLayers,
   bikeStandLayers,
-  bicycleLayers,
   carParkLayers,
   coachParkingLayers,
   libraryLayers,
@@ -97,7 +96,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_parking: false,
     custom_parking_meter: false,
     custom_bicycle: false,
-    bicycle_share: false,
+    custom_bicycle_share: false,
+    custom_accessible_parking: false,
     // Add entries for other icons
   });
 
@@ -174,6 +174,28 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             setImagesLoaded((prev) => ({ ...prev, "bicycle_share": true }));
           }
           setImagesLoaded((prev) => ({ ...prev, "bicycle_share": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_bicycle_share')) {
+        map.loadImage(window.location.origin+'/images/bicycle_share.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_bicycle_share', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_bicycle_share": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_bicycle_share": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_accessible_parking')) {
+        map.loadImage(window.location.origin+'/images/accessibleParking.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_accessible_parking', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_accessible_parking": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_accessible_parking": true }));
         });
       }
       // Repeat for other custom icons
@@ -456,7 +478,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...bikeStandLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.bicycle_share && (
+              {imagesLoaded.custom_bicycle_share && (
                 <Source
                   id="bike-sharing"
                   type="geojson"
@@ -465,6 +487,28 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...bikeSharingLayers?.close} />
                   <Layer {...bikeSharingLayers?.medium} />
                   <Layer {...bikeSharingLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_bicycle_share && (
+                <Source
+                  id="bike-sharing"
+                  type="geojson"
+                  data={pointsGeoJson?.bike_sharing_station}
+                >
+                  <Layer {...bikeSharingLayers?.close} />
+                  <Layer {...bikeSharingLayers?.medium} />
+                  <Layer {...bikeSharingLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_accessible_parking && (
+                <Source
+                  id="accessible-parking"
+                  type="geojson"
+                  data={pointsGeoJson?.accessible_parking}
+                >
+                  <Layer {...accessibleParkingLayers?.close} />
+                  <Layer {...accessibleParkingLayers?.medium} />
+                  <Layer {...accessibleParkingLayers?.far} />
                 </Source>
               )}
               {/* Parking Meter Source */}

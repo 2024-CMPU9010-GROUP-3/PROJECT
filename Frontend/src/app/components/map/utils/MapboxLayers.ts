@@ -133,13 +133,13 @@ export const bikeStandLayers = createZoomBasedLayers(
 );
 export const bikeSharingLayers = createZoomBasedLayers(
   "bike-sharing",
-  "bicycle_share",
+  "custom_bicycle_share",
   colors.secondary,
   true
 );
 export const accessibleParkingLayers = createZoomBasedLayers(
   "accessible-parking",
-  "disabled",
+  "custom_accessible_parking",
   colors.primary
 );
 export const publicBinLayers = createZoomBasedLayers(
