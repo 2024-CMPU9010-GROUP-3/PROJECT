@@ -22,6 +22,7 @@ import {
   accessibleParkingLayers,
   bikeSharingLayers,
   bikeStandLayers,
+  bicycleLayers,
   carParkLayers,
   coachParkingLayers,
   libraryLayers,
@@ -94,6 +95,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   // Images state
   const [imagesLoaded, setImagesLoaded] = useState({
     custom_parking: false,
+    custom_parking_meter: false,
+    custom_bicycle: false,
+    bicycle_share: false,
     // Add entries for other icons
   });
 
@@ -137,6 +141,39 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             setImagesLoaded((prev) => ({ ...prev, "custom_parking": true }));
           }
           setImagesLoaded((prev) => ({ ...prev, "custom_parking": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_parking_meter')) {
+        map.loadImage(window.location.origin+'/images/parking_meter.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_parking_meter', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_parking_meter": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_parking_meter": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_bicycle')) {
+        map.loadImage(window.location.origin+'/images/bicycle.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_bicycle', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_bicycle": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_bicycle": true }));
+        });
+      }
+
+      if (!map.hasImage('bicycle_share')) {
+        map.loadImage(window.location.origin+'/images/bicycle_share.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('bicycle_share', image);
+            setImagesLoaded((prev) => ({ ...prev, "bicycle_share": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "bicycle_share": true }));
         });
       }
       // Repeat for other custom icons
@@ -392,9 +429,43 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 clusterMaxZoom={14} // Max zoom to cluster points on
                 clusterRadius={50}
               >
-                <Layer {...parkingClusterStyles.symbol} />
-                <Layer {...parkingClusterStyles.unclustered} />
+                <Layer {...parkingClusterStyles.close} />
+                <Layer {...parkingClusterStyles.medium} />
+                <Layer {...parkingClusterStyles.far} />
               </Source>
+              )}
+              {imagesLoaded.custom_parking_meter && (
+                <Source
+                  id="custom_parking_meter"
+                  type="geojson"
+                  data={pointsGeoJson?.parking_meter}
+                >
+                  <Layer {...parkingMeterLayers?.close} />
+                  <Layer {...parkingMeterLayers?.medium} />
+                  <Layer {...parkingMeterLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_bicycle && (
+                <Source
+                  id="custom_bicycle"
+                  type="geojson"
+                  data={pointsGeoJson?.bike_stand}
+                >
+                  <Layer {...bikeStandLayers?.close} />
+                  <Layer {...bikeStandLayers?.medium} />
+                  <Layer {...bikeStandLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.bicycle_share && (
+                <Source
+                  id="bike-sharing"
+                  type="geojson"
+                  data={pointsGeoJson?.bike_sharing_station}
+                >
+                  <Layer {...bikeSharingLayers?.close} />
+                  <Layer {...bikeSharingLayers?.medium} />
+                  <Layer {...bikeSharingLayers?.far} />
+                </Source>
               )}
               {/* Parking Meter Source */}
               <Source
