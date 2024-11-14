@@ -213,7 +213,7 @@ insights to improve the Magpie user experience.
               \item Difficulty of Task
               \item Errors
           \end{enumerate}
-          These will measure how the users are working through a series of pre-defined tasks (Table 2.2). These are the most common usability metrics and they tend to have moderate correlation with each other to suggest an overlap (Sauro et.al 2009).  Averaging them together allows us to generate a Single Usability Metric (SUM) which summarizes the user experience running through those tasks. These metrics will be measured by filling score cards (figure 2.2) and through observation \& discussion with the users. In addition, quantitative data will be collected through a user experience survey shown in figure 2.1.
+          These will measure how the users are working through a series of pre-defined tasks (Table 2.2). These are the most common usability metrics and they tend to have moderate correlation with each other to suggest an overlap (Sauro et.al 2009).  Averaging them together allows us to generate a Single Usability Metric (SUM) which summarizes the user experience running through those tasks. These metrics will be measured by filling score cards (\hl{figure 2.2}) and through observation \& discussion with the users. In addition, quantitative data will be collected through a user experience survey shown in figure 2.1.
 \end{enumerate}
 \begin{table}[h!]
     \centering
@@ -221,7 +221,7 @@ insights to improve the Magpie user experience.
     \label{tab:table2}
     \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
         \hline
-        \textbf{Task - chronological}                                                                                                                      & \textbf{Completion} & \textbf{Time taken} \\ \hline
+        \textbf{Tasks - chronological}                                                                                                                     & \textbf{Completion} & \textbf{Time taken} \\ \hline
         Load Magpie application                                                                                                                            &                     &                     \\ \hline
         Navigate to the Terms and Privacy policy                                                                                                           &                     &                     \\ \hline
         Create an account, log in and go through the onboarding steps until the end.                                                                       &                     &                     \\ \hline
@@ -289,37 +289,31 @@ The questionnaire includes questions on visual design, information architecture,
 \chapter{Results}
 \section{Usability testing}
 \subsection{Casual Think-Aloud Protocol}
-\begin{itemize}
-    \item Onboarding feature implementation \hl{SAUL}
-    \begin{itemize}
-        \item Onboarding feature was tested with two users
-        \item One is a casual user and the other is a professional user
-        \item The professional user had little issues with the onboarding
-        feature, and found it clear
-        \item The casual user attempted to click on the highlighted user
-        interface elements during the tutorial, which is not possible
-        \item A deeper black was added to the screen overlay to better indicate
-        that elements are not clickable
-        \item Gifs were added to the onboarding elements to indicate what each
-        button does
-        \item The onboarding feature was tested again with the same users and
-        they found it more intuitive
-    \end{itemize}
-
-    \begin{figure}
-        \centering
-        \includegraphics[width=0.5\textwidth]{Figures/fig10.png}
-        \caption{Onboarding feature A}
-
-        \includegraphics[width=0.5\textwidth]{Figures/fig11.png}
-        \caption{Onboarding feature B}
-    \end{figure}
-
+\begin{enumerate}
+    \item Onboarding feature implementation
+          \begin{itemize}
+              \item Onboarding feature was tested with two users, one casual and the other professional
+              \item The professional user had little issues with the onboarding
+                    feature, and found it clear and went through each step smoothly without questions
+              \item The casual user attempted to click on the highlighted user
+                    interface elements during the tutorial, which is not possible. They expressed that they would've liked to interact with the highlighted elements.
+              \item Due to the limitation of the feature, we are not able to make this interaction possible. However, a deeper black was added to the screen overlay (figure 3.1) to better indicate
+                    that elements are not clickable. Gifs were also added to the onboarding elements (figure 3.2) to indicate what each
+                    button does.
+                    \begin{figure}
+                        \centering
+                        \includegraphics[width=0.5\textwidth]{Figures/fig10.png}
+                        \caption{Onboarding feature A}
+                        \includegraphics[width=0.5\textwidth]{Figures/fig11.png}
+                        \caption{Onboarding feature B}
+                    \end{figure}
+              \item The onboarding feature was tested again with the same users and
+                    they both found it more intuitive
+          \end{itemize}
     \item Dashboard implementation \\
-          
     \item Avatar implementation \hl{YUANSHUO}
-    When developing the avatar feature of the Magpie app, our goal was to provide users with an intuitive and easy-to-use interface. We have now implemented a dropdown menu that appears when clicking on the avatar. If you are not logged in, it will display login. If you are logged in, you can set logout, etc. In the early development stage, we collected feedback from roommates and colleagues, who pointed out that the avatar should have the function of changing pictures such as uploading or selecting. Based on this feedback, we adjusted the default avatar and will add the selection or upload function later. At the same time, some people also reported that according to their experience, they may encounter difficulties such as inflexible image cropping and slow upload speed. We will also pay attention to these issues in later development. In addition, we also ensure that the avatar can be displayed correctly on different devices. In the future, we plan to add more customization options to further enhance the user experience.
-\end{itemize}
+          When developing the avatar feature of the Magpie app, our goal was to provide users with an intuitive and easy-to-use interface. We have now implemented a dropdown menu that appears when clicking on the avatar. If you are not logged in, it will display login. If you are logged in, you can set logout, etc. In the early development stage, we collected feedback from roommates and colleagues, who pointed out that the avatar should have the function of changing pictures such as uploading or selecting. Based on this feedback, we adjusted the default avatar and will add the selection or upload function later. At the same time, some people also reported that according to their experience, they may encounter difficulties such as inflexible image cropping and slow upload speed. We will also pay attention to these issues in later development. In addition, we also ensure that the avatar can be displayed correctly on different devices. In the future, we plan to add more customization options to further enhance the user experience.
+\end{enumerate}
 \subsubsection{Dashboard Implementation -- Kaustubh}
 \paragraph{Testing Overview}
 Users were provided unrestricted access to the dashboard and encouraged to interact naturally with the system while providing verbal feedback. This approach allowed us to observe authentic user behavior and identify potential usability issues.
