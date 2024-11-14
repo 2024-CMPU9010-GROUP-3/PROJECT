@@ -329,27 +329,41 @@ The testing was structured around four main interactive components:
 \end{itemize}
 \textbf{Check radius Control:}
 \begin{itemize}
-    \item Basic Navigation
-    \item Zoom functionality
-    \item Area selection
-    \item Visual Clarity
-\end{itemize}
-\textbf{Map Interface:}
-\begin{itemize}
-    \item Basic Navigation
-    \item Zoom functionality
-    \item Area selection
-    \item Visual Clarity
+    \item Slider movement and responsiveness
+    \item Real-time radius updates
+    \item Measurement accuracy
+    \item Circle visibility
 \end{itemize}
 \textbf{Amenities Filter}
 \begin{itemize}
-    \item Basic Navigation
-    \item Zoom functionality
-    \item Area selection
-    \item Visual Clarity
+    \item Filter Selection \& Search
+    \item Test dropdown menu functionality
+    \item Verify search bar responds correctly
+    \item Check autocomplete suggestions
+    \item Validate filter categories are clear
+\end{itemize}
+\textbf{Map Legend Dashboard: }
+\begin{itemize}
+    \item Visibility \& Layout
+    \item Data Display
+    \item User Interaction
+    \item Improvement Areas
+    \item Performance
 \end{itemize}
 
 
+\subsubsection{Test Results}
+\textbf{Map Interface: }
+Overall, users found the map easy and natural to navigate. They quickly figured out how to move around and zoom in and out without needing instructions, and the map responded quickly to their actions without any noticeable delay. The way selected areas were shown on the map made sense to users, helping them understand exactly which parts of Dublin they were looking at. However, several users, especially those less familiar with digital maps, mentioned they'd prefer having traditional '+' and '-' buttons for zooming rather than relying on the mouse wheel. Some also found it tricky to keep track of where they were in relation to the wider city area, suggesting that a small overview map in the corner would help them stay oriented. A few users also mentioned that when they selected an area, they weren't always sure if their selection had registered properly, indicating we could make the visual feedback more obvious when an area is selected.
+
+\textbf{Radius Control: }
+Users found the radius selection tool quite intuitive to use. When they moved the slider, they appreciated seeing the circle size change immediately on the map, giving them instant feedback about their selection. The slider itself worked smoothly without any jumpiness or lag, and users were able to fine-tune their selection area with good precision. However, several users mentioned it would be helpful to type in specific radius values when they needed exact measurements. Some also suggested having quick-select buttons for commonly used distances, like 100m, 250m, and 500m, which would save time for frequent searches. A few users noted that the circle outline could be hard to see in certain areas of the map, and recommended making it more visible, perhaps with a bolder or more contrasting color.
+
+\textbf{Amenities Filter: }
+From our testing sessions with five users, the amenities filter received mixed feedback. Most users found the basic selection and deselection process straightforward, though three users specifically mentioned they initially missed the scrollable nature of the list. Two users suggested grouping similar amenities together, particularly noting how parking-related options (Parking, Parking Meter, Accessible Parking) could be consolidated under one category. All users successfully used the filter, but four out of five mentioned that a search function would be helpful when looking for specific amenities in the list. The most common praise was for the clear 'x' button to remove selections, while the most frequent criticism was the lack of visual hierarchy and categorization in the list. One user specifically noted that larger icons would improve visibility and recognition of different amenity types.
+
+\textbf{Map Legend Dashboard: }
+During the testing of the map legend dashboard with five users, several key observations emerged. Users appreciated the clear display of amenity counts and consistent labeling format (Spots, Locations, etc.), but three users noted confusion about zero values staying visible in the list. The real-time count updates worked effectively, with users confirming immediate changes when adjusting the radius. A common suggestion among four users was the need for visual grouping of related amenities, particularly parking-related items. Two users specifically mentioned that adding icons would help quick identification, while all users noted the helpful distinction between different unit types (Spots vs. Locations vs. Points). The most significant improvement request was for better visual hierarchy and the ability to collapse categories to reduce scrolling.
 
 \subsection{Uncontrolled (Remote)}
 In Progress
