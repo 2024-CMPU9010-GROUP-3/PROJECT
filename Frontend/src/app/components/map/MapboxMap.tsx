@@ -99,6 +99,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_bicycle_share: false,
     custom_accessible_parking: false,
     custom_public_bins: false,
+    custom_public_wifi: false,
     // Add entries for other icons
   });
 
@@ -208,6 +209,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             setImagesLoaded((prev) => ({ ...prev, "custom_public_bins": true }));
           }
           setImagesLoaded((prev) => ({ ...prev, "custom_public_bins": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_public_wifi')) {
+        map.loadImage(window.location.origin+'/images/wifi.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_public_wifi', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_public_wifi": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_public_wifi": true }));
         });
       }
       // Repeat for other custom icons
@@ -532,6 +544,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...publicBinLayers?.close} />
                   <Layer {...publicBinLayers?.medium} />
                   <Layer {...publicBinLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_public_wifi && (
+                <Source
+                  id="public-wifi"
+                  type="geojson"
+                  data={pointsGeoJson?.public_wifi_access_point}
+                >
+                  <Layer {...publicWifiLayers?.close} />
+                  <Layer {...publicWifiLayers?.medium} />
+                  <Layer {...publicWifiLayers?.far} />
                 </Source>
               )}
               {/* Parking Meter Source */}

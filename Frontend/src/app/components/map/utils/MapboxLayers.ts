@@ -154,7 +154,7 @@ export const coachParkingLayers = createZoomBasedLayers(
 );
 export const publicWifiLayers = createZoomBasedLayers(
   "public-wifi",
-  "wifi",
+  "custom_public_wifi",
   colors.info
 );
 export const libraryLayers = createZoomBasedLayers(
