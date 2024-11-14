@@ -325,8 +325,12 @@ def calculate_avg_spot_dimensions(cars):
     avg_length_pixels = np.median(lengths)
 
     #cross product based on optimal values found previously
-    avg_width_meters = 2 * avg_width_pixels / 18
-    avg_length_meters = 3.2 * avg_length_pixels / 18
+    #avg_width_meters = 2 * avg_width_pixels / 18
+    #avg_length_meters = 3.2 * avg_length_pixels / 18
+
+    #we set the avgerage width and length as in practise it works better and accounts for the variations
+    avg_width_meters = 3
+    avg_length_meters = 3
 
     print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
@@ -382,9 +386,9 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     print(f"Empty parking spot at {empty_x_center}, {empty_y_center}, {alignment}, {angle_degrees}")
 
     find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters) #Horizontal spots in a row
-    find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters=8 ) #Horizontal spots stacked in a column
+    find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters=9 ) #Horizontal spots stacked in a column
     find_empty_spots(vertical_cars_sorted_by_lat, 'vertical', avg_spot_length, gap_threshold_meters) #Vertical spots in columns
-    find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters=8)  # Vertical spots side by side in a row
+    find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters=9)  # Vertical spots side by side in a row
 
     empty_spots = sorted(empty_spots, key=lambda spot: (spot[0][0], spot[0][1]))
     unique_empty_spots = []
@@ -400,6 +404,41 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
 
     return unique_empty_spots
 
+def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_lat, avg_spot_width, avg_spot_length):
+    """
+    Filters out empty parking spots that are on the road
+
+    Params:
+        empty_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation
+        road_mask_path (ndarray): Path of the saved mask
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image
+        avg_spot_width (float): Average width of a parking spot in pixels
+        avg_spot_length (float): Average length of a parking spot in pixels
+
+    Returns:
+        filtered_empty_spots (list): List of empty parking spots not on the road
+    """
+    road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
+
+    filtered_empty_spots = []
+    
+    for spot, rotation, alignment in empty_spots:
+        x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+
+        x_min = int(x_center - avg_spot_width / 2)
+        x_max = int(x_center + avg_spot_width / 2)
+        y_min = int(y_center - avg_spot_length / 2)
+        y_max = int(y_center + avg_spot_length / 2)
+
+        car_region = road_mask[y_min:y_max, x_min:x_max]
+        road_pixels = cv2.countNonZero(car_region)
+        total_pixels = car_region.size
+
+        if total_pixels > 0 and road_pixels / total_pixels <= 0.4:
+            filtered_empty_spots.append((spot, rotation, alignment))
+
+    return filtered_empty_spots
 
 def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
     """
@@ -409,7 +448,7 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
         image_path (str): Path to the image
         empty_spots (list): List of empty parking spots' center coordinates, roation and alignment
         center_long (float): Longitude of the center of the image
-        center_lat (float): Latitude of the center of the image.
+        center_lat (float): Latitude of the center of the image
         avg_spot_width (float): Average width of a parking spot in pixels
         avg_spot_length (float): Average length of a parking spot in pixels
     """
@@ -481,8 +520,9 @@ def get_parking_coords_in_image(model, longitude, latitude):
     if all_detections:
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
         empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
-        draw_empty_spots_on_image(output_path_bb_image, empty_spots, longitude, latitude, avg_width_pixels, avg_length_pixels)
-        empty_spots_coords = [spot for spot, _, _ in empty_spots]
+        empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
+        draw_empty_spots_on_image(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
+        empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
 
     return all_detections
@@ -624,3 +664,9 @@ if __name__ == "__main__":
     main(-6.2463, 53.3195, -6.2455, 53.3198)
     main(-6.2465, 53.3193, -6.2457, 53.3196)
     
+    main(-6.2811, 53.3489, -6.2801, 53.3495)#mix 
+    main(-6.2799, 53.3528, -6.2791, 53.3533)#vert 
+    main(-6.2807, 53.3529, -6.2797, 53.3535)# mix 
+    main(-6.2818, 53.3527, -6.2808, 53.3533)#hor
+    main(-6.283, 53.3525, -6.282, 53.3531)#hor, but not empty parking spots as car isn't identified
+    main(-6.2848, 53.3524, -6.2838, 53.353)#vert
