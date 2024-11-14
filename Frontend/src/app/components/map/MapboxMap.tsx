@@ -1,23 +1,37 @@
 "use client";
 
-import React, { Fragment, Suspense, useEffect, useMemo, useState } from "react";
+// React core
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 
-import { FaLocationDot } from "react-icons/fa6";
-import DeckGL from "@deck.gl/react";
-import "mapbox-gl/dist/mapbox-gl.css";
+// Third-party packages
+import DeckGL from '@deck.gl/react';
+import { GeoJSON } from 'geojson';
+import { FaLocationDot } from 'react-icons/fa6';
+import { Grid } from 'react-loader-spinner';
+import Map, { Layer, LayerProps, Marker, Source } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
+// Local components
+import { Badge } from '@/components/ui/badge';
+import MultipleSelector, { Option } from '@/components/ui/registry/multiple-select';
+import { Slider } from '@/components/ui/slider';
+
+// Local utils and configs
+import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
+import { getToken } from '@/lib/session';
+import { cn } from '@/lib/utils';
+import { useOnborda } from 'onborda';
+
+// Types and interfaces
 import {
   MapClickEvent,
   Coordinates,
   Point,
   CoordinatesForGeoJson,
-} from "@/lib/interfaces/types";
-import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
-import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
-import { GeoJSON } from "geojson";
-import { Slider } from "@/components/ui/slider";
-import { cn } from "@/lib/utils";
-import { Grid } from "react-loader-spinner";
-import { Badge } from "@/components/ui/badge";
+  ImageConfig,
+} from '@/lib/interfaces/types';
+
+// Map layer configurations
 import {
   accessibleParkingLayers,
   bikeSharingLayers,
@@ -31,12 +45,7 @@ import {
   publicToiletLayers,
   publicWifiLayers,
   waterFountainLayers,
-} from "./utils/MapboxLayers";
-import MultipleSelector, {
-  Option,
-} from "@/components/ui/registry/multiple-select";
-import { useOnborda } from "onborda";
-import { getToken } from "@/lib/session";
+} from './utils/MapboxLayers';
 
 
 type SliderProps = React.ComponentProps<typeof Slider>;
