@@ -15,7 +15,6 @@ var Router = http.NewServeMux()
 var v1Router = http.NewServeMux()
 
 func init() {
-	log.Println("init routes")
 	Router.Handle("/v1/", http.StripPrefix("/v1", v1Router))
 }
 
