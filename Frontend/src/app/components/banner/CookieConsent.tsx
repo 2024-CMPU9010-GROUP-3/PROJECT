@@ -14,7 +14,6 @@ import {
 
 export default function CookieConsent({
   variant = "default",
-  demo = false,
   onAcceptCallback = async () => {
     await setCookiesAccepted();
     await commitSessionToCookies();
@@ -53,12 +52,10 @@ export default function CookieConsent({
     try {
       setIsOpen(true);
       if (document.cookie.includes("cookieConsent=true")) {
-        if (!demo) {
-          setIsOpen(false);
-          setTimeout(() => {
-            setHide(true);
-          }, 700);
-        }
+        setIsOpen(false);
+        setTimeout(() => {
+          setHide(true);
+        }, 700);
       }
     } catch (e) {
       console.log("Error: ", e);
@@ -89,9 +86,9 @@ export default function CookieConsent({
               <br />
               <br />
               <span className="text-xs">
-                By clicking "
+                By clicking &quot;
                 <span className="font-medium opacity-80">Accept</span>
-                ", you agree to our use of cookies.
+                &quot;, you agree to our use of cookies.
               </span>
               <br />
               <Link href="/terms" className="text-xs underline">
@@ -152,3 +149,5 @@ export default function CookieConsent({
     </div>
   );
 }
+
+
