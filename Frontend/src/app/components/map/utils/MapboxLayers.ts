@@ -164,7 +164,7 @@ export const libraryLayers = createZoomBasedLayers(
 );
 export const carParkLayers = createZoomBasedLayers(
   "car-parks",
-  "car",
+  "custom_car_parks",
   colors.primary
 );
 export const waterFountainLayers = createZoomBasedLayers(
