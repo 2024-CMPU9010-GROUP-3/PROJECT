@@ -169,7 +169,7 @@ export const carParkLayers = createZoomBasedLayers(
 );
 export const waterFountainLayers = createZoomBasedLayers(
   "water-fountains",
-  "drinking-water",
+  "custom_water_fountain",
   colors.water
 );
 export const publicToiletLayers = createZoomBasedLayers(

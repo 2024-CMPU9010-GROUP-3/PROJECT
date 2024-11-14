@@ -103,6 +103,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_bus: false,
     custom_library: false,
     custom_car_parks: false,
+    custom_water_fountain: false,
     // Add entries for other icons
   });
 
@@ -256,6 +257,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             setImagesLoaded((prev) => ({ ...prev, "custom_car_parks": true }));
           }
           setImagesLoaded((prev) => ({ ...prev, "custom_car_parks": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_water_fountain')) {
+        map.loadImage(window.location.origin+'/images/water_fountain.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_water_fountain', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_water_fountain": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_water_fountain": true }));
         });
       }
       // Repeat for other custom icons
@@ -624,6 +636,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...carParkLayers?.close} />
                   <Layer {...carParkLayers?.medium} />
                   <Layer {...carParkLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_water_fountain && (
+                <Source
+                  id="water-fountains"
+                  type="geojson"
+                  data={pointsGeoJson?.drinking_water_fountain}
+                >
+                  <Layer {...waterFountainLayers?.close} />
+                  <Layer {...waterFountainLayers?.medium} />
+                  <Layer {...waterFountainLayers?.far} />
                 </Source>
               )}
               {/* Parking Meter Source */}
