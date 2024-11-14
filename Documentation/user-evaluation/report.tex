@@ -30,7 +30,6 @@
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{Figures/tud_logo.png}
-    \caption{TU Dublin Logo}    
 \end{figure}
 \title{MSc in Computing - Team Project}
 %\title{User Evaluation Report - Magpie (Group 3)}
@@ -207,44 +206,32 @@ insights to improve the Magpie user experience.
               \item Collect quantitative data from users through user experience survey post-test
               \item Analyse responses \& present results
           \end{enumerate}
-    \item \underline{Baseline \& Evaluation metrics:} User experience will be evaluated through a range of metrics shown below in table 2.1  which will measure how the users are working through a series of pre-defined tasks (Table 2.2). These metrics will be measured through observation \& discussion with the users. In addition, quantitative data will be collected through a user experience survey shown in figure 2.1.
+    \item \underline{Baseline \& Evaluation metrics:} User experience will be evaluated through a range of metrics shown below:
+          \begin{enumerate}
+              \item Task Success Rate
+              \item Time on Task
+              \item Difficulty of Task
+              \item Errors
+          \end{enumerate}
+          These will measure how the users are working through a series of pre-defined tasks (Table 2.2). These are the most common usability metrics and they tend to have moderate correlation with each other to suggest an overlap (Sauro et.al 2009).  Averaging them together allows us to generate a Single Usability Metric (SUM) which summarizes the user experience running through those tasks. These metrics will be measured by filling score cards (figure 2.2) and through observation \& discussion with the users. In addition, quantitative data will be collected through a user experience survey shown in figure 2.1.
 \end{enumerate}
-\begin{table}[h!]
-    \centering
-    \caption{Metrics for Controlled Usability testing}
-    \label{tab:table1}
-    \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
-        \hline
-        \textbf{Metric}    & \textbf{Threshold}         \\ \hline
-        Task Success Rate  & 50\%                       \\ \hline
-        Time on Task       & Custom - Dependent on task \\ \hline
-        Error Rate         & \hl{look online}           \\ \hline
-        Difficulty of task & Custom - Dependent on task \\ \hline
-    \end{tabularx}
-\end{table}
 \begin{table}[h!]
     \centering
     \caption{Tasks for Controlled Usability testing}
     \label{tab:table2}
     \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
         \hline
-        \textbf{Task - chronological}                                                                                                                  & \textbf{Completion} & \textbf{Time taken} \\ \hline
-        Click on link and load Magpie application                                                                                                      &                     &                     \\ \hline
-        Click on Terms and Privacy policy                                                                                                              &                     &                     \\ \hline
-        Return to log in page from Terms and Privacy policy page                                                                                       &                     &                     \\ \hline
-        Click on "Sign up" and create an account                                                                                                       &                     &                     \\ \hline
-        Go through onboarding steps until the end                                                                                                      &                     &                     \\ \hline
-        Place cursor on the map in "Phibsborough/Ballyfermot/Temple Bar/Inchicore/Fairview/Dundrum..." area and adjust the radius circle to 250 meters &                     &                     \\ \hline
-        Zoom into the area where you placed the cursor until you can clearly see road names on the map                                                 &                     &                     \\ \hline
-        Zoom out until you are able to see the radius circle in its entirety                                                                           &                     &                     \\ \hline
-        Click on another area of the map "Phibsborough/Ballyfermot/Temple Bar/Inchicore/Fairview/Dundrum..." and increase radius size to 400 meters    &                     &                     \\ \hline
-        Choose parking meter amenity in the drop down                                                                                                  &                     &                     \\ \hline
-        Remove parking meter amenity from the dropdown                                                                                                 &                     &                     \\ \hline
-        Choose Public Toilets and Public Wifi amenities in the drop down                                                                               &                     &                     \\ \hline
-        Click on another area of Dublin city "Phibsborough/Ballyfermot/Temple Bar/Inchicore/Fairview/Dundrum..." and reduce radius size to 100 meters  &                     &                     \\ \hline
-        \hl{Click on export as png}                                                                                                                    &                     &                     \\ \hline
-        Click on the question mark and exit the onboarding at step 3                                                                                   &                     &                     \\ \hline
-        Click on avatar and log out                                                                                                                    &                     &                     \\ \hline
+        \textbf{Task - chronological}                                                                                                                      & \textbf{Completion} & \textbf{Time taken} \\ \hline
+        Load Magpie application                                                                                                                            &                     &                     \\ \hline
+        Navigate to the Terms and Privacy policy                                                                                                           &                     &                     \\ \hline
+        Create an account, log in and go through the onboarding steps until the end.                                                                       &                     &                     \\ \hline
+        Choose any area in Dublin city and adjust the radius circle to 250 meters                                                                          &                     &                     \\ \hline
+        Zoom into the area where you placed the cursor until you can clearly see road names on the map; then choose parking meter amenity in the drop down &                     &                     \\ \hline
+        Click on another area of the map, zoom out until you're able to see the entire circle and increase radius size to 400 meters                       &                     &                     \\ \hline
+        Go through the onboarding/tutorial and exit at step 3                                                                                              &                     &                     \\ \hline
+        Remove "Parking Meter" amenity and choose "Public Toilets" and "Public Wifi" amenities in the drop down                                            &                     &                     \\ \hline
+        Click on another area of Dublin city, reduce radius size to 100 meters, zoom in to your liking and \hl{export the map as an image (png or jpeg)}   &                     &                     \\ \hline
+        Log out                                                                                                                                            &                     &                     \\ \hline
     \end{tabularx}
 \end{table}
 \subsection{Field-test (Remote)}
@@ -305,13 +292,13 @@ The questionnaire includes questions on visual design, information architecture,
 \begin{itemize}
     \item Onboarding feature implementation \hl{SAUL}
     \item Dashboard implementation \\
-    
+          
     \item Avatar implementation \hl{YUANSHUO}
 \end{itemize}
 \subsubsection{Dashboard Implementation -- Kaustubh}
-\paragraph{Testing Overview}  
+\paragraph{Testing Overview}
 Users were provided unrestricted access to the dashboard and encouraged to interact naturally with the system while providing verbal feedback. This approach allowed us to observe authentic user behavior and identify potential usability issues.
-\paragraph{Methodology}  
+\paragraph{Methodology}
 \textbf{Cognitive Walkthrough:}
 \begin{itemize}
     \item \textbf{Format: } Unstructured exploration with think-aloud protocol.
@@ -432,6 +419,7 @@ Here are the answers to the expert review survey below in table 3.1. The number 
           Seventeenth International Conference on Digital Society.
     \item McGuirk, Pauline M and Andrew MacLaran (2001). “Changing approaches to urban planning in an ‘entrepreneurial
           city’: the case of Dublin”. In: European Planning Studies 9.4, pp. 437–457.
+    \item Sauro, R. Lewis (April 2009). "Correlations among Prototypical Usability Metrics: Evidence for the Constuct of Usability"
 \end{itemize}
 \addcontentsline{toc}{chapter}{Table of Figures}
 \listoffigures
