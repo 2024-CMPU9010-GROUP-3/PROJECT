@@ -6,7 +6,7 @@
 * debemeh06@gmail.com = Waiting
 * benjohnson0806@gmail.com = Agreed
 * d20124630@mytudublin.ie = Waiting
-* C24329646@mytudublin.ie = Waiting
+* C24329646@mytudublin.ie = Agreed
 
 ## Professional users (remote & uncontrolled)
 * Damian = Agreed
