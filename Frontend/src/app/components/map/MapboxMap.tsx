@@ -98,6 +98,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_bicycle: false,
     custom_bicycle_share: false,
     custom_accessible_parking: false,
+    custom_public_bins: false,
     // Add entries for other icons
   });
 
@@ -196,6 +197,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             setImagesLoaded((prev) => ({ ...prev, "custom_accessible_parking": true }));
           }
           setImagesLoaded((prev) => ({ ...prev, "custom_accessible_parking": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_public_bins')) {
+        map.loadImage(window.location.origin+'/images/bin.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_public_bins', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_public_bins": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_public_bins": true }));
         });
       }
       // Repeat for other custom icons
@@ -509,6 +521,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...accessibleParkingLayers?.close} />
                   <Layer {...accessibleParkingLayers?.medium} />
                   <Layer {...accessibleParkingLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_public_bins && (
+                <Source
+                  id="public-bins"
+                  type="geojson"
+                  data={pointsGeoJson?.public_bins}
+                >
+                  <Layer {...publicBinLayers?.close} />
+                  <Layer {...publicBinLayers?.medium} />
+                  <Layer {...publicBinLayers?.far} />
                 </Source>
               )}
               {/* Parking Meter Source */}

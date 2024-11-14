@@ -144,7 +144,7 @@ export const accessibleParkingLayers = createZoomBasedLayers(
 );
 export const publicBinLayers = createZoomBasedLayers(
   "public-bins",
-  "waste-basket",
+  "custom_public_bins",
   colors.neutral
 );
 export const coachParkingLayers = createZoomBasedLayers(
