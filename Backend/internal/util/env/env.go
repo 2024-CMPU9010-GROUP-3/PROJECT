@@ -34,7 +34,7 @@ var (
 		EnvCorsOrigins:     "",
 		EnvCorsMethods:     "",
 		EnvJwtSecret:       "",
-		EnvJwtExpiry:       "24h",
+		EnvJwtExpiry:       "168h",
 		EnvLogin:           "",
 		EnvPassword:        "",
 		EnvHost:            "",
