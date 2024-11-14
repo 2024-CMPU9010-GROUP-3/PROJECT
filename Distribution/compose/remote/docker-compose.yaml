@@ -64,6 +64,7 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN=${MAPBOX_ACCESS_TOKEN}
+      - NEXT_PUBLIC_BACKEND_URL=http://public-service:8080
     networks:
       - app-network
 

@@ -26,8 +26,8 @@ ENV NODE_ENV=production
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# We do not currently have a public directory, as such this will fail and cause the build to fail
-# COPY --from=builder /app/public ./public
+# Copy the public directory
+COPY --from=builder /app/public ./public
 
 # Set the correct permission for prerender cache
 RUN mkdir .next
