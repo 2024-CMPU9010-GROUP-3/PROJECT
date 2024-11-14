@@ -159,7 +159,7 @@ export const publicWifiLayers = createZoomBasedLayers(
 );
 export const libraryLayers = createZoomBasedLayers(
   "libraries",
-  "library",
+  "custom_library",
   colors.secondary
 );
 export const carParkLayers = createZoomBasedLayers(
