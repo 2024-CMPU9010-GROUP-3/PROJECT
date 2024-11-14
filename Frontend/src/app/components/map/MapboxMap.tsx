@@ -100,6 +100,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_accessible_parking: false,
     custom_public_bins: false,
     custom_public_wifi: false,
+    custom_bus: false,
     // Add entries for other icons
   });
 
@@ -220,6 +221,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             setImagesLoaded((prev) => ({ ...prev, "custom_public_wifi": true }));
           }
           setImagesLoaded((prev) => ({ ...prev, "custom_public_wifi": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_bus')) {
+        map.loadImage(window.location.origin+'/images/bus.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_bus', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_bus": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_bus": true }));
         });
       }
       // Repeat for other custom icons
@@ -555,6 +567,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...publicWifiLayers?.close} />
                   <Layer {...publicWifiLayers?.medium} />
                   <Layer {...publicWifiLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_bus && (
+                <Source
+                  id="coach-parking"
+                  type="geojson"
+                  data={pointsGeoJson?.coach_parking}
+                >
+                  <Layer {...coachParkingLayers?.close} />
+                  <Layer {...coachParkingLayers?.medium} />
+                  <Layer {...coachParkingLayers?.far} />
                 </Source>
               )}
               {/* Parking Meter Source */}

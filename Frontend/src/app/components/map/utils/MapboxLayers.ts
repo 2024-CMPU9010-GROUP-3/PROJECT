@@ -149,7 +149,7 @@ export const publicBinLayers = createZoomBasedLayers(
 );
 export const coachParkingLayers = createZoomBasedLayers(
   "coach-parking",
-  "bus",
+  "custom_bus",
   colors.primary
 );
 export const publicWifiLayers = createZoomBasedLayers(
