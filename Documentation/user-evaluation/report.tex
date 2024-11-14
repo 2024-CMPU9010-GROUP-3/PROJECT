@@ -215,46 +215,25 @@ insights to improve the Magpie user experience.
           \end{enumerate}
           These will measure how the users are working through a series of pre-defined tasks (Table 2.2). These are the most common usability metrics and they tend to have moderate correlation with each other to suggest an overlap (Sauro et.al 2009).  Averaging them together allows us to generate a Single Usability Metric (SUM) which summarizes the user experience running through those tasks. These metrics will be measured by filling score cards (\hl{figure 2.2}) and through observation \& discussion with the users. In addition, quantitative data will be collected through a user experience survey shown in figure 2.1.
 \end{enumerate}
-\begin{table}[htbp]
+\begin{table}[h!]
     \centering
-    \begin{tabular}{|p{5cm}|p{2.5cm}|p{2cm}|p{2cm}|p{3.5cm}|}
-    \hline
-    \textbf{Task} & \textbf{Expected Completion} & \textbf{Target Time} & \textbf{Difficulty (1-5)} & \textbf{Typical Errors} \\
-    \hline
-    Load Magpie application & User sees login page & 5s & 1 & Network timeout, browser compatibility \\
-    \hline
-    Access Terms and Privacy & User views policy page & 10s & 1 & None expected \\
-    \hline
-    Return to login & User returns to main login & 5s & 1 & Navigation confusion \\
-    \hline
-    Sign up new account & Complete registration & 2m & 2 & Invalid email format, password requirements \\
-    \hline
-    Complete onboarding & Finish all tutorial steps & 3m & 2 & Skipping steps, confusion about progression \\
-    \hline
-    Place cursor and set 250m radius & Radius circle visible at location & 30s & 3 & Incorrect radius size, wrong location \\
-    \hline
-    Zoom to road name level & Street names visible & 20s & 2 & Over/under zooming \\
-    \hline
-    Zoom out to full radius & Complete circle visible & 15s & 2 & Losing circle location \\
-    \hline
-    New location with 400m radius & Larger radius at new spot & 30s & 3 & Radius adjustment issues \\
-    \hline
-    Select parking meter filter & Parking meters visible & 15s & 2 & Filter selection confusion \\
-    \hline
-    Remove parking meter filter & Filter removed & 10s & 1 & Filter deselection issues \\
-    \hline
-    Add toilets and WiFi filters & Both amenities shown & 20s & 2 & Multiple filter confusion \\
-    \hline
-    New location with 100m radius & Smaller radius at new location & 25s & 3 & Precise radius adjustment \\
-    \hline
-    Exit onboarding at step 3 & Tutorial closed & 10s & 1 & Exit button not found \\
-    \hline
-    Logout & Return to login page & 10s & 1 & Menu navigation issues \\
-    \hline
-    \end{tabular}
-    \caption{Magpie User Testing Protocol}
-    \label{tab:user-testing-protocol}
-    \end{table}
+    \caption{Tasks for Controlled Usability testing}
+    \label{tab:table2}
+    \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
+        \hline
+        \textbf{Tasks - chronological}                                                                                                                     & \textbf{Completion} & \textbf{Time taken} \\ \hline
+        Load Magpie application                                                                                                                            &                     &                     \\ \hline
+        Navigate to the Terms and Privacy policy                                                                                                           &                     &                     \\ \hline
+        Create an account, log in and go through the onboarding steps until the end.                                                                       &                     &                     \\ \hline
+        Choose any area in Dublin city and adjust the radius circle to 250 meters                                                                          &                     &                     \\ \hline
+        Zoom into the area where you placed the cursor until you can clearly see road names on the map; then choose parking meter amenity in the drop down &                     &                     \\ \hline
+        Click on another area of the map, zoom out until you're able to see the entire circle and increase radius size to 400 meters                       &                     &                     \\ \hline
+        Go through the onboarding/tutorial and exit at step 3                                                                                              &                     &                     \\ \hline
+        Remove "Parking Meter" amenity and choose "Public Toilets" and "Public Wifi" amenities in the drop down                                            &                     &                     \\ \hline
+        Click on another area of Dublin city, reduce radius size to 100 meters, zoom in to your liking and \hl{export the map as an image (png or jpeg)}   &                     &                     \\ \hline
+        Log out                                                                                                                                            &                     &                     \\ \hline
+    \end{tabularx}
+\end{table}
 \subsection{Field-test (Remote)}
 \begin{enumerate}
     \item \underline{Objective:} Analyze how users interact with Magpie in a
@@ -332,13 +311,13 @@ they both found it more intuitive
 \subsubsection{Avatar implementation}
 In the early development stage, we collected feedback from roommates and colleagues who pointed out that the avatar should display correctly on different devices and have the function of changing pictures such as uploading or selecting.
 At the same time, some people also reported that according to their experience, they may encounter difficulties such as inflexible image cropping and slow upload speed.\\
-Based on this feedback, we adjusted the default avatar to make it responsive on different devices and are currently developping the "add/upload profile picture"(\hl{figure 3.3}). We will also pay attention to the concerns mentioned throughout the development of the profile feature.
+Based on this feedback, we adjusted the default avatar to make it responsive on different devices and are currently developing the "add/upload profile picture". We will also pay attention to the concerns mentioned throughout the development of the profile feature.
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\textwidth]{Figures/fig14.png}
+    \fbox{\includegraphics[width=0.5\textwidth]{Figures/fig14.png}}
     \caption{First version of avatar/profile button}
     \label{fig:plot14}
-    \includegraphics[width=0.5\textwidth]{Figures/fig15.png}
+    \fbox{\includegraphics[width=0.5\textwidth]{Figures/fig15.png}}
     \caption{Second version of avatar/profile button}
     \label{fig:plot15}
 \end{figure}
@@ -386,6 +365,12 @@ If there are no amenities found in the radius of search, a message should pop up
 \textbf{Log in/sign up: }
 When trying to log in with credentials that don't exist, the system should return a proper error such as "username doesn't exist". Log out and account sign up went smoothly. Professor Curley questioned the benefits of logging for Magpie, to which we stated:
 Magpie was conceived with the idea of providing a service to working professionals; therefore logging in will allow the implementation of further features such as safeguarding their previous searches, storing exported reports, connecting with other members of your organization and much more.\\ \\
+\begin{figure}
+    \centering
+    \fbox{\includegraphics[width=\textwidth]{Figures/fig16.png}}
+    \caption{Current error when inputting non-existant username and password}
+    \label{fig:plot16}
+\end{figure}
 \textbf{Overall: }
 To resume, Professor Curley found our interface sleek and minimalistic. However, she suggested that if we want to remain with this style, we need to ensure there is as little room as possible for ambiguity and confusion. The user needs to find it easy to move from one feature to another and understand the triggers. Currently, Magpie looks so sleek that the user may not be able to see what they want.\\ \\
 
@@ -418,7 +403,7 @@ Below are the answers to the expert review survey in table 3.1. The number next 
 \subsection{Implemented changes}
 \begin{itemize}
     \item Fixed authentication bug to ensure user lands on the login page = remedies brusk introduction to Magpie by landing directly on the map
-    \item Unclear icons when choosing amenities to display on the map = remedied by implementing custom icons with new colors \& larger size
+    \item Unclear icons when choosing amenities to display on the map = remedied by implementing custom icons with new colors \& larger size as seen in figure 4.1.
           \begin{figure}
               \centering
               \fbox{\includegraphics[width=\textwidth]{Figures/fig13.png}}
@@ -429,7 +414,11 @@ Below are the answers to the expert review survey in table 3.1. The number next 
 \subsection{Planned changes}
 \begin{itemize}
     \item Rearrange dashboard to improve workflow and make it easier for the user to navigate the features = remedies confusing workflow of the dashboard
+    \item Add amenity icons to the dashboard to help user intuition = remedies disconnect between the map and the dashboard
     \item Add an escape button to the onboarding = remedies locked in the tutorial
+    \item Add more features to the radius control to enhance user experience when interacting with it = extra feature
+    \item Consolidate certain filter items for easier selection = extra feature
+    \item Enhance radius circle format = extra feature
 \end{itemize}
 
 
