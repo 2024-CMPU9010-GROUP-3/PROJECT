@@ -215,25 +215,46 @@ insights to improve the Magpie user experience.
           \end{enumerate}
           These will measure how the users are working through a series of pre-defined tasks (Table 2.2). These are the most common usability metrics and they tend to have moderate correlation with each other to suggest an overlap (Sauro et.al 2009).  Averaging them together allows us to generate a Single Usability Metric (SUM) which summarizes the user experience running through those tasks. These metrics will be measured by filling score cards (\hl{figure 2.2}) and through observation \& discussion with the users. In addition, quantitative data will be collected through a user experience survey shown in figure 2.1.
 \end{enumerate}
-\begin{table}[h!]
+\begin{table}[htbp]
     \centering
-    \caption{Tasks for Controlled Usability testing}
-    \label{tab:table2}
-    \begin{tabularx}{\textwidth}{|p{0.6\textwidth}|X|X|}
-        \hline
-        \textbf{Tasks - chronological}                                                                                                                     & \textbf{Completion} & \textbf{Time taken} \\ \hline
-        Load Magpie application                                                                                                                            &                     &                     \\ \hline
-        Navigate to the Terms and Privacy policy                                                                                                           &                     &                     \\ \hline
-        Create an account, log in and go through the onboarding steps until the end.                                                                       &                     &                     \\ \hline
-        Choose any area in Dublin city and adjust the radius circle to 250 meters                                                                          &                     &                     \\ \hline
-        Zoom into the area where you placed the cursor until you can clearly see road names on the map; then choose parking meter amenity in the drop down &                     &                     \\ \hline
-        Click on another area of the map, zoom out until you're able to see the entire circle and increase radius size to 400 meters                       &                     &                     \\ \hline
-        Go through the onboarding/tutorial and exit at step 3                                                                                              &                     &                     \\ \hline
-        Remove "Parking Meter" amenity and choose "Public Toilets" and "Public Wifi" amenities in the drop down                                            &                     &                     \\ \hline
-        Click on another area of Dublin city, reduce radius size to 100 meters, zoom in to your liking and \hl{export the map as an image (png or jpeg)}   &                     &                     \\ \hline
-        Log out                                                                                                                                            &                     &                     \\ \hline
-    \end{tabularx}
-\end{table}
+    \begin{tabular}{|p{5cm}|p{2.5cm}|p{2cm}|p{2cm}|p{3.5cm}|}
+    \hline
+    \textbf{Task} & \textbf{Expected Completion} & \textbf{Target Time} & \textbf{Difficulty (1-5)} & \textbf{Typical Errors} \\
+    \hline
+    Load Magpie application & User sees login page & 5s & 1 & Network timeout, browser compatibility \\
+    \hline
+    Access Terms and Privacy & User views policy page & 10s & 1 & None expected \\
+    \hline
+    Return to login & User returns to main login & 5s & 1 & Navigation confusion \\
+    \hline
+    Sign up new account & Complete registration & 2m & 2 & Invalid email format, password requirements \\
+    \hline
+    Complete onboarding & Finish all tutorial steps & 3m & 2 & Skipping steps, confusion about progression \\
+    \hline
+    Place cursor and set 250m radius & Radius circle visible at location & 30s & 3 & Incorrect radius size, wrong location \\
+    \hline
+    Zoom to road name level & Street names visible & 20s & 2 & Over/under zooming \\
+    \hline
+    Zoom out to full radius & Complete circle visible & 15s & 2 & Losing circle location \\
+    \hline
+    New location with 400m radius & Larger radius at new spot & 30s & 3 & Radius adjustment issues \\
+    \hline
+    Select parking meter filter & Parking meters visible & 15s & 2 & Filter selection confusion \\
+    \hline
+    Remove parking meter filter & Filter removed & 10s & 1 & Filter deselection issues \\
+    \hline
+    Add toilets and WiFi filters & Both amenities shown & 20s & 2 & Multiple filter confusion \\
+    \hline
+    New location with 100m radius & Smaller radius at new location & 25s & 3 & Precise radius adjustment \\
+    \hline
+    Exit onboarding at step 3 & Tutorial closed & 10s & 1 & Exit button not found \\
+    \hline
+    Logout & Return to login page & 10s & 1 & Menu navigation issues \\
+    \hline
+    \end{tabular}
+    \caption{Magpie User Testing Protocol}
+    \label{tab:user-testing-protocol}
+    \end{table}
 \subsection{Field-test (Remote)}
 \begin{enumerate}
     \item \underline{Objective:} Analyze how users interact with Magpie in a
