@@ -289,91 +289,41 @@ The questionnaire includes questions on visual design, information architecture,
 \chapter{Results}
 \section{Usability testing}
 \subsection{Casual Think-Aloud Protocol}
-\begin{enumerate}
-    \item Onboarding feature implementation
-          \begin{itemize}
-              \item Onboarding feature was tested with two users, one casual and the other professional
-              \item The professional user had little issues with the onboarding
-                    feature, and found it clear and went through each step smoothly without questions
-              \item The casual user attempted to click on the highlighted user
-                    interface elements during the tutorial, which is not possible. They expressed that they would've liked to interact with the highlighted elements.
-              \item Due to the limitation of the feature, we are not able to make this interaction possible. However, a deeper black was added to the screen overlay to better indicate
-                    that elements are not clickable. Figure 3.1 shows the before and figure 3.2 the after. In addition, Gifs were also added to the onboarding elements to indicate what each
-                    button does.
-              \item The onboarding feature was tested again with the same users and
-                    they both found it more intuitive
-                    \begin{figure}
-                        \centering
-                        \includegraphics[width=0.5\textwidth]{Figures/fig10.png}
-                        \caption{Onboarding before overlay change}                        \includegraphics[width=0.5\textwidth]{Figures/fig11.png}
-                        \caption{Onboarding after overlay change}
-                    \end{figure}
-          \end{itemize}
-    \item Dashboard implementation
-    \item Avatar implementation
-          \begin{itemize}
-              \item In the early development stage, we collected feedback from roommates and colleagues who pointed out that the avatar should display correctly on different devices and have the function of changing pictures such as uploading or selecting.
-              \item At the same time, some people also reported that according to their experience, they may encounter difficulties such as inflexible image cropping and slow upload speed.
-              \item Based on this feedback, we adjusted the default avatar to make it responsive on different devices and are currently developping the "add/upload profile picture"(\hl{figure 3.3}). We will also pay attention to the concerns mentioned throughout the development of the profile feature.
-          \end{itemize}
-\end{enumerate}
-\subsubsection{Dashboard Implementation -- Kaustubh}
-\paragraph{Testing Overview}
-Users were provided unrestricted access to the dashboard and encouraged to interact naturally with the system while providing verbal feedback. This approach allowed us to observe authentic user behavior and identify potential usability issues.
-\paragraph{Methodology}
-\textbf{Cognitive Walkthrough:}
-\begin{itemize}
-    \item \textbf{Format: } Unstructured exploration with think-aloud protocol.
-    \item \textbf{Duration: } 15-20 minutes per session.
-    \item \textbf{Participants: } 5 users with varying technical backgrounds.
-    \item \textbf{Documentation: } Screen recording and observer notes.
-\end{itemize}
-\textbf{Test Components: }
-The testing was structured around four main interactive components:
-\textbf{Map Interface:}
-\begin{itemize}
-    \item Basic Navigation
-    \item Zoom functionality
-    \item Area selection
-    \item Visual Clarity
-\end{itemize}
-\textbf{Check radius Control:}
-\begin{itemize}
-    \item Slider movement and responsiveness
-    \item Real-time radius updates
-    \item Measurement accuracy
-    \item Circle visibility
-\end{itemize}
-\textbf{Amenities Filter}
-\begin{itemize}
-    \item Filter Selection \& Search
-    \item Test dropdown menu functionality
-    \item Verify search bar responds correctly
-    \item Check autocomplete suggestions
-    \item Validate filter categories are clear
-\end{itemize}
-\textbf{Map Legend Dashboard: }
-\begin{itemize}
-    \item Visibility \& Layout
-    \item Data Display
-    \item User Interaction
-    \item Improvement Areas
-    \item Performance
-\end{itemize}
+\subsubsection{Onboarding feature implementation}
+Onboarding feature was tested with two users, one casual and the other professional. The professional user had little issues with the onboarding
+feature, and found it clear and went through each step smoothly without questions. The casual user attempted to click on the highlighted user
+interface elements during the tutorial, which is not possible. They expressed that they would've liked to interact with the highlighted elements.\\
+Due to the limitation of the feature, we are not able to make this interaction possible. However, a deeper black was added to the screen overlay to better indicate
+that elements are not clickable. Figure 3.1 shows the before and figure 3.2 the after. \\
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{Figures/fig10.png}
+    \caption{Onboarding before overlay change}                        \includegraphics[width=0.5\textwidth]{Figures/fig11.png}
+    \caption{Onboarding after overlay change}
+\end{figure}
+In addition, Gifs were also added to the onboarding elements to indicate what each
+button does. The onboarding feature was tested again with the same users and
+they both found it more intuitive
 
+\subsubsection{Avatar implementation}
+In the early development stage, we collected feedback from roommates and colleagues who pointed out that the avatar should display correctly on different devices and have the function of changing pictures such as uploading or selecting.
+At the same time, some people also reported that according to their experience, they may encounter difficulties such as inflexible image cropping and slow upload speed.\\
+Based on this feedback, we adjusted the default avatar to make it responsive on different devices and are currently developping the "add/upload profile picture"(\hl{figure 3.3}). We will also pay attention to the concerns mentioned throughout the development of the profile feature.
 
-\subsubsection{Test Results}
+\subsubsection{Dashboard Implementation}
+5 users were provided unrestricted access to the dashboard and encouraged to interact naturally with the system while providing verbal feedback. This approach allowed us to observe authentic user behavior and identify potential usability issues.\\
+
 \textbf{Map Interface: }
-Overall, users found the map easy and natural to navigate. They quickly figured out how to move around and zoom in and out without needing instructions, and the map responded quickly to their actions without any noticeable delay. The way selected areas were shown on the map made sense to users, helping them understand exactly which parts of Dublin they were looking at. However, several users, especially those less familiar with digital maps, mentioned they'd prefer having traditional '+' and '-' buttons for zooming rather than relying on the mouse wheel. Some also found it tricky to keep track of where they were in relation to the wider city area, suggesting that a small overview map in the corner would help them stay oriented. A few users also mentioned that when they selected an area, they weren't always sure if their selection had registered properly, indicating we could make the visual feedback more obvious when an area is selected.
+Users quickly figured out how to move around and zoom in and out without needing instructions. However, users less familiar with digital maps mentioned they'd prefer having traditional '+' and '-' buttons for zooming rather than relying on the mouse wheel. Some also found it tricky to keep track of where they were in relation to the wider city area, suggesting that a small overview map in the corner would help them stay oriented. A few users also mentioned that when they selected an area, they weren't always sure if their selection had registered properly, indicating we could make the visual feedback more obvious when an area is selected.\\
 
 \textbf{Radius Control: }
-Users found the radius selection tool quite intuitive to use. When they moved the slider, they appreciated seeing the circle size change immediately on the map, giving them instant feedback about their selection. The slider itself worked smoothly without any jumpiness or lag, and users were able to fine-tune their selection area with good precision. However, several users mentioned it would be helpful to type in specific radius values when they needed exact measurements. Some also suggested having quick-select buttons for commonly used distances, like 100m, 250m, and 500m, which would save time for frequent searches. A few users noted that the circle outline could be hard to see in certain areas of the map, and recommended making it more visible, perhaps with a bolder or more contrasting color.
+Users found the radius selection tool intuitive to use. When they moved the slider, they appreciated seeing the circle size change immediately on the map, giving them instant feedback about their selection. However, several users mentioned it would be helpful to type in specific radius values when they needed exact measurements. Some also suggested having quick-select buttons for commonly used distances, like 100m, 250m, and 500m, which would save time for frequent searches. A few users noted that the circle outline could be hard to see in certain areas of the map, and recommended making it more visible, perhaps with a bolder or more contrasting color.\\
 
 \textbf{Amenities Filter: }
-From our testing sessions with five users, the amenities filter received mixed feedback. Most users found the basic selection and deselection process straightforward, though three users specifically mentioned they initially missed the scrollable nature of the list. Two users suggested grouping similar amenities together, particularly noting how parking-related options (Parking, Parking Meter, Accessible Parking) could be consolidated under one category. All users successfully used the filter, but four out of five mentioned that a search function would be helpful when looking for specific amenities in the list. The most common praise was for the clear 'x' button to remove selections, while the most frequent criticism was the lack of visual hierarchy and categorization in the list. One user specifically noted that larger icons would improve visibility and recognition of different amenity types.
+This part of the dashboard received mixed feedback. Most users found the basic selection and deselection process straightforward, though three users specifically mentioned they initially missed the scrollable nature of the list. Two users suggested grouping similar amenities together, particularly noting how parking-related options (Parking, Parking Meter, Accessible Parking) could be consolidated under one category.\\ All users successfully used the filter, but four out of five mentioned that a search function would be helpful when looking for specific amenities in the list. The most common praise was for the clear 'x' button to remove selections, while the most frequent criticism was the lack of visual hierarchy and categorization in the list. One user specifically noted that larger icons on the map would improve visibility and recognition of different amenity types.\\
 
 \textbf{Map Legend Dashboard: }
-During the testing of the map legend dashboard with five users, several key observations emerged. Users appreciated the clear display of amenity counts and consistent labeling format (Spots, Locations, etc.), but three users noted confusion about zero values staying visible in the list. The real-time count updates worked effectively, with users confirming immediate changes when adjusting the radius. A common suggestion among four users was the need for visual grouping of related amenities, particularly parking-related items. Two users specifically mentioned that adding icons would help quick identification, while all users noted the helpful distinction between different unit types (Spots vs. Locations vs. Points). The most significant improvement request was for better visual hierarchy and the ability to collapse categories to reduce scrolling.
+All users appreciated the clear display of amenity counts and consistent labeling format (Spots, Locations, etc.), but three  noted confusion about zero values staying visible in the list. Two users specifically mentioned that adding icons to the dashboard would help quick identification, while all users noted the helpful distinction between different unit types (Spots vs. Locations vs. Points). The most significant improvement request was for better visual hierarchy and the ability to collapse categories to reduce scrolling. \\
 
 \subsection{Uncontrolled (Remote)}
 In Progress
@@ -383,32 +333,26 @@ In Progress
 In Progress
 
 \section{Expert review}
-The review provided very valuable insights on Magpie's workflow, user interface and technical components. These were the main takeways:
-\begin{itemize}
-    \item Andrea was directly taken to the mapview, which was not supposed to happen. After the review, we investigated the cause of this event and uncovered a bug in the authentication
-    \item Andrea suggested a landing page introducing Magpie because she felt lost just being taken to the page and nothing happening. Due to the bug explained above, the onboarding did not automatically start.
-    \item Regarding onboarding, the user intuitively wants to press on the items being highlighted during the tutorial, which is not possible. That is a current limitation of the way the frontend has been developed.
-    \item Still regarding onboarding, Andrea suggested there should be an option to exit the tutorial at any time for users who don't want to sit through it.
-    \item Still about onboarding, maybe reduce text but make it more interesting, visually appealing and engaging.
-    \item RECOGNITION OVER RECALL
-    \item prioritise the items that can be done during this month, and the rest is to be included in the "future work" of the report
-    \item currently, its not intuitive where to choose the amenity in the dropdown + icons were not visible enough
-    \item zooming into the map!! can we have buttons?
-    \item need a connection between the map and the dashboard, especially with the icons, add them to the dashboard
-    \item make sure we test magpie on different devices
-    \item the hierarchy of items on the dashboard does not make sense, is not intuitive to use. why are all amenities displayed when one is selected and their count displays zero?
-    \item looking at the points inside the radius, its currently not obvious what amenity is displaying = the icons are too small and dont stand out enough.
-    \item we explained our workflow idea of the design of the dashboard, and when we explained it to her she said "oooh" but it was not obvious and not very intuitive. same for the numbers on the side of each amenity displaying the count. --> we move from bottom up approach (pyramid) instead of the current top down (upside down) approach to the dashboard.
-    \item if we want simple clean aesthetic, we need to design the user interface in a way that there is as little room as possible for ambiguity and confusion and guessing games = the user needs to find it easy to move from one feature to another and understand the triggers. currently its looks so slick that the user might not be able to see what they want.
-    \item found the parking meter information very useful!
-    \item if there are no amenities found in the radius, a message should pop up to tell the user because its not always clear to let the user inspect until their eyes get tired
-    \item log out was fine
-    \item when trying to log in with credentials that dont exist, a proper error should be returned that "username" doesn't exist, and it should be properly visible
-    \item create an account went smoothly
-    \item the alert thing for success shouldn't be an alert (my own opinion)
-    \item what are the benefits of logging in? we (group) answered that since its a service for professionals, logging in will keep their search, any files they have exported, etc
-\end{itemize}
-Here are the answers to the expert review survey below in table 3.1. The number next to each multiple choice answer refers to the rating, 1 being the worst and 5 being the best.
+The review provided very valuable insights on Magpie's workflow, user interface and technical components. These were the main takeaways:\\ \\
+\textbf{Landing Page: }
+Upon loading Magpie, Professor Curley was directly taken to the mapview, which was not supposed to happen. After the review, we investigated the cause of this event and uncovered a bug in the authentication which we have been working on. Following this event, she suggested creating a landing page or some sort of introduction to ease the user into discovering Magpie.\\ \\
+\textbf{Onboarding: }
+Due to the bug explained above, the onboarding did not automatically start as it should have upon login. Nevertheless, Professor Curley said that the user may want to intuitively press on the elements being highlighted during the tutorial, as she tried to do. This adds to the feedback received during casual testing for the implementation of this feature. Unfortunately, due to a technical limitations we are not able to solve it, only provide make certain changes to dissuade the user of doing so.\\
+In addition, Professor Curley suggested there should be an option to exit the tutorial at any time for users who don't want to sit through it. Lastly, the tutorial shoud be more visually striking and engaging in order to leave a lasting impression on the user.\\ \\
+\textbf{Dashboard \& Map: }
+Currently, the hierarchy of items on the dashboard does not make sense to the average, and is not intuitive to use. All the amenities are displayed when only one is selected (\hl{figure 3.something}) and their count displays zero, which the user might interpret as there are zero other amenities in the area in addition to the one I selected.\\
+The icons on the map are not visible enough, and zooming in \& out on the map may not be intuitive to the range of users and devices. Adding zoom buttons could help bridge that gap. \\
+Currently, Professor Curley noted that there is a disconnect between the map and the dashboard whereas they should be looked as one. She suggested adding amenity icons to the dashboard to help bridge that gap.\\ \\
+
+\textbf{Filters: }
+If there are no amenities found in the radius of search, a message should pop up to tell the user so. Currently, it is not very clear if there are amenities present in the chosen area especially due to the small size \& faded color of the icons. \\ \\
+\textbf{Log in/sign up: }
+When trying to log in with credentials that don't exist, the system should return a proper error such as "username doesn't exist". Log out and account sign up went smoothly. Professor Curley questioned the benefits of logging for Magpie, to which we stated:
+Magpie was conceived with the idea of providing a service to working professionals; therefore logging in will allow the implementation of further features such as safeguarding their previous searches, storing exported reports, connecting with other members of your organization and much more.\\ \\
+\textbf{Overall: }
+To resume, Professor Curley found our interface sleek and minimalistic. However, she suggested that if we want to stay with this interface, we need to ensure there is as little room as possible for ambiguity and confusion and guessing games. The user needs to find it easy to move from one feature to another and understand the triggers. Currently, Magpie looks so sleek that the user may not be able to see what they want.\\ \\
+
+Here are the answers to the expert review survey below in table 3.1. The number next to each multiple choice answer refers to the rating, 1 being the worst and 5 being the best. The response to the survey help complement the oral feedback received during the expert review and provide some quantitative data as a baseline for the next evaluation. The two open-ended questions, to which she asked us to elaborate further, will help us review future open-ended questions and ensure they give enough information for the user to answer.
 \begin{table}[h!]
     \centering
     \caption{Expert Review Questionnaire Answers}
@@ -427,7 +371,7 @@ Here are the answers to the expert review survey below in table 3.1. The number 
         Any additional comments on why this tool would useful/impractical for the above use cases?                               & For each of those user groups, it needs to be signposted more, how they would use them. There is too much left to trying to figure it out yourself. It possibly is very useful for all but needs highlighting by you. \\ \hline
         Evaluate the following technical aspects from Worst (1) to Best (5)                                                      & Loading speed: 3, System responsiveness: 3, Data update frequency: 1, Filter functionality: 3, Radius selection: 4                                                                                                    \\ \hline
         Rate the application's compliance with the items below from Worst (1) to Best (5)                                        & Accessibility: 2, GIS data standards: 3, GDPR: 4                                                                                                                                                                      \\ \hline
-        Any additional comments regarding our application?                                                                       & Is loading speed and system responsiveness the same?What does data update frequency mean?
+        Any additional comments regarding our application?                                                                       & Is loading speed and system responsiveness the same?What does data update frequency mean?                                                                                                                             \\ \hline
     \end{tabularx}
 \end{table}
 
@@ -437,6 +381,12 @@ Here are the answers to the expert review survey below in table 3.1. The number 
 \begin{itemize}
     \item Fix authentication bug to ensure user lands on the login page = remedies brusk introduction to magpie by landing on Map
     \item Unclear icons when choosing amenities to display on the map = remedied by implementing custom icons with new colors \& larger size
+          \begin{figure}
+              \centering
+              \fbox{\includegraphics[width=\textwidth]{Figures/fig12.png}}
+              \caption{Before and after icon changes}
+              \label{fig:plot12}
+          \end{figure}
 \end{itemize}
 \subsection{Planned changes}
 \begin{itemize}
