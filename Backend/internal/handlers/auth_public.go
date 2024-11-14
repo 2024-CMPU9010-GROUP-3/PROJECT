@@ -5,15 +5,14 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
-	"os"
 	"time"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util/env"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -310,16 +309,12 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// all env variables should be moved into a separate package and checked on startup in the future
-	secret := os.Getenv(secretEnv)
-	if len(secret) == 0 {
+	secret, set := env.Get(env.EnvJwtSecret)
+	if !set {
 		resp.SendError(customErrors.Internal.JwtSecretMissingError, w)
 		return
 	}
-	expiry := os.Getenv(expiryEnv)
-	if len(expiry) == 0 {
-		log.Printf("Warning: MAGPIE_JWT_EXPIRY not set, defaulting to 7d expiry")
-		expiry = "168h"
-	}
+	expiry, _ := env.Get(env.EnvJwtExpiry)
 
 	parsedExpiry, err := time.ParseDuration(expiry)
 	if err != nil {
