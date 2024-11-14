@@ -1,36 +1,5 @@
 import { LayerProps } from "react-map-gl";
 
-// // Update commonIconLayout to have single standard size
-// const commonIconLayout = {
-//   small: ["interpolate", ["linear"], ["zoom"], 10, 0.5, 14, 0.8] as [
-//     string,
-//     [string],
-//     [string],
-//     number,
-//     number,
-//     number,
-//     number
-//   ],
-//   standard: ["interpolate", ["linear"], ["zoom"], 12, 0.8, 16, 1.2] as [
-//     string,
-//     [string],
-//     [string],
-//     number,
-//     number,
-//     number,
-//     number
-//   ],
-//   large: ["interpolate", ["linear"], ["zoom"], 14, 1.2, 18, 1.6] as [
-//     string,
-//     [string],
-//     [string],
-//     number,
-//     number,
-//     number,
-//     number
-//   ],
-// };
-
 // Modern color palette
 const colors = {
   primary: "#2563EB", // Royal Blue
