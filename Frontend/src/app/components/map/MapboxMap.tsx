@@ -36,7 +36,7 @@ import MultipleSelector, {
   Option,
 } from "@/components/ui/registry/multiple-select";
 import { useOnborda } from "onborda";
-import {getToken} from "@/lib/session";
+import { getToken } from "@/lib/session";
 
 
 type SliderProps = React.ComponentProps<typeof Slider>;
@@ -68,6 +68,24 @@ const MultiSelectOptions: Option[] = [
   { label: "Public Bins", value: "public_bins" },
   { label: "Coach Parking", value: "coach_parking" },
 ];
+
+// Array of image paths to load 
+const IMAGES: ImageConfig[] = [
+  { id: 'custom_parking', path: '/images/parking.png' },
+  { id: 'custom_parking_meter', path: '/images/parking_meter.png' },
+  { id: 'custom_bicycle', path: '/images/bicycle.png' },
+  { id: 'bicycle_share', path: '/images/bicycle_share.png' },
+  { id: 'custom_bicycle_share', path: '/images/bicycle_share.png' },
+  { id: 'custom_accessible_parking', path: '/images/accessibleParking.png' },
+  { id: 'custom_public_bins', path: '/images/bin.png' },
+  { id: 'custom_public_wifi', path: '/images/wifi.png' },
+  { id: 'custom_bus', path: '/images/bus.png' },
+  { id: 'custom_library', path: '/images/library.png' },
+  { id: 'custom_car_parks', path: '/images/car_park.png' },
+  { id: 'custom_water_fountain', path: '/images/water_fountain.png' },
+  { id: 'custom_toilet', path: '/images/toilet.png' },
+];
+
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
@@ -120,7 +138,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
+        Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -135,157 +153,36 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     target: mapboxgl.Map;
   }
 
+  // Load custom icons to the map from the ImageConfig array
+  // Note, if you add more icons, you need to add them to the IMAGES array and also edit LoadImages
+  const loadImages = async (map: mapboxgl.Map) => {
+    const loadImage = (config: ImageConfig): Promise<void> => {
+      if (map.hasImage(config.id)) return Promise.resolve();
+
+      return new Promise((resolve, reject) => {
+        map.loadImage(window.location.origin + config.path, (error, image) => {
+          if (error) reject(error);
+          if (image) {
+            map.addImage(config.id, image);
+            setImagesLoaded(prev => ({ ...prev, [config.id]: true }));
+          }
+          resolve();
+        });
+      });
+    };
+
+    try {
+      await Promise.all(IMAGES.map(loadImage));
+    } catch (error) {
+      console.error('Error loading images:', error);
+    }
+  };
+
   const handleMapLoad = (event: MapLoadEvent) => {
     const map = event.target;
     // setMapInstance(map);
 
-    const loadImages = async () => {
-      if (!map.hasImage('custom_parking')) {
-        map.loadImage(window.location.origin+'/images/parking.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_parking', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_parking": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_parking": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_parking_meter')) {
-        map.loadImage(window.location.origin+'/images/parking_meter.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_parking_meter', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_parking_meter": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_parking_meter": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_bicycle')) {
-        map.loadImage(window.location.origin+'/images/bicycle.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_bicycle', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_bicycle": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_bicycle": true }));
-        });
-      }
-
-      if (!map.hasImage('bicycle_share')) {
-        map.loadImage(window.location.origin+'/images/bicycle_share.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('bicycle_share', image);
-            setImagesLoaded((prev) => ({ ...prev, "bicycle_share": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "bicycle_share": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_bicycle_share')) {
-        map.loadImage(window.location.origin+'/images/bicycle_share.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_bicycle_share', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_bicycle_share": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_bicycle_share": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_accessible_parking')) {
-        map.loadImage(window.location.origin+'/images/accessibleParking.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_accessible_parking', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_accessible_parking": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_accessible_parking": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_public_bins')) {
-        map.loadImage(window.location.origin+'/images/bin.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_public_bins', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_public_bins": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_public_bins": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_public_wifi')) {
-        map.loadImage(window.location.origin+'/images/wifi.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_public_wifi', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_public_wifi": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_public_wifi": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_bus')) {
-        map.loadImage(window.location.origin+'/images/bus.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_bus', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_bus": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_bus": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_library')) {
-        map.loadImage(window.location.origin+'/images/library.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_library', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_library": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_library": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_car_parks')) {
-        map.loadImage(window.location.origin+'/images/car_park.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_car_parks', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_car_parks": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_car_parks": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_water_fountain')) {
-        map.loadImage(window.location.origin+'/images/water_fountain.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_water_fountain', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_water_fountain": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_water_fountain": true }));
-        });
-      }
-
-      if (!map.hasImage('custom_toilet')) {
-        map.loadImage(window.location.origin+'/images/toilet.png', (error, image) => {
-          if (error) throw error;
-          if (image) {
-            map.addImage('custom_toilet', image);
-            setImagesLoaded((prev) => ({ ...prev, "custom_toilet": true }));
-          }
-          setImagesLoaded((prev) => ({ ...prev, "custom_toilet": true }));
-        });
-      }
-      // Repeat for other custom icons
-    };
-
-    loadImages();
+    loadImages(map).catch(error => console.error('Error loading images:', error));
   };
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
@@ -353,8 +250,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${
-        sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
@@ -388,7 +284,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
+        Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -527,18 +423,18 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               </Source>
               {/* Parking Source */}
               {imagesLoaded.custom_parking && (
-              <Source
-                id="custom_parking"
-                type="geojson"
-                data={pointsGeoJson?.parking}
-                cluster={true}
-                clusterMaxZoom={14} // Max zoom to cluster points on
-                clusterRadius={50}
-              >
-                <Layer {...parkingClusterStyles.close} />
-                <Layer {...parkingClusterStyles.medium} />
-                <Layer {...parkingClusterStyles.far} />
-              </Source>
+                <Source
+                  id="custom_parking"
+                  type="geojson"
+                  data={pointsGeoJson?.parking}
+                  cluster={true}
+                  clusterMaxZoom={14} // Max zoom to cluster points on
+                  clusterRadius={50}
+                >
+                  <Layer {...parkingClusterStyles.close} />
+                  <Layer {...parkingClusterStyles.medium} />
+                  <Layer {...parkingClusterStyles.far} />
+                </Source>
               )}
               {imagesLoaded.custom_parking_meter && (
                 <Source
