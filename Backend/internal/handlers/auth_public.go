@@ -19,9 +19,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-const secretEnv = "MAGPIE_JWT_SECRET"
-const expiryEnv = "MAGPIE_JWT_EXPIRY"
-
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 	userIdPathParam := r.PathValue("id")
 	var userId pgtype.UUID
