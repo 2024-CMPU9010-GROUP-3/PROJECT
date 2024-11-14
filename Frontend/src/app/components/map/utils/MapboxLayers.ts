@@ -174,6 +174,6 @@ export const waterFountainLayers = createZoomBasedLayers(
 );
 export const publicToiletLayers = createZoomBasedLayers(
   "public-toilets",
-  "toilet",
+  "custom_toilet",
   colors.info
 );

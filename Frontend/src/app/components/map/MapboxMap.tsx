@@ -104,6 +104,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_library: false,
     custom_car_parks: false,
     custom_water_fountain: false,
+    custom_toilet: false,
     // Add entries for other icons
   });
 
@@ -268,6 +269,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             setImagesLoaded((prev) => ({ ...prev, "custom_water_fountain": true }));
           }
           setImagesLoaded((prev) => ({ ...prev, "custom_water_fountain": true }));
+        });
+      }
+
+      if (!map.hasImage('custom_toilet')) {
+        map.loadImage(window.location.origin+'/images/toilet.png', (error, image) => {
+          if (error) throw error;
+          if (image) {
+            map.addImage('custom_toilet', image);
+            setImagesLoaded((prev) => ({ ...prev, "custom_toilet": true }));
+          }
+          setImagesLoaded((prev) => ({ ...prev, "custom_toilet": true }));
         });
       }
       // Repeat for other custom icons
@@ -647,6 +659,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...waterFountainLayers?.close} />
                   <Layer {...waterFountainLayers?.medium} />
                   <Layer {...waterFountainLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_toilet && (
+                <Source
+                  id="public-toilets"
+                  type="geojson"
+                  data={pointsGeoJson?.public_toilet}
+                >
+                  <Layer {...publicToiletLayers?.close} />
+                  <Layer {...publicToiletLayers?.medium} />
+                  <Layer {...publicToiletLayers?.far} />
                 </Source>
               )}
               {/* Parking Meter Source */}
