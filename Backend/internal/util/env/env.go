@@ -5,37 +5,42 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
 const (
-	EnvPort           = "MAGPIE_PORT"
-	EnvDbUrl          = "MAGPIE_DB_URL"
-	EnvMigrationsPath = "MAGPIE_DB_MIGRATIONS"
-	EnvCorsOrigins    = "MAGPIE_CORS_ALLOWED_ORIGINS"
-	EnvCorsMethods    = "MAGPIE_CORS_ALLOWED_METHODS"
-	EnvJwtSecret      = "MAGPIE_JWT_SECRET"
-	EnvJwtExpiry      = "MAGPIE_JWT_EXPIRY"
-	EnvLogin          = "LOGIN"
-	EnvPassword       = "PASSWORD"
-	EnvHost           = "HOST"
-	EnvDbName         = "DATABASE_NAME"
+	EnvPort            = "MAGPIE_PORT"
+	EnvDbUrl           = "MAGPIE_DB_URL"
+	EnvMigrationsPath  = "MAGPIE_DB_MIGRATIONS"
+	EnvCorsOrigins     = "MAGPIE_CORS_ALLOWED_ORIGINS"
+	EnvCorsMethods     = "MAGPIE_CORS_ALLOWED_METHODS"
+	EnvJwtSecret       = "MAGPIE_JWT_SECRET"
+	EnvJwtExpiry       = "MAGPIE_JWT_EXPIRY"
+	EnvLogin           = "LOGIN"
+	EnvPassword        = "PASSWORD"
+	EnvHost            = "HOST"
+	EnvDbName          = "DATABASE_NAME"
+	EnvDbRetries       = "MAGPIE_DB_RETRIES"
+	EnvDbRetryInterval = "MAGPIE_DB_RETRY_INTERVAL"
 )
 
 var (
 	defaults = map[string]string{
-		EnvPort:           "8080",
-		EnvDbUrl:          "",
-		EnvMigrationsPath: "./sql/migrations",
-		EnvCorsOrigins:    "",
-		EnvCorsMethods:    "",
-		EnvJwtSecret:      "",
-		EnvJwtExpiry:      "",
-		EnvLogin:          "",
-		EnvPassword:       "",
-		EnvHost:           "",
-		EnvDbName:         "",
+		EnvPort:            "8080",
+		EnvDbUrl:           "",
+		EnvMigrationsPath:  "./sql/migrations",
+		EnvCorsOrigins:     "",
+		EnvCorsMethods:     "",
+		EnvJwtSecret:       "",
+		EnvJwtExpiry:       "24h",
+		EnvLogin:           "",
+		EnvPassword:        "",
+		EnvHost:            "",
+		EnvDbName:          "",
+		EnvDbRetries:       "6",
+		EnvDbRetryInterval: "10",
 	}
 )
 
@@ -43,7 +48,6 @@ func Get(name string) (string, bool) {
 	env, set := os.LookupEnv(name)
 	if !set {
 		if len(defaults[name]) != 0 {
-			log.Printf("Warning: %s not found in environment, falling back to default", name)
 			return defaults[name], true
 		} else {
 			log.Printf("Warning: %s not found in environment", name)
@@ -51,6 +55,15 @@ func Get(name string) (string, bool) {
 		}
 	}
 	return env, set
+}
+
+func GetInt(name string) (int, bool) {
+	env, _ := Get(name)
+	envInt, err := strconv.Atoi(env)
+	if err != nil {
+		return 0, false
+	}
+	return envInt, true
 }
 
 func Load() {
@@ -74,6 +87,26 @@ func Validate() error {
 	_, jwtSecretSet := Get(EnvJwtSecret)
 	if !jwtSecretSet {
 		return errors.New("Error: No JWT Secret found in environment")
+	}
+
+	_, jwtExpirySet := Get(EnvJwtExpiry)
+	if !jwtExpirySet {
+		return errors.New("Error: No JWT Expiry found in environment")
+	}
+
+	_, migrationsPathSet := Get(EnvMigrationsPath)
+	if !migrationsPathSet {
+		return errors.New("Error: No migrations path found in environment")
+	}
+
+	_, dbRetriesSet := GetInt(EnvDbRetries)
+	if !dbRetriesSet {
+		return errors.New("Error: No retry amount for database connection found in environment")
+	}
+
+	_, dbRetryIntervalSet := GetInt(EnvDbRetryInterval)
+	if !dbRetryIntervalSet {
+		return errors.New("Error: No retry interval for database connection found in environment")
 	}
 
 	return nil
