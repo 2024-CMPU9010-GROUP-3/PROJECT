@@ -196,7 +196,7 @@ export function SignupForm() {
               </button>
             </div>
           </div>
-          {errorMessage && <div className="text-red-500">{errorMessage}</div>}
+          <div className="text-red-500 w-full text-center">{errorMessage || "\u00A0"}</div>
           <Button disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

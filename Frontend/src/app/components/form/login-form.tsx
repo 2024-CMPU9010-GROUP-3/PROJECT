@@ -60,10 +60,10 @@ export function LoginForm() {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         // login success, handle logic
-        const data = await response.json();
-        console.log("Login successful:", data); // print success response
         if (data.response.content) {
           const content = data.response.content
           
@@ -79,12 +79,10 @@ export function LoginForm() {
         }
       } else {
         // handle error case
-        const errorData = await response.text(); // get error data
-        setErrorMessage("Login failed: " + errorData); // display original error message
+        setErrorMessage(data.error.errorMsg); // display original error message
       }
     } catch (error) {
-      console.error("An error occurred", error);
-      setErrorMessage("An error occurred during login");
+      setErrorMessage("An unknown error occurred during login");
     } finally {
       setIsLoading(false); // reset loading state
     }
@@ -145,12 +143,12 @@ export function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)} // update password state
               />
             </div>
+            <div className="text-red-500 w-full text-center">{errorMessage || "\u00A0"}</div>
+            {/* display error message */}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}{" "}
               {/* display loading state */}
             </Button>
-            {errorMessage && <div className="text-red-500">{errorMessage}</div>}{" "}
-            {/* display error message */}
           </div>
         </form>
         <div className="mt-4 text-center text-sm">
