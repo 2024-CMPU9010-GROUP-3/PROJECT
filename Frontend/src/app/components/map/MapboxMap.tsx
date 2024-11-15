@@ -18,9 +18,7 @@ import { Slider } from '@/components/ui/slider';
 
 // Local utils and configs
 import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
-import { getToken } from '@/lib/session';
 import { cn } from '@/lib/utils';
-import { useOnborda } from 'onborda';
 
 // Types and interfaces
 import {
@@ -45,7 +43,11 @@ import {
   publicToiletLayers,
   publicWifiLayers,
   waterFountainLayers,
-} from './utils/MapboxLayers';
+} from "./utils/MapboxLayers";
+
+import { useOnborda } from "onborda";
+
+import { useSession } from '@/app/context/SessionContext';
 
 
 type SliderProps = React.ComponentProps<typeof Slider>;
@@ -196,6 +198,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
 
+  const {sessionToken} = useSession()
+
   const handleAmenitiesFilterChange = (selectedOptions: Option[]) => {
     setAmenitiesFilter(selectedOptions.map((option) => option.value));
   };
@@ -265,7 +269,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         method: "GET",
         credentials: "include",
         headers: {
-          authorization: "Bearer " + await getToken(),
+          authorization: "Bearer " + sessionToken,
         }
       }
     );

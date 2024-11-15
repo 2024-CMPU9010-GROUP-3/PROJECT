@@ -13,8 +13,8 @@ import {
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation"; // useRouter
-import {commitSessionToCookies, getToken, setToken, setUUID} from "@/lib/session";
-import {getCookiesAccepted} from "@/lib/cookies";
+import { useSession } from '@/app/context/SessionContext';
+
 
 export function LoginForm() {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // allow login with username or email
@@ -22,17 +22,17 @@ export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
   const [isLoading, setIsLoading] = useState(false); // loading state
   const router = useRouter(); // router
+  const { sessionToken, setSessionToken, setSessionUUID } = useSession();
 
   // check if user is already logged in
   useEffect(() => {
     (async () => {
-    const token = await getToken(); // check user login status
-    if (token) {
+    if (sessionToken) {
       // if user is already logged in, redirect to home
       router.push("/"); // redirect to home
     }
   })()
-  }, [router]);
+  }, [router, sessionToken]);
 
   const onSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault(); // prevent default form submission behavior
@@ -61,14 +61,11 @@ export function LoginForm() {
         // login success, handle logic
         const data = await response.json();
         console.log("Login successful:", data); // print success response
-        if (data.response.content.userid) {
-         
-          await setUUID(data.response.content.userid);
-          await setToken(data.response.content.token);
-
-          if(await getCookiesAccepted()) {
-            await commitSessionToCookies();
-          }
+        if (data.response.content) {
+          const content = data.response.content
+          
+          setSessionToken(content.token)
+          setSessionUUID(content.userid)
 
           setErrorMessage(null); // clear any error message
 
