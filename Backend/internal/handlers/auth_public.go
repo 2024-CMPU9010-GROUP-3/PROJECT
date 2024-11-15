@@ -75,7 +75,7 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
 		return
 	}
-
+	
 	usernameExists, err := db.New(dbConn).UsernameExists(*dbCtx, db.UsernameExistsParams{Username: userDto.Username, ID: pgtype.UUID{}})
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
