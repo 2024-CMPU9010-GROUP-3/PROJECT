@@ -44,9 +44,7 @@ import {
   publicWifiLayers,
   waterFountainLayers,
 } from "./utils/MapboxLayers";
-import MultipleSelector, {
-  Option,
-} from "@/components/ui/registry/multiple-select";
+
 import { useOnborda } from "onborda";
 
 import { useSession } from '@/app/context/SessionContext';
