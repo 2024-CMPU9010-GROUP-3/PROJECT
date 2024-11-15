@@ -18,7 +18,6 @@ import { Slider } from '@/components/ui/slider';
 
 // Local utils and configs
 import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
-import { getToken } from '@/lib/session';
 import { cn } from '@/lib/utils';
 import { useOnborda } from 'onborda';
 
