@@ -52,30 +52,15 @@ export default function LoginPage() {
       <div className="container relative hidden md:grid h-screen flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
         <div className="relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
           {/* Desktop Side Section */}
-          <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 to-zinc-700" />
-          <Link
-            href="/"
-            className="relative inline-flex items-center gap-2 z-20"
-          >
-            <Image
-              src="/images/BKlogo.svg"
-              alt="Logo"
-              width={30}
-              height={30}
-              className="mr-2 h-12 w-12"
-            />
-            <span className="text-lg font-medium">Magpie</span>
+            <Image className="object-cover z-0" src="/images/map_screenshot.png" alt="Map Screenshot" fill></Image>
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 to-zinc-900/70 z-10"/>
+          <Link href="/" className="relative inline-flex items-center gap-2 z-20">
+            <Image src="/images/logo-wt.svg" alt="Logo" width={100} height={100} className="mr-2 h-32 w-32" />
+            <div>
+              <div className="text-6xl font-bold">Magpie</div>
+              <div className="text-2xl font-medium">Services at a glance</div>
+            </div>
           </Link>
-          <div className="relative z-20 mt-auto">
-            <blockquote className="space-y-2">
-              <p className="text-lg">
-                &ldquo;In the heart of the city&apos;s flow, we map the unseen,
-                weaving data and vision to guide tomorrow&apos;s planners toward
-                a more connected world.&rdquo;
-              </p>
-              <footer className="text-sm">Magpie</footer>
-            </blockquote>
-          </div>
         </div>
 
         <div className="lg:p-8 flex items-center justify-center">
