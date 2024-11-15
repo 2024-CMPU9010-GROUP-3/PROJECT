@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation";
 
 
-export function UserAuthForm() {
+export function SignupForm() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [email, setEmail] = React.useState<string>("");
   const [username, setUsername] = React.useState<string>("");
