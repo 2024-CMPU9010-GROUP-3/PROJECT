@@ -1,22 +1,37 @@
 "use client";
 
-import React, { Fragment, Suspense, useEffect, useMemo, useState } from "react";
-import { FaLocationDot } from "react-icons/fa6";
-import DeckGL from "@deck.gl/react";
-import "mapbox-gl/dist/mapbox-gl.css";
+// React core
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
+
+// Third-party packages
+import DeckGL from '@deck.gl/react';
+import { GeoJSON } from 'geojson';
+import { FaLocationDot } from 'react-icons/fa6';
+import { Grid } from 'react-loader-spinner';
+import Map, { Layer, LayerProps, Marker, Source } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+
+// Local components
+import { Badge } from '@/components/ui/badge';
+import MultipleSelector, { Option } from '@/components/ui/registry/multiple-select';
+import { Slider } from '@/components/ui/slider';
+
+// Local utils and configs
+import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
+import { getToken } from '@/lib/session';
+import { cn } from '@/lib/utils';
+import { useOnborda } from 'onborda';
+
+// Types and interfaces
 import {
   MapClickEvent,
   Coordinates,
   Point,
   CoordinatesForGeoJson,
-} from "@/lib/interfaces/types";
-import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
-import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
-import { GeoJSON } from "geojson";
-import { Slider } from "@/components/ui/slider";
-import { cn } from "@/lib/utils";
-import { Grid } from "react-loader-spinner";
-import { Badge } from "@/components/ui/badge";
+  ImageConfig,
+} from '@/lib/interfaces/types';
+
+// Map layer configurations
 import {
   accessibleParkingLayers,
   bikeSharingLayers,
@@ -37,6 +52,7 @@ import MultipleSelector, {
 import { useOnborda } from "onborda";
 
 import { useSession } from '@/app/context/SessionContext';
+
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -68,6 +84,24 @@ const MultiSelectOptions: Option[] = [
   { label: "Coach Parking", value: "coach_parking" },
 ];
 
+// Array of image paths to load 
+const IMAGES: ImageConfig[] = [
+  { id: 'custom_parking', path: '/images/parking.png' },
+  { id: 'custom_parking_meter', path: '/images/parking_meter.png' },
+  { id: 'custom_bicycle', path: '/images/bicycle.png' },
+  { id: 'bicycle_share', path: '/images/bicycle_share.png' },
+  { id: 'custom_bicycle_share', path: '/images/bicycle_share.png' },
+  { id: 'custom_accessible_parking', path: '/images/accessibleParking.png' },
+  { id: 'custom_public_bins', path: '/images/bin.png' },
+  { id: 'custom_public_wifi', path: '/images/wifi.png' },
+  { id: 'custom_bus', path: '/images/bus.png' },
+  { id: 'custom_library', path: '/images/library.png' },
+  { id: 'custom_car_parks', path: '/images/car_park.png' },
+  { id: 'custom_water_fountain', path: '/images/water_fountain.png' },
+  { id: 'custom_toilet', path: '/images/toilet.png' },
+];
+
+
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
   const [isMarkerVisible, setIsMarkerVisible] = useState<boolean>(false);
@@ -90,6 +124,23 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     [coordinates]
   );
 
+  // Images state
+  const [imagesLoaded, setImagesLoaded] = useState({
+    custom_parking: false,
+    custom_parking_meter: false,
+    custom_bicycle: false,
+    custom_bicycle_share: false,
+    custom_accessible_parking: false,
+    custom_public_bins: false,
+    custom_public_wifi: false,
+    custom_bus: false,
+    custom_library: false,
+    custom_car_parks: false,
+    custom_water_fountain: false,
+    custom_toilet: false,
+    // Add entries for other icons
+  });
+
   const [circleCoordinates, setCircleCoordinates] = useState<number[][]>(() => {
     const radiusInMeters = sliderValue * 100; // Convert slider value to meters
     const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
@@ -102,7 +153,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
+        Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -112,6 +163,42 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
     return coordinates;
   });
+
+  interface MapLoadEvent {
+    target: mapboxgl.Map;
+  }
+
+  // Load custom icons to the map from the ImageConfig array
+  // Note, if you add more icons, you need to add them to the IMAGES array and also edit LoadImages
+  const loadImages = async (map: mapboxgl.Map) => {
+    const loadImage = (config: ImageConfig): Promise<void> => {
+      if (map.hasImage(config.id)) return Promise.resolve();
+
+      return new Promise((resolve, reject) => {
+        map.loadImage(window.location.origin + config.path, (error, image) => {
+          if (error) reject(error);
+          if (image) {
+            map.addImage(config.id, image);
+            setImagesLoaded(prev => ({ ...prev, [config.id]: true }));
+          }
+          resolve();
+        });
+      });
+    };
+
+    try {
+      await Promise.all(IMAGES.map(loadImage));
+    } catch (error) {
+      console.error('Error loading images:', error);
+    }
+  };
+
+  const handleMapLoad = (event: MapLoadEvent) => {
+    const map = event.target;
+    // setMapInstance(map);
+
+    loadImages(map).catch(error => console.error('Error loading images:', error));
+  };
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
 
@@ -180,8 +267,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${
-        sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
@@ -215,7 +301,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
+        Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -319,6 +405,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               mapStyle="mapbox://styles/mapbox/streets-v12"
               antialias={true}
               style={{ width: "100%", height: "100%" }}
+              onLoad={handleMapLoad}
             >
               {/* Map content remains the same */}
               <Marker
@@ -352,17 +439,152 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Layer {...layerStyle} />
               </Source>
               {/* Parking Source */}
-              <Source
-                id="points"
-                type="geojson"
-                data={pointsGeoJson?.parking}
-                cluster={true}
-                clusterMaxZoom={14} // Max zoom to cluster points on
-                clusterRadius={50}
-              >
-                <Layer {...parkingClusterStyles.symbol} />
-                <Layer {...parkingClusterStyles.unclustered} />
-              </Source>
+              {imagesLoaded.custom_parking && (
+                <Source
+                  id="custom_parking"
+                  type="geojson"
+                  data={pointsGeoJson?.parking}
+                  cluster={true}
+                  clusterMaxZoom={14} // Max zoom to cluster points on
+                  clusterRadius={50}
+                >
+                  <Layer {...parkingClusterStyles.close} />
+                  <Layer {...parkingClusterStyles.medium} />
+                  <Layer {...parkingClusterStyles.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_parking_meter && (
+                <Source
+                  id="custom_parking_meter"
+                  type="geojson"
+                  data={pointsGeoJson?.parking_meter}
+                >
+                  <Layer {...parkingMeterLayers?.close} />
+                  <Layer {...parkingMeterLayers?.medium} />
+                  <Layer {...parkingMeterLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_bicycle && (
+                <Source
+                  id="custom_bicycle"
+                  type="geojson"
+                  data={pointsGeoJson?.bike_stand}
+                >
+                  <Layer {...bikeStandLayers?.close} />
+                  <Layer {...bikeStandLayers?.medium} />
+                  <Layer {...bikeStandLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_bicycle_share && (
+                <Source
+                  id="bike-sharing"
+                  type="geojson"
+                  data={pointsGeoJson?.bike_sharing_station}
+                >
+                  <Layer {...bikeSharingLayers?.close} />
+                  <Layer {...bikeSharingLayers?.medium} />
+                  <Layer {...bikeSharingLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_bicycle_share && (
+                <Source
+                  id="bike-sharing"
+                  type="geojson"
+                  data={pointsGeoJson?.bike_sharing_station}
+                >
+                  <Layer {...bikeSharingLayers?.close} />
+                  <Layer {...bikeSharingLayers?.medium} />
+                  <Layer {...bikeSharingLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_accessible_parking && (
+                <Source
+                  id="accessible-parking"
+                  type="geojson"
+                  data={pointsGeoJson?.accessible_parking}
+                >
+                  <Layer {...accessibleParkingLayers?.close} />
+                  <Layer {...accessibleParkingLayers?.medium} />
+                  <Layer {...accessibleParkingLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_public_bins && (
+                <Source
+                  id="public-bins"
+                  type="geojson"
+                  data={pointsGeoJson?.public_bins}
+                >
+                  <Layer {...publicBinLayers?.close} />
+                  <Layer {...publicBinLayers?.medium} />
+                  <Layer {...publicBinLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_public_wifi && (
+                <Source
+                  id="public-wifi"
+                  type="geojson"
+                  data={pointsGeoJson?.public_wifi_access_point}
+                >
+                  <Layer {...publicWifiLayers?.close} />
+                  <Layer {...publicWifiLayers?.medium} />
+                  <Layer {...publicWifiLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_bus && (
+                <Source
+                  id="coach-parking"
+                  type="geojson"
+                  data={pointsGeoJson?.coach_parking}
+                >
+                  <Layer {...coachParkingLayers?.close} />
+                  <Layer {...coachParkingLayers?.medium} />
+                  <Layer {...coachParkingLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_library && (
+                <Source
+                  id="libraries"
+                  type="geojson"
+                  data={pointsGeoJson?.library}
+                >
+                  <Layer {...libraryLayers?.close} />
+                  <Layer {...libraryLayers?.medium} />
+                  <Layer {...libraryLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_car_parks && (
+                <Source
+                  id="car-parks"
+                  type="geojson"
+                  data={pointsGeoJson?.multistorey_car_parking}
+                >
+                  <Layer {...carParkLayers?.close} />
+                  <Layer {...carParkLayers?.medium} />
+                  <Layer {...carParkLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_water_fountain && (
+                <Source
+                  id="water-fountains"
+                  type="geojson"
+                  data={pointsGeoJson?.drinking_water_fountain}
+                >
+                  <Layer {...waterFountainLayers?.close} />
+                  <Layer {...waterFountainLayers?.medium} />
+                  <Layer {...waterFountainLayers?.far} />
+                </Source>
+              )}
+              {imagesLoaded.custom_toilet && (
+                <Source
+                  id="public-toilets"
+                  type="geojson"
+                  data={pointsGeoJson?.public_toilet}
+                >
+                  <Layer {...publicToiletLayers?.close} />
+                  <Layer {...publicToiletLayers?.medium} />
+                  <Layer {...publicToiletLayers?.far} />
+                </Source>
+              )}
               {/* Parking Meter Source */}
               <Source
                 id="parking-meters"

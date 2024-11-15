@@ -1,4 +1,4 @@
-# Minutes of the Meeting (MoM) - Week 8 - Day 1
+# Minutes of the Meeting (MoM) - Week 8 - Day 2
 
 **Project Title:** Magpie - Services at a Glance
 
