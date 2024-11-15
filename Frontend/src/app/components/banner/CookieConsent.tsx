@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 import Link from "next/link";
-import { setCookiesAccepted } from "@/lib/cookies";
+import { getCookiesAccepted, setCookiesAccepted } from "@/lib/cookies";
 import {
   deleteSessionFromCookies,
   commitSessionToCookies,
@@ -14,49 +14,39 @@ import {
 
 export default function CookieConsent({
   variant = "default",
-  onAcceptCallback = async () => {
-    await setCookiesAccepted();
-    await commitSessionToCookies();
-  },
-  onDeclineCallback = async () => {
-    try {
-      await deleteSessionFromCookies();
-      console.log("User denied cookie consent");
-    } catch (error) {
-      console.error("Error during handling deny:", error);
-    }
-  },
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [hide, setHide] = useState(false);
 
   const accept = async () => {
     setIsOpen(false);
-    document.cookie =
-      "cookieConsent=true; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+    await setCookiesAccepted();
+    await commitSessionToCookies();
     setTimeout(() => {
       setHide(true);
     }, 700);
-    await onAcceptCallback();
   };
 
   const decline = async () => {
     setIsOpen(false);
+    await deleteSessionFromCookies();
     setTimeout(() => {
       setHide(true);
     }, 700);
-    await onDeclineCallback();
   };
 
   useEffect(() => {
     try {
       setIsOpen(true);
-      if (document.cookie.includes("cookieConsent=true")) {
-        setIsOpen(false);
-        setTimeout(() => {
-          setHide(true);
-        }, 700);
-      }
+      (async () => {
+        const cookiesAccepted = await getCookiesAccepted();
+        if (cookiesAccepted) {
+          setIsOpen(false);
+          setTimeout(() => {
+            setHide(true);
+          }, 700);
+        }
+      })();
     } catch (e) {
       console.log("Error: ", e);
     }
@@ -65,7 +55,7 @@ export default function CookieConsent({
   return variant != "default" ? (
     <div
       className={cn(
-        "fixed z-[200] bottom-0 left-0 right-0 sm:left-12 sm:bottom-4 w-full sm:max-w-md duration-700",
+        "fixed z-[200] bottom-0 left-0 right-0 sm:left-[5%] sm:bottom-4 w-full sm:max-w-md duration-700",
         !isOpen
           ? "transition-[opacity,transform] translate-y-8 opacity-0"
           : "transition-[opacity,transform] translate-y-0 opacity-100",
@@ -110,7 +100,7 @@ export default function CookieConsent({
   ) : (
     <div
       className={cn(
-        "fixed z-[200] bottom-0 left-0 right-0 sm:left-12 sm:bottom-4 w-full sm:max-w-md duration-700",
+        "fixed z-[200] bottom-0 left-0 right-0 sm:left-[5%] sm:bottom-4 w-full sm:max-w-md duration-700",
         !isOpen
           ? "transition-[opacity,transform] translate-y-8 opacity-0"
           : "transition-[opacity,transform] translate-y-0 opacity-100",
