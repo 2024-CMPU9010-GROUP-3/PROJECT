@@ -2,35 +2,22 @@
 
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { Icons } from "@/components/ui/icons";
 import { Button } from "@/components/ui/registry/button";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation";
-import { signup } from "@/app/components/serverActions/actions"; // Import the signup action
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {
-  username?: string;
-  password?: string;
-  confirmPassword?: string;
-  email?: string;
-}
 
-export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps>) {
+export function UserAuthForm() {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [email, setEmail] = React.useState<string>("");
+  const [username, setUsername] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [confirmPassword, setConfirmPassword] = React.useState<string>("");
   const [firstName, setFirstName] = React.useState<string>("");
   const [lastName, setLastName] = React.useState<string>("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [formErrors, setFormErrors] = React.useState<{
-    firstName?: string[];
-    lastName?: string[];
-    email?: string[];
-    password?: string[];
-  }>({});
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState<boolean>(false);
   const router = useRouter();
@@ -39,47 +26,54 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
     event.preventDefault();
     setIsLoading(true);
     setErrorMessage(null);
-    setFormErrors({});
 
     if (
       !email.trim() ||
       !password.trim() ||
       !confirmPassword.trim() ||
-      !firstName.trim() ||
-      !lastName.trim()
+      !username.trim()
     ) {
-      setErrorMessage("Fields cannot be empty");
+      setErrorMessage("* Some required fields are empty");
       setIsLoading(false);
       return;
     }
 
     // Check if password and confirm password match
     if (password !== confirmPassword) {
-      console.error("Passwords do not match");
       setErrorMessage("Passwords do not match");
       setIsLoading(false);
       return;
     }
 
     try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-      formData.append("firstName", firstName);
-      formData.append("lastName", lastName);
-
-      const result = await signup({}, formData); // Call the signup action
-
-      if (result.errors) {
-        console.error("Registration failed:", result.errors);
-        setFormErrors(result.errors);
-      } else {
-        alert("Sign up successful in user form");
-        router.push("/");
+      const requestData = {
+        "email": email,
+        "password": password,
+        "firstName": firstName,
+        "lastName": lastName,
+        "username": username,
       }
+      
+      const response = await fetch(
+        "/api/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestData), // send username/email and password
+        }
+      );
+
+      const responseBody = await response.json();
+      
+      if (responseBody.error) {
+        setErrorMessage(responseBody.error.errorMsg);
+      } else {
+        router.push("/login");
+      }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("An error occurred", error);
-      alert("An error occurred, please try again later.");
       setErrorMessage("An error occurred, please try again later.");
     } finally {
       setIsLoading(false);
@@ -87,7 +81,7 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className="mx-auto max-w-sm">
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="flex gap-2">
@@ -126,7 +120,7 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
             </Label>
             <Input
               id="email"
-              placeholder="name@example.com"
+              placeholder="Email*"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
@@ -138,13 +132,30 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
             
           </div>
           <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="email">
+              Email
+            </Label>
+            <Input
+              id="username"
+              placeholder="Username*"
+              type="text"
+              autoCapitalize="none"
+              autoComplete="username"
+              autoCorrect="off"
+              disabled={isLoading}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            
+          </div>
+          <div className="grid gap-1">
             <Label className="sr-only" htmlFor="password">
               Password
             </Label>
             <div className="relative">
               <Input
                 id="password"
-                placeholder="Enter your password"
+                placeholder="Password*"
                 type={showPassword ? "text" : "password"}
                 autoCapitalize="none"
                 autoComplete="current-password"
@@ -168,7 +179,7 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
             <div className="relative">
               <Input
                 id="confirm-password"
-                placeholder="Confirm your password"
+                placeholder="Confirm Password*"
                 type={showConfirmPassword ? "text" : "password"}
                 autoCapitalize="none"
                 autoComplete="current-password"
@@ -186,35 +197,6 @@ export function UserAuthForm({ className, ...props }: Readonly<UserAuthFormProps
             </div>
           </div>
           {errorMessage && <div className="text-red-500">{errorMessage}</div>}
-          {formErrors.firstName && (
-              <ul className="text-red-500 text-sm mt-1">
-                {formErrors.firstName.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            )}
-          {formErrors.lastName && (
-              <ul className="text-red-500 text-sm mt-1">
-                {formErrors.lastName.map((error, index) => (
-                  <li key={index}>{error}</li>
-                ))}
-              </ul>
-            )}
-          {formErrors.email && (
-            <ul className="text-red-500 text-sm mt-1">
-              {formErrors.email.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          )}
-          {formErrors.password && (
-            <ul className="text-red-500 text-sm mt-1">
-              {formErrors.password.map((error, index) => (
-                <li key={index}>{error}</li>
-              ))}
-            </ul>
-          )}       
-          
           <Button disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
