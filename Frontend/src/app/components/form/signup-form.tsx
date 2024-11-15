@@ -70,7 +70,7 @@ export function SignupForm() {
       if (responseBody.error) {
         setErrorMessage(responseBody.error.errorMsg);
       } else {
-        router.push("/login");
+        router.push("/login?signup=success");
       }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {

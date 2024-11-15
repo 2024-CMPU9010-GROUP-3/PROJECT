@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/registry/card";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
-import { useRouter } from "next/navigation"; // useRouter
+import { useRouter, useSearchParams } from "next/navigation"; // useRouter
 import { useSession } from '@/app/context/SessionContext';
 
 
@@ -23,6 +23,9 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false); // loading state
   const router = useRouter(); // router
   const { sessionToken, setSessionToken, setSessionUUID } = useSession();
+  const searchParams = useSearchParams();
+
+  const isSignupSuccess = searchParams.get("signup") === "success";
 
   // check if user is already logged in
   useEffect(() => {
@@ -88,12 +91,24 @@ export function LoginForm() {
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
+    <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
-          Enter your username or email below to login to your account
-        </CardDescription>
+        {!isSignupSuccess && 
+          <CardTitle className="text-2xl">Welcome to Magpie</CardTitle>
+        }
+        {isSignupSuccess && 
+          <CardTitle className="text-2xl">Signup successful</CardTitle>
+        }
+        {!isSignupSuccess && 
+          <CardDescription>
+            Please log in using your username or email
+          </CardDescription>
+        }
+        {isSignupSuccess && 
+          <CardDescription>
+            You can now use your username or email to log in!
+          </CardDescription>
+        }
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit}>
@@ -105,7 +120,7 @@ export function LoginForm() {
               <Input
                 id="usernameOrEmail"
                 type="text"
-                placeholder="username or m@example.com"
+                placeholder="Username/Email*"
                 required
                 value={usernameOrEmail} // bind usernameOrEmail state
                 onChange={(e) => setUsernameOrEmail(e.target.value)} // update state
@@ -114,16 +129,17 @@ export function LoginForm() {
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link
+                {/* <Link
                   href="#"
                   className="ml-auto inline-block text-sm underline"
                 >
                   Forgot your password?
-                </Link>
+                </Link> NOT YET IMPLEMENTED*/}
               </div>
               <Input
                 id="password"
                 type="password"
+                placeholder="Password*"
                 required
                 value={password} // bind password state
                 onChange={(e) => setPassword(e.target.value)} // update password state
