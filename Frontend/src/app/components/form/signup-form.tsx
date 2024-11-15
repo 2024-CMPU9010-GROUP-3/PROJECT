@@ -66,11 +66,16 @@ export function SignupForm() {
           body: JSON.stringify(requestData), // send username/email and password
         }
       );
-
-      const responseBody = await response.json();
       
-      if (responseBody.error) {
-        setErrorMessage(responseBody.error.errorMsg);
+
+      
+      if (!response.ok) {
+        const responseBody = await response.json();
+        if (responseBody){
+          setErrorMessage(responseBody.error.errorMsg);
+        } else {
+          setErrorMessage("An error occurred, please try again later.");
+        }
       } else {
         router.push("/login?signup=success");
       }
