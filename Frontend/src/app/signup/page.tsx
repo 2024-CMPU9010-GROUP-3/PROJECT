@@ -2,8 +2,6 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/registry/button";
 import { SignupForm } from "@/app/components/form/signup-form";
 
 export const metadata: Metadata = {
@@ -16,20 +14,26 @@ export default function SignupPage() {
     <>
       <div className="md:hidden relative min-h-screen flex flex-col items-center justify-center">
         {/* Mobile version */}
-        <Image
-          src="/images/auth-wt.png"
-          width={1280}
-          height={843}
-          alt="Authentication"
-          className="block dark:hidden object-cover absolute inset-0 w-full h-full" // Mobile Light Image
-        />
-        <Image
-          src="/images/auth-bk.png"
-          width={1280}
-          height={843}
-          alt="Authentication"
-          className="hidden dark:block object-cover absolute inset-0 w-full h-full" // Mobile Dark Image
-        />
+        <div className="flex gap-2 mb-2">
+          <Image
+            src="/images/logo-circle-bk.svg"
+            height={50}
+            width={50}
+            alt="Magpie Logo"
+            className="block dark:hidden object-contain inset-0" // Mobile Light Image
+          />
+          <Image
+            src="/images/logo-circle-wt.png"
+            height={50}
+            width={50}
+            alt="Magpie Logo"
+            className="hidden dark:block object-contain inset-0" // Mobile Dark Image
+          />
+          <div>
+              <div className="text-2xl font-bold">Magpie</div>
+              <div className="text-m font-medium">Services at a Glance</div>
+            </div>
+        </div>
         {/* Center user sign up form */}
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
@@ -66,7 +70,7 @@ export default function SignupPage() {
             <Image src="/images/logo-wt.svg" alt="Logo" width={100} height={100} className="mr-2 h-32 w-32" />
             <div>
               <div className="text-6xl font-bold">Magpie</div>
-              <div className="text-2xl font-medium">Services at a glance</div>
+              <div className="text-2xl font-medium">Services at a Glance</div>
             </div>
           </Link>
         </div>
