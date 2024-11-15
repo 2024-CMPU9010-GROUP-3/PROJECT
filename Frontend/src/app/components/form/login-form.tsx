@@ -81,6 +81,7 @@ export function LoginForm() {
         // handle error case
         setErrorMessage(data.error.errorMsg); // display original error message
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setErrorMessage("An unknown error occurred during login");
     } finally {
