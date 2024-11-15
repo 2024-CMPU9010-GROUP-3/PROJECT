@@ -109,7 +109,7 @@ export function LoginForm() {
         }
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="mt-4">
           {" "}
           {/* form submission handling */}
           <div className="grid gap-4">

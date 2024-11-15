@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/registry/button";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter } from "next/navigation";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/registry/card";
+import Link from "next/link";
 
 
 export function SignupForm() {
@@ -81,7 +83,12 @@ export function SignupForm() {
   }
 
   return (
-    <div className="mx-auto max-w-sm">
+    <Card>
+      <CardHeader>
+        <CardTitle>Create your Magpie Account</CardTitle>
+        <CardDescription></CardDescription>
+      </CardHeader>
+      <CardContent>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="flex gap-2">
@@ -205,6 +212,13 @@ export function SignupForm() {
           </Button>
         </div>
       </form>
-    </div>
+      <div className="mt-4 text-center text-sm">
+          Already have an account?{" "}
+          <Link href="./login" className="underline">
+            Log in
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

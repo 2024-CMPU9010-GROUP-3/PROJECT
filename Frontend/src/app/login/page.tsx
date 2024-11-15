@@ -79,10 +79,10 @@ export default function LoginPage() {
         </div>
 
         <div className="lg:p-8 flex items-center justify-center">
-          <div className="w-full max-w-sm flex flex-col justify-center space-y-6">
+          <div className="w-full max-w-sm flex flex-col justify-center space-y-6 sm:w-[400px]">
             <LoginForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
-              By clicking continue, you agree to our{" "}
+              By using Magpie, you agree to our{" "}
               <Link
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
