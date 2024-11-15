@@ -23,9 +23,6 @@ export function LoginForm() {
   const [isLoading, setIsLoading] = useState(false); // loading state
   const router = useRouter(); // router
   const { sessionToken, setSessionToken, setSessionUUID } = useSession();
-  const searchParams = useSearchParams();
-
-  const isSignupSuccess = searchParams.get("signup") === "success";
 
   // check if user is already logged in
   useEffect(() => {
@@ -92,24 +89,7 @@ export function LoginForm() {
   return (
     <Card>
       <Suspense>
-        <CardHeader>
-          {!isSignupSuccess && 
-            <CardTitle className="text-2xl">Welcome to Magpie</CardTitle>
-          }
-          {isSignupSuccess && 
-            <CardTitle className="text-2xl">Signup successful</CardTitle>
-          }
-          {!isSignupSuccess && 
-            <CardDescription>
-              Please log in using your username or email
-            </CardDescription>
-          }
-          {isSignupSuccess && 
-            <CardDescription>
-              You can now use your username or email to log in!
-            </CardDescription>
-          }
-        </CardHeader>
+        <CardHeaderWithSuccess/>
       </Suspense>
       <CardContent>
         <form onSubmit={onSubmit} className="mt-4">
@@ -163,4 +143,29 @@ export function LoginForm() {
       </CardContent>
     </Card>
   );
+}
+
+function CardHeaderWithSuccess () {
+  const searchParams = useSearchParams();
+  const isSignupSuccess = searchParams.get("signup") === "success";
+  return (
+    <CardHeader>
+      {!isSignupSuccess && 
+        <CardTitle className="text-2xl">Welcome to Magpie</CardTitle>
+      }
+      {isSignupSuccess && 
+        <CardTitle className="text-2xl">Signup successful</CardTitle>
+      }
+      {!isSignupSuccess && 
+        <CardDescription>
+          Please log in using your username or email
+        </CardDescription>
+      }
+      {isSignupSuccess && 
+        <CardDescription>
+          You can now use your username or email to log in!
+        </CardDescription>
+      }
+    </CardHeader>
+  )
 }
