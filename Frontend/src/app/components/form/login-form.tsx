@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react"; // useState and useEffect
+import { useState, useEffect, Suspense } from "react"; // useState and useEffect
 import { Button } from "@/components/ui/registry/button";
 import {
   Card,
@@ -91,24 +91,26 @@ export function LoginForm() {
 
   return (
     <Card>
-      <CardHeader>
-        {!isSignupSuccess && 
-          <CardTitle className="text-2xl">Welcome to Magpie</CardTitle>
-        }
-        {isSignupSuccess && 
-          <CardTitle className="text-2xl">Signup successful</CardTitle>
-        }
-        {!isSignupSuccess && 
-          <CardDescription>
-            Please log in using your username or email
-          </CardDescription>
-        }
-        {isSignupSuccess && 
-          <CardDescription>
-            You can now use your username or email to log in!
-          </CardDescription>
-        }
-      </CardHeader>
+      <Suspense>
+        <CardHeader>
+          {!isSignupSuccess && 
+            <CardTitle className="text-2xl">Welcome to Magpie</CardTitle>
+          }
+          {isSignupSuccess && 
+            <CardTitle className="text-2xl">Signup successful</CardTitle>
+          }
+          {!isSignupSuccess && 
+            <CardDescription>
+              Please log in using your username or email
+            </CardDescription>
+          }
+          {isSignupSuccess && 
+            <CardDescription>
+              You can now use your username or email to log in!
+            </CardDescription>
+          }
+        </CardHeader>
+      </Suspense>
       <CardContent>
         <form onSubmit={onSubmit} className="mt-4">
           {" "}
