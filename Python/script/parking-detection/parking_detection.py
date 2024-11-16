@@ -494,6 +494,40 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
     cv2.imwrite(image_path, image)
 
 
+def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
+    """
+    Original function which seems to work better
+    Draws the empty parking spots on the image
+
+    Params:
+        image_path (str): Path to the image
+        empty_spots (list): List of empty parking spots' center coordinates
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image.
+        avg_spot_width (float): Average width of a parking spot in pixels
+        avg_spot_length (float): Average length of a parking spot in pixels
+    """
+    image = cv2.imread(image_path)
+
+    for spot, _, orientation in empty_spots:
+        x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+        
+        if orientation == 'horizontal':
+            x1 = int(x_pixel - avg_spot_width // 2)
+            y1 = int(y_pixel - avg_spot_length // 2)
+            x2 = int(x_pixel + avg_spot_width // 2)
+            y2 = int(y_pixel + avg_spot_length // 2)
+        else: 
+            x1 = int(x_pixel - avg_spot_length // 2)
+            y1 = int(y_pixel - avg_spot_width // 2)
+            x2 = int(x_pixel + avg_spot_length // 2)
+            y2 = int(y_pixel + avg_spot_width // 2)  
+        
+        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+
+    cv2.imwrite(image_path, image)
+
+
 def get_parking_coords_in_image(model, longitude, latitude):
     """
     Detects the parking spaces in the image (at longitude/latitude) and returns a list of coordinates
@@ -536,7 +570,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
         empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
         empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
-        draw_empty_spots_on_image(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
+        #draw_empty_spots_on_image(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
+        draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
 
