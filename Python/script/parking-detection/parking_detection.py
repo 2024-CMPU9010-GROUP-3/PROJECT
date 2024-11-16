@@ -335,7 +335,7 @@ def calculate_avg_spot_dimensions(cars):
     print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
-def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12, duplicate_threshold_meters=1):
+def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12, duplicate_threshold_meters=1, overlap_threshold_meters=1.25):
     """
     Detects empty spots in rows of parked cars based on detected car bounding box centers
     
@@ -345,6 +345,7 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         avg_spot_length (float): Average length of a parking spot in meters
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
         duplicate_threshold_meters (float): Threshold to differenciate between spots that are considered identical in meters
+        overlap_threshold_meters (float): Threshold to remove empty spots overlapping with detected cars
 
     Returns:
        empty_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
@@ -402,7 +403,21 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
             if distance_to_prev >= duplicate_threshold_meters or spot[2] != empty_spots[i - 1][2]:
                 unique_empty_spots.append(spot)
 
-    return unique_empty_spots
+    filtered_empty_spots = []
+
+    for empty_spot in unique_empty_spots:
+        empty_x, empty_y = empty_spot[0]
+        overlap = False
+        for car in cars:
+            car_x, car_y, _, _, _, _ = car
+            distance_to_car = geodesic((empty_y, empty_x), (car_y, car_x)).meters
+            if distance_to_car < overlap_threshold_meters:
+                overlap = True
+                break
+        if not overlap:
+            filtered_empty_spots.append(empty_spot)
+
+    return filtered_empty_spots
 
 def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_lat, avg_spot_width, avg_spot_length):
     """
