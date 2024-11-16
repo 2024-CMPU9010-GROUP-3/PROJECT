@@ -6,7 +6,6 @@ import {
   UserRoundX,
 } from "lucide-react";
 
-import { logout } from "@/app/components/serverActions/actions"; // Import logout action
 import { useRouter } from "next/navigation";
 
 import {
@@ -30,15 +29,13 @@ export function DropdownMenuDemo() {
   // Function to handle login
   const handleLogin = () => {
     router.push("/login");
-    console.log("Login clicked!");
   };
 
   // Function to handle logout
   const handleLogout = async () => {
-    await logout(); // Call logout action
     setSessionToken('');
     setSessionUUID('');
-    console.log("Logged out!");
+    router.push("/login");
   };
 
   return (
