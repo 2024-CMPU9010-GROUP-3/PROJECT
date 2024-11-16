@@ -7,13 +7,12 @@ export const Navbar = () => (
       <div className="flex justify-between h-16 items-center">
         <div className="flex items-center">
           <Image
-            src="/api/placeholder/40/40"
+            src="/images/BKlogo.svg"
             alt="Magpie Logo"
-            className="h-10 w-10"
-            width={40}
-            height={40}
+            className="h-16 w-16"
+            width={500}
+            height={500}
           />
-          <span className="ml-2 text-xl font-bold">Magpie</span>
         </div>
         <div className="hidden md:flex items-center space-x-8">
           <a href="#features" className="text-gray-600 hover:text-gray-900">
