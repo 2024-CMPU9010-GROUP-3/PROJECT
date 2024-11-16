@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react"; // useState and useEffect
+import { useState, useEffect, Suspense } from "react"; // useState and useEffect
 import { Button } from "@/components/ui/registry/button";
 import {
   Card,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/registry/card";
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
-import { useRouter } from "next/navigation"; // useRouter
+import { useRouter, useSearchParams } from "next/navigation"; // useRouter
 import { useSession } from '@/app/context/SessionContext';
 
 
@@ -57,10 +57,10 @@ export function LoginForm() {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
         // login success, handle logic
-        const data = await response.json();
-        console.log("Login successful:", data); // print success response
         if (data.response.content) {
           const content = data.response.content
           
@@ -76,27 +76,23 @@ export function LoginForm() {
         }
       } else {
         // handle error case
-        const errorData = await response.text(); // get error data
-        setErrorMessage("Login failed: " + errorData); // display original error message
+        setErrorMessage(data.error.errorMsg); // display original error message
       }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error("An error occurred", error);
-      setErrorMessage("An error occurred during login");
+      setErrorMessage("An unknown error occurred during login");
     } finally {
       setIsLoading(false); // reset loading state
     }
   };
 
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
-          Enter your username or email below to login to your account
-        </CardDescription>
-      </CardHeader>
+    <Card>
+      <Suspense>
+        <CardHeaderWithSuccess/>
+      </Suspense>
       <CardContent>
-        <form onSubmit={onSubmit}>
+        <form onSubmit={onSubmit} className="mt-4">
           {" "}
           {/* form submission handling */}
           <div className="grid gap-4">
@@ -105,7 +101,7 @@ export function LoginForm() {
               <Input
                 id="usernameOrEmail"
                 type="text"
-                placeholder="username or m@example.com"
+                placeholder="Username/Email*"
                 required
                 value={usernameOrEmail} // bind usernameOrEmail state
                 onChange={(e) => setUsernameOrEmail(e.target.value)} // update state
@@ -114,27 +110,28 @@ export function LoginForm() {
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link
+                {/* <Link
                   href="#"
                   className="ml-auto inline-block text-sm underline"
                 >
                   Forgot your password?
-                </Link>
+                </Link> NOT YET IMPLEMENTED*/}
               </div>
               <Input
                 id="password"
                 type="password"
+                placeholder="Password*"
                 required
                 value={password} // bind password state
                 onChange={(e) => setPassword(e.target.value)} // update password state
               />
             </div>
+            <div className="text-red-500 w-full text-center">{errorMessage || "\u00A0"}</div>
+            {/* display error message */}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}{" "}
               {/* display loading state */}
             </Button>
-            {errorMessage && <div className="text-red-500">{errorMessage}</div>}{" "}
-            {/* display error message */}
           </div>
         </form>
         <div className="mt-4 text-center text-sm">
@@ -146,4 +143,29 @@ export function LoginForm() {
       </CardContent>
     </Card>
   );
+}
+
+function CardHeaderWithSuccess () {
+  const searchParams = useSearchParams();
+  const isSignupSuccess = searchParams.get("signup") === "success";
+  return (
+    <CardHeader>
+      {!isSignupSuccess && 
+        <CardTitle className="text-2xl">Welcome to Magpie</CardTitle>
+      }
+      {isSignupSuccess && 
+        <CardTitle className="text-2xl">Signup successful</CardTitle>
+      }
+      {!isSignupSuccess && 
+        <CardDescription>
+          Please log in using your username or email
+        </CardDescription>
+      }
+      {isSignupSuccess && 
+        <CardDescription>
+          You can now use your username or email to log in!
+        </CardDescription>
+      }
+    </CardHeader>
+  )
 }
