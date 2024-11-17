@@ -402,6 +402,9 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
             
             if distance_to_prev >= duplicate_threshold_meters or spot[2] != empty_spots[i - 1][2]:
                 unique_empty_spots.append(spot)
+            else:
+                print(f"Removed spot at {spot[0]} due to proximity to {empty_spots[i - 1][0]}. Distance: {distance_to_prev:.2f}")
+
 
     filtered_empty_spots = []
 
@@ -416,6 +419,10 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                 break
         if not overlap:
             filtered_empty_spots.append(empty_spot)
+
+    print(f'Empty spots: {len(empty_spots)}')
+    print(f'Unique empty spots: {len(unique_empty_spots)}')
+    print(f'Filtered empty spots: {len(filtered_empty_spots)}')
 
     return filtered_empty_spots
 
@@ -570,6 +577,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
         empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
         empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
+        print(f'Filtered spots after road mask: {len(empty_spots_filtered)}')
         #draw_empty_spots_on_image(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
@@ -687,7 +695,7 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    main(-6.2576, 53.3388, -6.2566, 53.3394)
+    '''main(-6.2576, 53.3388, -6.2566, 53.3394)
     main(-6.2608, 53.3464, -6.2598, 53.347)
     main(-6.2617, 53.3462, -6.2606, 53.3469)
     main(-6.2854, 53.3511, -6.2843, 53.3517)
@@ -720,3 +728,17 @@ if __name__ == "__main__":
     main(-6.2818, 53.3527, -6.2808, 53.3533)#hor
     main(-6.283, 53.3525, -6.282, 53.3531)#hor, but not empty parking spots as car isn't identified
     main(-6.2848, 53.3524, -6.2838, 53.353)#vert
+
+    main(-6.2769, 53.356, -6.2762, 53.3563)#parking lots
+    main(-6.277, 53.3564, -6.2763, 53.3566)
+    main(-6.2647, 53.3527, -6.2639, 53.353)
+    main(-6.264, 53.3529, -6.2632, 53.3532)
+    main(-6.2632, 53.3527, -6.2626, 53.3529)
+    main(-6.2517, 53.3718, -6.2509, 53.3721)
+    main(-6.3169, 53.3767, -6.3159, 53.3773)
+    main(-6.2699, 53.3607, -6.2689, 53.3613)'''
+
+    main(-6.296, 53.3637, -6.2951, 53.3642)
+    main(-6.2981, 53.3638, -6.2972, 53.3644)
+    main(-6.2946, 53.3658, -6.2937, 53.3664)
+    main(-6.2972, 53.3696, -6.2962, 53.3702)
