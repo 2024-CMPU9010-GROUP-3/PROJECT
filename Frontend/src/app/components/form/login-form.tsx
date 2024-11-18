@@ -22,7 +22,7 @@ export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
   const [isLoading, setIsLoading] = useState(false); // loading state
   const router = useRouter(); // router
-  const { sessionToken, setSessionToken, setSessionUUID } = useSession();
+  const { sessionToken, setSessionToken, sessionUUID, setSessionUUID, isUserLoggedIn, setIsUserLoggedIn } = useSession();
 
   // check if user is already logged in
   useEffect(() => {
@@ -66,8 +66,15 @@ export function LoginForm() {
         if (data.response.content) {
           const content = data.response.content
           
-          setSessionToken(content.token)
-          setSessionUUID(content.userid)
+          // setSessionToken(content.token)
+          // setSessionUUID(content.userid)
+          setSessionToken(prevToken => content.token)
+          setSessionUUID(prevUUID => content.userid)
+
+          if(sessionToken && sessionUUID){
+            setIsUserLoggedIn(true)
+          }
+          console.log("CONTENT >>>", content)
 
           setErrorMessage(null); // clear any error message
 

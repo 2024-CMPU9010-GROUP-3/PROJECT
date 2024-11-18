@@ -9,6 +9,8 @@ const uuidCookieName = "magpie_uuid";
 export async function saveSessionToCookies(sessionToken: string, sessionUUID: string) {
   const cookieStore = cookies();
 
+  console.log("SAVE SESSION TO COOKIES >>>", sessionToken, sessionUUID)
+
   // Set cookies to store sessionToken and sessionUUID
   let expiryDate = new Date(Date.now() + 86400 * 1000); // 1 day expiry default
   const decoded = jwtDecode<JwtPayload>(sessionToken)
