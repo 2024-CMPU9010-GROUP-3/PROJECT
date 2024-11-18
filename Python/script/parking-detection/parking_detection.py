@@ -158,7 +158,7 @@ def new_mask(image_path, save_path, threshold=240):
 
 def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
     """
-    Detect cars in the image using the retrained YOLO model and remove those on the road
+    Detect cars in the image using the retrained YOLO model and draws them on the image.
 
     Params:
         image_path (str): Path of the image
@@ -213,11 +213,9 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
 
                 if road_pixels / total_pixels > 0.5:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is on the road")
-                    print(orientation)
                     cv2.polylines(img, [box_points], isClosed=True, color=(255, 0, 0), thickness=2) #blue if on the road
                 else:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
-                    print(orientation)
                     detections_parking.append([x_center, y_center, width, height, angle_degrees, orientation])
                     cv2.polylines(img, [box_points], isClosed=True, color=(0, 0, 255), thickness=2) #red if parked
 
@@ -294,24 +292,10 @@ def convert_coordinates_to_bounding_box(longitude, latitude, center_long, center
 
     return x_offset, y_offset
 
-def get_center_bounding_box(x_min, y_min, x_max, y_max):
-    """
-    Returns the center of the bounding box
-    
-    Params:
-        x_min, y_min, x_max, y_max (int): Top left and bottom right cordinates of the bounding box
-
-    Returns:
-        x, y (float): Center coordinates of the bounding box
-    """
-    x = (x_min + x_max) / 2
-    y = (y_min + y_max) / 2
-
-    return x, y
 
 def calculate_avg_spot_dimensions(cars):
     """
-    Calculates average parking spot width and length from the bounding box found as it is very variable
+    Calculates average parking spot width and length in pixels
     
     Params:
         cars (list): List of corrdinates with width and length
@@ -324,20 +308,17 @@ def calculate_avg_spot_dimensions(cars):
     avg_width_pixels = np.median(widths)
     avg_length_pixels = np.median(lengths)
 
-    #cross product based on optimal values found previously
-    #avg_width_meters = 2 * avg_width_pixels / 18
-    #avg_length_meters = 3.2 * avg_length_pixels / 18
+    #the avgerage width and length are set as in practise it works better and accounts for the variations and avoids misclassifications when avg_length_meters or avg_width_meters are < 3 (when they were calculated dynamically)
+    avg_width_meters = 3.05
+    avg_length_meters = 3.05
 
-    #we set the avgerage width and length as in practise it works better and accounts for the variations
-    avg_width_meters = 3
-    avg_length_meters = 3
-
-    print(avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
     return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
 def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12, duplicate_threshold_meters=1, overlap_threshold_meters=1.25):
     """
-    Detects empty spots in rows of parked cars based on detected car bounding box centers
+    Detects empty spots in a group of parked cars in an image, based on the detected car bounding box centers.
+    There are 4 cases: horizontal in a row, horizontal stacked, vertical in a column and vertical side by side.
+    Duplicate spots and spots coinciding with cars identified by the Yolo model are removed.
     
     Params:
         cars (list): List of car bounding box centers with orientation horizontal or vertical
@@ -348,7 +329,7 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         overlap_threshold_meters (float): Threshold to remove empty spots overlapping with detected cars
 
     Returns:
-       empty_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation (for drawing the boxes)
+       empty_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation
     """
     empty_spots = []
     
@@ -384,7 +365,7 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], angle_degrees, alignment))
-                    print(f"Empty parking spot at {empty_x_center}, {empty_y_center}, {alignment}, {angle_degrees}")
+                    print(f"Empty parking spot at {empty_x_center}, {empty_y_center}")
 
     find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters) #Horizontal spots in a row
     find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters=9 ) #Horizontal spots stacked in a column
@@ -420,15 +401,15 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         if not overlap:
             filtered_empty_spots.append(empty_spot)
 
-    print(f'Empty spots: {len(empty_spots)}')
-    print(f'Unique empty spots: {len(unique_empty_spots)}')
-    print(f'Filtered empty spots: {len(filtered_empty_spots)}')
+    #print(f'Empty spots: {len(empty_spots)}')
+    #print(f'Unique empty spots: {len(unique_empty_spots)}')
+    #print(f'Filtered empty spots: {len(filtered_empty_spots)}')
 
     return filtered_empty_spots
 
 def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_lat, avg_spot_width, avg_spot_length):
     """
-    Filters out empty parking spots that are on the road
+    Filters out empty parking spots found that are on the road
 
     Params:
         empty_spots (list): List of coordinates of estimated empty parking spots with horizontal or vertical orientation
@@ -503,7 +484,7 @@ def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, 
 
 def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
     """
-    Original function which seems to work better
+    Original function which seems to work better even though it doesn't take the rotation into account
     Draws the empty parking spots on the image
 
     Params:
@@ -537,7 +518,8 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
 
 def get_parking_coords_in_image(model, longitude, latitude):
     """
-    Detects the parking spaces in the image (at longitude/latitude) and returns a list of coordinates
+    Detects all the parking spaces in the image (at longitude/latitude) and returns a list of coordinates, agregating
+    the cars (of the road) found by the Yolo model and the empty parking spots found (which are drawn and added to the image) 
 
     Params:
         model : YOLO model
@@ -553,8 +535,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -577,8 +559,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
         empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
         empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
-        print(f'Filtered spots after road mask: {len(empty_spots_filtered)}')
-        #draw_empty_spots_on_image(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
+        #print(f'Filtered spots after road mask: {len(empty_spots_filtered)}')
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
@@ -695,50 +676,9 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    '''main(-6.2576, 53.3388, -6.2566, 53.3394)
-    main(-6.2608, 53.3464, -6.2598, 53.347)
-    main(-6.2617, 53.3462, -6.2606, 53.3469)
-    main(-6.2854, 53.3511, -6.2843, 53.3517)
-    main(-6.2893, 53.3486, -6.2883, 53.3492)
-    main(-6.2899, 53.3473, -6.2889, 53.3479)
-    main(-6.2903, 53.349, -6.2893, 53.3496) 
-    main(-6.2657, 53.3567, -6.2646, 53.3574)
-
-    main(-6.2853, 53.353, -6.2845, 53.3533)#hor
-    main(-6.2847, 53.3526, -6.2839, 53.3529)
-    main(-6.2845, 53.3524, -6.2837, 53.3527)
-    main(-6.2821, 53.3492, -6.2814, 53.3495)#vert
-    main(-6.2735, 53.3473, -6.2727, 53.3476)
-    main(-6.2723, 53.3478, -6.2719, 53.3479 )#parking
-    main(-6.2548, 53.3274, -6.2541, 53.3277)
-    main(-6.2705, 53.3466, -6.2698, 53.3468)#vert
-    main(-6.2646, 53.3432, -6.2641, 53.3434)
-    main(-6.2649, 53.3385, -6.2641, 53.3388)
-    main(-6.2611, 53.3308, -6.2604, 53.3311)
-    main(-6.2512, 53.3252, -6.2506, 53.3254)
-    main(-6.2708, 53.3456, -6.27, 53.3459)#hor
-    main(-6.2653, 53.3392, -6.2645, 53.3395)#mix
-    main(-6.2461, 53.3198, -6.2453, 53.3201)
-    main(-6.2463, 53.3195, -6.2455, 53.3198)
-    main(-6.2465, 53.3193, -6.2457, 53.3196)
-    
-    main(-6.2811, 53.3489, -6.2801, 53.3495)#mix 
-    main(-6.2799, 53.3528, -6.2791, 53.3533)#vert 
-    main(-6.2807, 53.3529, -6.2797, 53.3535)# mix 
-    main(-6.2818, 53.3527, -6.2808, 53.3533)#hor
-    main(-6.283, 53.3525, -6.282, 53.3531)#hor, but not empty parking spots as car isn't identified
-    main(-6.2848, 53.3524, -6.2838, 53.353)#vert
-
-    main(-6.2769, 53.356, -6.2762, 53.3563)#parking lots
-    main(-6.277, 53.3564, -6.2763, 53.3566)
-    main(-6.2647, 53.3527, -6.2639, 53.353)
-    main(-6.264, 53.3529, -6.2632, 53.3532)
-    main(-6.2632, 53.3527, -6.2626, 53.3529)
-    main(-6.2517, 53.3718, -6.2509, 53.3721)
-    main(-6.3169, 53.3767, -6.3159, 53.3773)
-    main(-6.2699, 53.3607, -6.2689, 53.3613)'''
-
-    main(-6.296, 53.3637, -6.2951, 53.3642)
-    main(-6.2981, 53.3638, -6.2972, 53.3644)
-    main(-6.2946, 53.3658, -6.2937, 53.3664)
-    main(-6.2972, 53.3696, -6.2962, 53.3702)
+    #main(-6.2264, 53.4194, -6.2219, 53.4221)#parking lot
+    #main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
+    #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
+    #main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
+    #main(-6.2751, 53.347, -6.272, 53.3489)#urban area
+    main()
