@@ -2,7 +2,7 @@
 ## Casual users (remote & controlled)
 * C21459946@mytudublin.ie = Agreed
 * c24394486@mytudublin.ie = Waiting
-* D22125503@mytudublin.ie = Waiting
+* D22125503@mytudublin.ie = Agreed
 * debemeh06@gmail.com = Waiting
 * benjohnson0806@gmail.com = Agreed
 * d20124630@mytudublin.ie = Waiting
@@ -12,7 +12,7 @@
 * Damian = Agreed
 * andrej.malik@stwarchitects.com = Waiting
 * bryan.boyle@ucc.ie = Waiting
-* mairatsa@gmail.com = Waiting
+* mairatsa@gmail.com = Agreed
 * jmurphy@longfordcoco.ie = Waiting
 
 ## Random (whoever we can find??)
