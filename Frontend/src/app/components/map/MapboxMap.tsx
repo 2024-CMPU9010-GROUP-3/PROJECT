@@ -97,7 +97,6 @@ const IMAGES: ImageConfig[] = [
   { id: 'custom_toilet', path: '/images/toilet.png' },
 ];
 
-
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
   const [isMarkerVisible, setIsMarkerVisible] = useState<boolean>(false);
@@ -198,10 +197,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
 
-  const {sessionToken} = useSession()
+  const { sessionToken } = useSession()
 
   const handleAmenitiesFilterChange = (selectedOptions: Option[]) => {
     setAmenitiesFilter(selectedOptions.map((option) => option.value));
+  };
+
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = event.target;
+    setAmenitiesFilter((prev) =>
+      checked ? [...prev, value] : prev.filter((item) => item !== value)
+    );
   };
 
   // Handle map click event
@@ -385,7 +391,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       </div>
       {/* Map Container - Taller on mobile */}
       <div
-        className="w-full lg:w-[75%] h-[60vh] sm:h-[70vh] lg:h-screen relative"
+        className="
+          w-full 
+          h-[60vh] 
+          md:w-[75%] 
+          sm:h-[70vh] 
+          lg:h-screen relative
+        "
         id="onboarding-step-5"
       >
         {mapBoxApiKey ? (
@@ -718,7 +730,20 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       </div>
 
       {/* Sidebar - Full width on mobile, scrollable */}
-      <div className="w-full lg:w-[25%] h-[40vh] sm:h-[30vh] lg:h-screen p-3 sm:p-4 lg:p-6 bg-gray-50 overflow-y-auto">
+      <div className="
+        w-full
+        p-3
+        h-[40vh]
+        bg-gray-50 
+        overflow-y-auto  
+        lg:h-screen
+        lg:p-6
+        md:w-[25%] 
+        md:h-screen
+        md:p-6
+        sm:h-[30vh]
+        sm:p-4
+      ">
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
           {mapBoxApiKey ? (
             <>
@@ -760,209 +785,63 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             </>
           ) : null}
 
-          {/* Marker Data Card */}
+          {/* Combined Data and Filter Options Card */}
           <div className="px-2 sm:px-3 lg:px-4">
             <div
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
               id="onboarding-step-3"
             >
-              {/* <h2 className="text-base sm:text-lg lg:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">
-                Marker Data
-              </h2> */}
               {isMarkerVisible ? (
                 <Suspense
                   fallback={<div className="animate-pulse">Loading...</div>}
                 >
-                  <div className="space-y-2">
-                    {/* Parking */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Parking
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(pointsGeoJson?.parking as GeoJSON.FeatureCollection)
-                          ?.features?.length || 0}{" "}
-                        Spots
-                      </Badge>
-                    </div>
-
-                    {/* Parking Meters */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Parking Meters
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.parking_meter as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Spots
-                      </Badge>
-                    </div>
-
-                    {/* Bike Stands */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Bike Stands
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.bike_stand as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Spots
-                      </Badge>
-                    </div>
-
-                    {/* Public WiFi */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Public WiFi
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.public_wifi_access_point as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Points
-                      </Badge>
-                    </div>
-
-                    {/* Libraries */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Libraries
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(pointsGeoJson?.library as GeoJSON.FeatureCollection)
-                          ?.features?.length || 0}{" "}
-                        Locations
-                      </Badge>
-                    </div>
-
-                    {/* Multi-storey Car Parks */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Car Parks
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.multistorey_car_parking as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Locations
-                      </Badge>
-                    </div>
-
-                    {/* Water Fountains */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Water Fountains
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.drinking_water_fountain as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Fountains
-                      </Badge>
-                    </div>
-
-                    {/* Public Toilets */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Public Toilets
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.public_toilet as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Locations
-                      </Badge>
-                    </div>
-
-                    {/* Bike Sharing */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Bike Sharing
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.bike_sharing_station as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Stations
-                      </Badge>
-                    </div>
-
-                    {/* Accessible Parking */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Accessible Parking
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.accessible_parking as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Spots
-                      </Badge>
-                    </div>
-
-                    {/* Public Bins */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Public Bins
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.public_bins as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Bins
-                      </Badge>
-                    </div>
-
-                    {/* Coach Parking */}
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm sm:text-base lg:text-lg text-gray-700">
-                        Coach Parking
-                      </span>
-                      <Badge
-                        variant="secondary"
-                        className="px-2 py-1 text-xs sm:text-sm rounded-full bg-gray-100"
-                      >
-                        {(
-                          pointsGeoJson?.coach_parking as GeoJSON.FeatureCollection
-                        )?.features?.length || 0}{" "}
-                        Spots
-                      </Badge>
-                    </div>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Amenity
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Count
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Show
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {MultiSelectOptions.map((option) => (
+                          <tr key={option.value}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {option.label}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {(
+                                pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                              )?.features?.length || 0}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <input
+                                type="checkbox"
+                                value={option.value}
+                                checked={amenitiesFilter.includes(option.value)}
+                                onChange={handleCheckboxChange}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </Suspense>
               ) : (
@@ -972,26 +851,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               )}
             </div>
           </div>
-
-          {/* Filter Options Card */}
-          {mapBoxApiKey ? (
-            <>
-              <div className="w-[90%] mx-auto bg-white" id="onboarding-step-4">
-                <MultipleSelector
-                  defaultOptions={MultiSelectOptions}
-                  onChange={handleAmenitiesFilterChange}
-                  placeholder="Select your amenities"
-                  emptyIndicator={
-                    <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                      no results found.
-                    </p>
-                  }
-                />
-              </div>
-            </>
-          ) : (
-            ""
-          )}
         </div>
       </div>
     </div>
