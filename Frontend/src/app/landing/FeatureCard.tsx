@@ -1,21 +1,36 @@
-import { FC } from "react";
+// FeatureCard.tsx
+import { LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface FeatureCardProps {
-  icon: FC<{ className?: string }>;
+  icon: LucideIcon;
   title: string;
   description: string;
+  className?: string;
 }
 
-export const FeatureCard: FC<FeatureCardProps> = ({
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 },
+};
+
+export const FeatureCard = ({
   icon: Icon,
   title,
   description,
-}) => (
-  <div className="p-6 bg-white rounded-lg shadow-md">
-    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-      <Icon className="h-6 w-6 text-blue-600" />
-    </div>
-    <h3 className="text-lg font-medium text-gray-900">{title}</h3>
-    <p className="mt-2 text-gray-500">{description}</p>
-  </div>
-);
+  className,
+}: FeatureCardProps) => {
+  return (
+    <motion.div variants={item} className={`rounded-2xl p-6 ${className}`}>
+      <div className="flex flex-col items-center text-center space-y-4">
+        <div className="p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl">
+          <Icon className="w-6 h-6 text-blue-600" />
+        </div>
+
+        <h3 className="text-xl font-bold text-gray-900">{title}</h3>
+
+        <p className="text-gray-600 leading-relaxed">{description}</p>
+      </div>
+    </motion.div>
+  );
+};
