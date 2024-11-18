@@ -837,15 +837,23 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                         {MultiSelectOptions.map((option) => (
                           <tr key={option.value}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <Image src={iconMap[option.value]} alt={option.label} width={24} height={24} className="w-6 h-6" />
+                              <Image
+                                src={iconMap[option.value]}
+                                alt={option.label}
+                                width={24}
+                                height={24}
+                                className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
+                              />
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {option.label}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {(
-                                pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                              )?.features?.length || 0}
+                              {amenitiesFilter.includes(option.value)
+                                ? (
+                                  pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                                )?.features?.length || 0
+                                : '-'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <button onClick={() => handleIconClick(option.value)}>
