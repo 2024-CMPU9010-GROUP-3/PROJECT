@@ -305,7 +305,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   const { startOnborda } = useOnborda();
   const handleStartOnborda = () => {
-    console.log(startOnborda("general-onboarding"));
+    startOnborda("general-onboarding");
   };
 
   useEffect(() => {
