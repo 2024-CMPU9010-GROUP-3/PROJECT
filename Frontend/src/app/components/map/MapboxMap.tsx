@@ -10,10 +10,10 @@ import { FaLocationDot } from 'react-icons/fa6';
 import { Grid } from 'react-loader-spinner';
 import Map, { Layer, LayerProps, Marker, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 
 // Local components
-import { Badge } from '@/components/ui/badge';
-import MultipleSelector, { Option } from '@/components/ui/registry/multiple-select';
 import { Slider } from '@/components/ui/slider';
 
 // Local utils and configs
@@ -65,6 +65,11 @@ type GeoJsonCollection =
   | "public_bins"
   | "coach_parking";
 
+interface Option {
+  label: string;
+  value: string;
+}
+
 const MultiSelectOptions: Option[] = [
   { label: "Parking Meter", value: "parking_meter" },
   { label: "Bike Stand", value: "bike_stand" },
@@ -96,6 +101,21 @@ const IMAGES: ImageConfig[] = [
   { id: 'custom_water_fountain', path: '/images/water_fountain.png' },
   { id: 'custom_toilet', path: '/images/toilet.png' },
 ];
+
+const iconMap: Record<string, string> = {
+  parking_meter: '/images/parking_meter.png',
+  bike_stand: '/images/bicycle.png',
+  public_wifi_access_point: '/images/wifi.png',
+  library: '/images/library.png',
+  multistorey_car_parking: '/images/car_park.png',
+  drinking_water_fountain: '/images/water_fountain.png',
+  public_toilet: '/images/toilet.png',
+  bike_sharing_station: '/images/bicycle_share.png',
+  parking: '/images/parking.png',
+  accessible_parking: '/images/accessibleParking.png',
+  public_bins: '/images/bin.png',
+  coach_parking: '/images/bus.png',
+};
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
@@ -195,18 +215,15 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     loadImages(map).catch(error => console.error('Error loading images:', error));
   };
 
-  const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>([]);
+  const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>(() =>
+    MultiSelectOptions.map((option) => option.value)
+  );
 
   const { sessionToken } = useSession()
 
-  const handleAmenitiesFilterChange = (selectedOptions: Option[]) => {
-    setAmenitiesFilter(selectedOptions.map((option) => option.value));
-  };
-
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = event.target;
+  const handleIconClick = (value: string) => {
     setAmenitiesFilter((prev) =>
-      checked ? [...prev, value] : prev.filter((item) => item !== value)
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
     );
   };
 
@@ -393,10 +410,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       <div
         className="
           w-full 
-          h-[60vh] 
-          md:w-[75%] 
-          sm:h-[70vh] 
+          h-[60vh]
+          xl:w-[74%]  
+          lg:w-[52%]
           lg:h-screen relative
+          sm:h-[70vh]
         "
         id="onboarding-step-5"
       >
@@ -447,7 +465,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Layer {...layerStyle} />
               </Source>
               {/* Parking Source */}
-              {imagesLoaded.custom_parking && (
+              {imagesLoaded.custom_parking && amenitiesFilter.includes("parking") && (
                 <Source
                   id="custom_parking"
                   type="geojson"
@@ -461,7 +479,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...parkingClusterStyles.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_parking_meter && (
+              {imagesLoaded.custom_parking_meter && amenitiesFilter.includes("parking_meter") && (
                 <Source
                   id="custom_parking_meter"
                   type="geojson"
@@ -472,7 +490,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...parkingMeterLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_bicycle && (
+              {imagesLoaded.custom_bicycle && amenitiesFilter.includes("bike_stand") && (
                 <Source
                   id="custom_bicycle"
                   type="geojson"
@@ -483,7 +501,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...bikeStandLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_bicycle_share && (
+              {imagesLoaded.custom_bicycle_share && amenitiesFilter.includes("bike_sharing_station") && (
                 <Source
                   id="bike-sharing"
                   type="geojson"
@@ -494,18 +512,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...bikeSharingLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_bicycle_share && (
-                <Source
-                  id="bike-sharing"
-                  type="geojson"
-                  data={pointsGeoJson?.bike_sharing_station}
-                >
-                  <Layer {...bikeSharingLayers?.close} />
-                  <Layer {...bikeSharingLayers?.medium} />
-                  <Layer {...bikeSharingLayers?.far} />
-                </Source>
-              )}
-              {imagesLoaded.custom_accessible_parking && (
+              {imagesLoaded.custom_accessible_parking && amenitiesFilter.includes("accessible_parking") && (
                 <Source
                   id="accessible-parking"
                   type="geojson"
@@ -516,7 +523,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...accessibleParkingLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_public_bins && (
+              {imagesLoaded.custom_public_bins && amenitiesFilter.includes("public_bins") && (
                 <Source
                   id="public-bins"
                   type="geojson"
@@ -527,7 +534,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...publicBinLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_public_wifi && (
+              {imagesLoaded.custom_public_wifi && amenitiesFilter.includes("public_wifi_access_point") && (
                 <Source
                   id="public-wifi"
                   type="geojson"
@@ -538,7 +545,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...publicWifiLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_bus && (
+              {imagesLoaded.custom_bus && amenitiesFilter.includes("coach_parking") && (
                 <Source
                   id="coach-parking"
                   type="geojson"
@@ -549,7 +556,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...coachParkingLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_library && (
+              {imagesLoaded.custom_library && amenitiesFilter.includes("library") && (
                 <Source
                   id="libraries"
                   type="geojson"
@@ -560,7 +567,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...libraryLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_car_parks && (
+              {imagesLoaded.custom_car_parks && amenitiesFilter.includes("multistorey_car_parking") && (
                 <Source
                   id="car-parks"
                   type="geojson"
@@ -571,7 +578,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...carParkLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_water_fountain && (
+              {imagesLoaded.custom_water_fountain && amenitiesFilter.includes("drinking_water_fountain") && (
                 <Source
                   id="water-fountains"
                   type="geojson"
@@ -582,7 +589,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <Layer {...waterFountainLayers?.far} />
                 </Source>
               )}
-              {imagesLoaded.custom_toilet && (
+              {imagesLoaded.custom_toilet && amenitiesFilter.includes("public_toilet") && (
                 <Source
                   id="public-toilets"
                   type="geojson"
@@ -735,12 +742,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         p-3
         h-[40vh]
         bg-gray-50 
-        overflow-y-auto  
+        overflow-y-auto
+        xl:w-[26%]  
+        xl:h-screen
+        xl:p-6
+        lg:w-[48%]
         lg:h-screen
         lg:p-6
-        md:w-[25%] 
-        md:h-screen
-        md:p-6
         sm:h-[30vh]
         sm:p-4
       ">
@@ -803,6 +811,12 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                             scope="col"
                             className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                           >
+                            Icon
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
                             Amenity
                           </th>
                           <th
@@ -822,6 +836,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                       <tbody className="bg-white divide-y divide-gray-200">
                         {MultiSelectOptions.map((option) => (
                           <tr key={option.value}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <Image src={iconMap[option.value]} alt={option.label} width={24} height={24} className="w-6 h-6" />
+                            </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {option.label}
                             </td>
@@ -831,12 +848,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                               )?.features?.length || 0}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <input
-                                type="checkbox"
-                                value={option.value}
-                                checked={amenitiesFilter.includes(option.value)}
-                                onChange={handleCheckboxChange}
-                              />
+                              <button onClick={() => handleIconClick(option.value)}>
+                                {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                              </button>
                             </td>
                           </tr>
                         ))}
