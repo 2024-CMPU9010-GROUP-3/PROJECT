@@ -1,5 +1,4 @@
-import {deleteSessionFromCookies} from '@/app/components/serverActions/actions';
-import {getCookiesAccepted} from '@/lib/cookies';
+import {getCookiesAccepted,deleteSessionFromCookies} from '@/lib/cookies';
 import { cookies } from 'next/headers';
 import {NextResponse} from 'next/server';
 

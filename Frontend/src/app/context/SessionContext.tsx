@@ -3,7 +3,7 @@ import {getCookiesAccepted} from '@/lib/cookies';
 // SessionContext.tsx
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import {deleteSessionFromCookies, saveSessionToCookies} from '../components/serverActions/actions';
+import {deleteSessionFromCookies, saveSessionToCookies} from '@/lib/cookies';
 
 // Define the shape of the session context
 interface SessionContextType {
@@ -38,6 +38,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
   const [sessionToken, setSessionToken] = useState<string>("");
   const [sessionUUID, setSessionUUID] = useState<string>("");
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
+  const [isCookiesAccepted, setIsCookiesAccepted] = useState<boolean>(false);
 
   const initializeSession = async () => {
     const { token, uuid } = await fetchSessionData();
@@ -45,28 +46,37 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
     setSessionUUID(uuid);
   };
 
+  const myfirstfunction = async () => {
+    setIsCookiesAccepted(await getCookiesAccepted());
+  }
+
   useEffect(() => {
     initializeSession();
+    myfirstfunction();
   }, []);
 
   useEffect(() => {
     console.log("USE EFFECT FIRING");
     console.log("START OF USE EFFECT >>>", sessionToken, sessionUUID, isUserLoggedIn)
     try{
-      (async() => {
-        const cookiesAccepted = await getCookiesAccepted();
-        console.log("TRY COMMIT COOKIES >>>", cookiesAccepted, sessionToken, sessionUUID, isUserLoggedIn)
-    
-          if(!cookiesAccepted || (!sessionToken && !sessionUUID)) {
-            await deleteSessionFromCookies();
-            return;
-          }
-    
-          if(cookiesAccepted && sessionToken && sessionUUID) {
-            await saveSessionToCookies(sessionToken, sessionUUID);
-            return;
-          }
-      })()
+      const update = async () => {
+        console.log("UPDATE CALLED >>>", sessionToken, sessionUUID)
+        console.log("TRY COMMIT COOKIES >>>", isCookiesAccepted, sessionToken, sessionUUID, isUserLoggedIn)
+        
+        if(!isCookiesAccepted || (!sessionToken && !sessionUUID)) {
+          await deleteSessionFromCookies();
+          return;
+        }
+        
+        if(isCookiesAccepted && sessionToken && sessionUUID) {
+          console.log("NOW TRY TO REALLY SET COOKIES")
+          await saveSessionToCookies(sessionToken, sessionUUID);
+          console.log("AFTER SET COOKIES")
+          return;
+        }
+      }
+      update()
+      console.log("END OF USE EFFECT")
 
     } catch (error){
       console.log("USE EFFECT ERROR", error)
