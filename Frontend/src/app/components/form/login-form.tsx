@@ -29,10 +29,12 @@ export function LoginForm() {
     (async () => {
     if (sessionToken) {
       // if user is already logged in, redirect to home
-      router.push("/"); // redirect to home
+      setTimeout(() => {
+        router.push("/"); // redirect to home
+      }, 0);
     }
   })()
-  }, [router, sessionToken]);
+  }, [sessionToken, router]);
 
   const onSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault(); // prevent default form submission behavior
@@ -69,7 +71,9 @@ export function LoginForm() {
 
           setErrorMessage(null); // clear any error message
 
-          router.push("/")
+          setTimeout(() => {
+            router.push("/"); // redirect to home
+          }, 0);
 
         } else {
           setErrorMessage("Login failed: No user id received"); // if no user id, display error message

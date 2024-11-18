@@ -55,13 +55,13 @@ const (
 		`SELECT 1 ` +
 		`FROM logins ` +
 		`WHERE Email = \$1 ` +
-		`AND Id <> \$2 \) AS \"exists\"`
+		`AND Id IS DISTINCT FROM \$2 \) AS \"exists\"`
 
 	queryGetUsernameExists = `SELECT EXISTS\( ` +
 		`SELECT 1 ` +
 		`FROM logins ` +
 		`WHERE Username = \$1 ` +
-		`AND Id <> \$2 \) AS \"exists\"`
+		`AND Id IS DISTINCT FROM \$2 \) AS \"exists\"`
 
 	queryGetUserDetailsById = `SELECT Id, RegisterDate, FirstName, LastName, ProfilePicture, LastLoggedIn ` +
 		`FROM user_details ` +
