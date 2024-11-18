@@ -835,7 +835,14 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {MultiSelectOptions.map((option) => (
-                          <tr key={option.value}>
+                          <tr
+                            key={option.value}
+                            className={`${
+                              !amenitiesFilter.includes(option.value)
+                                ? 'bg-gray-200'
+                                : ''
+                            }`}
+                          >
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <Image
                                 src={iconMap[option.value]}
