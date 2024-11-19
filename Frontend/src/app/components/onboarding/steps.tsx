@@ -104,7 +104,7 @@ export const steps: Tour[] = [
                 icon: <>🎉</>,
                 title: "That's it!",
                 content: <>
-                    If you ever need this tour again, hit the <strong>?</strong> button in the bottom right corner.
+                    If you ever need this tour again, hit the <strong>?</strong> button in the bottom left corner.
                     <br /> <br />
                     Enjoy using <i>Magpie</i>!
                 </>,
