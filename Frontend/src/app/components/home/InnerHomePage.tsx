@@ -4,7 +4,7 @@ import Nav from "@/app/nav/page";
 import CookieConsent from "../banner/CookieConsent";
 
 
-const HomePage = () => {
+const InnerHomePage = () => {
   return (
     <ProtectedRoute>
       <LocationAggregatorMap />
@@ -19,4 +19,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default InnerHomePage;
