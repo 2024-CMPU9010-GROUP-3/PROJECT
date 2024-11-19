@@ -637,18 +637,18 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {amenitiesFilter.includes(option.value)
                                 ? (
-                                  pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                                )?.features?.length > 0
+                                    pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                                  )?.features?.length > 0
                                   ? (
-                                    <span className="font-bold">
-                                      {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                        ?.features?.length || 0}
-                                    </span>
-                                  )
+                                      <span className="font-bold">
+                                        {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                          ?.features?.length || 0}
+                                      </span>
+                                    )
                                   : (
-                                    (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                      ?.features?.length || 0
-                                  )
+                                      (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                        ?.features?.length || 0
+                                    )
                                 : '-'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
@@ -663,8 +663,63 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   </div>
                 </Suspense>
               ) : (
-                <div className="text-xs sm:text-sm lg:text-base text-gray-500">
-                  Place a marker on the map to view data
+                <div className="relative overflow-x-auto">
+                  <div className="opacity-50 pointer-events-none">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Icon
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Amenity
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Count
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Show
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {MultiSelectOptions.map((option) => (
+                          <tr key={option.value} className="bg-gray-100">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <Image
+                                src={iconMap[option.value]}
+                                alt={option.label}
+                                width={24}
+                                height={24}
+                                className="w-6 h-6 filter grayscale"
+                              />
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {option.label}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              -
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <EyeOff size={16} color="#3e6e96" />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               )}
             </div>
