@@ -378,10 +378,11 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
-def get_parking_coords_in_image(model, longitude, latitude, directory):
+def get_empty_parking_in_image(model, longitude, latitude, directory):
     """
     Detects all the parking spaces in the image (at longitude/latitude) and returns a list of coordinates, agregating
-    the cars (of the road) found by the Yolo model and the empty parking spots found (which are drawn and added to the image) 
+    the cars (of the road) found by the Yolo model and the empty parking spots found (which are drawn and added to the image).
+    It returns only the empty parking spots found for evaluation. 
 
     Params:
         model : YOLO model
@@ -391,7 +392,7 @@ def get_parking_coords_in_image(model, longitude, latitude, directory):
 
 
     Returns: 
-        all_detections (list): List of all coordinates of parking spots found in the image in the format log, lat, width, height, angle, orientation
+        all_detections (list): List of all empty parking spots detected in the image in the format log, lat, width, height, angle, orientation
     """
     output_folder = directory
     output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
@@ -422,14 +423,13 @@ def get_parking_coords_in_image(model, longitude, latitude, directory):
         empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
         #print(f'Filtered spots after road mask: {len(empty_spots_filtered)}')
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
-        all_detections.extend(empty_spots_filtered)
-
-    return all_detections
+    
+    return empty_spots_filtered
 
 
 def get_predictions_in_image(model, long, lat, directory):
     """
-    Returns all the model and empty parking spot predictions in an image in the correct format (with the pixel coordinates needed for evaluation)
+    Returns all empty parking spot predictions in an image in the correct format (with the pixel coordinates needed for evaluation)
 
     Params:
         model : YOLO model
@@ -439,16 +439,16 @@ def get_predictions_in_image(model, long, lat, directory):
 
 
     Returns:
-            all_detections (list): List of all the parking spots found in the image in the format x, y, width, height, angle, orientation (x and y being pixel values)
+            empty_detections (list): List of all the empty parking spots found in the image in the format x, y, width, height, angle, orientation (x and y being pixel values)
     """
-    all_detections = []
+    empty_detections = []
 
-    detections = get_parking_coords_in_image(model, long, lat, directory)
+    detections = get_empty_parking_in_image(model, long, lat, directory)
     for x_center, y_center, width, height, angle, orientation in detections:
         x_pixel, y_pixel =  convert_coordinates_to_bounding_box(x_center, y_center, long, lat)
-        all_detections.append(x_pixel, y_pixel, width, height, angle, orientation)
+        empty_detections.append(x_pixel, y_pixel, width, height, angle, orientation)
 
-    return all_detections
+    return empty_detections
 
 
 def get_true_labels(long, lat, directory):
@@ -477,6 +477,8 @@ def get_true_labels(long, lat, directory):
 def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
     """
     Evaluates our predictions in an image with the true labels
+    Returns Average IoU, Precision, Recall, F1 score, Orientation Accuracy, 
+    Spot Detection Ratio, Spot Detection Error, False Positive Rate, False Negative Rate
 
     Params:
         predictions (list): List of predictions
@@ -484,7 +486,7 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
         iou_threshold (float): IoU threshold to consider a prediction correct
 
     Returns:
-        avg_iou, precision, recall, f1_score (float): Average IoU, Precision, Recall and F1 score
+        avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr (float): Average IoU, Precision, Recall, F1 score, Orientation Accuracy, Spot Detection Ratio, Spot Detection Error, FPR, FNR
     """
 
     def calculate_iou(box1, box2):
@@ -517,6 +519,7 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
     false_positives = 0
     false_negatives = 0
     iou_scores = []
+    orientation_matches = 0
 
     matched_labels = set()
 
@@ -535,6 +538,11 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
                 true_positives += 1
                 iou_scores.append(best_iou)
                 matched_labels.add(best_match)
+
+                pred_orientation = pred[5]
+                gt_orientation = true_labels[best_match][5]
+                if pred_orientation == gt_orientation:
+                    orientation_matches += 1
             else:
                 false_positives += 1  #duplicate prediction
         else:
@@ -546,14 +554,25 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
     recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0
     f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
     avg_iou = sum(iou_scores) / len(iou_scores) if iou_scores else 0
+    orientation_accuracy = orientation_matches / len(true_labels) if len(true_labels) > 0 else 0
 
-    return avg_iou, precision, recall, f1_score
+    nb_predictions = len(predictions)
+    nb_true_labels = len(true_labels)
+    spot_detection_ratio = nb_predictions / nb_true_labels if nb_true_labels > 0 else 0
+    spot_detection_error = abs(nb_predictions - nb_true_labels)
+
+    fpr = false_positives / (false_positives + true_positives) if (false_positives + true_positives) > 0 else 0
+    fnr = false_negatives / (false_negatives + true_positives) if (false_negatives + true_positives) > 0 else 0
+
+    return avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr
 
 
 def main(directory):
     """
     Main function to evaluate the empty parking detction on the test images and calculate the corresponding performance metrics
-    
+    Saves Averages of IoU, Precision, Recall, F1 score, Orientation Accuracy, 
+    Spot Detection Ratio, Spot Detection Error, False Positive Rate and False Negative Rate
+
     Params:
         directory(str): path to the directory containing the images and the labels in json format 
     """
@@ -581,33 +600,52 @@ def main(directory):
         "iou": [],
         "precision": [],
         "recall": [],
-        "f1score": [],
+        "f1_score": [],
+        "orientation_accuracy": [],
+        "spot_detection_ratio": [],
+        "spot_detection_error": [],
+        "fpr": [],
+        "fnr": []
     }
 
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
 
-        iou, precision, recall, f1score = evaluate_predictions(predictions, true_labels)
+        iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr = evaluate_predictions(predictions, true_labels)
 
         metrics["iou"].append(iou)
         metrics["precision"].append(precision)
         metrics["recall"].append(recall)
-        metrics["f1score"].append(f1score)
+        metrics["f1_score"].append(f1_score)
+        metrics["orientation_accuracy"].append(orientation_accuracy)
+        metrics["spot_detection_ratio"].append(spot_detection_ratio)
+        metrics["spot_detection_error"].append(spot_detection_error)
+        metrics["fpr"].append(fpr)
+        metrics["fnr"].append(fnr)
 
-        print(f"Metrics for image {long}, {lat}: IoU={iou:.2f}, Precision={precision:.2f}, Recall={recall:.2f}, F1={f1score:.2f}")
+        print(f"Metrics for image {long}, {lat}: IoU={iou:.2f}, Precision={precision:.2f}, Recall={recall:.2f}, F1 Score={f1_score:.2f}, Orientation Accuracy={orientation_accuracy:.2f}, Spot Detection Ratio={spot_detection_ratio:.2f}, Spot Detection Error={spot_detection_error:.2f}, FPR={fpr:.2f}, FNR={fnr:.2f}")
 
     avg_iou = sum(metrics["iou"]) / len(metrics["iou"])
     avg_precision = sum(metrics["precision"]) / len(metrics["precision"])
     avg_recall = sum(metrics["recall"]) / len(metrics["recall"])
-    avg_f1 = sum(metrics["f1score"]) / len(metrics["f1score"])
+    avg_f1 = sum(metrics["f1_score"]) / len(metrics["f1_score"])
+    avg_orientation_accuracy = sum(metrics["orientation_accuracy"]) / len(metrics["orientation_accuracy"])
+    avg_SDR = sum(metrics["spot_detection_ratio"]) / len(metrics["spot_detection_ratio"])
+    avg_SDE = sum(metrics["spot_detection_error"]) / len(metrics["spot_detection_error"])
+    avg_FPR = sum(metrics["fpr"]) / len(metrics["fpr"])
+    avg_FNR = sum(metrics["fnr"]) / len(metrics["fnr"])
 
     print("Overall Metrics:")
     print(f"Average IoU: {avg_iou:.2f}")
     print(f"Average Precision: {avg_precision:.2f}")
     print(f"Average Recall: {avg_recall:.2f}")
     print(f"Average F1 Score: {avg_f1:.2f}")
-
+    print(f"Average Orientation Accuracy: {avg_orientation_accuracy:.2f}")
+    print(f"Average Spot Detection Ratio (SDR): {avg_SDR:.2f}")
+    print(f"Average Spot Detection Error (SDE): {avg_SDE:.2f}")
+    print(f"Average False Positive Rate (FPR): {avg_FPR:.2f}")
+    print(f"Average False Negative Rate (FNR): {avg_FNR:.2f}")
 
 if __name__ == "__main__":
     main("test-images")
