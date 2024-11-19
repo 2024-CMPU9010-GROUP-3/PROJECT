@@ -657,7 +657,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   </div>
                 </Suspense>
               ) : (
-                <div className="relative overflow-x-auto">
+                <div>
                   <div className="opacity-50 pointer-events-none">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
