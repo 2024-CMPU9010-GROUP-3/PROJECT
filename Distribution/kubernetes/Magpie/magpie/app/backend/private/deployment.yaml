@@ -45,3 +45,9 @@ spec:
                 secretKeyRef:
                   name: secret-magpie-db-user
                   key: DATABASE_NAME
+
+            - name: MAGPIE_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-magpie-db-user
+                  key: MAGPIE_JWT_SECRET
