@@ -24,9 +24,7 @@ export function LoginForm() {
   const {
     sessionToken,
     setSessionToken,
-    sessionUUID,
     setSessionUUID,
-    setIsUserLoggedIn,
   } = useSession();
 
   // check if user is already logged in
@@ -65,10 +63,6 @@ export function LoginForm() {
           const content = data.response.content;
           setSessionToken(content.token);
           setSessionUUID(content.userid);
-
-          if (sessionToken && sessionUUID) {
-            setIsUserLoggedIn(true);
-          }
 
           setErrorMessage(null); // clear any error message
         } else {
