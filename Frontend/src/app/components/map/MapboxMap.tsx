@@ -71,19 +71,19 @@ const MultiSelectOptions: Option[] = [
 
 // Array of image paths to load 
 const IMAGES: ImageConfig[] = [
-  { id: 'custom_parking', path: '/images/parking.png' },
-  { id: 'custom_parking_meter', path: '/images/parking_meter.png' },
-  { id: 'custom_bicycle', path: '/images/bicycle.png' },
-  { id: 'bicycle_share', path: '/images/bicycle_share.png' },
-  { id: 'custom_bicycle_share', path: '/images/bicycle_share.png' },
-  { id: 'custom_accessible_parking', path: '/images/accessibleParking.png' },
-  { id: 'custom_public_bins', path: '/images/bin.png' },
-  { id: 'custom_public_wifi', path: '/images/wifi.png' },
-  { id: 'custom_bus', path: '/images/bus.png' },
-  { id: 'custom_library', path: '/images/library.png' },
-  { id: 'custom_car_parks', path: '/images/car_park.png' },
-  { id: 'custom_water_fountain', path: '/images/water_fountain.png' },
-  { id: 'custom_toilet', path: '/images/toilet.png' },
+  { id: 'custom_parking', path: '/mapicons/parking.png' },
+  { id: 'custom_parking_meter', path: '/mapicons/parking_meter.png' },
+  { id: 'custom_bicycle', path: '/mapicons/bicycle.png' },
+  { id: 'bicycle_share', path: '/mapicons/bicycle_share.png' },
+  { id: 'custom_bicycle_share', path: '/mapicons/bicycle_share.png' },
+  { id: 'custom_accessible_parking', path: '/mapicons/accessibleParking.png' },
+  { id: 'custom_public_bins', path: '/mapicons/bin.png' },
+  { id: 'custom_public_wifi', path: '/mapicons/wifi.png' },
+  { id: 'custom_bus', path: '/mapicons/bus.png' },
+  { id: 'custom_library', path: '/mapicons/library.png' },
+  { id: 'custom_car_parks', path: '/mapicons/car_park.png' },
+  { id: 'custom_water_fountain', path: '/mapicons/water_fountain.png' },
+  { id: 'custom_toilet', path: '/mapicons/toilet.png' },
 ];
 
 // Array of icon paths to load
