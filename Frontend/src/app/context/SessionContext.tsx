@@ -1,9 +1,14 @@
-"use client"
-import {getCookiesAccepted} from '@/lib/cookies';
-// SessionContext.tsx
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import {deleteSessionFromCookies, saveSessionToCookies} from '../components/serverActions/actions';
+import { getCookiesAccepted, loadSessionFromCookies } from "@/lib/cookies";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { deleteSessionFromCookies, saveSessionToCookies } from "@/lib/cookies";
 
 // Define the shape of the session context
 interface SessionContextType {
@@ -11,6 +16,8 @@ interface SessionContextType {
   setSessionToken: React.Dispatch<React.SetStateAction<string>>;
   sessionUUID: string;
   setSessionUUID: React.Dispatch<React.SetStateAction<string>>;
+  isCookiesAccepted: boolean;
+  setIsCookiesAccepted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Create a default value for the context
@@ -19,6 +26,8 @@ const defaultSessionContext: SessionContextType = {
   setSessionToken: () => {},
   sessionUUID: "",
   setSessionUUID: () => {},
+  isCookiesAccepted: false,
+  setIsCookiesAccepted: () => {},
 };
 
 // Create context with the defined type
@@ -30,39 +39,45 @@ interface SessionProviderProps {
 }
 
 // SessionProvider component
-export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
+export const SessionProvider: React.FC<SessionProviderProps> = ({
+  children,
+}) => {
   const [sessionToken, setSessionToken] = useState<string>("");
   const [sessionUUID, setSessionUUID] = useState<string>("");
-
-  const initializeSession = async () => {
-    const { token, uuid } = await fetchSessionData();
-    setSessionToken(token);
-    setSessionUUID(uuid);
-  };
+  const [isCookiesAccepted, setIsCookiesAccepted] = useState<boolean>(false);
 
   useEffect(() => {
-    initializeSession();
+    const { token, uuid } = loadSessionFromCookies()
+    if (token && uuid){
+      setSessionToken(token);
+      setSessionUUID(uuid);
+    }
+    setIsCookiesAccepted(getCookiesAccepted());
   }, []);
 
   useEffect(() => {
-    const tryCommitToCookies = async () => {
-      const cookiesAccepted = await getCookiesAccepted();
-
-      if(!cookiesAccepted || (!sessionToken && !sessionUUID)) {
-        await deleteSessionFromCookies();
-        return;
-      }
-
-      if(cookiesAccepted && sessionToken && sessionUUID) {
-        await saveSessionToCookies(sessionToken, sessionUUID);
-        return;
-      }
+    if (!isCookiesAccepted || (!sessionToken && !sessionUUID)) {
+      deleteSessionFromCookies();
+      return;
     }
-    tryCommitToCookies()
-  }, [sessionToken, sessionUUID])
+
+    if (isCookiesAccepted && sessionToken && sessionUUID) {
+      saveSessionToCookies(sessionToken, sessionUUID);
+      return;
+    }
+  }, [sessionToken, sessionUUID, isCookiesAccepted]);
 
   return (
-    <SessionContext.Provider value={{ sessionToken, setSessionToken, sessionUUID, setSessionUUID }}>
+    <SessionContext.Provider
+      value={{
+        sessionToken,
+        setSessionToken,
+        sessionUUID,
+        setSessionUUID,
+        isCookiesAccepted,
+        setIsCookiesAccepted
+      }}
+    >
       {children}
     </SessionContext.Provider>
   );
@@ -70,10 +85,3 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
 
 // Custom hook to access session context
 export const useSession = () => useContext(SessionContext);
-
-// Fetch session data from API
-async function fetchSessionData() {
-  const response = await fetch('/api/session');
-  const data = await response.json();
-  return { token: data.token, uuid: data.uuid };
-}

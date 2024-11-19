@@ -13,8 +13,7 @@ import {
 import { Input } from "@/components/ui/registry/input";
 import { Label } from "@/components/ui/registry/label";
 import { useRouter, useSearchParams } from "next/navigation"; // useRouter
-import { useSession } from '@/app/context/SessionContext';
-
+import { useSession } from "@/app/context/SessionContext";
 
 export function LoginForm() {
   const [usernameOrEmail, setUsernameOrEmail] = useState(""); // allow login with username or email
@@ -22,18 +21,18 @@ export function LoginForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // error message
   const [isLoading, setIsLoading] = useState(false); // loading state
   const router = useRouter(); // router
-  const { sessionToken, setSessionToken, setSessionUUID } = useSession();
+  const {
+    sessionToken,
+    setSessionToken,
+    setSessionUUID,
+  } = useSession();
 
   // check if user is already logged in
   useEffect(() => {
-    (async () => {
     if (sessionToken) {
       // if user is already logged in, redirect to home
-      setTimeout(() => {
-        router.push("/"); // redirect to home
-      }, 0);
+      router.push("/");
     }
-  })()
   }, [sessionToken, router]);
 
   const onSubmit = async (event: React.SyntheticEvent) => {
@@ -48,33 +47,24 @@ export function LoginForm() {
     }
 
     try {
-      const response = await fetch(
-        "/api/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ usernameOrEmail: usernameOrEmail, password }), // send username/email and password
-        }
-      );
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ usernameOrEmail: usernameOrEmail, password }), // send username/email and password
+      });
 
       const data = await response.json();
 
       if (response.ok) {
         // login success, handle logic
         if (data.response.content) {
-          const content = data.response.content
-          
-          setSessionToken(content.token)
-          setSessionUUID(content.userid)
+          const content = data.response.content;
+          setSessionToken(content.token);
+          setSessionUUID(content.userid);
 
           setErrorMessage(null); // clear any error message
-
-          setTimeout(() => {
-            router.push("/"); // redirect to home
-          }, 0);
-
         } else {
           setErrorMessage("Login failed: No user id received"); // if no user id, display error message
         }
@@ -82,7 +72,7 @@ export function LoginForm() {
         // handle error case
         setErrorMessage(data.error.errorMsg); // display original error message
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setErrorMessage("An unknown error occurred during login");
     } finally {
@@ -93,7 +83,7 @@ export function LoginForm() {
   return (
     <Card>
       <Suspense>
-        <CardHeaderWithSuccess/>
+        <CardHeaderWithSuccess />
       </Suspense>
       <CardContent>
         <form onSubmit={onSubmit} className="mt-4">
@@ -130,7 +120,9 @@ export function LoginForm() {
                 onChange={(e) => setPassword(e.target.value)} // update password state
               />
             </div>
-            <div className="text-red-500 w-full text-center">{errorMessage || "\u00A0"}</div>
+            <div className="text-red-500 w-full text-center">
+              {errorMessage || "\u00A0"}
+            </div>
             {/* display error message */}
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}{" "}
@@ -149,27 +141,27 @@ export function LoginForm() {
   );
 }
 
-function CardHeaderWithSuccess () {
+function CardHeaderWithSuccess() {
   const searchParams = useSearchParams();
   const isSignupSuccess = searchParams.get("signup") === "success";
   return (
     <CardHeader>
-      {!isSignupSuccess && 
+      {!isSignupSuccess && (
         <CardTitle className="text-2xl">Welcome to Magpie</CardTitle>
-      }
-      {isSignupSuccess && 
+      )}
+      {isSignupSuccess && (
         <CardTitle className="text-2xl">Signup successful</CardTitle>
-      }
-      {!isSignupSuccess && 
+      )}
+      {!isSignupSuccess && (
         <CardDescription>
           Please log in using your username or email
         </CardDescription>
-      }
-      {isSignupSuccess && 
+      )}
+      {isSignupSuccess && (
         <CardDescription>
           You can now use your username or email to log in!
         </CardDescription>
-      }
+      )}
     </CardHeader>
-  )
+  );
 }

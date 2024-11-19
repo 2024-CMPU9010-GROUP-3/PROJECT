@@ -6,3 +6,6 @@ language-server-log.txt
 
 # Ignore macOS directory attributes file
 .DS_STORE
+
+# Ignore spellcheck dictionary
+.vscode/settings.json
