@@ -6,7 +6,7 @@
 * debemeh06@gmail.com = Waiting
 * benjohnson0806@gmail.com = Agreed - sent to schedule
 * d20124630@mytudublin.ie = Waiting
-* C24329646@mytudublin.ie = Agreed - sent to schedule
+* C24329646@mytudublin.ie = Agreed - schedule Thursday 21/11 @14:00
 
 ## Professional users (remote & uncontrolled)
 * Damian = Agreed - sent to schedule
