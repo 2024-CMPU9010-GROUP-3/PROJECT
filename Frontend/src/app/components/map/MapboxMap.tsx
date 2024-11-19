@@ -577,7 +577,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Suspense
                   fallback={<div className="animate-pulse">Loading...</div>}
                 >
-                  <div className="overflow-x-auto">
+                  <div className="overflow-x-none">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
