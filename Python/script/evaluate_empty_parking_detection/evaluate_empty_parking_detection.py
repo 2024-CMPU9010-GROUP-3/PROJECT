@@ -1,3 +1,4 @@
+import json
 import torch
 from ultralytics import YOLO
 import cv2
@@ -9,6 +10,8 @@ import numpy as np
 import math
 import pandas as pd
 from geopy.distance import geodesic
+from shapely.geometry import box
+
 
 def create_mask(image_path, save_path, threshold=240):
     """
@@ -375,7 +378,7 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
-def get_parking_coords_in_image(model, longitude, latitude):
+def get_parking_coords_in_image(model, longitude, latitude, directory):
     """
     Detects all the parking spaces in the image (at longitude/latitude) and returns a list of coordinates, agregating
     the cars (of the road) found by the Yolo model and the empty parking spots found (which are drawn and added to the image) 
@@ -384,11 +387,13 @@ def get_parking_coords_in_image(model, longitude, latitude):
         model : YOLO model
         longitude (float): Longitude value
         latitude (float): Latitude value
+        directory(str): Path to the directory containing the images and the labels in json format 
+
 
     Returns: 
         all_detections (list): List of all coordinates of parking spots found in the image in the format log, lat, width, height, angle, orientation
     """
-    output_folder = 'test_images'
+    output_folder = directory
     output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
     output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
@@ -422,7 +427,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
     return all_detections
 
 
-def get_predictions_in_image(model, long, lat):
+def get_predictions_in_image(model, long, lat, directory):
     """
     Returns all the model and empty parking spot predictions in an image in the correct format (with the pixel coordinates needed for evaluation)
 
@@ -430,28 +435,179 @@ def get_predictions_in_image(model, long, lat):
         model : YOLO model
         longitude (float): Longitude value of the image
         latitude (float): Latitude value of the image
+        directory(str): Path to the directory containing the images and the labels in json format 
+
 
     Returns:
             all_detections (list): List of all the parking spots found in the image in the format x, y, width, height, angle, orientation (x and y being pixel values)
     """
     all_detections = []
 
-    detections = get_parking_coords_in_image(model, long, lat)
+    detections = get_parking_coords_in_image(model, long, lat, directory)
     for x_center, y_center, width, height, angle, orientation in detections:
         x_pixel, y_pixel =  convert_coordinates_to_bounding_box(x_center, y_center, long, lat)
         all_detections.append(x_pixel, y_pixel, width, height, angle, orientation)
 
     return all_detections
 
-def main():
-    """
-    Params:
-    """
-    if not os.path.exists("test_images"):
-        os.makedirs("test_images")
 
+def get_true_labels(long, lat, directory):
+    """
+    Retrieve the true labels for a specific image
+
+    Params:
+        long (float): Longitude of the image
+        lat (float): Latitude of the image
+        directory(str): Path to the directory containing the images and the labels in json format 
+
+
+    Returns:
+        true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, angle, orientation
+    """
+    true_labels_file = f"{directory}/{long}_{lat}_labels.json"
+
+    if not os.path.exists(true_labels_file):
+        raise FileNotFoundError(f"True labels file not found: {true_labels_file}")
+
+    with open(true_labels_file, "r") as file:
+        true_labels = json.load(file)
+
+    return true_labels
+
+def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
+    """
+    Evaluates our predictions in an image with the true labels
+
+    Params:
+        predictions (list): List of predictions
+        true_labels (list): List of true_labels
+        iou_threshold (float): IoU threshold to consider a prediction correct
+
+    Returns:
+        avg_iou, precision, recall, f1_score (float): Average IoU, Precision, Recall and F1 score
+    """
+
+    def calculate_iou(box1, box2):
+        """Calculates IoU for two bounding boxes."""
+        x1, y1, w1, h1, _, _ = box1
+        x2, y2, w2, h2, _, _ = box2
+
+        box1_tl = (x1 - w1 / 2, y1 - h1 / 2)
+        box1_br = (x1 + w1 / 2, y1 + h1 / 2)
+        box2_tl = (x2 - w2 / 2, y2 - h2 / 2)
+        box2_br = (x2 + w2 / 2, y2 + h2 / 2)
+
+        x_left = max(box1_tl[0], box2_tl[0])
+        y_top = max(box1_tl[1], box2_tl[1])
+        x_right = min(box1_br[0], box2_br[0])
+        y_bottom = min(box1_br[1], box2_br[1])
+
+        if x_right < x_left or y_bottom < y_top:
+            return 0  #As there would be no overlap
+
+        intersection_area = (x_right - x_left) * (y_bottom - y_top)
+
+        box1_area = w1 * h1
+        box2_area = w2 * h2
+        union_area = box1_area + box2_area - intersection_area
+
+        return intersection_area / union_area
+
+    true_positives = 0
+    false_positives = 0
+    false_negatives = 0
+    iou_scores = []
+
+    matched_labels = set()
+
+    #For each predictions find the closest label and compare
+    for pred in predictions:
+        best_iou = 0
+        best_match = None
+        for i, gt in enumerate(true_labels):
+            iou = calculate_iou(pred, gt)
+            if iou > best_iou:
+                best_iou = iou
+                best_match = i
+
+        if best_iou >= iou_threshold:
+            if best_match not in matched_labels:
+                true_positives += 1
+                iou_scores.append(best_iou)
+                matched_labels.add(best_match)
+            else:
+                false_positives += 1  #duplicate prediction
+        else:
+            false_positives += 1  #no match found
+
+    false_negatives = len(true_labels) - len(matched_labels)
+
+    precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
+    recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0
+    f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+    avg_iou = sum(iou_scores) / len(iou_scores) if iou_scores else 0
+
+    return avg_iou, precision, recall, f1_score
+
+
+def main(directory):
+    """
+    Main function to evaluate the empty parking detction on the test images and calculate the corresponding performance metrics
+    
+    Params:
+        directory(str): path to the directory containing the images and the labels in json format 
+    """
+    
+    if not os.path.exists(directory):
+        print(f"Error: Directory {directory} does not exist.")
+        return
+    
+    files = os.listdir(directory)
+
+    coordinates = []
+    for file in files:
+        if file.endswith(".png"):
+            try:
+                long, lat, _ = file.split("_")
+                long, lat = float(long), float(lat)
+                coordinates.append((long, lat))
+            except ValueError:
+                print(f"Skipping file {file}: Invalid name format for extracting coordinates.")
+                continue
+    
     model = YOLO("best - obb.pt")
+
+    metrics = {
+        "iou": [],
+        "precision": [],
+        "recall": [],
+        "f1score": [],
+    }
+
+    for long, lat in set(coordinates):
+        predictions = get_predictions_in_image(model, long, lat, directory)
+        true_labels = get_true_labels(long, lat, directory)
+
+        iou, precision, recall, f1score = evaluate_predictions(predictions, true_labels)
+
+        metrics["iou"].append(iou)
+        metrics["precision"].append(precision)
+        metrics["recall"].append(recall)
+        metrics["f1score"].append(f1score)
+
+        print(f"Metrics for image {long}, {lat}: IoU={iou:.2f}, Precision={precision:.2f}, Recall={recall:.2f}, F1={f1score:.2f}")
+
+    avg_iou = sum(metrics["iou"]) / len(metrics["iou"])
+    avg_precision = sum(metrics["precision"]) / len(metrics["precision"])
+    avg_recall = sum(metrics["recall"]) / len(metrics["recall"])
+    avg_f1 = sum(metrics["f1score"]) / len(metrics["f1score"])
+
+    print("Overall Metrics:")
+    print(f"Average IoU: {avg_iou:.2f}")
+    print(f"Average Precision: {avg_precision:.2f}")
+    print(f"Average Recall: {avg_recall:.2f}")
+    print(f"Average F1 Score: {avg_f1:.2f}")
 
 
 if __name__ == "__main__":
-    main()
+    main("test-images")
