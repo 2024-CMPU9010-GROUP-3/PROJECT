@@ -377,7 +377,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         startOnborda("general-onboarding");
       }, 1000);
     }
-  },[]);
+  },[closeOnborda, sessionToken, startOnborda]);
 
   const layerStyle: LayerProps = {
     id: "circle",
