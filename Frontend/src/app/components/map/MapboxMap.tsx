@@ -87,6 +87,7 @@ const IMAGES: ImageConfig[] = [
   { id: 'custom_toilet', path: '/images/toilet.png' },
 ];
 
+// Array of icon paths to load
 const iconMap: Record<string, string> = {
   parking_meter: '/images/parking_meter.png',
   bike_stand: '/images/bicycle.png',
@@ -138,7 +139,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_car_parks: false,
     custom_water_fountain: false,
     custom_toilet: false,
-    // Add entries for other icons
   });
 
   const [circleCoordinates, setCircleCoordinates] = useState<number[][]>(() => {
@@ -195,7 +195,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   const handleMapLoad = (event: MapLoadEvent) => {
     const map = event.target;
-    // setMapInstance(map);
 
     loadImages(map).catch(error => console.error('Error loading images:', error));
   };
