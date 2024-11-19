@@ -568,11 +568,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                         {MultiSelectOptions.map((option) => (
                           <tr
                             key={option.value}
-                            className={`${
-                              !amenitiesFilter.includes(option.value)
+                            className={`${!amenitiesFilter.includes(option.value)
                                 ? 'bg-gray-200'
                                 : ''
-                            }`}
+                              }`}
                           >
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <Image
@@ -618,4 +617,3 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 };
 
 export default LocationAggregatorMap;
-  
