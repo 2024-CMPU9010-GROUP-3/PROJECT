@@ -394,14 +394,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       {/* Map Container - Taller on mobile */}
       <div
         className="
-          w-full 
-          h-[60vh]
-          xl:w-[74%]  
-          lg:w-[52%]
-          lg:h-screen relative
+          flex-grow
+          h-full
+          relative
           sm:h-[70vh]
+          lg:h-screen relative
         "
-        id="onboarding-step-5"
+        id="onboarding-st5"
       >
         {mapBoxApiKey ? (
           <DeckGL
@@ -471,18 +470,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       </div>
       {/* Sidebar - Full width on mobile, scrollable */}
       <div className="
-        w-full
+        flex-none
         p-3
-        h-[40vh]
         bg-gray-50 
         overflow-y-auto
-        xl:w-[26%]  
-        xl:h-screen
         xl:p-6
-        lg:w-[48%]
-        lg:h-screen
+        lg:h-screen relative
         lg:p-6
-        sm:h-[30vh]
         sm:p-4
       ">
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
