@@ -31,14 +31,10 @@ export function LoginForm() {
 
   // check if user is already logged in
   useEffect(() => {
-    (async () => {
-      if (sessionToken) {
-        // if user is already logged in, redirect to home
-        setTimeout(() => {
-          router.push("/"); // redirect to home
-        }, 0);
-      }
-    })();
+    if (sessionToken) {
+      // if user is already logged in, redirect to home
+      router.push("/");
+    }
   }, [sessionToken, router]);
 
   const onSubmit = async (event: React.SyntheticEvent) => {
@@ -75,10 +71,6 @@ export function LoginForm() {
           }
 
           setErrorMessage(null); // clear any error message
-
-          setTimeout(() => {
-            router.push("/"); // redirect to home
-          }, 0);
         } else {
           setErrorMessage("Login failed: No user id received"); // if no user id, display error message
         }
