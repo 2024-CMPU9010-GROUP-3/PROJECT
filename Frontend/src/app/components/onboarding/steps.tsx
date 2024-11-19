@@ -40,7 +40,7 @@ export const steps: Tour[] = [
                 content: <>
                     This slider allows you to adjust the search radius. It goes all the way from 1m to 10km.
                     <br /> <br />
-                    Note, the larger the radius- the longer it&apos;ll take to load the data!
+                    Note: the <strong>larger the radius- the longer it&apos;ll take to load the data!</strong>
                 </>,
                 selector: "#onboarding-step-2",
                 side: "left-top",
@@ -91,7 +91,7 @@ export const steps: Tour[] = [
                 content: <>
                     Left or right clicking anywhere on the map will display information about the selected location.
                     <br /> <br />
-                    You can zoom by <strong>scrolling</strong> or <strong>pinching</strong> on a touchpad or touchscreen.
+                    You can zoom by <strong>scrolling</strong> with a mouse or <strong>pinching</strong> on a touchpad (or touchscreen).
                 </>,
                 selector: "#onboarding-step-5",
                 side: "left-bottom",
