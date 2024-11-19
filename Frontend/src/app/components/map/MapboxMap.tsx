@@ -12,6 +12,8 @@ import Map, { Layer, LayerProps, Marker, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
+import { useOnborda } from "onborda";
+import { useSession } from '@/app/context/SessionContext';
 
 // Local components
 import { Slider } from '@/components/ui/slider';
@@ -19,6 +21,7 @@ import { Slider } from '@/components/ui/slider';
 
 // Local utils and configs
 import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
+import packageJson from '../../../../package.json';
 import MapSources from './utils/MapSources';
 import { cn } from '@/lib/utils';
 
@@ -30,10 +33,6 @@ import {
   CoordinatesForGeoJson,
   ImageConfig,
 } from '@/lib/interfaces/types';
-
-import { useOnborda } from "onborda";
-
-import { useSession } from '@/app/context/SessionContext';
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -292,6 +291,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     startOnborda("general-onboarding");
   };
 
+  const version = packageJson.version;
+
   useEffect(() => {
     const radiusInMeters = sliderValueDisplay * 100; // Convert slider value to meters
     const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
@@ -488,9 +489,21 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           {mapBoxApiKey ? (
             <>
               <div className="px-2 sm:px-3 lg:px-4">
-                <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
-                  <p id="onboarding-step-1">Magpie Dashboard</p>
-                </h1>
+                <div className="flex items-center space-x-4" id="onboarding-step-1">
+                  <Image
+                    src="/images/BKlogo.svg"
+                    alt="BK Logo"
+                    width={64}
+                    height={64}
+                    className="inline-block"
+                  />
+                  <div>
+                    <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
+                      Magpie Dashboard: <span className="text-[#3e6e96]">v{version}</span>
+                    </h1>
+                    <span className="italic">Services at a glance</span>
+                  </div>
+                </div>
               </div>
               {/* Search Radius Card */}
               <div className="px-2 sm:px-3 lg:px-4">
@@ -568,8 +581,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                           <tr
                             key={option.value}
                             className={`${!amenitiesFilter.includes(option.value)
-                                ? 'bg-gray-200'
-                                : ''
+                              ? 'bg-gray-200'
+                              : ''
                               }`}
                           >
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
