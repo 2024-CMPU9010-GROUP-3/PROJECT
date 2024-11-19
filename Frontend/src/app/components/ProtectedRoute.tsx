@@ -11,11 +11,13 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   const { sessionToken } = useSession();
 
     useEffect(() => {
-      const checkAuthentication = async () => {
+      const checkAuthentication = () => {
         try {
             // Redirect to login if not authenticated and not on an unprotected path
             if (!sessionToken) {
+              setTimeout(() => {
                 router.push('/login');
+              })
             }
         } catch (error) {
             console.error("Error during authentication check:", error);

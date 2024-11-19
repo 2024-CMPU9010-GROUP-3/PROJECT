@@ -31,10 +31,11 @@ export function setCookiesAccepted() {
   }
 }
 
-// export async function unsetCookiesAccepted() {
-//   const cookieStore = cookies();
-//   cookieStore.delete(cookiesAcceptedName);
-// }
+export async function unsetCookiesAccepted() {
+  Cookies.remove(cookiesAcceptedName, { path: "/" });
+  Cookies.remove(tokenCookieName, { path: "/" });
+  Cookies.remove(uuidCookieName, { path: "/" });
+}
 
 export function saveSessionToCookies(
   sessionToken: string,
@@ -59,6 +60,17 @@ export function saveSessionToCookies(
   } catch (error) {
     console.error("Error saving session:", error);
     return false;
+  }
+}
+
+export function loadSessionFromCookies() {
+  try {
+    const token = Cookies.get(tokenCookieName);
+    const uuid = Cookies.get(uuidCookieName);
+    return {token: token, uuid: uuid};
+  } catch (error) {
+    console.log("Error loading session from cookies:", error);
+    return {token: undefined, uuid: undefined}
   }
 }
 

@@ -1,7 +1,6 @@
 "use client";
-import { getCookiesAccepted } from "@/lib/cookies";
-// SessionContext.tsx
 
+import { getCookiesAccepted, loadSessionFromCookies } from "@/lib/cookies";
 import React, {
   createContext,
   useContext,
@@ -48,37 +47,24 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
   const [isCookiesAccepted, setIsCookiesAccepted] = useState<boolean>(false);
 
-  const initializeSession = async () => {
-    const { token, uuid } = await fetchSessionData();
-    setSessionToken(token);
-    setSessionUUID(uuid);
-  };
-
-  const myfirstfunction = async () => {
-    setIsCookiesAccepted(await getCookiesAccepted());
-  };
-
   useEffect(() => {
-    initializeSession();
-    myfirstfunction();
+    const { token, uuid } = loadSessionFromCookies()
+    if (token && uuid){
+      setSessionToken(token);
+      setSessionUUID(uuid);
+    }
+    setIsCookiesAccepted(getCookiesAccepted());
   }, []);
 
   useEffect(() => {
-    try {
-      const update = async () => {
-        if (!isCookiesAccepted || (!sessionToken && !sessionUUID)) {
-          await deleteSessionFromCookies();
-          return;
-        }
+    if (!isCookiesAccepted || (!sessionToken && !sessionUUID)) {
+      deleteSessionFromCookies();
+      return;
+    }
 
-        if (isCookiesAccepted && sessionToken && sessionUUID) {
-          await saveSessionToCookies(sessionToken, sessionUUID);
-          return;
-        }
-      };
-      update();
-    } catch (error) {
-      console.log("USE EFFECT ERROR", error);
+    if (isCookiesAccepted && sessionToken && sessionUUID) {
+      saveSessionToCookies(sessionToken, sessionUUID);
+      return;
     }
   }, [sessionToken, sessionUUID, isUserLoggedIn, isCookiesAccepted]);
 
@@ -100,10 +86,3 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
 
 // Custom hook to access session context
 export const useSession = () => useContext(SessionContext);
-
-// Fetch session data from API
-async function fetchSessionData() {
-  const response = await fetch("/api/session");
-  const data = await response.json();
-  return { token: data.token, uuid: data.uuid };
-}
