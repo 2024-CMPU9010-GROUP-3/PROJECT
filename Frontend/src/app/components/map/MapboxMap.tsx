@@ -517,9 +517,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                         Search Radius
                       </label>
                       <Slider
-                        onValueChange={(value) =>
-                          setSliderValueDisplay(value[0])
-                        }
+                        value={[sliderValueDisplay]}
+                        onValueChange={(value) => setSliderValueDisplay(value[0])}
                         onValueCommit={(value) => setSliderValue(value[0])}
                         defaultValue={[sliderValue]}
                         max={100}
@@ -530,6 +529,44 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                     </div>
                     <div className="text-sm lg:text-base font-medium text-gray-600">
                       {sliderValueDisplay * 100} meters
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => {
+                          setSliderValueDisplay(1);
+                          setSliderValue(1);
+                        }}
+                        className="px-2 py-1 bg-gray-200 rounded"
+                      >
+                        100m
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSliderValueDisplay(2);
+                          setSliderValue(2);
+                        }}
+                        className="px-2 py-1 bg-gray-200 rounded"
+                      >
+                        200m
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSliderValueDisplay(5);
+                          setSliderValue(5);
+                        }}
+                        className="px-2 py-1 bg-gray-200 rounded"
+                      >
+                        500m
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSliderValueDisplay(10);
+                          setSliderValue(10);
+                        }}
+                        className="px-2 py-1 bg-gray-200 rounded"
+                      >
+                        1000m
+                      </button>
                     </div>
                   </div>
                 </div>
