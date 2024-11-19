@@ -1,9 +1,15 @@
-"use client"
-import {getCookiesAccepted} from '@/lib/cookies';
+"use client";
+import { getCookiesAccepted } from "@/lib/cookies";
 // SessionContext.tsx
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import {deleteSessionFromCookies, saveSessionToCookies} from '@/lib/cookies';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import { deleteSessionFromCookies, saveSessionToCookies } from "@/lib/cookies";
 
 // Define the shape of the session context
 interface SessionContextType {
@@ -34,7 +40,9 @@ interface SessionProviderProps {
 }
 
 // SessionProvider component
-export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) => {
+export const SessionProvider: React.FC<SessionProviderProps> = ({
+  children,
+}) => {
   const [sessionToken, setSessionToken] = useState<string>("");
   const [sessionUUID, setSessionUUID] = useState<string>("");
   const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
@@ -48,7 +56,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
 
   const myfirstfunction = async () => {
     setIsCookiesAccepted(await getCookiesAccepted());
-  }
+  };
 
   useEffect(() => {
     initializeSession();
@@ -56,40 +64,35 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
   }, []);
 
   useEffect(() => {
-    console.log("USE EFFECT FIRING");
-    console.log("START OF USE EFFECT >>>", sessionToken, sessionUUID, isUserLoggedIn)
-    try{
+    try {
       const update = async () => {
-        console.log("UPDATE CALLED >>>", sessionToken, sessionUUID)
-        console.log("TRY COMMIT COOKIES >>>", isCookiesAccepted, sessionToken, sessionUUID, isUserLoggedIn)
-        
-        if(!isCookiesAccepted || (!sessionToken && !sessionUUID)) {
+        if (!isCookiesAccepted || (!sessionToken && !sessionUUID)) {
           await deleteSessionFromCookies();
           return;
         }
-        
-        if(isCookiesAccepted && sessionToken && sessionUUID) {
-          console.log("NOW TRY TO REALLY SET COOKIES")
+
+        if (isCookiesAccepted && sessionToken && sessionUUID) {
           await saveSessionToCookies(sessionToken, sessionUUID);
-          console.log("AFTER SET COOKIES")
           return;
         }
-      }
-      update()
-      console.log("END OF USE EFFECT")
-
-    } catch (error){
-      console.log("USE EFFECT ERROR", error)
+      };
+      update();
+    } catch (error) {
+      console.log("USE EFFECT ERROR", error);
     }
-    finally {
-      console.log("USE EFFECT DID FIRE")
-    }
-
-    // tryCommitToCookies()
-  }, [sessionToken, sessionUUID, isUserLoggedIn])
+  }, [sessionToken, sessionUUID, isUserLoggedIn, isCookiesAccepted]);
 
   return (
-    <SessionContext.Provider value={{ sessionToken, setSessionToken, sessionUUID, setSessionUUID, isUserLoggedIn, setIsUserLoggedIn }}>
+    <SessionContext.Provider
+      value={{
+        sessionToken,
+        setSessionToken,
+        sessionUUID,
+        setSessionUUID,
+        isUserLoggedIn,
+        setIsUserLoggedIn,
+      }}
+    >
       {children}
     </SessionContext.Provider>
   );
@@ -100,7 +103,7 @@ export const useSession = () => useContext(SessionContext);
 
 // Fetch session data from API
 async function fetchSessionData() {
-  const response = await fetch('/api/session');
+  const response = await fetch("/api/session");
   const data = await response.json();
   return { token: data.token, uuid: data.uuid };
 }

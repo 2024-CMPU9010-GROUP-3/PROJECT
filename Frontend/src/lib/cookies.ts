@@ -1,55 +1,74 @@
-'use server'
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import Cookies from "js-cookie";
 
-import {jwtDecode, JwtPayload} from "jwt-decode";
-import {cookies} from "next/headers";
-
-const cookiesAcceptedName = "magpie_cookies_accepted"
+const cookiesAcceptedName = "magpie_cookies_accepted";
 const tokenCookieName = "magpie_token";
 const uuidCookieName = "magpie_uuid";
-const cookiesAcceptedMaxAge = 365 * 24 * 60 * 60; // one year
+// const cookiesAcceptedMaxAge = 365 * 24 * 60 * 60; // one year
 
-export async function getCookiesAccepted() {
-  console.log("GET COOKIES ACCEPTED CALLED")
-  const cookieStore = cookies()
-  const cookiesAccepted = cookieStore.get(cookiesAcceptedName);
-  if (cookiesAccepted && cookiesAccepted.value === "true"){
-    return true;
-  } else {
+export function getCookiesAccepted() {
+  try {
+    const cookiesAccepted = Cookies.get(cookiesAcceptedName);
+    return cookiesAccepted === "true";
+  } catch (error) {
+    console.error("Error getting cookie:", error);
     return false;
   }
 }
 
-export async function setCookiesAccepted(){
-  const cookieStore = cookies();
-  cookieStore.set({
-    name: cookiesAcceptedName,
-    value: "true",
-    maxAge: cookiesAcceptedMaxAge,
-  });
-}
-
-export async function unsetCookiesAccepted() {
-  const cookieStore = cookies();
-  cookieStore.delete(cookiesAcceptedName);
-}
-
-export async function saveSessionToCookies(sessionToken: string, sessionUUID: string) {
-  console.log("SAVE SESSION TO COOKIES >>>", sessionToken, sessionUUID)
-  const cookieStore = cookies();
-
-
-  // Set cookies to store sessionToken and sessionUUID
-  let expiryDate = new Date(Date.now() + 86400 * 1000); // 1 day expiry default
-  const decoded = jwtDecode<JwtPayload>(sessionToken)
-  if(decoded.exp){
-    expiryDate = new Date(decoded.exp * 1000);
+export function setCookiesAccepted() {
+  try {
+    Cookies.set(cookiesAcceptedName, "true", {
+      expires: 365, // 1 year
+      path: "/",
+      sameSite: "strict",
+      secure: true, // for HTTPS
+    });
+    return true;
+  } catch (error) {
+    console.error("Error setting cookie:", error);
+    return false;
   }
-  cookieStore.set(tokenCookieName, sessionToken, { expires: expiryDate });
-  cookieStore.set(uuidCookieName, sessionUUID, { expires: expiryDate });
 }
 
-export async function deleteSessionFromCookies() {
-  const cookieStore = cookies();
-  cookieStore.delete(tokenCookieName);
-  cookieStore.delete(uuidCookieName);
+// export async function unsetCookiesAccepted() {
+//   const cookieStore = cookies();
+//   cookieStore.delete(cookiesAcceptedName);
+// }
+
+export function saveSessionToCookies(
+  sessionToken: string,
+  sessionUUID: string
+) {
+  try {
+    const decoded = jwtDecode<JwtPayload>(sessionToken);
+    const expires = decoded.exp
+      ? new Date(decoded.exp * 1000)
+      : new Date(Date.now() + 86400000);
+
+    const options = {
+      expires,
+      path: "/",
+      sameSite: "strict" as const,
+      secure: true,
+    };
+
+    Cookies.set(tokenCookieName, sessionToken, options);
+    Cookies.set(uuidCookieName, sessionUUID, options);
+    return true;
+  } catch (error) {
+    console.error("Error saving session:", error);
+    return false;
+  }
+}
+
+export function deleteSessionFromCookies() {
+  try {
+    Cookies.remove(tokenCookieName, { path: "/" });
+    Cookies.remove(uuidCookieName, { path: "/" });
+    return true;
+  } catch (error) {
+    console.error("Error deleting session:", error);
+    return false;
+  }
 }
