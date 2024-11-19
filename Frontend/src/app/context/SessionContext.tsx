@@ -16,8 +16,8 @@ interface SessionContextType {
   setSessionToken: React.Dispatch<React.SetStateAction<string>>;
   sessionUUID: string;
   setSessionUUID: React.Dispatch<React.SetStateAction<string>>;
-  isUserLoggedIn: boolean;
-  setIsUserLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+  isCookiesAccepted: boolean;
+  setIsCookiesAccepted: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 // Create a default value for the context
@@ -26,8 +26,8 @@ const defaultSessionContext: SessionContextType = {
   setSessionToken: () => {},
   sessionUUID: "",
   setSessionUUID: () => {},
-  isUserLoggedIn: false,
-  setIsUserLoggedIn: () => {},
+  isCookiesAccepted: false,
+  setIsCookiesAccepted: () => {},
 };
 
 // Create context with the defined type
@@ -44,7 +44,6 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
 }) => {
   const [sessionToken, setSessionToken] = useState<string>("");
   const [sessionUUID, setSessionUUID] = useState<string>("");
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState<boolean>(false);
   const [isCookiesAccepted, setIsCookiesAccepted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -66,7 +65,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
       saveSessionToCookies(sessionToken, sessionUUID);
       return;
     }
-  }, [sessionToken, sessionUUID, isUserLoggedIn, isCookiesAccepted]);
+  }, [sessionToken, sessionUUID, isCookiesAccepted]);
 
   return (
     <SessionContext.Provider
@@ -75,8 +74,8 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
         setSessionToken,
         sessionUUID,
         setSessionUUID,
-        isUserLoggedIn,
-        setIsUserLoggedIn,
+        isCookiesAccepted,
+        setIsCookiesAccepted
       }}
     >
       {children}
