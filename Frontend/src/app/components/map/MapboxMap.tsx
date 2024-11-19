@@ -618,7 +618,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                           <tr
                             key={option.value}
                             className={`${!amenitiesFilter.includes(option.value)
-                              ? 'bg-gray-200'
+                              ? 'bg-gray-100'
                               : ''
                               }`}
                           >
@@ -651,7 +651,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                                   )
                                 : '-'}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
                               <button onClick={() => handleIconClick(option.value)}>
                                 {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
                               </button>
