@@ -21,9 +21,10 @@ import { Slider } from '@/components/ui/slider';
 
 // Local utils and configs
 import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
+import { getCookiesAccepted } from '@/lib/cookies';
+import { cn } from '@/lib/utils';
 import packageJson from '../../../../package.json';
 import MapSources from './utils/MapSources';
-import { cn } from '@/lib/utils';
 
 // Types and interfaces
 import {
@@ -286,10 +287,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     setPointsGeoJson(geoJson);
   };
 
-  const { startOnborda } = useOnborda();
-  const handleStartOnborda = () => {
-    startOnborda("general-onboarding");
-  };
+  const { startOnborda, closeOnborda } = useOnborda();
 
   const version = packageJson.version;
 
@@ -364,8 +362,22 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   // Get current position
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(success, error, options);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+  },);
+
+  useEffect(() => {
+    closeOnborda();
+    if (sessionToken && getCookiesAccepted() === false) {
+      // Onborda seems to load before the map, so we need to wait a bit before starting the onboarding
+      // This is awful, terrible code, I am so sorry you have to see this. I know it's bad. I tried
+      // MANY different ways of doing this, over several hours. This being the only workable solution.
+      // Feel free to take a crack at it yourself, I'd love to see this removed.
+      // 1Solon - 19/11/2024
+      setTimeout(() => {
+        startOnborda("general-onboarding");
+      }, 1000);
+    }
+  },[]);
 
   const layerStyle: LayerProps = {
     id: "circle",
@@ -383,7 +395,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       <div className="absolute bottom-[5%] left-[1%] z-[999]">
         <div>
           <button
-            onClick={handleStartOnborda}
+            onClick={() => startOnborda("general-onboarding")}
             className="mt-2 px-4 py-2 bg-white text-gray-800 rounded-full shadow-md"
             id="onboarding-step-6"
           >
@@ -631,18 +643,18 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {amenitiesFilter.includes(option.value)
                                 ? (
-                                    pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                                  )?.features?.length > 0
+                                  pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                                )?.features?.length > 0
                                   ? (
-                                      <span className="font-bold">
-                                        {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                          ?.features?.length || 0}
-                                      </span>
-                                    )
+                                    <span className="font-bold">
+                                      {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                        ?.features?.length || 0}
+                                    </span>
+                                  )
                                   : (
-                                      (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                        ?.features?.length || 0
-                                    )
+                                    (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                      ?.features?.length || 0
+                                  )
                                 : '-'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
@@ -725,3 +737,4 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 };
 
 export default LocationAggregatorMap;
+
