@@ -120,21 +120,17 @@ users (User A) \& professionals who require amenity data (User B).
 
 \begin{figure}
     \centering
-    % First image (on its own row)
-    \begin{minipage}{0.95\textwidth}
+    \begin{minipage}{0.45\textwidth}
         \centering
         \fbox{\includegraphics[width=\textwidth]{Figures/fig6.png}}
         \caption{Additional features rating}
         \label{fig:plot6}
     \end{minipage}
-
-    \vspace{0.5cm} % Optional spacing between rows
-
-    % Second and third images side by side
+    \hfill
     \begin{minipage}{0.45\textwidth}
         \centering
         \fbox{\includegraphics[width=\textwidth]{Figures/fig7.png}}
-        \caption{Version 1 of high-fidelity prototype}
+        \caption{Version 1 of high fidelity prototype}
         \label{fig:plot7}
     \end{minipage}
     \hfill
@@ -217,7 +213,7 @@ insights to improve the Magpie user experience.
               \item Difficulty of Task
               \item Errors
           \end{enumerate}
-          These will measure how the users are working through a series of pre-defined tasks (Table 2.2). These are the most common usability metrics and they tend to have moderate correlation with each other to suggest an overlap (Sauro et.al 2009).  Averaging them together allows us to generate a Single Usability Metric (SUM) which summarizes the user experience running through those tasks. These metrics will be measured by filling score cards (\hl{figure 2.2}) and through observation \& discussion with the users. In addition, quantitative data will be collected through a user experience survey shown in figure 2.1.
+          These will measure how the users are working through a series of pre-defined tasks (Table 2.1). These are the most common usability metrics and they tend to have moderate correlation with each other to suggest an overlap (Sauro et.al 2009).  Averaging them together allows us to generate a Single Usability Metric (SUM) which summarizes the user experience running through those tasks. These metrics will be measured by filling score cards and through observation \& discussion with the users. In addition, quantitative data will be collected through a user experience survey shown in figure 2.1.
 \end{enumerate}
 \begin{table}[h!]
     \centering
@@ -234,7 +230,7 @@ insights to improve the Magpie user experience.
         Click on another area of the map, zoom out until you're able to see the entire circle and increase radius size to 400 meters                       &                     &                     \\ \hline
         Go through the onboarding/tutorial and exit at step 3                                                                                              &                     &                     \\ \hline
         Remove "Parking Meter" amenity and choose "Public Toilets" and "Public Wifi" amenities in the drop down                                            &                     &                     \\ \hline
-        Click on another area of Dublin city, reduce radius size to 100 meters, zoom in to your liking and \hl{export the map as an image (png or jpeg)}   &                     &                     \\ \hline
+        Click on another area of Dublin city, reduce radius size to 100 meters, zoom in to your liking                                                     &                     &                     \\ \hline
         Log out                                                                                                                                            &                     &                     \\ \hline
     \end{tabularx}
 \end{table}
@@ -407,7 +403,7 @@ Below are the answers to the expert review survey in table 3.1. The number next 
 \subsection{Implemented changes}
 \begin{itemize}
     \item Fixed authentication bug to ensure user lands on the login page = remedies brusk introduction to Magpie by landing directly on the map
-    \item Unclear icons when choosing amenities to display on the map = remedied by implementing custom icons with new colors \& larger size as seen in figure 4.1.
+    \item Implementing custom icons with new colors \& larger size  = remedies unclear icons when choosing amenities to display on the map as seen in figure 4.1.
           \begin{figure}
               \centering
               \fbox{\includegraphics[width=\textwidth]{Figures/fig13.png}}

@@ -1,7 +1,7 @@
 # Users participating in Usability testing
 ## Casual users (remote & controlled)
 * C21459946@mytudublin.ie = Agreed - sent to schedule
-* c24394486@mytudublin.ie = Agreed ? - sent to schedule 
+* c24394486@mytudublin.ie = Agreed ? - sent to schedule
 * D22125503@mytudublin.ie = Agreed - sent to schedule
 * debemeh06@gmail.com = Waiting
 * benjohnson0806@gmail.com = Agreed - sent to schedule
@@ -12,7 +12,7 @@
 * Damian = Agreed - sent to schedule
 * Brendan = Agreed - schedule Wednesday 20/11 @11:30
 * andrej.malik@stwarchitects.com = Waiting
-* bryan.boyle@ucc.ie = Waiting
+* bryan.boyle@ucc.ie = Agreed - sent to schedule
 * mairatsa@gmail.com = Agreed - sent to schedule
 * jmurphy@longfordcoco.ie = Waiting
 
