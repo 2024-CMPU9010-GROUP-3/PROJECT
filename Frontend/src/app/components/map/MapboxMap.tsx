@@ -637,8 +637,18 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {amenitiesFilter.includes(option.value)
                                 ? (
-                                  pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                                )?.features?.length || 0
+                                    pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                                  )?.features?.length > 0
+                                  ? (
+                                      <span className="font-bold">
+                                        {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                          ?.features?.length || 0}
+                                      </span>
+                                    )
+                                  : (
+                                      (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                        ?.features?.length || 0
+                                    )
                                 : '-'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
