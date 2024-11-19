@@ -1,4 +1,5 @@
 import { Tour } from "onborda/dist/types";
+import { Eye, EyeOff } from 'lucide-react';
 
 export const steps: Tour[] = [
     {
@@ -20,7 +21,9 @@ export const steps: Tour[] = [
                     <br /> <br />
                     This tour will guide you through the application.
                     <br /> <br />
-                    The current prototype works in Dublin and the immediate surroundings.
+                    The current prototype works in <strong>Dublin and the immediate surroundings.</strong>
+                    <br /> <br />
+                    Note, the <strong>display is locked until you finish the tour!</strong>
                     <br /> <br />
                     When you&apos;re ready, hit <strong>next!</strong>
                 </>,
@@ -53,7 +56,7 @@ export const steps: Tour[] = [
                     Information about the selected location will be displayed here!
                 </>,
                 selector: "#onboarding-step-3",
-                side: "left",
+                side: "left-top",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,
@@ -65,11 +68,13 @@ export const steps: Tour[] = [
                 content: <>
                     <i>Magpie</i> supports about a <strong>dozen</strong> different amenities. You may not want to see all of them at once.
                     <br /> <br />
-                    You can select the amenities you want by clicking on this box, and either:
+                    You can select the amenities you want to disable by clicking these:
                     <br /> <br />
-                    &emsp;• Typing the elements you want
-                    <br />
-                    &emsp;• Using the dropdown menu
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                        <Eye size={20} color="#3e6e96" />
+                        <span style={{ marginLeft: '5rem' }}></span> {/* Adjust the margin as needed */}
+                        <EyeOff size={20} color="#3e6e96" />
+                    </div>
 
                 </>,
                 selector: "#onboarding-step-4",
@@ -85,9 +90,11 @@ export const steps: Tour[] = [
                 title: "Selection a location",
                 content: <>
                     Left or right clicking anywhere on the map will display information about the selected location.
+                    <br /> <br />
+                    You can zoom by <strong>scrolling</strong> or <strong>pinching</strong> on a touchpad or touchscreen.
                 </>,
                 selector: "#onboarding-step-5",
-                side: "right",
+                side: "left-bottom",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,
