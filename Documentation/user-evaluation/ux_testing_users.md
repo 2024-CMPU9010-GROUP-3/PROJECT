@@ -4,7 +4,7 @@
 * c24394486@mytudublin.ie = Agreed ? - sent to schedule
 * D22125503@mytudublin.ie = Agreed - sent to schedule
 * debemeh06@gmail.com = Waiting
-* benjohnson0806@gmail.com = Agreed - sent to schedule
+* benjohnson0806@gmail.com = Agreed - schedule Friday 22/11 @14:00
 * d20124630@mytudublin.ie = Waiting
 * C24329646@mytudublin.ie = Agreed - schedule Thursday 21/11 @14:00
 
