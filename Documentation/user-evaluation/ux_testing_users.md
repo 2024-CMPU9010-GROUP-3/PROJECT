@@ -11,7 +11,7 @@
 ## Professional users (remote & uncontrolled)
 * Damian = Agreed - sent to schedule
 * Brendan = Agreed - schedule Wednesday 20/11 @11:30
-* andrej.malik@stwarchitects.com = Waiting
+* andrej.malik@stwarchitects.com = sent to schedule
 * bryan.boyle@ucc.ie = Agreed - sent to schedule
 * mairatsa@gmail.com = Agreed - sent to schedule
 * jmurphy@longfordcoco.ie = Waiting
