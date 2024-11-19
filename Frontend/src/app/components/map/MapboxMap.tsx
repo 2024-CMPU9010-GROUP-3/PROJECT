@@ -21,9 +21,10 @@ import { Slider } from '@/components/ui/slider';
 
 // Local utils and configs
 import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
+import { getCookiesAccepted } from '@/lib/cookies';
+import { cn } from '@/lib/utils';
 import packageJson from '../../../../package.json';
 import MapSources from './utils/MapSources';
-import { cn } from '@/lib/utils';
 
 // Types and interfaces
 import {
@@ -286,10 +287,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     setPointsGeoJson(geoJson);
   };
 
-  const { startOnborda } = useOnborda();
-  const handleStartOnborda = () => {
-    startOnborda("general-onboarding");
-  };
+  const { startOnborda, closeOnborda } = useOnborda();
 
   const version = packageJson.version;
 
@@ -364,8 +362,22 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   // Get current position
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(success, error, options);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+  },);
+
+  useEffect(() => {
+    closeOnborda();
+    if (sessionToken && getCookiesAccepted() === false) {
+      // Onborda seems to load before the map, so we need to wait a bit before starting the onboarding
+      // This is awful, terrible code, I am so sorry you have to see this. I know it's bad. I tried
+      // MANY different ways of doing this, over several hours. This being the only workable solution.
+      // Feel free to take a crack at it yourself, I'd love to see this removed.
+      // 1Solon - 19/11/2024
+      setTimeout(() => {
+        startOnborda("general-onboarding");
+      }, 1000);
+    }
+  },[closeOnborda, sessionToken, startOnborda]);
 
   const layerStyle: LayerProps = {
     id: "circle",
@@ -383,7 +395,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       <div className="absolute bottom-[5%] left-[1%] z-[999]">
         <div>
           <button
-            onClick={handleStartOnborda}
+            onClick={() => startOnborda("general-onboarding")}
             className="mt-2 px-4 py-2 bg-white text-gray-800 rounded-full shadow-md"
             id="onboarding-step-6"
           >
@@ -394,14 +406,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       {/* Map Container - Taller on mobile */}
       <div
         className="
-          w-full 
-          h-[60vh]
-          xl:w-[74%]  
-          lg:w-[52%]
-          lg:h-screen relative
+          flex-grow
+          h-full
+          relative
           sm:h-[70vh]
+          lg:h-screen relative
         "
-        id="onboarding-step-5"
+        id="onboarding-st5"
       >
         {mapBoxApiKey ? (
           <DeckGL
@@ -471,18 +482,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       </div>
       {/* Sidebar - Full width on mobile, scrollable */}
       <div className="
-        w-full
+        flex-none
         p-3
-        h-[40vh]
         bg-gray-50 
         overflow-y-auto
-        xl:w-[26%]  
-        xl:h-screen
         xl:p-6
-        lg:w-[48%]
-        lg:h-screen
+        lg:h-screen relative
         lg:p-6
-        sm:h-[30vh]
         sm:p-4
       ">
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
@@ -506,7 +512,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 </div>
               </div>
               {/* Search Radius Card */}
-              <div className="px-2 sm:px-3 lg:px-4">
+              <div className="sticky top-0 bg-gray-50 z-10 px-2 sm:px-3 lg:px-4">
                 <div
                   className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
                   id="onboarding-step-2"
@@ -583,7 +589,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 <Suspense
                   fallback={<div className="animate-pulse">Loading...</div>}
                 >
-                  <div className="overflow-x-auto">
+                  <div>
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
                         <tr>
@@ -637,18 +643,18 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {amenitiesFilter.includes(option.value)
                                 ? (
-                                    pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                                  )?.features?.length > 0
+                                  pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                                )?.features?.length > 0
                                   ? (
-                                      <span className="font-bold">
-                                        {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                          ?.features?.length || 0}
-                                      </span>
-                                    )
+                                    <span className="font-bold">
+                                      {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                        ?.features?.length || 0}
+                                    </span>
+                                  )
                                   : (
-                                      (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                        ?.features?.length || 0
-                                    )
+                                    (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                      ?.features?.length || 0
+                                  )
                                 : '-'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
@@ -663,7 +669,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   </div>
                 </Suspense>
               ) : (
-                <div className="relative overflow-x-auto">
+                <div>
                   <div className="opacity-50 pointer-events-none">
                     <table className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-50">
@@ -731,3 +737,4 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 };
 
 export default LocationAggregatorMap;
+

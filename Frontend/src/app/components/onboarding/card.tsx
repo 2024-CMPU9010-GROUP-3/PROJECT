@@ -34,36 +34,36 @@ export const TourCard: React.FC<CardComponentProps> = ({
 
   function handleConfetti() {
     closeOnborda();
-    
+
     // Run confetti once immediately
     confetti({
-        particleCount: 100,
-        startVelocity: 30,
-        spread: 360,
-        origin: {
-            x: Math.random(),
-            y: Math.random() - 0.2
-        }
+      particleCount: 100,
+      startVelocity: 30,
+      spread: 360,
+      origin: {
+        x: Math.random(),
+        y: Math.random() - 0.2
+      }
     });
 
     // Set up interval to run confetti 5 times, once per second
     let count = 0;
     const interval = setInterval(() => {
-        confetti({
-            particleCount: 100,
-            startVelocity: 30,
-            spread: 360,
-            origin: {
-                x: Math.random(),
-                y: Math.random() - 0.2
-            }
-        });
-        count++;
-        if (count === 4) {
-            clearInterval(interval);
+      confetti({
+        particleCount: 100,
+        startVelocity: 30,
+        spread: 360,
+        origin: {
+          x: Math.random(),
+          y: Math.random() - 0.2
         }
+      });
+      count++;
+      if (count === 4) {
+        clearInterval(interval);
+      }
     }, 500);
-}
+  }
 
   function handleNextStep() {
     setCurrentStep((prev) => Math.min(prev + 1, totalSteps - 1));
@@ -80,7 +80,7 @@ export const TourCard: React.FC<CardComponentProps> = ({
       <CardHeader>
         <div className="flex items-start justify-between w-full space-x-4">
           <div className="flex flex-col space-y-2">
-            <CardDescription className="text-black/50">
+            <CardDescription className="text-black/50 flex justify-between items-center">
               {currentStep + 1} of {totalSteps}
             </CardDescription>
             <CardTitle className="mb-2 text-lg text-black">
@@ -89,8 +89,7 @@ export const TourCard: React.FC<CardComponentProps> = ({
           </div>
           <Button
             variant="ghost"
-            className="text-black/50 absolute top-4 right-2 hover:bg-transparent hover:text-black/80"
-            size="icon"
+            className="text-red/50 absolute top-4 right-2 hover:bg-transparent hover:text-black/80"
             onClick={() => closeOnborda()}
           >
             <X size={16} />
