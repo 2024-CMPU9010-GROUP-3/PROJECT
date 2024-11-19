@@ -6,49 +6,42 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 
 import Link from "next/link";
-import { getCookiesAccepted, setCookiesAccepted } from "@/lib/cookies";
-import {
-  deleteSessionFromCookies,
-  commitSessionToCookies,
-} from "@/lib/session";
+import { getCookiesAccepted, saveSessionToCookies, setCookiesAccepted, unsetCookiesAccepted, deleteSessionFromCookies } from "@/lib/cookies";
+import {useSession} from "@/app/context/SessionContext"
 
 export default function CookieConsent({
   variant = "default",
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [hide, setHide] = useState(false);
+  const {sessionToken, sessionUUID} = useSession();
 
-  const accept = async () => {
+  const accept = () => {
     setIsOpen(false);
-    await setCookiesAccepted();
-    await commitSessionToCookies();
+    setCookiesAccepted();
+    saveSessionToCookies(sessionToken, sessionUUID);
     setTimeout(() => {
       setHide(true);
     }, 700);
   };
 
-  const decline = async () => {
+  const decline = () => {
     setIsOpen(false);
-    await deleteSessionFromCookies();
+    unsetCookiesAccepted();
+    deleteSessionFromCookies();
     setTimeout(() => {
       setHide(true);
     }, 700);
   };
 
   useEffect(() => {
-    try {
-      setIsOpen(true);
-      (async () => {
-        const cookiesAccepted = await getCookiesAccepted();
-        if (cookiesAccepted) {
-          setIsOpen(false);
-          setTimeout(() => {
-            setHide(true);
-          }, 700);
-        }
-      })();
-    } catch (e) {
-      console.log("Error: ", e);
+    setIsOpen(true);
+
+    if (getCookiesAccepted()) {
+      setIsOpen(false);
+      setTimeout(() => {
+        setHide(true);
+      }, 700);
     }
   }, []);
 
