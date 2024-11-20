@@ -64,18 +64,15 @@ export default function SignupPage() {
 
         <div className="relative hidden h-full flex-col p-10 text-white dark:border-r lg:flex">
           {/* Desktop Side Section */}
-          <div className="absolute inset-0 bg-gradient-to-r from-zinc-700 to-zinc-950" />
-          <div className="absolute top-8 left-6" style={{ zIndex: 99 }}>
-                <MagpieLogo />
-              </div>
-          <div className="relative z-20 mt-auto">
-            <blockquote className="space-y-2">
-              <p className="text-lg">
-                &ldquo;Where data meets design, and every street tells a story—shaping cities through the lens of innovation, one space at a time.&rdquo;
-              </p>
-              <footer className="text-sm">Magpie</footer>
-            </blockquote>
-          </div>
+            <Image className="object-cover z-0" src="/images/map_screenshot_alt.png" alt="Map Screenshot" fill></Image>
+          <div className="absolute inset-0 bg-gradient-to-r from-zinc-900 to-zinc-900/70 z-10"/>
+          <Link href="/" className="relative inline-flex items-center gap-2 z-20">
+            <Image src="/images/logo-wt.svg" alt="Logo" width={100} height={100} className="mr-2 h-32 w-32" />
+            <div>
+              <div className="text-6xl font-bold">Magpie</div>
+              <div className="text-2xl font-medium">Services at a Glance</div>
+            </div>
+          </Link>
         </div>
 
         <div className="lg:p-8 flex items-center justify-center">
