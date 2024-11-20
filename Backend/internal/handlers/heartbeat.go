@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"time"
 )
@@ -17,11 +18,11 @@ func isAlive() bool {
 func HandleHeartbeat(w http.ResponseWriter, r *http.Request) {
 	if !isAlive() {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("false"))
+		_,_ = io.WriteString(w, "false")
 		return
 	} else {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("true"))
+		_,_ =io.WriteString(w, "true")
 		return
 	}
 }
