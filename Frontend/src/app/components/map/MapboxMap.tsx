@@ -109,6 +109,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     latitude: 0,
     longitude: 0,
   });
+  const [markerIsVisible, setMarkerIsVisible] = useState<boolean>(false);
   const [pointsGeoJson, setPointsGeoJson] = useState<Record<
     string,
     GeoJSON
@@ -222,6 +223,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     if (mapClickEvent.coordinate) {
       const [longitude, latitude] = mapClickEvent.coordinate;
       setCoordinates({ latitude, longitude });
+      setMarkerIsVisible(true);
     }
   };
 
@@ -433,15 +435,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               onLoad={handleMapLoad}
             >
               {/* Map content remains the same */}
-              <Marker
-                longitude={coordinates?.longitude}
-                latitude={coordinates?.latitude}
-                anchor="center"
-              >
-                <div>
-                  <FaLocationDot size={50} color="FFA15A" />
-                </div>
-              </Marker>
+              {markerIsVisible && (
+                <Marker
+                  longitude={coordinates?.longitude}
+                  latitude={coordinates?.latitude}
+                  anchor="center"
+                >
+                  <div>
+                    <FaLocationDot size={50} color="FFA15A" />
+                  </div>
+                </Marker>
+              )}
               <Marker
                 latitude={currentPositionCords?.latitude}
                 longitude={currentPositionCords?.longitude}
@@ -541,10 +545,19 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                       {sliderValueDisplay * 100} meters
                       <button
                         onClick={() => {
+                          setCoordinates({ latitude: 0, longitude: 0 });
+                          setMarkerIsVisible(false);
+                        }}
+                        className="px-2 py-1 bg-gray-200 rounded ml-auto"
+                      >
+                        Clear
+                      </button>
+                      <button
+                        onClick={() => {
                           setSliderValueDisplay(1);
                           setSliderValue(1);
                         }}
-                        className="px-2 py-1 bg-gray-200 rounded ml-auto"
+                        className="px-2 py-1 bg-gray-200 rounded"
                       >
                         100m
                       </button>
