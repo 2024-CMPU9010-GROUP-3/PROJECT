@@ -98,6 +98,7 @@ export type Point = {
 };
 
 export interface ImageConfig {
+  value: string;
   id: string;
   path: string;
 }

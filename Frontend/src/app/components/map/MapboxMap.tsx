@@ -50,58 +50,20 @@ type GeoJsonCollection =
   | "public_bins"
   | "coach_parking";
 
-interface Option {
-  label: string;
-  value: string;
-}
-
-const MultiSelectOptions: Option[] = [
-  { label: "Parking Meter", value: "parking_meter" },
-  { label: "Bike Stand", value: "bike_stand" },
-  { label: "Public Wifi", value: "public_wifi_access_point" },
-  { label: "Library", value: "library" },
-  { label: "Multi Storey Car Park", value: "multistorey_car_parking" },
-  { label: "Drinking Water Fountain", value: "drinking_water_fountain" },
-  { label: "Public Toilet", value: "public_toilet" },
-  { label: "Bike Sharing Station", value: "bike_sharing_station" },
-  { label: "Parking", value: "parking" },
-  { label: "Accessible Parking", value: "accessible_parking" },
-  { label: "Public Bins", value: "public_bins" },
-  { label: "Coach Parking", value: "coach_parking" },
+const mapElements = [
+  { label: "Parking Meter", value: "parking_meter", id: 'custom_parking_meter', path: '/mapicons/parking_meter.png' },
+  { label: "Bike Stand", value: "bike_stand", id: 'custom_bicycle', path: '/mapicons/bicycle.png' },
+  { label: "Public Wifi", value: "public_wifi_access_point", id: 'custom_public_wifi', path: '/mapicons/wifi.png' },
+  { label: "Library", value: "library", id: 'custom_library', path: '/mapicons/library.png' },
+  { label: "Multi Storey Car Park", value: "multistorey_car_parking", id: 'custom_car_parks', path: '/mapicons/car_park.png' },
+  { label: "Drinking Water Fountain", value: "drinking_water_fountain", id: 'custom_water_fountain', path: '/mapicons/water_fountain.png' },
+  { label: "Public Toilet", value: "public_toilet", id: 'custom_toilet', path: '/mapicons/toilet.png' },
+  { label: "Bike Sharing Station", value: "bike_sharing_station", id: 'custom_bicycle_share', path: '/mapicons/bicycle_share.png' },
+  { label: "Parking", value: "parking", id: 'custom_parking', path: '/mapicons/parking.png' },
+  { label: "Accessible Parking", value: "accessible_parking", id: 'custom_accessible_parking', path: '/mapicons/accessibleParking.png' },
+  { label: "Public Bins", value: "public_bins", id: 'custom_public_bins', path: '/mapicons/bin.png' },
+  { label: "Coach Parking", value: "coach_parking", id: 'custom_bus', path: '/mapicons/bus.png' },
 ];
-
-// Array of image paths to load 
-const IMAGES: ImageConfig[] = [
-  { id: 'custom_parking', path: '/mapicons/parking.png' },
-  { id: 'custom_parking_meter', path: '/mapicons/parking_meter.png' },
-  { id: 'custom_bicycle', path: '/mapicons/bicycle.png' },
-  { id: 'bicycle_share', path: '/mapicons/bicycle_share.png' },
-  { id: 'custom_bicycle_share', path: '/mapicons/bicycle_share.png' },
-  { id: 'custom_accessible_parking', path: '/mapicons/accessibleParking.png' },
-  { id: 'custom_public_bins', path: '/mapicons/bin.png' },
-  { id: 'custom_public_wifi', path: '/mapicons/wifi.png' },
-  { id: 'custom_bus', path: '/mapicons/bus.png' },
-  { id: 'custom_library', path: '/mapicons/library.png' },
-  { id: 'custom_car_parks', path: '/mapicons/car_park.png' },
-  { id: 'custom_water_fountain', path: '/mapicons/water_fountain.png' },
-  { id: 'custom_toilet', path: '/mapicons/toilet.png' },
-];
-
-// Array of icon paths to load
-const iconMap: Record<string, string> = {
-  parking_meter: '/mapicons/parking_meter.png',
-  bike_stand: '/mapicons/bicycle.png',
-  public_wifi_access_point: '/mapicons/wifi.png',
-  library: '/mapicons/library.png',
-  multistorey_car_parking: '/mapicons/car_park.png',
-  drinking_water_fountain: '/mapicons/water_fountain.png',
-  public_toilet: '/mapicons/toilet.png',
-  bike_sharing_station: '/mapicons/bicycle_share.png',
-  parking: '/mapicons/parking.png',
-  accessible_parking: '/mapicons/accessibleParking.png',
-  public_bins: '/mapicons/bin.png',
-  coach_parking: '/mapicons/bus.png',
-};
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
@@ -187,7 +149,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     };
 
     try {
-      await Promise.all(IMAGES.map(loadImage));
+      await Promise.all(mapElements.map(loadImage));
     } catch (error) {
       console.error('Error loading images:', error);
     }
@@ -200,7 +162,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   };
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>(() =>
-    MultiSelectOptions.map((option) => option.value)
+    mapElements.map((option) => option.value)
   );
 
   const { sessionToken } = useSession()
@@ -213,7 +175,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   const [resetSelection, setResetSelection] = useState(false);
   const handleGlobalAmenitiesFilter = () => {
-    setAmenitiesFilter(() => (resetSelection ? [] : MultiSelectOptions.map((option) => option.value)));
+    setAmenitiesFilter(() => (resetSelection ? [] : mapElements.map((option) => option.value)));
     setResetSelection((prev) => !prev);
   }
 
@@ -636,50 +598,52 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {MultiSelectOptions.map((option) => (
-                          <tr
-                            key={option.value}
-                            className={`${!amenitiesFilter.includes(option.value)
-                              ? 'bg-gray-100'
-                              : ''
-                              }`}
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <Image
-                                src={iconMap[option.value]}
-                                alt={option.label}
-                                width={24}
-                                height={24}
-                                className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {option.label}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {amenitiesFilter.includes(option.value)
-                                ? (
-                                  pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                                )?.features?.length > 0
+                        {mapElements.map((option) => {
+                          const imageConfig = mapElements.find(img => img.value === option.value);
+                          return (
+                            <tr
+                              key={option.value}
+                              className={`${!amenitiesFilter.includes(option.value) ? 'bg-gray-100' : ''}`}
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {imageConfig && (
+                                  <Image
+                                    src={imageConfig.path}
+                                    alt={option.label}
+                                    width={24}
+                                    height={24}
+                                    className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
+                                  />
+                                )}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {option.label}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {amenitiesFilter.includes(option.value)
                                   ? (
-                                    <span className="font-bold">
-                                      {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                        ?.features?.length || 0}
-                                    </span>
-                                  )
-                                  : (
-                                    (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                      ?.features?.length || 0
-                                  )
-                                : '-'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                              <button onClick={() => handleIconClick(option.value)}>
-                                {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
+                                    pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                                  )?.features?.length > 0
+                                    ? (
+                                      <span className="font-bold">
+                                        {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                          ?.features?.length || 0}
+                                      </span>
+                                    )
+                                    : (
+                                      (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                        ?.features?.length || 0
+                                    )
+                                  : '-'}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                                <button onClick={() => handleIconClick(option.value)}>
+                                  {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </table>
                   </div>
