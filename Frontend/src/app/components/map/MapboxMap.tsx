@@ -602,86 +602,88 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               <Suspense
                 fallback={<div className="animate-pulse">Loading...</div>}
               >
-                <div>
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Icon
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Amenity
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Count
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          <button onClick={() => handleGlobalAmenitiesFilter()}>
-                            {resetSelection ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
-                          </button>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {MultiSelectOptions.map((option) => (
-                        <tr
-                          key={option.value}
-                          className={`${!amenitiesFilter.includes(option.value)
-                            ? 'bg-gray-100'
-                            : ''
-                            }`}
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <Image
-                              src={iconMap[option.value]}
-                              alt={option.label}
-                              width={24}
-                              height={24}
-                              className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {option.label}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {amenitiesFilter.includes(option.value)
-                              ? (
-                                pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                              )?.features?.length > 0
-                                ? (
-                                  <span className="font-bold">
-                                    {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                      ?.features?.length || 0}
-                                  </span>
-                                )
-                                : (
-                                  (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                    ?.features?.length || 0
-                                )
-                              : '-'}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                            <button onClick={() => handleIconClick(option.value)}>
-                              {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                {mapBoxApiKey ? (
+                  <div>
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Icon
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Amenity
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Count
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            <button onClick={() => handleGlobalAmenitiesFilter()}>
+                              {resetSelection ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
                             </button>
-                          </td>
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {MultiSelectOptions.map((option) => (
+                          <tr
+                            key={option.value}
+                            className={`${!amenitiesFilter.includes(option.value)
+                              ? 'bg-gray-100'
+                              : ''
+                              }`}
+                          >
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <Image
+                                src={iconMap[option.value]}
+                                alt={option.label}
+                                width={24}
+                                height={24}
+                                className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
+                              />
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                              {option.label}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {amenitiesFilter.includes(option.value)
+                                ? (
+                                  pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                                )?.features?.length > 0
+                                  ? (
+                                    <span className="font-bold">
+                                      {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                        ?.features?.length || 0}
+                                    </span>
+                                  )
+                                  : (
+                                    (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                      ?.features?.length || 0
+                                  )
+                                : '-'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                              <button onClick={() => handleIconClick(option.value)}>
+                                {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : null}
               </Suspense>
             </div>
           </div >
