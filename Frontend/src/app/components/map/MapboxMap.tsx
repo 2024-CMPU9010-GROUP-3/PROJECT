@@ -377,7 +377,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         startOnborda("general-onboarding");
       }, 1000);
     }
-  },[closeOnborda, sessionToken, startOnborda]);
+  }, [closeOnborda, sessionToken, startOnborda]);
 
   const layerStyle: LayerProps = {
     id: "circle",
@@ -490,7 +490,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         lg:p-6
         sm:p-4
       "
-      id="onboarding-step-1"
+        id="onboarding-step-1"
       >
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
           {mapBoxApiKey ? (
@@ -513,7 +513,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 </div>
               </div>
               {/* Search Radius Card */}
-              <div className="sticky top-0 bg-gray-50 z-10 px-2 sm:px-3 lg:px-4">
+              <div className="sticky top-0 bg-gray-50 px-2 sm:px-3 lg:px-4">
                 <div
                   className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
                 >
@@ -584,7 +584,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             <div
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
             >
-              {isMarkerVisible ? (
                 <Suspense
                   fallback={<div className="animate-pulse">Loading...</div>}
                 >
@@ -667,71 +666,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                     </table>
                   </div>
                 </Suspense>
-              ) : (
-                <div>
-                  <div className="opacity-50 pointer-events-none">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Icon
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Amenity
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Count
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Show
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {MultiSelectOptions.map((option) => (
-                          <tr key={option.value} className="bg-gray-100">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <Image
-                                src={iconMap[option.value]}
-                                alt={option.label}
-                                width={24}
-                                height={24}
-                                className="w-6 h-6 filter grayscale"
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {option.label}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              -
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                              <EyeOff size={16} color="#3e6e96" />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          </div >
+        </div >
+      </div >
+    </div >
   );
 };
 
