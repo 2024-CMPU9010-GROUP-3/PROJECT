@@ -2,13 +2,10 @@ import json
 import torch
 from ultralytics import YOLO
 import cv2
-import requests
-from PIL import Image
-from io import BytesIO
 import os
 import numpy as np
 import math
-import pandas as pd
+import csv
 from geopy.distance import geodesic
 from shapely.geometry import box
 
@@ -567,14 +564,17 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
     return avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr
 
 
-def main(directory):
+def main(directory, output_file="metrics.csv"):
     """
     Main function to evaluate the empty parking detction on the test images and calculate the corresponding performance metrics
     Saves Averages of IoU, Precision, Recall, F1 score, Orientation Accuracy, 
-    Spot Detection Ratio, Spot Detection Error, False Positive Rate and False Negative Rate
+    Spot Detection Ratio, Spot Detection Error, False Positive Rate and False Negative Rate in a csv file for each
+    image as well as the overall average metrics.
 
     Params:
-        directory(str): path to the directory containing the images and the labels in json format 
+        directory(str): Path to the directory containing the images and the labels in json format 
+        output_file (str): Path to save the CSV file ctaining the metrics for each image and the overall metrics
+
     """
     
     if not os.path.exists(directory):
@@ -608,6 +608,8 @@ def main(directory):
         "fnr": []
     }
 
+    image_metrics = []
+
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
@@ -624,6 +626,20 @@ def main(directory):
         metrics["fpr"].append(fpr)
         metrics["fnr"].append(fnr)
 
+        image_metrics.append({
+            "longitude": long,
+            "latitude": lat,
+            "iou": iou,
+            "precision": precision,
+            "recall": recall,
+            "f1_score": f1_score,
+            "orientation_accuracy": orientation_accuracy,
+            "spot_detection_ratio": spot_detection_ratio,
+            "spot_detection_error": spot_detection_error,
+            "fpr": fpr,
+            "fnr": fnr
+        })
+
         print(f"Metrics for image {long}, {lat}: IoU={iou:.2f}, Precision={precision:.2f}, Recall={recall:.2f}, F1 Score={f1_score:.2f}, Orientation Accuracy={orientation_accuracy:.2f}, Spot Detection Ratio={spot_detection_ratio:.2f}, Spot Detection Error={spot_detection_error:.2f}, FPR={fpr:.2f}, FNR={fnr:.2f}")
 
     avg_iou = sum(metrics["iou"]) / len(metrics["iou"])
@@ -636,6 +652,20 @@ def main(directory):
     avg_FPR = sum(metrics["fpr"]) / len(metrics["fpr"])
     avg_FNR = sum(metrics["fnr"]) / len(metrics["fnr"])
 
+    overall_metrics = {
+        "longitude": "Overall",
+        "latitude": "Metrics",
+        "iou": avg_iou,
+        "precision": avg_precision,
+        "recall": avg_recall,
+        "f1_score": avg_f1,
+        "orientation_accuracy": avg_orientation_accuracy,
+        "spot_detection_ratio": avg_SDR,
+        "spot_detection_error": avg_SDE,
+        "fpr": avg_FPR,
+        "fnr": avg_FNR
+    }
+
     print("Overall Metrics:")
     print(f"Average IoU: {avg_iou:.2f}")
     print(f"Average Precision: {avg_precision:.2f}")
@@ -646,6 +676,17 @@ def main(directory):
     print(f"Average Spot Detection Error (SDE): {avg_SDE:.2f}")
     print(f"Average False Positive Rate (FPR): {avg_FPR:.2f}")
     print(f"Average False Negative Rate (FNR): {avg_FNR:.2f}")
+
+    with open(output_file, mode="w", newline="") as file:
+        writer = csv.DictWriter(file, fieldnames=[
+            "longitude", "latitude", "iou", "precision", "recall", "f1_score", "orientation_accuracy",
+            "spot_detection_ratio", "spot_detection_error", "fpr", "fnr"
+        ])
+        writer.writeheader()
+        writer.writerows(image_metrics)
+        writer.writerow(overall_metrics)
+
+    print(f"Metrics saved to {output_file}")
 
 if __name__ == "__main__":
     main("test-images")
