@@ -73,7 +73,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id pgtype.UUID) error {
 
 const emailExists = `-- name: EmailExists :one
 SELECT EXISTS(
-  SELECT 1 FROM logins WHERE Email = $1 AND Id <> $2
+  SELECT 1 FROM logins WHERE Email = $1 AND Id IS DISTINCT FROM $2
 ) AS "exists"
 `
 
@@ -336,7 +336,7 @@ func (q *Queries) UpdateUserDetails(ctx context.Context, arg UpdateUserDetailsPa
 
 const usernameExists = `-- name: UsernameExists :one
 SELECT EXISTS(
-  SELECT 1 FROM logins WHERE Username = $1 AND Id <> $2
+  SELECT 1 FROM logins WHERE Username = $1 AND Id IS DISTINCT FROM $2
 ) AS "exists"
 `
 

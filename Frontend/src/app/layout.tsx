@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
 import Providers from "./providers";
 import "./globals.css";
-import { AuthProvider } from '@/app/context/AuthContext';
+import { SessionProvider } from './context/SessionContext';
 import { Onborda, OnbordaProvider } from "onborda";
 import { steps } from "./components/onboarding/steps";
 import { TourCard } from "./components/onboarding/card";
 
 
 export const metadata: Metadata = {
-  title: "Magpie - Services at a glance",
+  title: "Magpie",
   description: "An at a glance view of available public services across Dublin",
 };
 
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased min-h-screen">
-        <AuthProvider>
+        <SessionProvider>
           <Providers>
             <OnbordaProvider>
               <Onborda
@@ -35,7 +35,7 @@ export default function RootLayout({
               </Onborda>
             </OnbordaProvider>
           </Providers>
-        </AuthProvider>
+        </SessionProvider>
       </body>
     </html>
   );

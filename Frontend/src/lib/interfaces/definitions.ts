@@ -2,18 +2,16 @@ import { z } from 'zod'
 
 // define the validation schema for the signup form
 export const SignupFormSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, { message: "name cannot be empty" })
-    .trim(),
-  lastName: z
-    .string()
-    .min(1, { message: "surname cannot be empty" })
-    .trim(),
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
   email: z
     .string()
     .email({ message: "please enter a valid email address" })
     .trim(),
+  username: z
+    .string()
+    .trim()
+    .min(3, { message: "Username must be at least 3 characters long" }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" })
@@ -28,8 +26,7 @@ export const SignupFormSchema = z.object({
 // define form state type
 export type FormState = {
   errors?: {
-    firstName?: string[]
-    lastName?: string[]
+    username?: string[]
     email?: string[]
     password?: string[]
   }

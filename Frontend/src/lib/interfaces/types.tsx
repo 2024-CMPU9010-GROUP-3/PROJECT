@@ -96,3 +96,8 @@ export type Point = {
   Type: string;
   Longlat: Coordinates | CoordinatesForGeoJson;
 };
+
+export interface ImageConfig {
+  id: string;
+  path: string;
+}

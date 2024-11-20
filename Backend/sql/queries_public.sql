@@ -42,12 +42,12 @@ LIMIT 1;
 
 -- name: EmailExists :one
 SELECT EXISTS(
-  SELECT 1 FROM logins WHERE Email = @email AND Id <> @id
+  SELECT 1 FROM logins WHERE Email = @email AND Id IS DISTINCT FROM @id
 ) AS "exists";
 
 -- name: UsernameExists :one
 SELECT EXISTS(
-  SELECT 1 FROM logins WHERE Username = @username AND Id <> @id
+  SELECT 1 FROM logins WHERE Username = @username AND Id IS DISTINCT FROM @id
 ) AS "exists";
 
 -- name: CreateUser :one
