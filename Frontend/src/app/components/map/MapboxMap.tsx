@@ -88,18 +88,18 @@ const IMAGES: ImageConfig[] = [
 
 // Array of icon paths to load
 const iconMap: Record<string, string> = {
-  parking_meter: '/images/parking_meter.png',
-  bike_stand: '/images/bicycle.png',
-  public_wifi_access_point: '/images/wifi.png',
-  library: '/images/library.png',
-  multistorey_car_parking: '/images/car_park.png',
-  drinking_water_fountain: '/images/water_fountain.png',
-  public_toilet: '/images/toilet.png',
-  bike_sharing_station: '/images/bicycle_share.png',
-  parking: '/images/parking.png',
-  accessible_parking: '/images/accessibleParking.png',
-  public_bins: '/images/bin.png',
-  coach_parking: '/images/bus.png',
+  parking_meter: '/mapicons/parking_meter.png',
+  bike_stand: '/mapicons/bicycle.png',
+  public_wifi_access_point: '/mapicons/wifi.png',
+  library: '/mapicons/library.png',
+  multistorey_car_parking: '/mapicons/car_park.png',
+  drinking_water_fountain: '/mapicons/water_fountain.png',
+  public_toilet: '/mapicons/toilet.png',
+  bike_sharing_station: '/mapicons/bicycle_share.png',
+  parking: '/mapicons/parking.png',
+  accessible_parking: '/mapicons/accessibleParking.png',
+  public_bins: '/mapicons/bin.png',
+  coach_parking: '/mapicons/bus.png',
 };
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
