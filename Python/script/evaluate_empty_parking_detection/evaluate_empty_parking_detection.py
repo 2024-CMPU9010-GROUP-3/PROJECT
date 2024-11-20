@@ -261,7 +261,6 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append((empty_x_center, empty_y_center, avg_width_pixels, avg_length_pixels, angle_degrees, alignment))
-                    #depends on orientation???
                     print(f"Empty parking spot at {empty_x_center}, {empty_y_center}")
 
     find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters) #Horizontal spots in a row
@@ -325,11 +324,17 @@ def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_
     
     for long, lat, width, length, rotation, alignment in empty_spots:
         x_center, y_center = convert_coordinates_to_bounding_box(long, lat, center_long, center_lat)
-
-        x_min = int(x_center - avg_spot_width / 2)
-        x_max = int(x_center + avg_spot_width / 2)
-        y_min = int(y_center - avg_spot_length / 2)
-        y_max = int(y_center + avg_spot_length / 2)
+        
+        if alignment == 'horizontal':
+            x_min = int(x_center - avg_spot_width / 2)
+            x_max = int(x_center + avg_spot_width / 2)
+            y_min = int(y_center - avg_spot_length / 2)
+            y_max = int(y_center + avg_spot_length / 2)
+        else:
+            x_min = int(x_center - avg_spot_length / 2)
+            x_max = int(x_center + avg_spot_length / 2)
+            y_min = int(y_center - avg_spot_width / 2)
+            y_max = int(y_center + avg_spot_width / 2)
 
         car_region = road_mask[y_min:y_max, x_min:x_max]
         road_pixels = cv2.countNonZero(car_region)
