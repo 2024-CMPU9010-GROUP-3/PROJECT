@@ -8,7 +8,7 @@ import { TourCard } from "./components/onboarding/card";
 
 
 export const metadata: Metadata = {
-  title: "Magpie - Services at a glance",
+  title: "Magpie",
   description: "An at a glance view of available public services across Dublin",
 };
 

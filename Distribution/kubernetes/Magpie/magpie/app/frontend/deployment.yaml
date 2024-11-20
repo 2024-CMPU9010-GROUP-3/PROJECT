@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/2024-cmpu9010-group-3/frontend:0.6.0@sha256:86d800960bbca23c02071a24911595f5b47e88d5442ac517397f2d228cc92d4a
+          image: ghcr.io/2024-cmpu9010-group-3/frontend:0.8.0@sha256:2712f011c78391d3acf3961e6af0217169f99c5d0a87217f35406752876941ba
           resources: {}
           ports:
             - containerPort: 3000
