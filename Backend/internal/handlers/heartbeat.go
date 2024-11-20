@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 )
@@ -12,7 +11,6 @@ func isAlive() bool {
 	ctx, cancel := context.WithTimeout(*dbCtx, time.Duration(5*time.Second))
 	defer cancel()
 	_, err := dbConn.Exec(ctx, "-- ping")
-	log.Printf("%+v", err)
 	return err == nil
 }
 
