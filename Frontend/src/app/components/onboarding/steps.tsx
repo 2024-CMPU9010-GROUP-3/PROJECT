@@ -78,7 +78,7 @@ export const steps: Tour[] = [
 
                 </>,
                 selector: "#onboarding-step-4",
-                side: "left",
+                side: "left-top",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,
@@ -94,7 +94,7 @@ export const steps: Tour[] = [
                     You can zoom by <strong>scrolling</strong> with a mouse or <strong>pinching</strong> on a touchpad (or touchscreen).
                 </>,
                 selector: "#onboarding-step-5",
-                side: "left-bottom",
+                side: "right-top",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,

@@ -412,7 +412,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           sm:h-[70vh]
           lg:h-screen relative
         "
-        id="onboarding-st5"
+        id="onboarding-step-5"
       >
         {mapBoxApiKey ? (
           <DeckGL
@@ -490,7 +490,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         lg:h-screen relative
         lg:p-6
         sm:p-4
-      ">
+      "
+      id="onboarding-step-3"
+      >
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
           {mapBoxApiKey ? (
             <>
@@ -583,7 +585,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           <div className="px-2 sm:px-3 lg:px-4">
             <div
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
-              id="onboarding-step-3"
             >
               {isMarkerVisible ? (
                 <Suspense
