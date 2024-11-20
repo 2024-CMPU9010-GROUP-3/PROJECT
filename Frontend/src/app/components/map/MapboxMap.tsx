@@ -105,7 +105,6 @@ const iconMap: Record<string, string> = {
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
-  const [isMarkerVisible, setIsMarkerVisible] = useState<boolean>(false);
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
     longitude: 0,
@@ -217,7 +216,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     if (mapClickEvent.coordinate) {
       const [longitude, latitude] = mapClickEvent.coordinate;
       setCoordinates({ latitude, longitude });
-      setIsMarkerVisible(true);
     }
   };
 
@@ -533,16 +531,14 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                         {...props}
                       />
                     </div>
-                    <div className="text-sm lg:text-base font-medium text-gray-600">
+                    <div className="text-sm lg:text-base font-medium text-gray-600 flex space-x-2">
                       {sliderValueDisplay * 100} meters
-                    </div>
-                    <div className="flex space-x-2">
                       <button
                         onClick={() => {
                           setSliderValueDisplay(1);
                           setSliderValue(1);
                         }}
-                        className="px-2 py-1 bg-gray-200 rounded"
+                        className="px-2 py-1 bg-gray-200 rounded ml-auto"
                       >
                         100m
                       </button>
