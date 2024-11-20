@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -13,6 +12,7 @@ import (
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util"
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util/env"
 )
 
 func accessAuthenticated(next http.Handler) http.Handler {
@@ -24,14 +24,14 @@ func accessAuthenticated(next http.Handler) http.Handler {
 			return
 		}
 
-		authToken, found := strings.CutPrefix(authTokenWithPrefix,"Bearer ")
+		authToken, found := strings.CutPrefix(authTokenWithPrefix, "Bearer ")
 		if !found {
 			resp.SendError(customErrors.Auth.UnauthorizedError, w)
 			return
 		}
 
-		jwtSecret := []byte(os.Getenv("MAGPIE_JWT_SECRET"))
-		if len(jwtSecret) == 0 {
+		jwtSecret, set := env.Get(env.EnvJwtSecret)
+		if !set {
 			resp.SendError(customErrors.Internal.JwtSecretMissingError, w)
 			return
 		}
@@ -42,7 +42,7 @@ func accessAuthenticated(next http.Handler) http.Handler {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
 
-			return jwtSecret, nil
+			return []byte(jwtSecret), nil
 		})
 		if err != nil {
 			resp.SendError(customErrors.Internal.JwtParseError, w)
