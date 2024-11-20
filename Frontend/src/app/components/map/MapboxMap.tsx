@@ -514,10 +514,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 </div>
               </div>
               {/* Search Radius Card */}
-              <div className="sticky top-0 bg-gray-50 z-10 px-2 sm:px-3 lg:px-4">
+              <div className="sticky top-0 bg-gray-50 z-10 px-2 sm:px-3 lg:px-4" id="onboarding-step-2">
                 <div
                   className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
-                  id="onboarding-step-2"
                 >
                   <div className="space-y-2 sm:space-y-3">
                     <div>
