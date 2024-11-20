@@ -1,4 +1,3 @@
-import json
 import torch
 from ultralytics import YOLO
 import cv2
@@ -279,8 +278,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
             
             if distance_to_prev >= duplicate_threshold_meters or spot[5] != empty_spots[i - 1][5]:
                 unique_empty_spots.append(spot)
-            else:
-                print(f"Removed spot at {spot[0]}, {spot[1]} due to proximity to {empty_spots[i - 1][0]}, {empty_spots[i - 1][1]}. Distance: {distance_to_prev:.2f}")
+            #else:
+                #print(f"Removed spot at {spot[0]}, {spot[1]} due to proximity to {empty_spots[i - 1][0]}, {empty_spots[i - 1][1]}. Distance: {distance_to_prev:.2f}")
 
 
     filtered_empty_spots = []
@@ -397,10 +396,12 @@ def get_empty_parking_in_image(model, longitude, latitude, directory):
         all_detections (list): List of all empty parking spots detected in the image in the format log, lat, width, height, angle, orientation
     """
     output_folder = directory
-    output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
+    output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satellite.png')
     output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
+    print("Satellite Image Path:", output_path_satelite_image)
+    print("Road Image Path:", output_path_road_image)
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -421,7 +422,7 @@ def get_empty_parking_in_image(model, longitude, latitude, directory):
 
     if all_detections:
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
-        empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
+        empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
         empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
         #print(f'Filtered spots after road mask: {len(empty_spots_filtered)}')
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
@@ -448,7 +449,7 @@ def get_predictions_in_image(model, long, lat, directory):
     detections = get_empty_parking_in_image(model, long, lat, directory)
     for x_center, y_center, width, height, angle, orientation in detections:
         x_pixel, y_pixel =  convert_coordinates_to_bounding_box(x_center, y_center, long, lat)
-        empty_detections.append(x_pixel, y_pixel, width, height, angle, orientation)
+        empty_detections.append([x_pixel, y_pixel, width, height, angle, orientation])
 
     return empty_detections
 
@@ -460,19 +461,44 @@ def get_true_labels(long, lat, directory):
     Params:
         long (float): Longitude of the image
         lat (float): Latitude of the image
-        directory(str): Path to the directory containing the images and the labels in json format 
+        directory(str): Path to the directory containing the images and the labels in a txt file in the YOLO format 
 
 
     Returns:
         true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, angle, orientation
     """
-    true_labels_file = f"{directory}/{long}_{lat}_labels.json"
+    true_labels_file = f"{long}_{lat}_satellite.txt"
+    file_path = os.path.join(directory, true_labels_file)
 
-    if not os.path.exists(true_labels_file):
-        raise FileNotFoundError(f"True labels file not found: {true_labels_file}")
+    if not os.path.exists(file_path):
+        print(f"Error: Label file {true_labels_file} does not exist in {directory}.")
+        return []
 
-    with open(true_labels_file, "r") as file:
-        true_labels = json.load(file)
+    true_labels = []
+
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                parts = line.strip().split()
+                
+                if len(parts) != 6:
+                    print(f"Warning: Skipping line due to unexpected format: {line}")
+                    continue
+                
+                try:
+                    x_pixel = float(parts[1])
+                    y_pixel = float(parts[2])
+                    width = float(parts[3])
+                    height = float(parts[4])
+                    angle = float(parts[5])
+                    orientation = parts[6] 
+
+                    true_labels.append([x_pixel, y_pixel, width, height, angle, orientation])
+                except ValueError:
+                    print(f"Warning: Invalid data format in line: {line}")
+                    continue
+    except IOError as e:
+        print(f"Error reading file {true_labels_file}: {e}")
 
     return true_labels
 
@@ -581,7 +607,6 @@ def main(directory, output_file="metrics.csv"):
         output_file (str): Path to save the CSV file ctaining the metrics for each image and the overall metrics
 
     """
-    
     if not os.path.exists(directory):
         print(f"Error: Directory {directory} does not exist.")
         return
@@ -590,7 +615,7 @@ def main(directory, output_file="metrics.csv"):
 
     coordinates = []
     for file in files:
-        if file.endswith(".png"):
+        if file.endswith(".txt"):
             try:
                 long, lat, _ = file.split("_")
                 long, lat = float(long), float(lat)
@@ -694,4 +719,4 @@ def main(directory, output_file="metrics.csv"):
     print(f"Metrics saved to {output_file}")
 
 if __name__ == "__main__":
-    main("test-images")
+    main("test_images")
