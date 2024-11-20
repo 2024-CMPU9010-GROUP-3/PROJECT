@@ -1,11 +1,21 @@
 package handlers
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+	"time"
+)
 
-var IsAlive func() bool
+func isAlive() bool {
+	// if the database doesn't respond within 5s something is wrong
+	ctx, cancel := context.WithTimeout(*dbCtx, time.Duration(5*time.Second))
+	defer cancel()
+	_, err := dbConn.Exec(ctx, ";")
+	return err == nil
+}
 
 func HandleHeartbeat(w http.ResponseWriter, r *http.Request) {
-	if IsAlive == nil || !IsAlive() {
+	if !isAlive() {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("false"))
 		return
