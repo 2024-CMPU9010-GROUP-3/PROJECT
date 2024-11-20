@@ -18,7 +18,6 @@ import { useSession } from '@/app/context/SessionContext';
 // Local components
 import { Slider } from '@/components/ui/slider';
 
-
 // Local utils and configs
 import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
 import { getCookiesAccepted } from '@/lib/cookies';
@@ -33,22 +32,10 @@ import {
   Point,
   CoordinatesForGeoJson,
   ImageConfig,
+  GeoJsonCollection,
 } from '@/lib/interfaces/types';
 
 type SliderProps = React.ComponentProps<typeof Slider>;
-type GeoJsonCollection =
-  | "parking_meter"
-  | "bike_stand"
-  | "public_wifi_access_point"
-  | "library"
-  | "multistorey_car_parking"
-  | "drinking_water_fountain"
-  | "public_toilet"
-  | "bike_sharing_station"
-  | "parking"
-  | "accessible_parking"
-  | "public_bins"
-  | "coach_parking";
 
 const mapElements = [
   { label: "Parking Meter", value: "parking_meter", id: 'custom_parking_meter', path: '/mapicons/parking_meter.png' },

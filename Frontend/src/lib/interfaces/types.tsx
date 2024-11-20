@@ -16,6 +16,21 @@ export interface DistanceScales {
   degreesPerUnit: number[];
 }
 
+// Type for the GeoJsonCollection
+export type GeoJsonCollection =
+  | "parking_meter"
+  | "bike_stand"
+  | "public_wifi_access_point"
+  | "library"
+  | "multistorey_car_parking"
+  | "drinking_water_fountain"
+  | "public_toilet"
+  | "bike_sharing_station"
+  | "parking"
+  | "accessible_parking"
+  | "public_bins"
+  | "coach_parking";
+
 // Interface for the viewport details
 export interface Viewport {
   _frustumPlanes: Record<string, unknown>; // Placeholder for frustum planes
