@@ -1,8 +1,8 @@
 # Users participating in Usability testing
 ## Casual users (remote & controlled)
 * C21459946@mytudublin.ie = Agreed - sent to schedule
-* c24394486@mytudublin.ie = Agreed ? - sent to schedule
-* D22125503@mytudublin.ie = Agreed - sent to schedule
+* c24394486@mytudublin.ie = Waiting
+* D22125503@mytudublin.ie = Agreed - schedule Wednesday 20/11 @19:00
 * debemeh06@gmail.com = Waiting
 * benjohnson0806@gmail.com = Agreed - schedule Friday 22/11 @14:00
 * d20124630@mytudublin.ie = Waiting
