@@ -23,8 +23,8 @@ export const FeatureCard = ({
   return (
     <motion.div variants={item} className={`rounded-2xl p-6 ${className}`}>
       <div className="flex flex-col items-center text-center space-y-4">
-        <div className="p-3 bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl">
-          <Icon className="w-6 h-6 text-blue-600" />
+        <div className="p-3 bg-gradient-to-br from-gray-50 to-gray-200 rounded-xl">
+          <Icon className="w-6 h-6 text-gray-800" />
         </div>
 
         <h3 className="text-xl font-bold text-gray-900">{title}</h3>

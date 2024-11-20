@@ -27,7 +27,7 @@ export const UseCases = () => (
         viewport={{ once: true }}
         className="text-3xl sm:text-4xl font-extrabold text-center mb-16"
       >
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-800">
           Magpie Works for Everyone
         </span>
       </motion.h2>
@@ -60,7 +60,7 @@ export const UseCases = () => (
           <motion.div
             key={section.title}
             variants={item}
-            className="backdrop-blur-sm bg-white/50 p-8 rounded-2xl border border-gray-100 hover:border-blue-100 shadow-sm hover:shadow-md transition-all duration-300"
+            className="backdrop-blur-sm bg-white/50 p-8 rounded-2xl border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
           >
             <h3 className="text-xl font-bold mb-6 text-gray-900">
               {section.title}

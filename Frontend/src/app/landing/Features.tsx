@@ -27,7 +27,7 @@ export const Features = () => (
         className="text-center"
       >
         <h2 className="text-3xl sm:text-4xl font-extrabold">
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-800">
             Features That Make Magpie Unmatched
           </span>
         </h2>
@@ -44,19 +44,19 @@ export const Features = () => (
           icon={MapPin}
           title="Interactive Map Visualization"
           description="Search, filter, and visualize essential services with ease."
-          className="backdrop-blur-sm bg-white/50 border border-gray-100 hover:border-blue-100 shadow-sm hover:shadow-md transition-all duration-300"
+          className="backdrop-blur-sm bg-white/50 border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
         />
         <FeatureCard
           icon={Building}
           title="Smart Search & Analysis"
           description="Get detailed insights and multi-layer data visualizations."
-          className="backdrop-blur-sm bg-white/50 border border-gray-100 hover:border-blue-100 shadow-sm hover:shadow-md transition-all duration-300"
+          className="backdrop-blur-sm bg-white/50 border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
         />
         <FeatureCard
           icon={Calendar}
           title="Professional Tools"
           description="Export reports and analyze historical trends for smarter decisions."
-          className="backdrop-blur-sm bg-white/50 border border-gray-100 hover:border-blue-100 shadow-sm hover:shadow-md transition-all duration-300"
+          className="backdrop-blur-sm bg-white/50 border border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md transition-all duration-300"
         />
       </motion.div>
     </div>
