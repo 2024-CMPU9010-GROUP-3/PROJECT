@@ -105,11 +105,11 @@ const iconMap: Record<string, string> = {
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
-  const [isMarkerVisible, setIsMarkerVisible] = useState<boolean>(false);
   const [coordinates, setCoordinates] = useState<Coordinates>({
     latitude: 0,
     longitude: 0,
   });
+  const [markerIsVisible, setMarkerIsVisible] = useState<boolean>(false);
   const [pointsGeoJson, setPointsGeoJson] = useState<Record<
     string,
     GeoJSON
@@ -211,13 +211,19 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     );
   };
 
+  const [resetSelection, setResetSelection] = useState(false);
+  const handleGlobalAmenitiesFilter = () => {
+    setAmenitiesFilter(() => (resetSelection ? [] : MultiSelectOptions.map((option) => option.value)));
+    setResetSelection((prev) => !prev);
+  }
+
   // Handle map click event
   const handleMapClick = (event: unknown) => {
     const mapClickEvent = event as MapClickEvent; // Type assertion
     if (mapClickEvent.coordinate) {
       const [longitude, latitude] = mapClickEvent.coordinate;
       setCoordinates({ latitude, longitude });
-      setIsMarkerVisible(true);
+      setMarkerIsVisible(true);
     }
   };
 
@@ -377,7 +383,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         startOnborda("general-onboarding");
       }, 1000);
     }
-  },[closeOnborda, sessionToken, startOnborda]);
+  }, [closeOnborda, sessionToken, startOnborda]);
 
   const layerStyle: LayerProps = {
     id: "circle",
@@ -392,12 +398,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Onboarding help button */}
-      <div className="absolute bottom-[5%] left-[1%] z-[999]">
+      <div className="absolute bottom-[5%] left-[1%] z-[999]" id='onboarding-step-3'>
         <div>
           <button
             onClick={() => startOnborda("general-onboarding")}
             className="mt-2 px-4 py-2 bg-white text-gray-800 rounded-full shadow-md"
-            id="onboarding-step-6"
           >
             {"?"}
           </button>
@@ -412,7 +417,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           sm:h-[70vh]
           lg:h-screen relative
         "
-        id="onboarding-st5"
+        id="onboarding-step-2"
       >
         {mapBoxApiKey ? (
           <DeckGL
@@ -430,15 +435,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               onLoad={handleMapLoad}
             >
               {/* Map content remains the same */}
-              <Marker
-                longitude={coordinates?.longitude}
-                latitude={coordinates?.latitude}
-                anchor="center"
-              >
-                <div>
-                  <FaLocationDot size={50} color="FFA15A" />
-                </div>
-              </Marker>
+              {markerIsVisible && (
+                <Marker
+                  longitude={coordinates?.longitude}
+                  latitude={coordinates?.latitude}
+                  anchor="center"
+                >
+                  <div>
+                    <FaLocationDot size={50} color="FFA15A" />
+                  </div>
+                </Marker>
+              )}
               <Marker
                 latitude={currentPositionCords?.latitude}
                 longitude={currentPositionCords?.longitude}
@@ -490,12 +497,14 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         lg:h-screen relative
         lg:p-6
         sm:p-4
-      ">
+      "
+        id="onboarding-step-1"
+      >
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
           {mapBoxApiKey ? (
             <>
               <div className="px-2 sm:px-3 lg:px-4">
-                <div className="flex items-center space-x-4" id="onboarding-step-1">
+                <div className="flex items-center space-x-4">
                   <Image
                     src="/images/BKlogo.svg"
                     alt="BK Logo"
@@ -512,10 +521,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 </div>
               </div>
               {/* Search Radius Card */}
-              <div className="sticky top-0 bg-gray-50 z-10 px-2 sm:px-3 lg:px-4">
+              <div className="sticky top-0 bg-gray-50 px-2 sm:px-3 lg:px-4">
                 <div
                   className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
-                  id="onboarding-step-2"
                 >
                   <div className="space-y-2 sm:space-y-3">
                     <div>
@@ -533,10 +541,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                         {...props}
                       />
                     </div>
-                    <div className="text-sm lg:text-base font-medium text-gray-600">
+                    <div className="text-sm lg:text-base font-medium text-gray-600 flex space-x-2">
                       {sliderValueDisplay * 100} meters
-                    </div>
-                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => {
+                          setCoordinates({ latitude: 0, longitude: 0 });
+                          setMarkerIsVisible(false);
+                        }}
+                        className="px-2 py-1 bg-gray-200 rounded ml-auto"
+                      >
+                        Clear
+                      </button>
                       <button
                         onClick={() => {
                           setSliderValueDisplay(1);
@@ -583,156 +598,96 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           <div className="px-2 sm:px-3 lg:px-4">
             <div
               className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
-              id="onboarding-step-3"
             >
-              {isMarkerVisible ? (
-                <Suspense
-                  fallback={<div className="animate-pulse">Loading...</div>}
-                >
-                  <div>
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Icon
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Amenity
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Count
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Show
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {MultiSelectOptions.map((option) => (
-                          <tr
-                            key={option.value}
-                            className={`${!amenitiesFilter.includes(option.value)
-                              ? 'bg-gray-100'
-                              : ''
-                              }`}
-                          >
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <Image
-                                src={iconMap[option.value]}
-                                alt={option.label}
-                                width={24}
-                                height={24}
-                                className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {option.label}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {amenitiesFilter.includes(option.value)
-                                ? (
-                                  pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                                )?.features?.length > 0
-                                  ? (
-                                    <span className="font-bold">
-                                      {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                        ?.features?.length || 0}
-                                    </span>
-                                  )
-                                  : (
-                                    (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                      ?.features?.length || 0
-                                  )
-                                : '-'}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                              <button onClick={() => handleIconClick(option.value)}>
-                                {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </Suspense>
-              ) : (
+              <Suspense
+                fallback={<div className="animate-pulse">Loading...</div>}
+              >
                 <div>
-                  <div className="opacity-50 pointer-events-none">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Icon
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Amenity
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Count
-                          </th>
-                          <th
-                            scope="col"
-                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                          >
-                            Show
-                          </th>
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Icon
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Amenity
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          Count
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >
+                          <button onClick={() => handleGlobalAmenitiesFilter()}>
+                            {resetSelection ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                          </button>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {MultiSelectOptions.map((option) => (
+                        <tr
+                          key={option.value}
+                          className={`${!amenitiesFilter.includes(option.value)
+                            ? 'bg-gray-100'
+                            : ''
+                            }`}
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <Image
+                              src={iconMap[option.value]}
+                              alt={option.label}
+                              width={24}
+                              height={24}
+                              className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
+                            />
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            {option.label}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {amenitiesFilter.includes(option.value)
+                              ? (
+                                pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                              )?.features?.length > 0
+                                ? (
+                                  <span className="font-bold">
+                                    {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                      ?.features?.length || 0}
+                                  </span>
+                                )
+                                : (
+                                  (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                    ?.features?.length || 0
+                                )
+                              : '-'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                            <button onClick={() => handleIconClick(option.value)}>
+                              {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                            </button>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {MultiSelectOptions.map((option) => (
-                          <tr key={option.value} className="bg-gray-100">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              <Image
-                                src={iconMap[option.value]}
-                                alt={option.label}
-                                width={24}
-                                height={24}
-                                className="w-6 h-6 filter grayscale"
-                              />
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {option.label}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              -
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                              <EyeOff size={16} color="#3e6e96" />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              )}
+              </Suspense>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          </div >
+        </div >
+      </div >
+    </div >
   );
 };
 
