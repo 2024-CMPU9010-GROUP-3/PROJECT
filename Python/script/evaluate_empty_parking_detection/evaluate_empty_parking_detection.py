@@ -400,8 +400,6 @@ def get_empty_parking_in_image(model, longitude, latitude, directory):
     output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
-    print("Satellite Image Path:", output_path_satelite_image)
-    print("Road Image Path:", output_path_road_image)
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -481,7 +479,7 @@ def get_true_labels(long, lat, directory):
             for line in file:
                 parts = line.strip().split()
                 
-                if len(parts) != 6:
+                if len(parts) != 7:
                     print(f"Warning: Skipping line due to unexpected format: {line}")
                     continue
                 
@@ -643,6 +641,8 @@ def main(directory, output_file="metrics.csv"):
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
+        print(predictions)
+        print(true_labels)
 
         iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr = evaluate_predictions(predictions, true_labels)
 
