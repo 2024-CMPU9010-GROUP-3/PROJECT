@@ -392,12 +392,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Onboarding help button */}
-      <div className="absolute bottom-[5%] left-[1%] z-[999]">
+      <div className="absolute bottom-[5%] left-[1%] z-[999]" id='onboarding-step-3'>
         <div>
           <button
             onClick={() => startOnborda("general-onboarding")}
             className="mt-2 px-4 py-2 bg-white text-gray-800 rounded-full shadow-md"
-            id="onboarding-step-6"
           >
             {"?"}
           </button>
@@ -412,7 +411,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           sm:h-[70vh]
           lg:h-screen relative
         "
-        id="onboarding-step-5"
+        id="onboarding-step-2"
       >
         {mapBoxApiKey ? (
           <DeckGL
@@ -491,13 +490,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         lg:p-6
         sm:p-4
       "
-      id="onboarding-step-3"
+      id="onboarding-step-1"
       >
         <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
           {mapBoxApiKey ? (
             <>
               <div className="px-2 sm:px-3 lg:px-4">
-                <div className="flex items-center space-x-4" id="onboarding-step-1">
+                <div className="flex items-center space-x-4">
                   <Image
                     src="/images/BKlogo.svg"
                     alt="BK Logo"
@@ -514,7 +513,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 </div>
               </div>
               {/* Search Radius Card */}
-              <div className="sticky top-0 bg-gray-50 z-10 px-2 sm:px-3 lg:px-4" id="onboarding-step-2">
+              <div className="sticky top-0 bg-gray-50 z-10 px-2 sm:px-3 lg:px-4">
                 <div
                   className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
                 >
