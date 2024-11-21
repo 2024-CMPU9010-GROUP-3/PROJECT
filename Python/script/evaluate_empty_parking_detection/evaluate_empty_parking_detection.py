@@ -440,7 +440,7 @@ def get_predictions_in_image(model, long, lat, directory):
 
 
     Returns:
-            empty_detections (list): List of all the empty parking spots found in the image in the format x, y, width, height, angle, orientation (x and y being pixel values)
+            empty_detections (list): List of all the empty parking spots found in the image in the format x, y, width, height, orientation (x and y being pixel values)
     """
     empty_detections = []
 
@@ -464,7 +464,7 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
         image_height (int): Image height in pixels
 
     Returns:
-        true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, angle, orientation
+        true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, orientation
     """
     true_labels_file = f"{long}_{lat}_satellite.txt"
     file_path = os.path.join(directory, true_labels_file)
@@ -499,6 +499,36 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
         print(f"Error reading file {true_labels_file}: {e}")
 
     return true_labels
+
+def draw_true_labels(true_labels, directory, longitude, latitude):
+    """
+    Draws true labels to visualize the evaluation
+
+    Params:
+        true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, orientation
+        directory(str): Path to the directory containing the images and the labels in a txt file in the YOLO format 
+        longitude (float): Longitude of the image
+        latitude (float): Latitude of the image
+    """
+    image_path = os.path.join(directory, f'{longitude}_{latitude}_bounding_boxes.png')
+    image = cv2.imread(image_path)
+
+    for x_pixel, y_pixel, width, height, orientation in true_labels:
+        
+        if orientation == 'horizontal':
+            x1 = int(x_pixel - width // 2)
+            y1 = int(y_pixel - height // 2)
+            x2 = int(x_pixel + width // 2)
+            y2 = int(y_pixel + height // 2)
+        else: 
+            x1 = int(x_pixel - height // 2)
+            y1 = int(y_pixel - width // 2)
+            x2 = int(x_pixel + height // 2)
+            y2 = int(y_pixel + width // 2)  
+        
+        cv2.rectangle(image, (x1, y1), (x2, y2), (180, 105, 255), 2)
+
+    cv2.imwrite(image_path, image)
 
 def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
     """
@@ -565,15 +595,10 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
                 iou_scores.append(best_iou)
                 matched_labels.add(best_match)
 
-                pred_orientation = pred[4]
-                gt_orientation = true_labels[best_match][4]
-                if pred_orientation == gt_orientation:
+                if pred[4] == true_labels[best_match][4]:
                     orientation_matches += 1
-            else:
-                false_positives += 1  #duplicate prediction
-        else:
-            false_positives += 1  #no match found
 
+    false_positives = len(predictions) - true_positives
     false_negatives = len(true_labels) - len(matched_labels)
 
     precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
@@ -641,6 +666,7 @@ def main(directory, output_file="metrics.csv"):
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
+        draw_true_labels(true_labels, directory, long, lat)
         print(predictions)
         print(true_labels)
 
