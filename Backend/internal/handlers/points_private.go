@@ -19,7 +19,7 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	var point dtos.CreatePointDto
 
-  e := point.Decode(r.Body)
+	e := point.Decode(r.Body)
 	if e != nil {
 		ce, ok := e.(customErrors.CustomError)
 		if !ok {
@@ -64,7 +64,7 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusCreated}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.IntIdDto{Id: pointId}, HttpStatus: http.StatusCreated}, w)
 }
 
 func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
@@ -124,7 +124,7 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.IntIdDto{Id: pointId}, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
@@ -146,5 +146,5 @@ func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.PointIdDto{Id: pointId}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.IntIdDto{Id: pointId}, HttpStatus: http.StatusAccepted}, w)
 }
