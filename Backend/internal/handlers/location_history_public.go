@@ -3,18 +3,72 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/twpayne/go-geom"
+	"github.com/twpayne/go-geom/encoding/geojson"
 )
 
 func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
-	return
+	var userId pgtype.UUID
+
+	userIdPathParam := r.PathValue("id")
+	limitQueryParam := r.URL.Query().Get("limit")
+	offsetQueryParam := r.URL.Query().Get("offset")
+
+	limit, err := strconv.Atoi(limitQueryParam)
+	if err != nil {
+		resp.SendError(customErrors.Parameter.InvalidIntError, w)
+		return
+	}
+
+	offset, err := strconv.Atoi(offsetQueryParam)
+	if err != nil {
+		resp.SendError(customErrors.Parameter.InvalidIntError, w)
+		return
+	}
+
+	err = userId.Scan(userIdPathParam)
+	if err != nil {
+		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		return
+	}
+
+	getLocationHistoryParams := db.GetLocationHistoryParams{
+		Userid: userId,
+		Lim:    int32(limit),
+		Off:    int32(offset),
+	}
+
+	rows, err := db.New(dbConn).GetLocationHistory(*dbCtx, getLocationHistoryParams)
+	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+
+	var entries []dtos.LocationHistoryEntryDto
+
+	for _, row := range rows {
+		longlat, err := geojson.Encode(row.Longlat)
+		if err != nil {
+			resp.SendError(customErrors.Internal.GeoJsonEncodingError.WithCause(err), w)
+			return
+		}
+		dto := dtos.LocationHistoryEntryDto{
+			ID: row.ID, Datecreated: row.Datecreated, Amenitytypes: row.Amenitytypes, Longlat: *longlat, Radius: row.Radius,
+		}
+		entries = append(entries, dto)
+	}
+
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.GetLocationHistoryListDto{HistoryEntries: entries, NextOffset: int32(offset + limit)}, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (handler *LocationHistoryHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
