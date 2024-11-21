@@ -530,7 +530,7 @@ def draw_true_labels(true_labels, directory, longitude, latitude):
 
     cv2.imwrite(image_path, image)
 
-def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
+def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
     """
     Evaluates our predictions in an image with the true labels
     Returns Average IoU, Precision, Recall, F1 score, Orientation Accuracy, 
@@ -614,6 +614,13 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
 
     fpr = false_positives / (false_positives + true_positives) if (false_positives + true_positives) > 0 else 0
     fnr = false_negatives / (false_negatives + true_positives) if (false_negatives + true_positives) > 0 else 0
+
+    print(true_positives, false_positives, false_negatives)
+
+    for labels in true_labels:
+        for pred in predictions:
+            iou = calculate_iou(labels, pred)
+            print(f"True Labels: {labels}, Predictions: {pred}, IoU: {iou}")
 
     return avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr
 
