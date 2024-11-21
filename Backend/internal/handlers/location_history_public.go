@@ -72,7 +72,37 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 }
 
 func (handler *LocationHistoryHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
-	return
+	var idListDto dtos.IntIdListDto
+	var userId pgtype.UUID
+
+	userIdPathParam := r.PathValue("id")
+
+	err := userId.Scan(userIdPathParam)
+	if err != nil {
+		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		return
+	}
+
+	err = idListDto.Decode(r.Body)
+	if err != nil {
+		customError, ok := err.(customErrors.CustomError)
+		if !ok {
+			resp.SendError(customErrors.Internal.UnknownError.WithCause(err), w)
+			return
+		} else {
+			resp.SendError(customError, w)
+			return
+		}
+	}
+
+	err = db.New(dbConn).DeleteLocationHistoryEntries(*dbCtx, idListDto.IdList)
+	if err != nil {
+		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+	resp.SendResponse(dtos.ResponseContentDto{Content: struct {
+		Deleted bool `json:"deleted"`
+	}{Deleted: true}, HttpStatus: http.StatusAccepted}, w)
 }
 
 func (handler *LocationHistoryHandler) HandlePost(w http.ResponseWriter, r *http.Request) {

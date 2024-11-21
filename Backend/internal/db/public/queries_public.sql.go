@@ -89,7 +89,7 @@ func (q *Queries) CreateUserDetails(ctx context.Context, arg CreateUserDetailsPa
 }
 
 const deleteLocationHistoryEntries = `-- name: DeleteLocationHistoryEntries :exec
-DELETE FROM location_history WHERE Id IN ($1::BIGSERIAL[])
+DELETE FROM location_history WHERE Id = ANY($1::BIGINT[])
 `
 
 func (q *Queries) DeleteLocationHistoryEntries(ctx context.Context, ids []int64) error {
