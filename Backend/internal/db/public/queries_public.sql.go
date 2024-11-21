@@ -14,6 +14,32 @@ import (
 	go_geom "github.com/twpayne/go-geom"
 )
 
+const createLocationHistoryEntry = `-- name: CreateLocationHistoryEntry :one
+INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius) VALUES (
+  $1, $2, $3, $4
+)
+RETURNING Id
+`
+
+type CreateLocationHistoryEntryParams struct {
+	Userid       pgtype.UUID    `json:"userid"`
+	Amenitytypes []PointType    `json:"amenitytypes"`
+	Longlat      *go_geom.Point `json:"longlat"`
+	Radius       int32          `json:"radius"`
+}
+
+func (q *Queries) CreateLocationHistoryEntry(ctx context.Context, arg CreateLocationHistoryEntryParams) (int64, error) {
+	row := q.db.QueryRow(ctx, createLocationHistoryEntry,
+		arg.Userid,
+		arg.Amenitytypes,
+		arg.Longlat,
+		arg.Radius,
+	)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO logins (
   Username, Email, PasswordHash
@@ -62,6 +88,15 @@ func (q *Queries) CreateUserDetails(ctx context.Context, arg CreateUserDetailsPa
 	return id, err
 }
 
+const deleteLocationHistoryEntries = `-- name: DeleteLocationHistoryEntries :exec
+DELETE FROM location_history WHERE Id IN ($1::BIGSERIAL[])
+`
+
+func (q *Queries) DeleteLocationHistoryEntries(ctx context.Context, ids []int64) error {
+	_, err := q.db.Exec(ctx, deleteLocationHistoryEntries, ids)
+	return err
+}
+
 const deleteUser = `-- name: DeleteUser :exec
 DELETE FROM logins WHERE Id = $1
 `
@@ -87,6 +122,54 @@ func (q *Queries) EmailExists(ctx context.Context, arg EmailExistsParams) (bool,
 	var exists bool
 	err := row.Scan(&exists)
 	return exists, err
+}
+
+const getLocationHistory = `-- name: GetLocationHistory :many
+SELECT Id, DateCreated, AmenityTypes, LongLat, Radius
+FROM location_history
+WHERE UserId = $1
+ORDER BY Id ASC
+LIMIT $3 OFFSET $2
+`
+
+type GetLocationHistoryParams struct {
+	Userid pgtype.UUID `json:"userid"`
+	Off    int32       `json:"off"`
+	Lim    int32       `json:"lim"`
+}
+
+type GetLocationHistoryRow struct {
+	ID           int64            `json:"id"`
+	Datecreated  pgtype.Timestamp `json:"datecreated"`
+	Amenitytypes []PointType      `json:"amenitytypes"`
+	Longlat      *go_geom.Point   `json:"longlat"`
+	Radius       int32            `json:"radius"`
+}
+
+func (q *Queries) GetLocationHistory(ctx context.Context, arg GetLocationHistoryParams) ([]GetLocationHistoryRow, error) {
+	rows, err := q.db.Query(ctx, getLocationHistory, arg.Userid, arg.Off, arg.Lim)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetLocationHistoryRow
+	for rows.Next() {
+		var i GetLocationHistoryRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Datecreated,
+			&i.Amenitytypes,
+			&i.Longlat,
+			&i.Radius,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getLoginByEmail = `-- name: GetLoginByEmail :one

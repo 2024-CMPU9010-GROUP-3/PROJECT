@@ -87,3 +87,19 @@ WHERE Id = $1;
 
 -- name: DeleteUser :exec
 DELETE FROM logins WHERE Id = $1;
+
+-- name: GetLocationHistory :many
+SELECT Id, DateCreated, AmenityTypes, LongLat, Radius
+FROM location_history
+WHERE UserId = @userid
+ORDER BY Id ASC
+LIMIT @lim OFFSET @off;
+
+-- name: CreateLocationHistoryEntry :one
+INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius) VALUES (
+  @userid, @amenitytypes, @longlat, @radius
+)
+RETURNING Id;
+
+-- name: DeleteLocationHistoryEntries :exec
+DELETE FROM location_history WHERE Id IN (@ids::BIGSERIAL[]);

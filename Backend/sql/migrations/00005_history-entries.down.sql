@@ -1,0 +1,1 @@
+DROP TABLE click_history IF EXISTS;
