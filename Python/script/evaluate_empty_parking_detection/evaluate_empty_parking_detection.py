@@ -205,7 +205,7 @@ def calculate_avg_spot_dimensions(cars):
     avg_width_meters = 3.05
     avg_length_meters = 3.05
 
-    return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
+    return avg_width_meters, avg_length_meters, float(avg_width_pixels), float(avg_length_pixels)
 
 def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, avg_length_pixels, gap_threshold_meters=12, duplicate_threshold_meters=1, overlap_threshold_meters=1.25):
     """
@@ -445,14 +445,14 @@ def get_predictions_in_image(model, long, lat, directory):
     empty_detections = []
 
     detections = get_empty_parking_in_image(model, long, lat, directory)
-    for x_center, y_center, width, height, angle, orientation in detections:
+    for x_center, y_center, width, height, _, orientation in detections:
         x_pixel, y_pixel =  convert_coordinates_to_bounding_box(x_center, y_center, long, lat)
-        empty_detections.append([x_pixel, y_pixel, width, height, angle, orientation])
+        empty_detections.append([x_pixel, y_pixel, width, height, orientation])
 
     return empty_detections
 
 
-def get_true_labels(long, lat, directory):
+def get_true_labels(long, lat, directory, image_width=400, image_height=400):
     """
     Retrieve the true labels for a specific image
 
@@ -460,7 +460,8 @@ def get_true_labels(long, lat, directory):
         long (float): Longitude of the image
         lat (float): Latitude of the image
         directory(str): Path to the directory containing the images and the labels in a txt file in the YOLO format 
-
+        image_width (int): Image width in pixels
+        image_height (int): Image height in pixels
 
     Returns:
         true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, angle, orientation
@@ -479,19 +480,18 @@ def get_true_labels(long, lat, directory):
             for line in file:
                 parts = line.strip().split()
                 
-                if len(parts) != 7:
+                if len(parts) != 6:
                     print(f"Warning: Skipping line due to unexpected format: {line}")
                     continue
                 
                 try:
-                    x_pixel = float(parts[1])
-                    y_pixel = float(parts[2])
-                    width = float(parts[3])
-                    height = float(parts[4])
-                    angle = float(parts[5])
-                    orientation = parts[6] 
+                    x_pixel = float(parts[1])*image_width #the values given by label studio are normalized and we want the denormalized values to compare with the predictions
+                    y_pixel = float(parts[2])*image_height
+                    width = float(parts[3])*image_width
+                    height = float(parts[4])*image_height
+                    orientation = parts[5] 
 
-                    true_labels.append([x_pixel, y_pixel, width, height, angle, orientation])
+                    true_labels.append([x_pixel, y_pixel, width, height, orientation])
                 except ValueError:
                     print(f"Warning: Invalid data format in line: {line}")
                     continue
@@ -517,8 +517,8 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
 
     def calculate_iou(box1, box2):
         """Calculates IoU for two bounding boxes."""
-        x1, y1, w1, h1, _, _ = box1
-        x2, y2, w2, h2, _, _ = box2
+        x1, y1, w1, h1, _ = box1
+        x2, y2, w2, h2, _ = box2
 
         box1_tl = (x1 - w1 / 2, y1 - h1 / 2)
         box1_br = (x1 + w1 / 2, y1 + h1 / 2)
@@ -565,8 +565,8 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.5):
                 iou_scores.append(best_iou)
                 matched_labels.add(best_match)
 
-                pred_orientation = pred[5]
-                gt_orientation = true_labels[best_match][5]
+                pred_orientation = pred[4]
+                gt_orientation = true_labels[best_match][4]
                 if pred_orientation == gt_orientation:
                     orientation_matches += 1
             else:
