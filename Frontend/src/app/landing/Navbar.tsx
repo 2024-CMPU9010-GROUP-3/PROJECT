@@ -1,5 +1,6 @@
 import { Menu } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 export const Navbar = () => (
   <nav className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
@@ -15,21 +16,27 @@ export const Navbar = () => (
           />
         </div>
         <div className="hidden md:flex items-center space-x-8">
-          <a href="#features" className="text-gray-600 hover:text-gray-900">
+          <Link href="#about" className="text-gray-600 hover:text-gray-900">
+            About
+          </Link>
+          <Link href="#features" className="text-gray-600 hover:text-gray-900">
             Features
-          </a>
-          <a href="#use-cases" className="text-gray-600 hover:text-gray-900">
+          </Link>
+          <Link href="#use-cases" className="text-gray-600 hover:text-gray-900">
             Use Cases
-          </a>
-          <a href="#why-magpie" className="text-gray-600 hover:text-gray-900">
-            Why Magpie
-          </a>
-          <a href="#get-started" className="text-gray-600 hover:text-gray-900">
+          </Link>
+          <Link
+            href="#get-started"
+            className="text-gray-600 hover:text-gray-900"
+          >
             Get Started
-          </a>
-          <button className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800">
+          </Link>
+          <Link
+            className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800"
+            href={"/signup"}
+          >
             Sign Up
-          </button>
+          </Link>
         </div>
         <div className="md:hidden">
           <Menu className="h-6 w-6" />

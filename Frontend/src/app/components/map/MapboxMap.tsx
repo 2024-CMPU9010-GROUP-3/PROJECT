@@ -1,30 +1,29 @@
 "use client";
 
 // React core
-import React, { Suspense, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 
 // Third-party packages
-import DeckGL from '@deck.gl/react';
-import { GeoJSON } from 'geojson';
-import { FaLocationDot } from 'react-icons/fa6';
-import { Grid } from 'react-loader-spinner';
-import Map, { Layer, LayerProps, Marker, Source } from 'react-map-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { Eye, EyeOff } from 'lucide-react';
-import Image from 'next/image';
+import DeckGL from "@deck.gl/react";
+import { GeoJSON } from "geojson";
+import { FaLocationDot } from "react-icons/fa6";
+import { Grid } from "react-loader-spinner";
+import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 import { useOnborda } from "onborda";
-import { useSession } from '@/app/context/SessionContext';
+import { useSession } from "@/app/context/SessionContext";
 
 // Local components
-import { Slider } from '@/components/ui/slider';
-
+import { Slider } from "@/components/ui/slider";
 
 // Local utils and configs
-import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
-import { getCookiesAccepted } from '@/lib/cookies';
-import { cn } from '@/lib/utils';
-import packageJson from '../../../../package.json';
-import MapSources from './utils/MapSources';
+import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
+import { getCookiesAccepted } from "@/lib/cookies";
+import { cn } from "@/lib/utils";
+import packageJson from "../../../../package.json";
+import MapSources from "./utils/MapSources";
 
 // Types and interfaces
 import {
@@ -33,7 +32,7 @@ import {
   Point,
   CoordinatesForGeoJson,
   ImageConfig,
-} from '@/lib/interfaces/types';
+} from "@/lib/interfaces/types";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 type GeoJsonCollection =
@@ -70,37 +69,37 @@ const MultiSelectOptions: Option[] = [
   { label: "Coach Parking", value: "coach_parking" },
 ];
 
-// Array of image paths to load 
+// Array of image paths to load
 const IMAGES: ImageConfig[] = [
-  { id: 'custom_parking', path: '/mapicons/parking.png' },
-  { id: 'custom_parking_meter', path: '/mapicons/parking_meter.png' },
-  { id: 'custom_bicycle', path: '/mapicons/bicycle.png' },
-  { id: 'bicycle_share', path: '/mapicons/bicycle_share.png' },
-  { id: 'custom_bicycle_share', path: '/mapicons/bicycle_share.png' },
-  { id: 'custom_accessible_parking', path: '/mapicons/accessibleParking.png' },
-  { id: 'custom_public_bins', path: '/mapicons/bin.png' },
-  { id: 'custom_public_wifi', path: '/mapicons/wifi.png' },
-  { id: 'custom_bus', path: '/mapicons/bus.png' },
-  { id: 'custom_library', path: '/mapicons/library.png' },
-  { id: 'custom_car_parks', path: '/mapicons/car_park.png' },
-  { id: 'custom_water_fountain', path: '/mapicons/water_fountain.png' },
-  { id: 'custom_toilet', path: '/mapicons/toilet.png' },
+  { id: "custom_parking", path: "/mapicons/parking.png" },
+  { id: "custom_parking_meter", path: "/mapicons/parking_meter.png" },
+  { id: "custom_bicycle", path: "/mapicons/bicycle.png" },
+  { id: "bicycle_share", path: "/mapicons/bicycle_share.png" },
+  { id: "custom_bicycle_share", path: "/mapicons/bicycle_share.png" },
+  { id: "custom_accessible_parking", path: "/mapicons/accessibleParking.png" },
+  { id: "custom_public_bins", path: "/mapicons/bin.png" },
+  { id: "custom_public_wifi", path: "/mapicons/wifi.png" },
+  { id: "custom_bus", path: "/mapicons/bus.png" },
+  { id: "custom_library", path: "/mapicons/library.png" },
+  { id: "custom_car_parks", path: "/mapicons/car_park.png" },
+  { id: "custom_water_fountain", path: "/mapicons/water_fountain.png" },
+  { id: "custom_toilet", path: "/mapicons/toilet.png" },
 ];
 
 // Array of icon paths to load
 const iconMap: Record<string, string> = {
-  parking_meter: '/mapicons/parking_meter.png',
-  bike_stand: '/mapicons/bicycle.png',
-  public_wifi_access_point: '/mapicons/wifi.png',
-  library: '/mapicons/library.png',
-  multistorey_car_parking: '/mapicons/car_park.png',
-  drinking_water_fountain: '/mapicons/water_fountain.png',
-  public_toilet: '/mapicons/toilet.png',
-  bike_sharing_station: '/mapicons/bicycle_share.png',
-  parking: '/mapicons/parking.png',
-  accessible_parking: '/mapicons/accessibleParking.png',
-  public_bins: '/mapicons/bin.png',
-  coach_parking: '/mapicons/bus.png',
+  parking_meter: "/mapicons/parking_meter.png",
+  bike_stand: "/mapicons/bicycle.png",
+  public_wifi_access_point: "/mapicons/wifi.png",
+  library: "/mapicons/library.png",
+  multistorey_car_parking: "/mapicons/car_park.png",
+  drinking_water_fountain: "/mapicons/water_fountain.png",
+  public_toilet: "/mapicons/toilet.png",
+  bike_sharing_station: "/mapicons/bicycle_share.png",
+  parking: "/mapicons/parking.png",
+  accessible_parking: "/mapicons/accessibleParking.png",
+  public_bins: "/mapicons/bin.png",
+  coach_parking: "/mapicons/bus.png",
 };
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
@@ -153,7 +152,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(markerCoords[1] * (Math.PI / 180));
+          Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -179,7 +178,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           if (error) reject(error);
           if (image) {
             map.addImage(config.id, image);
-            setImagesLoaded(prev => ({ ...prev, [config.id]: true }));
+            setImagesLoaded((prev) => ({ ...prev, [config.id]: true }));
           }
           resolve();
         });
@@ -189,33 +188,39 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     try {
       await Promise.all(IMAGES.map(loadImage));
     } catch (error) {
-      console.error('Error loading images:', error);
+      console.error("Error loading images:", error);
     }
   };
 
   const handleMapLoad = (event: MapLoadEvent) => {
     const map = event.target;
 
-    loadImages(map).catch(error => console.error('Error loading images:', error));
+    loadImages(map).catch((error) =>
+      console.error("Error loading images:", error)
+    );
   };
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>(() =>
     MultiSelectOptions.map((option) => option.value)
   );
 
-  const { sessionToken } = useSession()
+  const { sessionToken } = useSession();
 
   const handleIconClick = (value: string) => {
     setAmenitiesFilter((prev) =>
-      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
+      prev.includes(value)
+        ? prev.filter((item) => item !== value)
+        : [...prev, value]
     );
   };
 
   const [resetSelection, setResetSelection] = useState(false);
   const handleGlobalAmenitiesFilter = () => {
-    setAmenitiesFilter(() => (resetSelection ? [] : MultiSelectOptions.map((option) => option.value)));
+    setAmenitiesFilter(() =>
+      resetSelection ? [] : MultiSelectOptions.map((option) => option.value)
+    );
     setResetSelection((prev) => !prev);
-  }
+  };
 
   // Handle map click event
   const handleMapClick = (event: unknown) => {
@@ -276,14 +281,15 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${
+        sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
         credentials: "include",
         headers: {
           authorization: "Bearer " + sessionToken,
-        }
+        },
       }
     );
 
@@ -309,7 +315,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(markerCoords[1] * (Math.PI / 180));
+          Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -368,8 +374,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   // Get current position
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(success, error, options);
-
-  },);
+  });
 
   useEffect(() => {
     closeOnborda();
@@ -398,7 +403,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Onboarding help button */}
-      <div className="absolute bottom-[5%] left-[1%] z-[999]" id='onboarding-step-3'>
+      <div
+        className="absolute bottom-[5%] left-[1%] z-[999]"
+        id="onboarding-step-3"
+      >
         <div>
           <button
             onClick={() => startOnborda("general-onboarding")}
@@ -415,7 +423,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           h-full
           relative
           sm:h-[70vh]
-          lg:h-screen relative
+          lg:h-screen
         "
         id="onboarding-step-2"
       >
@@ -488,7 +496,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         )}
       </div>
       {/* Sidebar - Full width on mobile, scrollable */}
-      <div className="
+      <div
+        className="
         flex-none
         p-3
         bg-gray-50 
@@ -514,7 +523,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   />
                   <div>
                     <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
-                      Magpie Dashboard: <span className="text-[#3e6e96]">v{version}</span>
+                      Magpie Dashboard:{" "}
+                      <span className="text-[#3e6e96]">v{version}</span>
                     </h1>
                     <span className="italic">Services at a glance</span>
                   </div>
@@ -522,9 +532,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               </div>
               {/* Search Radius Card */}
               <div className="sticky top-0 bg-gray-50 px-2 sm:px-3 lg:px-4">
-                <div
-                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
-                >
+                <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4">
                   <div className="space-y-2 sm:space-y-3">
                     <div>
                       <label className="text-sm lg:text-base font-medium text-gray-700 mb-2 block">
@@ -532,7 +540,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                       </label>
                       <Slider
                         value={[sliderValueDisplay]}
-                        onValueChange={(value) => setSliderValueDisplay(value[0])}
+                        onValueChange={(value) =>
+                          setSliderValueDisplay(value[0])
+                        }
                         onValueCommit={(value) => setSliderValue(value[0])}
                         defaultValue={[sliderValue]}
                         max={100}
@@ -596,9 +606,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           ) : null}
           {/* Combined Data and Filter Options Card */}
           <div className="px-2 sm:px-3 lg:px-4">
-            <div
-              className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
-            >
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
               <Suspense
                 fallback={<div className="animate-pulse">Loading...</div>}
               >
@@ -629,7 +637,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                           className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                         >
                           <button onClick={() => handleGlobalAmenitiesFilter()}>
-                            {resetSelection ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                            {resetSelection ? (
+                              <Eye size={16} color="#3e6e96" />
+                            ) : (
+                              <EyeOff size={16} color="#3e6e96" />
+                            )}
                           </button>
                         </th>
                       </tr>
@@ -638,10 +650,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                       {MultiSelectOptions.map((option) => (
                         <tr
                           key={option.value}
-                          className={`${!amenitiesFilter.includes(option.value)
-                            ? 'bg-gray-100'
-                            : ''
-                            }`}
+                          className={`${
+                            !amenitiesFilter.includes(option.value)
+                              ? "bg-gray-100"
+                              : ""
+                          }`}
                         >
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <Image
@@ -649,32 +662,50 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                               alt={option.label}
                               width={24}
                               height={24}
-                              className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
+                              className={`w-6 h-6 ${
+                                !amenitiesFilter.includes(option.value)
+                                  ? "filter grayscale"
+                                  : ""
+                              }`}
                             />
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {option.label}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {amenitiesFilter.includes(option.value)
-                              ? (
-                                pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
-                              )?.features?.length > 0
-                                ? (
-                                  <span className="font-bold">
-                                    {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                      ?.features?.length || 0}
-                                  </span>
-                                )
-                                : (
-                                  (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
-                                    ?.features?.length || 0
-                                )
-                              : '-'}
+                            {amenitiesFilter.includes(option.value) ? (
+                              (
+                                pointsGeoJson?.[
+                                  option.value
+                                ] as GeoJSON.FeatureCollection
+                              )?.features?.length > 0 ? (
+                                <span className="font-bold">
+                                  {(
+                                    pointsGeoJson?.[
+                                      option.value
+                                    ] as GeoJSON.FeatureCollection
+                                  )?.features?.length || 0}
+                                </span>
+                              ) : (
+                                (
+                                  pointsGeoJson?.[
+                                    option.value
+                                  ] as GeoJSON.FeatureCollection
+                                )?.features?.length || 0
+                              )
+                            ) : (
+                              "-"
+                            )}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                            <button onClick={() => handleIconClick(option.value)}>
-                              {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                            <button
+                              onClick={() => handleIconClick(option.value)}
+                            >
+                              {amenitiesFilter.includes(option.value) ? (
+                                <Eye size={16} color="#3e6e96" />
+                              ) : (
+                                <EyeOff size={16} color="#3e6e96" />
+                              )}
                             </button>
                           </td>
                         </tr>
@@ -684,12 +715,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                 </div>
               </Suspense>
             </div>
-          </div >
-        </div >
-      </div >
-    </div >
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
 export default LocationAggregatorMap;
-

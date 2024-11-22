@@ -2,6 +2,7 @@
 
 import { ArrowRight, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 const HeroSection = () => {
   return (
@@ -35,7 +36,7 @@ const HeroSection = () => {
               whileTap={{ scale: 0.98 }}
               className="group px-8 py-3 bg-gradient-to-r from-black to-gray-800 text-white rounded-xl font-medium text-lg flex items-center justify-center hover:shadow-lg transition-all duration-200"
             >
-              Explore the Map
+              <Link href={"/"}>Get Started</Link>
               <MapPin className="ml-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
             </motion.button>
 

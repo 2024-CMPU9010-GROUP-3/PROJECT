@@ -15,7 +15,10 @@ const container = {
 };
 
 export const Features = () => (
-  <div className="py-24 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+  <div
+    className="py-24 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden"
+    id="features"
+  >
     <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
 
     <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

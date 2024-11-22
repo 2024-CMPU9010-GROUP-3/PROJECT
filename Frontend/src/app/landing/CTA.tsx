@@ -2,9 +2,13 @@
 
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export const CTA = () => (
-  <div className="bg-gradient-to-r from-black to-gray-800 relative overflow-hidden">
+  <div
+    className="bg-gradient-to-r from-black to-gray-800 relative overflow-hidden"
+    id="get-started"
+  >
     <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
 
     <div className="relative max-w-6xl mx-auto py-16 px-4 sm:px-6 lg:py-20 lg:px-8 lg:flex lg:items-center lg:justify-between">
@@ -36,7 +40,7 @@ export const CTA = () => (
           whileTap={{ scale: 0.98 }}
           className="group px-8 py-3 bg-white rounded-xl font-medium text-lg flex items-center justify-center hover:shadow-lg transition-all duration-200 text-black"
         >
-          Sign Up Now
+          <Link href={"/signup"}>Sign Up Now</Link>
           <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
         </motion.button>
       </motion.div>

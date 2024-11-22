@@ -17,7 +17,10 @@ const item = {
 };
 
 export const UseCases = () => (
-  <div className="py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
+  <div
+    className="py-24 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden"
+    id="use-cases"
+  >
     <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
 
     <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
