@@ -9,7 +9,7 @@
 * C24329646@mytudublin.ie = Agreed - schedule Thursday 21/11 @14:00
 
 ## Professional users (remote & uncontrolled)
-* Damian = Agreed - sent to schedule
+* Damian = Agreed - schedule Thursday 21/11 @16:00
 * Brendan = Agreed - schedule Wednesday 20/11 @11:30
 * andrej.malik@stwarchitects.com = sent to schedule
 * bryan.boyle@ucc.ie = Agreed - sent to schedule
