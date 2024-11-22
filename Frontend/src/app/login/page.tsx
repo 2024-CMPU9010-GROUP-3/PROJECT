@@ -40,14 +40,7 @@ export default function LoginPage() {
               href="/terms"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Terms of Service
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              Privacy Policy
+              Terms and Privacy Policy
             </Link>
             .
           </p>
@@ -78,14 +71,7 @@ export default function LoginPage() {
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Terms of Service
-              </Link>{" "}
-              and{" "}
-              <Link
-                href="/privacy"
-                className="underline underline-offset-4 hover:text-primary"
-              >
-                Privacy Policy
+                Terms and Privacy Policy
               </Link>
               .
             </p>
