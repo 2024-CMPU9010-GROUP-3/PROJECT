@@ -37,7 +37,7 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   public-service:
-    image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.10.0@sha256:198cbd95f823d3f7ded0646c4710e3a8267e1008c1fd43920cfe2a1dd31861c3
+    image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.11.0@sha256:33fb241367966f74b70a2cc4ed72083d26dacf3897809a44a73655f2d5df8308
     container_name: public-backend
     depends_on:
       postgis-service:
@@ -54,7 +54,7 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   frontend-service:
-    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.8.0@sha256:3d659ae1055cd3ac026648b1137a832e63841cc939875e7151d1f0bd31d66725
+    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.8.0@sha256:6795b3ba7d972d71b4cd2d56a61a5422d132a938d0530cb4f16dfc44496564da
     container_name: frontend
     depends_on:
       - private-service
