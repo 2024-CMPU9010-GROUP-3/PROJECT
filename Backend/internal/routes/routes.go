@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/handlers"
 )
 
 type route struct {
@@ -16,6 +18,7 @@ var v1Router = http.NewServeMux()
 
 func init() {
 	Router.Handle("/v1/", http.StripPrefix("/v1", v1Router))
+	Router.HandleFunc("GET /heartbeat", handlers.HandleHeartbeat)
 }
 
 func AddRoute(r route) {
