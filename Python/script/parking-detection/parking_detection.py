@@ -429,10 +429,16 @@ def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_
     for spot, rotation, alignment in empty_spots:
         x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
 
-        x_min = int(x_center - avg_spot_width / 2)
-        x_max = int(x_center + avg_spot_width / 2)
-        y_min = int(y_center - avg_spot_length / 2)
-        y_max = int(y_center + avg_spot_length / 2)
+        if alignment == 'horizontal':
+            x_min = int(x_center - avg_spot_width / 2)
+            x_max = int(x_center + avg_spot_width / 2)
+            y_min = int(y_center - avg_spot_length / 2)
+            y_max = int(y_center + avg_spot_length / 2)
+        else:
+            x_min = int(x_center - avg_spot_length / 2)
+            x_max = int(x_center + avg_spot_length / 2)
+            y_min = int(y_center - avg_spot_width / 2)
+            y_max = int(y_center + avg_spot_width / 2)
 
         car_region = road_mask[y_min:y_max, x_min:x_max]
         road_pixels = cv2.countNonZero(car_region)
