@@ -474,6 +474,54 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
         return []
 
     true_labels = []
+
+    try:
+        with open(file_path, 'r') as file:
+            for line in file:
+                parts = line.strip().split()
+                
+                if len(parts) != 6:
+                    print(f"Warning: Skipping line due to unexpected format: {line}")
+                    continue
+                
+                try:
+                    x_pixel = float(parts[1])*image_width #the values given by label studio are normalized and we want the denormalized values to compare with the predictions
+                    y_pixel = float(parts[2])*image_height
+                    width = float(parts[3])*image_width
+                    height = float(parts[4])*image_height
+                    orientation = float(parts[5])
+                    true_labels.append([x_pixel, y_pixel, width, height, orientation])
+                except ValueError:
+                    print(f"Warning: Invalid data format in line: {line}")
+                    continue
+    except IOError as e:
+        print(f"Error reading file {true_labels_file}: {e}")
+
+    return true_labels
+
+def get_true_labels_automatic_orientation_labelling(long, lat, directory, image_width=400, image_height=400):
+    """
+    Retrieve the true labels for a specific image.
+    The orientation is automatically labelled and the writen in the file
+
+    Params:
+        long (float): Longitude of the image
+        lat (float): Latitude of the image
+        directory(str): Path to the directory containing the images and the labels in a txt file in the YOLO format 
+        image_width (int): Image width in pixels
+        image_height (int): Image height in pixels
+
+    Returns:
+        true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, orientation
+    """
+    true_labels_file = f"{long}_{lat}_satellite.txt"
+    file_path = os.path.join(directory, true_labels_file)
+
+    if not os.path.exists(file_path):
+        print(f"Error: Label file {true_labels_file} does not exist in {directory}.")
+        return []
+
+    true_labels = []
     updated_lines = []
 
     try:
@@ -507,10 +555,9 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
             file.write("\n".join(updated_lines))
     except IOError as e:
         print(f"Error reading file {true_labels_file}: {e}")
-
-    
-
+        
     return true_labels
+
 
 def draw_true_labels(true_labels, directory, longitude, latitude):
     """
@@ -525,19 +572,13 @@ def draw_true_labels(true_labels, directory, longitude, latitude):
     image_path = os.path.join(directory, f'{longitude}_{latitude}_bounding_boxes.png')
     image = cv2.imread(image_path)
 
-    for x_pixel, y_pixel, width, height, orientation in true_labels:
+    for x_pixel, y_pixel, width, height, _ in true_labels:#here we don't need the orientation as in the labelling the width and height are correct (but in the model predictions width is almost always larger than height)
         
-        if orientation == 'horizontal':
-            x1 = int(x_pixel - width // 2)
-            y1 = int(y_pixel - height // 2)
-            x2 = int(x_pixel + width // 2)
-            y2 = int(y_pixel + height // 2)
-        else: 
-            x1 = int(x_pixel - height // 2)
-            y1 = int(y_pixel - width // 2)
-            x2 = int(x_pixel + height // 2)
-            y2 = int(y_pixel + width // 2)  
-        
+        x1 = int(x_pixel - width // 2)
+        y1 = int(y_pixel - height // 2)
+        x2 = int(x_pixel + width // 2)            
+        y2 = int(y_pixel + height // 2)
+
         cv2.rectangle(image, (x1, y1), (x2, y2), (180, 105, 255), 2)
 
     cv2.imwrite(image_path, image)
