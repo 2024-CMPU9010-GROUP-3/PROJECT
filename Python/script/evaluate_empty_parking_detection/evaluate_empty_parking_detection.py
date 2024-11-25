@@ -480,7 +480,7 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
             for line in file:
                 parts = line.strip().split()
                 
-                if len(parts) != 6:
+                if len(parts) != 5:
                     print(f"Warning: Skipping line due to unexpected format: {line}")
                     continue
                 
@@ -489,8 +489,10 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
                     y_pixel = float(parts[2])*image_height
                     width = float(parts[3])*image_width
                     height = float(parts[4])*image_height
-                    orientation = parts[5] 
-
+                    if width >= height:
+                        orientation = "horizontal"
+                    else:
+                        orientation = "vertical"
                     true_labels.append([x_pixel, y_pixel, width, height, orientation])
                 except ValueError:
                     print(f"Warning: Invalid data format in line: {line}")
@@ -752,4 +754,4 @@ def main(directory, output_file="metrics.csv"):
     print(f"Metrics saved to {output_file}")
 
 if __name__ == "__main__":
-    main("test_images")
+    main("test_images_subset")
