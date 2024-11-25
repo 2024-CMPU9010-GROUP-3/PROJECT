@@ -50,9 +50,10 @@
 
         \vspace{1cm}
         MSc in Computing \\
-        \vspace{0.5cm}
+        Advanced Software Development \rule[-1mm]{1.5pt}{1.1em} Data Science \\
+        \vspace{1cm}
         Team Project \\
-        \vspace{0.5cm}
+        \vspace{1cm}
         Final Report \\
 
         \vspace{2.5cm}
@@ -66,6 +67,7 @@
         \Large
         Group 3 \\
         \vspace{0.25cm}
+        \setlength\arrayrulewidth{1.5pt}
         \begin{tabular}{l l | l l}
           Saul Burgess & C19349793 & Andreas Kraus & D23125112 \\
           Kaustubh Trivedi & D23124940 & Jessica Fornetti & D23124588 \\
@@ -80,31 +82,37 @@
   \end{center}
 \end{titlepage}
 
+\input{tables.tex}
+
 %----------------------------------------------------------------------------------------
 %	ARTICLE CONTENTS
 %----------------------------------------------------------------------------------------
 
-% \section{User Scenario:}
-% \input{pages/user_scenario.tex}
+\section{Introduction}
+\input{pages/introduction.tex}
 
-% \section{Technical Problem:}
-% \input{pages/tech_problem.tex}
+\section{User Scenario}
+\input{pages/user_scenario.tex}
 
-% \section{Technical Solution:}
-% \input{pages/tech_solution.tex}
+\section{Technical Problem}
+\input{pages/technical_problem.tex}
 
-% \section{Evaluation:}
-% \input{pages/evaluation.tex}
+\section{Technical Solution}
+\input{pages/technical_solution.tex}
 
-% \section{Planning \& Conclusion:}
-% \input{pages/plan.tex}
+\section{Evaluation}
+\input{pages/evaluation.tex}
 
-% \input{pages/key_refs_resources.tex}
+\section{Future Work}
+\input{pages/future_work.tex}
 
-\begin{figure*}[h]
-	\printbibliography[]
+\section{Conclusion}
+\input{pages/conclusion.tex}
 
-	\listoffigures
-\end{figure*}
+\section{Appendix}
+\input{pages/appendix.tex}
+
+\onecolumn{}
+\printbibliography[]
 
 \end{document}

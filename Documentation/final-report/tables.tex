@@ -1,0 +1,32 @@
+\onecolumn{}
+\pagenumbering{Roman}
+\newgeometry{left=5cm,top=2cm,right=5cm,bottom=0.1cm}
+
+\makeatletter{}
+\renewcommand{\tableofcontents}{
+  \section*{Table of Contents} % Custom title
+  \@starttoc{toc}
+  }
+\makeatother{}
+
+\cleardoublepage{}
+\thispagestyle{plain}
+\onecolumn{}
+\addcontentsline{toc}{section}{Table of Contents}
+\tableofcontents{}
+
+\cleardoublepage{}
+\thispagestyle{empty}
+\addcontentsline{toc}{section}{List of Figures}
+\listoffigures{}
+
+\cleardoublepage{}
+\thispagestyle{empty}
+\addcontentsline{toc}{section}{List of Tables}
+\listoftables{}
+
+\cleardoublepage{}
+
+\restoregeometry{}
+\pagenumbering{arabic}
+\twocolumn{}

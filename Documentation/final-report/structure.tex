@@ -133,6 +133,29 @@
 	\vspace{20pt} % Space after the title section
 }
 
+
+
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%----------------------------------------------------------------------------------------
+
+\usepackage{tocloft}
+
+
+
+% fonts for TOC
+\renewcommand{\cfttoctitlefont}{\fontfamily{phv}\selectfont\Large\bfseries}
+\renewcommand{\cftsecfont}{\fontfamily{phv}\selectfont\bfseries}
+\renewcommand{\cftsecpagefont}{\fontfamily{phv}\selectfont}
+\renewcommand{\cftsubsecfont}{\fontfamily{phv}\selectfont\itshape}
+\renewcommand{\cftsubsecpagefont}{\fontfamily{phv}\selectfont}
+
+\renewcommand{\cftloftitlefont}{\fontfamily{phv}\selectfont\Large\bfseries} % List of Figures title
+\renewcommand{\cftlottitlefont}{\fontfamily{phv}\selectfont\Large\bfseries} % List of Tables title
+
+\setcounter{tocdepth}{3}
+
+
 %----------------------------------------------------------------------------------------
 %	ABSTRACT
 %----------------------------------------------------------------------------------------
