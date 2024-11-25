@@ -672,7 +672,7 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
     fpr = false_positives / (false_positives + true_positives) if (false_positives + true_positives) > 0 else 0
     fnr = false_negatives / (false_negatives + true_positives) if (false_negatives + true_positives) > 0 else 0
 
-    print(true_positives, false_positives, false_negatives)
+    #print(true_positives, false_positives, false_negatives)
 
     #for labels in true_labels:
     #    for pred in predictions:
@@ -731,8 +731,8 @@ def main(directory, output_file="metrics.csv"):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
         draw_true_labels(true_labels, directory, long, lat)
-        print(predictions)
-        print(true_labels)
+        #print(predictions)
+        #print(true_labels)
 
         iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr = evaluate_predictions(predictions, true_labels)
 
