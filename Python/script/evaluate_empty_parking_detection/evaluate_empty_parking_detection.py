@@ -474,6 +474,7 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
         return []
 
     true_labels = []
+    updated_lines = []
 
     try:
         with open(file_path, 'r') as file:
@@ -494,11 +495,20 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
                     else:
                         orientation = "vertical"
                     true_labels.append([x_pixel, y_pixel, width, height, orientation])
+
+                    updated_line = f"{parts[0]} {parts[1]} {parts[2]} {parts[3]} {parts[4]} {orientation}"
+                    updated_lines.append(updated_line)
+
                 except ValueError:
                     print(f"Warning: Invalid data format in line: {line}")
                     continue
+
+        with open(file_path, 'w') as file:
+            file.write("\n".join(updated_lines))
     except IOError as e:
         print(f"Error reading file {true_labels_file}: {e}")
+
+    
 
     return true_labels
 
@@ -676,7 +686,7 @@ def main(directory, output_file="metrics.csv"):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
         draw_true_labels(true_labels, directory, long, lat)
-        print(predictions)
+        #print(predictions)
         print(true_labels)
 
         iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr = evaluate_predictions(predictions, true_labels)
@@ -754,4 +764,4 @@ def main(directory, output_file="metrics.csv"):
     print(f"Metrics saved to {output_file}")
 
 if __name__ == "__main__":
-    main("test_images_subset")
+    main("all_test_images")
