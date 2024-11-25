@@ -67,6 +67,15 @@ func (ns NullPointType) Value() (driver.Value, error) {
 	return string(ns.PointType), nil
 }
 
+type LocationHistory struct {
+	ID           int64            `json:"id"`
+	Userid       pgtype.UUID      `json:"userid"`
+	Datecreated  pgtype.Timestamp `json:"datecreated"`
+	Amenitytypes []PointType      `json:"amenitytypes"`
+	Longlat      *go_geom.Point   `json:"longlat"`
+	Radius       int32            `json:"radius"`
+}
+
 type Login struct {
 	ID           pgtype.UUID `json:"id"`
 	Username     string      `json:"username"`
