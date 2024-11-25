@@ -489,7 +489,7 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
                     y_pixel = float(parts[2])*image_height
                     width = float(parts[3])*image_width
                     height = float(parts[4])*image_height
-                    orientation = float(parts[5])
+                    orientation = parts[5]
                     true_labels.append([x_pixel, y_pixel, width, height, orientation])
                 except ValueError:
                     print(f"Warning: Invalid data format in line: {line}")
@@ -555,7 +555,7 @@ def get_true_labels_automatic_orientation_labelling(long, lat, directory, image_
             file.write("\n".join(updated_lines))
     except IOError as e:
         print(f"Error reading file {true_labels_file}: {e}")
-        
+
     return true_labels
 
 
@@ -599,9 +599,13 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
     """
 
     def calculate_iou(box1, box2):
-        """Calculates IoU for two bounding boxes."""
-        x1, y1, w1, h1, _ = box1
+        """Calculates IoU for two bounding boxes.
+        Box1 is the predictions and box2 is the true label"""
+        x1, y1, w1, h1, orientation = box1
         x2, y2, w2, h2, _ = box2
+
+        if orientation == 'vertical':
+            w1, h1 = h1, w1  #swap width and height in the vertical case for the model predictions
 
         box1_tl = (x1 - w1 / 2, y1 - h1 / 2)
         box1_br = (x1 + w1 / 2, y1 + h1 / 2)
@@ -614,7 +618,7 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
         y_bottom = min(box1_br[1], box2_br[1])
 
         if x_right < x_left or y_bottom < y_top:
-            return 0  #As there would be no overlap
+            return 0  #no overlap
 
         intersection_area = (x_right - x_left) * (y_bottom - y_top)
 
@@ -670,10 +674,10 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
 
     print(true_positives, false_positives, false_negatives)
 
-    for labels in true_labels:
-        for pred in predictions:
-            iou = calculate_iou(labels, pred)
-            print(f"True Labels: {labels}, Predictions: {pred}, IoU: {iou}")
+    #for labels in true_labels:
+    #    for pred in predictions:
+    #        iou = calculate_iou(labels, pred)
+    #        print(f"True Labels: {labels}, Predictions: {pred}, IoU: {iou}")
 
     return avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr
 
@@ -727,7 +731,7 @@ def main(directory, output_file="metrics.csv"):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
         draw_true_labels(true_labels, directory, long, lat)
-        #print(predictions)
+        print(predictions)
         print(true_labels)
 
         iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr = evaluate_predictions(predictions, true_labels)
