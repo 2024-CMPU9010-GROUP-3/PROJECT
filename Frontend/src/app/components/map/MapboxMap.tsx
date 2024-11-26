@@ -5,10 +5,10 @@ import React, { Suspense, useEffect, useMemo, useState } from 'react';
 
 // Third-party packages
 import DeckGL from '@deck.gl/react';
-import { GeoJSON } from 'geojson';
+import { Feature, GeoJSON } from 'geojson';
 import { FaLocationDot } from 'react-icons/fa6';
 import { Grid } from 'react-loader-spinner';
-import Map, { Layer, LayerProps, Marker, Source } from 'react-map-gl';
+import Map, { Layer, LayerProps, Marker, Popup, Source } from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
@@ -20,6 +20,7 @@ import { Slider } from '@/components/ui/slider';
 
 // Local utils and configs
 import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
+import { isWithin20Meters, haversineDistance } from './utils/MeasurementUtils';
 import { getCookiesAccepted } from '@/lib/cookies';
 import { cn } from '@/lib/utils';
 import packageJson from '../../../../package.json';
@@ -33,6 +34,7 @@ import {
   CoordinatesForGeoJson,
   ImageConfig,
   GeoJsonCollection,
+  MapHoverEvent,
 } from '@/lib/interfaces/types';
 
 type SliderProps = React.ComponentProps<typeof Slider>;
@@ -63,7 +65,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     string,
     GeoJSON
   > | null>(null);
-  // const [markerSquareSize, setMarkerSquareSize] = useState<number>(0.027);
   const [currentPositionCords, setCurrentPositionCords] = useState<Coordinates>(
     { latitude: 0, longitude: 0 }
   );
@@ -73,6 +74,15 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     () => [coordinates?.longitude, coordinates?.latitude],
     [coordinates]
   );
+
+  // Hover State
+  const [hoverEntryTimeout, setEntryHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Tooltip state
+  const [toolTipIsVisible, setToolTipIsVisible] = useState<boolean>(false);
+  const [toolTipX, setToolTipX] = useState<number>(0);
+  const [toolTipY, setToolTipY] = useState<number>(0);
+  const [toolTipContent, setToolTipContent] = useState<string>("");
 
   // Images state
   const [imagesLoaded, setImagesLoaded] = useState({
@@ -176,6 +186,84 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     }
   };
 
+  // Handle map hover event
+  const handleHover = (event: unknown) => {
+    const mapHoverEvent = event as MapHoverEvent;
+
+    // Clear any existing timeout
+    if (hoverEntryTimeout) {
+      clearTimeout(hoverEntryTimeout);
+    }
+
+    // Hide the tooltip
+    setToolTipIsVisible(false);
+
+    // Check if the feature is undefined, if so, exit early
+    if (!mapHoverEvent.coordinate) {
+      return;
+    }
+
+    // Check if the map is too zoomed out, if so, exit early
+    if (mapHoverEvent.viewport.zoom < 14) {
+      return;
+    }
+
+    // Set a new timeout
+    const newTimeout = setTimeout(() => {
+      if (pointsGeoJson) {
+        let closestPoint: Feature | undefined;
+        let minDistance = Infinity;
+
+        const hoverCoords = mapHoverEvent.coordinate as [number, number];
+
+        Object.values(pointsGeoJson).forEach((geoJson) => {
+          (geoJson as GeoJSON.FeatureCollection).features.forEach((feature) => {
+            if (feature.geometry.type === "Point" && feature.geometry.coordinates.length === 2) {
+              const pointCoords = feature.geometry.coordinates as [number, number];
+
+              if (isWithin20Meters(hoverCoords, pointCoords)) {
+                const distance = haversineDistance(hoverCoords, pointCoords);
+
+                if (distance < minDistance) {
+                  minDistance = distance;
+                  closestPoint = feature;
+                }
+              }
+            }
+          });
+        });
+
+        if (closestPoint) {
+          const pointGeometry = closestPoint.geometry as GeoJSON.Point;
+          setToolTipX(pointGeometry.coordinates[1]);
+          setToolTipY(pointGeometry.coordinates[0]);
+
+          if (closestPoint.properties) {
+            fetchPointById(closestPoint.properties.Id as number).then((data) => {
+              setToolTipContent(data?.response?.content);
+            });
+          }
+
+          setToolTipIsVisible(true);
+          setToolTipContent("");
+        }
+      }
+    }, 400); // 1000 milliseconds = 1 second
+
+    // Store the new timeout ID in state
+    setEntryHoverTimeout(newTimeout);
+  };
+
+  // Clear the timeout when the component unmounts
+  // This prevents a client-side memory leak
+  useEffect(() => {
+    return () => {
+      if (hoverEntryTimeout) {
+        clearTimeout(hoverEntryTimeout);
+      }
+    };
+  }, [hoverEntryTimeout]);
+
   function convertToGeoJson(points: Point[]): Record<string, GeoJSON> {
     const featureTypes: GeoJsonCollection[] = [
       "parking_meter",
@@ -240,6 +328,23 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     const geoJson = convertToGeoJson(data?.response?.content);
 
     setPointsGeoJson(geoJson);
+  };
+
+  const fetchPointById = async (id: number) => {
+    const response = await fetch(`/api/details?id=${id}`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        authorization: "Bearer " + sessionToken,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    return data;
   };
 
   const { startOnborda, closeOnborda } = useOnborda();
@@ -374,6 +479,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             initialViewState={INITIAL_VIEW_STATE}
             controller={true}
             onClick={handleMapClick}
+            onHover={handleHover}
             style={{ width: "100%", height: "100%" }}
           >
             <Map
@@ -403,6 +509,28 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <FaLocationDot size={35} color="blue" />
                 </div>
               </Marker>
+              {toolTipIsVisible && (
+                <Popup
+                  latitude={toolTipX}
+                  longitude={toolTipY}
+                  closeButton={false}
+                  style={{ whiteSpace: "pre-wrap", padding: "8px" }}
+                  maxWidth='350px'
+                  anchor="bottom"
+                >
+                  <div className="popup-content">
+                    <h3 className="popup-header">Amenity Details:</h3>
+                    {Object.entries(toolTipContent).map(([key, value]) => (
+                      <div className="key-value-pair" key={key}>
+                        <span className="key">{key}:</span>
+                        <span className="value">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Popup>
+
+
+              )}
               <Source
                 id="circle"
                 type="geojson"
