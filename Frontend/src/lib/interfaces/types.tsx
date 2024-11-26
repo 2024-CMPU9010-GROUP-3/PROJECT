@@ -80,6 +80,19 @@ export interface MapClickEvent {
   pixelRatio: number;
 }
 
+export interface MapHoverEvent {
+  color: Uint8Array | null; // Updated to match DeckGL's expected type
+  layer: string | null;
+  viewport: Viewport;
+  index: number;
+  picked: boolean;
+  x: number;
+  y: number;
+  pixel: [number, number]; // Pixel coordinates
+  coordinate: [number, number]; // Geographic coordinates (longitude, latitude)
+  pixelRatio: number;
+}
+
 interface Location {
   coordinates: [number, number];
   type: string;
