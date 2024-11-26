@@ -156,7 +156,7 @@ def new_mask(image_path, save_path, threshold=240):
 
     cv2.imwrite(save_path, combined_mask)
 
-def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model, conf_threshold=0.354):
+def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model, conf_threshold=0.45):
     """
     Detect cars in the image using the retrained YOLO model and draws them on the image.
 
@@ -546,8 +546,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -687,9 +687,11 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    main(-6.2264, 53.4194, -6.2219, 53.4221)#parking lot
-    main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
-    main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
-    main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
-    main(-6.2751, 53.347, -6.272, 53.3489)#urban area
-    #main()
+    #main(-6.2264, 53.4194, -6.2219, 53.4221)#parking lot
+    #main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
+    #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
+    #main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
+    #main(-6.2751, 53.347, -6.272, 53.3489)#urban area
+
+    main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
+    main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
