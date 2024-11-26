@@ -86,9 +86,10 @@ func main() {
 	// the server keeps running in a different thread
 	<-signalChannel
 
-	// tell server to shut down in 10s at the latest
+	// tell server to shut down in time for the shutdown timeout at the latest
 	// no new connections are accepted, existing connections will still be handled
-	shutdownContext, shutdownCancelFunc := context.WithTimeout(context.Background(), 10*time.Second)
+	shutdownTimeout, _ := env.GetInt(env.EnvShutdownTimeout)
+	shutdownContext, shutdownCancelFunc := context.WithTimeout(context.Background(), time.Duration(shutdownTimeout)*time.Second)
 	defer shutdownCancelFunc()
 
 	if err := server.Shutdown(shutdownContext); err != nil {
