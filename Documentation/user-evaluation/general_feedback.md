@@ -46,3 +46,12 @@
 * Tries to click on the icons (1 user)
 * Tries to interact with dashboard before placing marker on the map due to seeing her own location marker (1 user)
 * Rejoice in onboarding confetti (2 users)
+
+# List of changes to make
+* Log in straight after sign up
+* Keep/ditch username (Brendan)
+* Remove Mac icons from profile menu
+* Make the profile icon more visible on the map
+* Change color of water fountain icon
+* Add bus/public transportation data
+* Re-think onboarding (content/steps)
