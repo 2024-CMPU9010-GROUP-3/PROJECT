@@ -55,4 +55,4 @@ def main(geojson_path, csv_path):
 
 
 if __name__ == "__main__":
-    main('C:\Github\magpie\Python\script\geojson-to-csv\\stops.geojson', 'C:\Github\magpie\Python\script\geojson-to-csv\\stops.csv')
+    main('stops.geojson', 'stops.csv')
