@@ -527,7 +527,7 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
-def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=15):
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=25):
     """
     Classifies parking spots as public(on the street parking) or private(residential) based on their proximity to the road (calculated using the road mask)
 
@@ -545,6 +545,8 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
 
     road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
     road_contours, _ = cv2.findContours(road_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    print(center_long, center_lat)
 
     for spot in all_parking_spots:
         x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
@@ -730,7 +732,7 @@ if __name__ == "__main__":
     #main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
     #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
     #main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
-    #main(-6.2751, 53.347, -6.272, 53.3489)#urban area
-    main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
-    main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
+    main(-6.2751, 53.347, -6.272, 53.3489)#urban area
+    #main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
+    #main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
     #main()
