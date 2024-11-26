@@ -527,6 +527,44 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=15):
+    """
+    Classifies parking spots as public(on the street parking) or private(residential) based on their proximity to the road (calculated using the road mask)
+
+    Params:
+        all_parking_spots (list): List of all parking spots(by the model and then the empty parking detection) 
+        road_mask_path (string): Path to road mask
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image
+        threshold (int): Threshold in pixels to classify a spot near the road as public
+
+    Returns:
+        classified_spots (list): List of parking spots with classification added
+    """
+    classified_spots = []
+
+    road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
+    road_contours, _ = cv2.findContours(road_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for spot in all_parking_spots:
+        x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+
+        min_distance = float("inf")
+        for contour in road_contours:
+            distance = cv2.pointPolygonTest(contour, (x_center, y_center), measureDist=True)
+            min_distance = min(min_distance, abs(distance))
+
+        if min_distance <= threshold:
+            classification = "public"
+        else:
+            classification = "private"
+
+        print(classification)
+
+        classified_spots.append([spot[0], spot[1], classification])
+
+    return classified_spots
+
 def get_parking_coords_in_image(model, longitude, latitude):
     """
     Detects all the parking spaces in the image (at longitude/latitude) and returns a list of coordinates, agregating
@@ -546,8 +584,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -574,6 +612,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
+        all_detections = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
 
     return all_detections
 
@@ -679,9 +718,9 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     for long, lat in centers:
         detections = get_parking_coords_in_image(model, long, lat)
         for detection in detections:
-            all_detections.append([detection[0], detection[1]])
+            all_detections.append([detection[0], detection[1], detection[2]])
 
-    df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
+    df = pd.DataFrame(all_detections, columns=["longitude", "latitude", "type"])
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
     df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
     
@@ -692,7 +731,6 @@ if __name__ == "__main__":
     #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
     #main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
     #main(-6.2751, 53.347, -6.272, 53.3489)#urban area
-    #main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
-    #main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
-
-    main()
+    main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
+    main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
+    #main()
