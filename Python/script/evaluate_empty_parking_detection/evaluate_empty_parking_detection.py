@@ -49,7 +49,7 @@ def create_mask(image_path, save_path, threshold=240):
     cv2.imwrite(save_path, mask_filtered)
 
 
-def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model, conf_threshold=0.45):
+def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model, conf_threshold=0.4):
     """
     Detect cars in the image using the retrained YOLO model and draws them on the image.
 
@@ -58,8 +58,7 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         road_mask_path (str): Path of the saved mask
         output_image_path (str): Path to save the image with bounding boxes, red for parking and blue cars on the road
         model : YOLO model
-        conf_threshold (float): Minimum confidence threshold for a predictions to be considered, set at 0.354 the optimal value given by the f1 curve 
-
+        conf_threshold (float): Minimum confidence threshold for a predictions to be considered
         
     Returns:
         detections_parking (list): List of the bounding boxes for the cars not on the road [x_center, y_center, width, height, angle_degrees]
