@@ -519,7 +519,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   anchor="bottom"
                 >
                   <div className="popup-content">
-                    <h3 className="popup-header">Amenity Details:</h3>
+                    <h3 className="popup-header">Amenity Details</h3>
                     {Object.entries(toolTipContent).map(([key, value]) => (
                       <div className="key-value-pair" key={key}>
                         <span className="key">{key}:</span>
