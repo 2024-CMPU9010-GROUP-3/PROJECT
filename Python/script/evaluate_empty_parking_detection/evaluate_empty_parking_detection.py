@@ -49,7 +49,7 @@ def create_mask(image_path, save_path, threshold=240):
     cv2.imwrite(save_path, mask_filtered)
 
 
-def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
+def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model, conf_threshold=0.45):
     """
     Detect cars in the image using the retrained YOLO model and draws them on the image.
 
@@ -57,7 +57,9 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         image_path (str): Path of the image
         road_mask_path (str): Path of the saved mask
         output_image_path (str): Path to save the image with bounding boxes, red for parking and blue cars on the road
-        model : YOLO model.
+        model : YOLO model
+        conf_threshold (float): Minimum confidence threshold for a predictions to be considered, set at 0.354 the optimal value given by the f1 curve 
+
         
     Returns:
         detections_parking (list): List of the bounding boxes for the cars not on the road [x_center, y_center, width, height, angle_degrees]
@@ -80,6 +82,10 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
             x_center, y_center, width, height, angle_radians = map(float, box.xywhr[0])
             angle_degrees = angle_radians * (180 / math.pi) 
             cls = int(box.cls[0])
+            conf = float(box.conf[0])
+
+            if conf < conf_threshold:#we ignore the predictions that have a low confidance score as they are more likely to be misclassifications
+                continue
 
             if cls == 0:
                 if -45 <= angle_degrees <= 45 or 135 <= angle_degrees <= 225:

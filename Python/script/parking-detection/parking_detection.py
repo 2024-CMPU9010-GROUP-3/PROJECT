@@ -164,7 +164,7 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         image_path (str): Path of the image
         road_mask_path (str): Path of the saved mask
         output_image_path (str): Path to save the image with bounding boxes, red for parking and blue cars on the road
-        model : YOLO model.
+        model : YOLO model
         conf_threshold (float): Minimum confidence threshold for a predictions to be considered, set at 0.354 the optimal value given by the f1 curve 
         
     Returns:
@@ -692,6 +692,7 @@ if __name__ == "__main__":
     #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
     #main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
     #main(-6.2751, 53.347, -6.272, 53.3489)#urban area
+    #main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
+    #main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
 
-    main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
-    main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
+    main()
