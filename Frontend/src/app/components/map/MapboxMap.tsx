@@ -408,7 +408,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               currentPositionCords.latitude,
             ],
           },
-          radius: sliderValue,
+          radius: sliderValue * 100,
         }),
         headers: {
           "Content-Type": "application/json",
