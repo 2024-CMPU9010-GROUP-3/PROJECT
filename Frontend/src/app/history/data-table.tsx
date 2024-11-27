@@ -26,6 +26,7 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200">
       <div className="rounded-xl overflow-hidden">
