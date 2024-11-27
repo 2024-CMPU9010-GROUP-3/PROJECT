@@ -1,29 +1,30 @@
 "use client";
 
 // React core
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 
 // Third-party packages
-import DeckGL from "@deck.gl/react";
-import { GeoJSON } from "geojson";
-import { FaLocationDot } from "react-icons/fa6";
-import { Grid } from "react-loader-spinner";
-import Map, { Layer, LayerProps, Marker, Source } from "react-map-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import { Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
+import DeckGL from '@deck.gl/react';
+import { Feature, GeoJSON } from 'geojson';
+import { FaLocationDot } from 'react-icons/fa6';
+import { Grid } from 'react-loader-spinner';
+import Map, { Layer, LayerProps, Marker, Popup, Source } from 'react-map-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 import { useOnborda } from "onborda";
-import { useSession } from "@/app/context/SessionContext";
+import { useSession } from '@/app/context/SessionContext';
 
 // Local components
-import { Slider } from "@/components/ui/slider";
+import { Slider } from '@/components/ui/slider';
 
 // Local utils and configs
-import { lightingEffect, INITIAL_VIEW_STATE } from "@/lib/mapconfig";
-import { getCookiesAccepted } from "@/lib/cookies";
-import { cn } from "@/lib/utils";
-import packageJson from "../../../../package.json";
-import MapSources from "./utils/MapSources";
+import { lightingEffect, INITIAL_VIEW_STATE } from '@/lib/mapconfig';
+import { isWithin20Meters, haversineDistance } from './utils/MeasurementUtils';
+import { getCookiesAccepted } from '@/lib/cookies';
+import { cn } from '@/lib/utils';
+import packageJson from '../../../../package.json';
+import MapSources from './utils/MapSources';
 
 // Types and interfaces
 import {
@@ -32,77 +33,26 @@ import {
   Point,
   CoordinatesForGeoJson,
   ImageConfig,
-} from "@/lib/interfaces/types";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+  GeoJsonCollection,
+  MapHoverEvent,
+} from '@/lib/interfaces/types';
 
 type SliderProps = React.ComponentProps<typeof Slider>;
-type GeoJsonCollection =
-  | "parking_meter"
-  | "bike_stand"
-  | "public_wifi_access_point"
-  | "library"
-  | "multistorey_car_parking"
-  | "drinking_water_fountain"
-  | "public_toilet"
-  | "bike_sharing_station"
-  | "parking"
-  | "accessible_parking"
-  | "public_bins"
-  | "coach_parking";
 
-interface Option {
-  label: string;
-  value: string;
-}
-
-const MultiSelectOptions: Option[] = [
-  { label: "Parking Meter", value: "parking_meter" },
-  { label: "Bike Stand", value: "bike_stand" },
-  { label: "Public Wifi", value: "public_wifi_access_point" },
-  { label: "Library", value: "library" },
-  { label: "Multi Storey Car Park", value: "multistorey_car_parking" },
-  { label: "Drinking Water Fountain", value: "drinking_water_fountain" },
-  { label: "Public Toilet", value: "public_toilet" },
-  { label: "Bike Sharing Station", value: "bike_sharing_station" },
-  { label: "Parking", value: "parking" },
-  { label: "Accessible Parking", value: "accessible_parking" },
-  { label: "Public Bins", value: "public_bins" },
-  { label: "Coach Parking", value: "coach_parking" },
+const mapElements = [
+  { label: "Parking Meter", value: "parking_meter", id: 'custom_parking_meter', path: '/mapicons/parking_meter.png' },
+  { label: "Bike Stand", value: "bike_stand", id: 'custom_bicycle', path: '/mapicons/bicycle.png' },
+  { label: "Public Wifi", value: "public_wifi_access_point", id: 'custom_public_wifi', path: '/mapicons/wifi.png' },
+  { label: "Library", value: "library", id: 'custom_library', path: '/mapicons/library.png' },
+  { label: "Multi Storey Car Park", value: "multistorey_car_parking", id: 'custom_car_parks', path: '/mapicons/car_park.png' },
+  { label: "Drinking Water Fountain", value: "drinking_water_fountain", id: 'custom_water_fountain', path: '/mapicons/water_fountain.png' },
+  { label: "Public Toilet", value: "public_toilet", id: 'custom_toilet', path: '/mapicons/toilet.png' },
+  { label: "Bike Sharing Station", value: "bike_sharing_station", id: 'custom_bicycle_share', path: '/mapicons/bicycle_share.png' },
+  { label: "Parking", value: "parking", id: 'custom_parking', path: '/mapicons/parking.png' },
+  { label: "Accessible Parking", value: "accessible_parking", id: 'custom_accessible_parking', path: '/mapicons/accessibleParking.png' },
+  { label: "Public Bins", value: "public_bins", id: 'custom_public_bins', path: '/mapicons/bin.png' },
+  { label: "Coach Parking", value: "coach_parking", id: 'custom_bus', path: '/mapicons/bus.png' },
 ];
-
-// Array of image paths to load
-const IMAGES: ImageConfig[] = [
-  { id: "custom_parking", path: "/mapicons/parking.png" },
-  { id: "custom_parking_meter", path: "/mapicons/parking_meter.png" },
-  { id: "custom_bicycle", path: "/mapicons/bicycle.png" },
-  { id: "bicycle_share", path: "/mapicons/bicycle_share.png" },
-  { id: "custom_bicycle_share", path: "/mapicons/bicycle_share.png" },
-  { id: "custom_accessible_parking", path: "/mapicons/accessibleParking.png" },
-  { id: "custom_public_bins", path: "/mapicons/bin.png" },
-  { id: "custom_public_wifi", path: "/mapicons/wifi.png" },
-  { id: "custom_bus", path: "/mapicons/bus.png" },
-  { id: "custom_library", path: "/mapicons/library.png" },
-  { id: "custom_car_parks", path: "/mapicons/car_park.png" },
-  { id: "custom_water_fountain", path: "/mapicons/water_fountain.png" },
-  { id: "custom_toilet", path: "/mapicons/toilet.png" },
-];
-
-// Array of icon paths to load
-const iconMap: Record<string, string> = {
-  parking_meter: "/mapicons/parking_meter.png",
-  bike_stand: "/mapicons/bicycle.png",
-  public_wifi_access_point: "/mapicons/wifi.png",
-  library: "/mapicons/library.png",
-  multistorey_car_parking: "/mapicons/car_park.png",
-  drinking_water_fountain: "/mapicons/water_fountain.png",
-  public_toilet: "/mapicons/toilet.png",
-  bike_sharing_station: "/mapicons/bicycle_share.png",
-  parking: "/mapicons/parking.png",
-  accessible_parking: "/mapicons/accessibleParking.png",
-  public_bins: "/mapicons/bin.png",
-  coach_parking: "/mapicons/bus.png",
-};
 
 const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const [mapBoxApiKey, setMapBoxApiKey] = useState<string>("");
@@ -115,7 +65,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     string,
     GeoJSON
   > | null>(null);
-  // const [markerSquareSize, setMarkerSquareSize] = useState<number>(0.027);
   const [currentPositionCords, setCurrentPositionCords] = useState<Coordinates>(
     { latitude: 0, longitude: 0 }
   );
@@ -126,8 +75,14 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     [coordinates]
   );
 
-  const { toast } = useToast();
-  const { sessionUUID } = useSession();
+  // Hover State
+  const [hoverEntryTimeout, setEntryHoverTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  // Tooltip state
+  const [toolTipIsVisible, setToolTipIsVisible] = useState<boolean>(false);
+  const [toolTipX, setToolTipX] = useState<number>(0);
+  const [toolTipY, setToolTipY] = useState<number>(0);
+  const [toolTipContent, setToolTipContent] = useState<string>("");
 
   // Images state
   const [imagesLoaded, setImagesLoaded] = useState({
@@ -157,7 +112,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
+        Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -183,7 +138,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           if (error) reject(error);
           if (image) {
             map.addImage(config.id, image);
-            setImagesLoaded((prev) => ({ ...prev, [config.id]: true }));
+            setImagesLoaded(prev => ({ ...prev, [config.id]: true }));
           }
           resolve();
         });
@@ -191,41 +146,35 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     };
 
     try {
-      await Promise.all(IMAGES.map(loadImage));
+      await Promise.all(mapElements.map(loadImage));
     } catch (error) {
-      console.error("Error loading images:", error);
+      console.error('Error loading images:', error);
     }
   };
 
   const handleMapLoad = (event: MapLoadEvent) => {
     const map = event.target;
 
-    loadImages(map).catch((error) =>
-      console.error("Error loading images:", error)
-    );
+    loadImages(map).catch(error => console.error('Error loading images:', error));
   };
 
   const [amenitiesFilter, setAmenitiesFilter] = useState<string[]>(() =>
-    MultiSelectOptions.map((option) => option.value)
+    mapElements.map((option) => option.value)
   );
 
-  const { sessionToken } = useSession();
+  const { sessionToken } = useSession()
 
   const handleIconClick = (value: string) => {
     setAmenitiesFilter((prev) =>
-      prev.includes(value)
-        ? prev.filter((item) => item !== value)
-        : [...prev, value]
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value]
     );
   };
 
   const [resetSelection, setResetSelection] = useState(false);
   const handleGlobalAmenitiesFilter = () => {
-    setAmenitiesFilter(() =>
-      resetSelection ? [] : MultiSelectOptions.map((option) => option.value)
-    );
+    setAmenitiesFilter(() => (resetSelection ? [] : mapElements.map((option) => option.value)));
     setResetSelection((prev) => !prev);
-  };
+  }
 
   // Handle map click event
   const handleMapClick = (event: unknown) => {
@@ -236,6 +185,84 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       setMarkerIsVisible(true);
     }
   };
+
+  // Handle map hover event
+  const handleHover = (event: unknown) => {
+    const mapHoverEvent = event as MapHoverEvent;
+
+    // Clear any existing timeout
+    if (hoverEntryTimeout) {
+      clearTimeout(hoverEntryTimeout);
+    }
+
+    // Hide the tooltip
+    setToolTipIsVisible(false);
+
+    // Check if the feature is undefined, if so, exit early
+    if (!mapHoverEvent.coordinate) {
+      return;
+    }
+
+    // Check if the map is too zoomed out, if so, exit early
+    if (mapHoverEvent.viewport.zoom < 14) {
+      return;
+    }
+
+    // Set a new timeout
+    const newTimeout = setTimeout(() => {
+      if (pointsGeoJson) {
+        let closestPoint: Feature | undefined;
+        let minDistance = Infinity;
+
+        const hoverCoords = mapHoverEvent.coordinate as [number, number];
+
+        Object.values(pointsGeoJson).forEach((geoJson) => {
+          (geoJson as GeoJSON.FeatureCollection).features.forEach((feature) => {
+            if (feature.geometry.type === "Point" && feature.geometry.coordinates.length === 2) {
+              const pointCoords = feature.geometry.coordinates as [number, number];
+
+              if (isWithin20Meters(hoverCoords, pointCoords)) {
+                const distance = haversineDistance(hoverCoords, pointCoords);
+
+                if (distance < minDistance) {
+                  minDistance = distance;
+                  closestPoint = feature;
+                }
+              }
+            }
+          });
+        });
+
+        if (closestPoint) {
+          const pointGeometry = closestPoint.geometry as GeoJSON.Point;
+          setToolTipX(pointGeometry.coordinates[1]);
+          setToolTipY(pointGeometry.coordinates[0]);
+
+          if (closestPoint.properties) {
+            fetchPointById(closestPoint.properties.Id as number).then((data) => {
+              setToolTipContent(data?.response?.content);
+            });
+          }
+
+          setToolTipIsVisible(true);
+          setToolTipContent("");
+        }
+      }
+    }, 400); // 1000 milliseconds = 1 second
+
+    // Store the new timeout ID in state
+    setEntryHoverTimeout(newTimeout);
+  };
+
+  // Clear the timeout when the component unmounts
+  // This prevents a client-side memory leak
+  useEffect(() => {
+    return () => {
+      if (hoverEntryTimeout) {
+        clearTimeout(hoverEntryTimeout);
+      }
+    };
+  }, [hoverEntryTimeout]);
 
   function convertToGeoJson(points: Point[]): Record<string, GeoJSON> {
     const featureTypes: GeoJsonCollection[] = [
@@ -286,15 +313,14 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${
-        sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
         credentials: "include",
         headers: {
           authorization: "Bearer " + sessionToken,
-        },
+        }
       }
     );
 
@@ -304,56 +330,21 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     setPointsGeoJson(geoJson);
   };
 
-  const handleSaveMap = async () => {
-    try {
-      // Validate coordinates
-      if (!currentPositionCords?.latitude || !currentPositionCords?.longitude) {
-        throw new Error("Location coordinates are missing");
-      }
+  const fetchPointById = async (id: number) => {
+    const response = await fetch(`/api/details?id=${id}`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        authorization: "Bearer " + sessionToken,
+      },
+    });
 
-      // Validate other required data
-      if (!amenitiesFilter?.length) {
-        throw new Error("Please select at least one amenity type");
-      }
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/history/${sessionUUID}`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            amenitytypes: amenitiesFilter,
-            longlat: {
-              type: "Point",
-              coordinates: [
-                currentPositionCords.longitude,
-                currentPositionCords.latitude,
-              ],
-            },
-            radius: sliderValue,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionToken}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        throw new Error(errorData?.message || "Failed to save map");
-      }
-
-      toast({
-        title: "Map saved",
-        description: "Your map has been saved successfully",
-      });
-    } catch (error) {
-      console.error("Error saving map:", error);
-      toast({
-        title: "Error saving map",
-        description: "Failed to save map",
-      });
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
     }
+
+    const data = await response.json();
+    return data;
   };
 
   const { startOnborda, closeOnborda } = useOnborda();
@@ -372,7 +363,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         markerCoords[0] +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
+        Math.cos(markerCoords[1] * (Math.PI / 180));
       const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
       coordinates.push([x, y]);
     }
@@ -431,7 +422,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   // Get current position
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(success, error, options);
-  });
+
+  },);
 
   useEffect(() => {
     closeOnborda();
@@ -460,10 +452,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Onboarding help button */}
-      <div
-        className="absolute bottom-[5%] left-[1%] z-[999]"
-        id="onboarding-step-3"
-      >
+      <div className="absolute bottom-[5%] left-[1%] z-[999]" id='onboarding-step-3'>
         <div>
           <button
             onClick={() => startOnborda("general-onboarding")}
@@ -480,7 +469,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           h-full
           relative
           sm:h-[70vh]
-          lg:h-screen
+          lg:h-screen relative
         "
         id="onboarding-step-2"
       >
@@ -490,6 +479,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             initialViewState={INITIAL_VIEW_STATE}
             controller={true}
             onClick={handleMapClick}
+            onHover={handleHover}
             style={{ width: "100%", height: "100%" }}
           >
             <Map
@@ -519,6 +509,28 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   <FaLocationDot size={35} color="blue" />
                 </div>
               </Marker>
+              {toolTipIsVisible && (
+                <Popup
+                  latitude={toolTipX}
+                  longitude={toolTipY}
+                  closeButton={false}
+                  style={{ whiteSpace: "pre-wrap", padding: "8px" }}
+                  maxWidth='350px'
+                  anchor="bottom"
+                >
+                  <div className="popup-content">
+                    <h3 className="popup-header">Amenity Details</h3>
+                    {Object.entries(toolTipContent).map(([key, value]) => (
+                      <div className="key-value-pair" key={key}>
+                        <span className="key">{key}:</span>
+                        <span className="value">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Popup>
+
+
+              )}
               <Source
                 id="circle"
                 type="geojson"
@@ -553,8 +565,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         )}
       </div>
       {/* Sidebar - Full width on mobile, scrollable */}
-      <div
-        className="
+      <div className="
         flex-none
         p-3
         bg-gray-50 
@@ -580,8 +591,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                   />
                   <div>
                     <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 tracking-tight">
-                      Magpie Dashboard:{" "}
-                      <span className="text-[#3e6e96]">v{version}</span>
+                      Magpie Dashboard: <span className="text-[#3e6e96]">v{version}</span>
                     </h1>
                     <span className="italic">Services at a glance</span>
                   </div>
@@ -589,7 +599,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               </div>
               {/* Search Radius Card */}
               <div className="sticky top-0 bg-gray-50 px-2 sm:px-3 lg:px-4">
-                <div className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4">
+                <div
+                  className="w-full bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p4"
+                >
                   <div className="space-y-2 sm:space-y-3">
                     <div>
                       <label className="text-sm lg:text-base font-medium text-gray-700 mb-2 block">
@@ -597,9 +609,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                       </label>
                       <Slider
                         value={[sliderValueDisplay]}
-                        onValueChange={(value) =>
-                          setSliderValueDisplay(value[0])
-                        }
+                        onValueChange={(value) => setSliderValueDisplay(value[0])}
                         onValueCommit={(value) => setSliderValue(value[0])}
                         defaultValue={[sliderValue]}
                         max={100}
@@ -661,134 +671,106 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               </div>
             </>
           ) : null}
-          {mapBoxApiKey ? (
-            <>
-              <Button
-                className="w-full mx-auto transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
-                onClick={handleSaveMap}
-              >
-                Save Map
-              </Button>
-            </>
-          ) : (
-            ""
-          )}
           {/* Combined Data and Filter Options Card */}
           <div className="px-2 sm:px-3 lg:px-4">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
+            <div
+              className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4"
+            >
               <Suspense
                 fallback={<div className="animate-pulse">Loading...</div>}
               >
-                <div>
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Icon
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Amenity
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          Count
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                        >
-                          <button onClick={() => handleGlobalAmenitiesFilter()}>
-                            {resetSelection ? (
-                              <Eye size={16} color="#3e6e96" />
-                            ) : (
-                              <EyeOff size={16} color="#3e6e96" />
-                            )}
-                          </button>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {MultiSelectOptions.map((option) => (
-                        <tr
-                          key={option.value}
-                          className={`${
-                            !amenitiesFilter.includes(option.value)
-                              ? "bg-gray-100"
-                              : ""
-                          }`}
-                        >
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <Image
-                              src={iconMap[option.value]}
-                              alt={option.label}
-                              width={24}
-                              height={24}
-                              className={`w-6 h-6 ${
-                                !amenitiesFilter.includes(option.value)
-                                  ? "filter grayscale"
-                                  : ""
-                              }`}
-                            />
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                            {option.label}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {amenitiesFilter.includes(option.value) ? (
-                              (
-                                pointsGeoJson?.[
-                                  option.value
-                                ] as GeoJSON.FeatureCollection
-                              )?.features?.length > 0 ? (
-                                <span className="font-bold">
-                                  {(
-                                    pointsGeoJson?.[
-                                      option.value
-                                    ] as GeoJSON.FeatureCollection
-                                  )?.features?.length || 0}
-                                </span>
-                              ) : (
-                                (
-                                  pointsGeoJson?.[
-                                    option.value
-                                  ] as GeoJSON.FeatureCollection
-                                )?.features?.length || 0
-                              )
-                            ) : (
-                              "-"
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                            <button
-                              onClick={() => handleIconClick(option.value)}
-                            >
-                              {amenitiesFilter.includes(option.value) ? (
-                                <Eye size={16} color="#3e6e96" />
-                              ) : (
-                                <EyeOff size={16} color="#3e6e96" />
-                              )}
+                {mapBoxApiKey ? (
+                  <div>
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Icon
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Amenity
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            Count
+                          </th>
+                          <th
+                            scope="col"
+                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                          >
+                            <button onClick={() => handleGlobalAmenitiesFilter()}>
+                              {resetSelection ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
                             </button>
-                          </td>
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {mapElements.map((option) => {
+                          const imageConfig = mapElements.find(img => img.value === option.value);
+                          return (
+                            <tr
+                              key={option.value}
+                              className={`${!amenitiesFilter.includes(option.value) ? 'bg-gray-100' : ''}`}
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {imageConfig && (
+                                  <Image
+                                    src={imageConfig.path}
+                                    alt={option.label}
+                                    width={24}
+                                    height={24}
+                                    className={`w-6 h-6 ${!amenitiesFilter.includes(option.value) ? 'filter grayscale' : ''}`}
+                                  />
+                                )}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {option.label}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {amenitiesFilter.includes(option.value)
+                                  ? (
+                                    pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection
+                                  )?.features?.length > 0
+                                    ? (
+                                      <span className="font-bold">
+                                        {(pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                          ?.features?.length || 0}
+                                      </span>
+                                    )
+                                    : (
+                                      (pointsGeoJson?.[option.value] as GeoJSON.FeatureCollection)
+                                        ?.features?.length || 0
+                                    )
+                                  : '-'}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                                <button onClick={() => handleIconClick(option.value)}>
+                                  {amenitiesFilter.includes(option.value) ? <Eye size={16} color="#3e6e96" /> : <EyeOff size={16} color="#3e6e96" />}
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : null}
               </Suspense>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
+          </div >
+        </div >
+      </div >
+    </div >
   );
 };
 
 export default LocationAggregatorMap;
+
