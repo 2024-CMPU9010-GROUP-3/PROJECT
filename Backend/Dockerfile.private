@@ -13,7 +13,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -tags private -o /app/bin/main ./cmd/main
 FROM build-stage AS test-stage
 RUN go test -v ./...
 
-FROM gcr.io/distroless/base-debian11 AS release-stage
+FROM alpine AS release-stage
+
+RUN addgroup -S rootless_group && adduser -S rootless_user -G rootless_group
 
 WORKDIR /
 
@@ -21,8 +23,13 @@ COPY --from=build-stage /app/bin/main /app/bin/main
 
 COPY --from=build-stage /app/sql/migrations/ ./sql/migrations/
 
+RUN chown -R rootless_user:rootless_group /app/bin/main /sql/migrations
+
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
 EXPOSE 8080
 
-USER nonroot:nonroot
+USER rootless_user
 
 ENTRYPOINT ["/app/bin/main"]
