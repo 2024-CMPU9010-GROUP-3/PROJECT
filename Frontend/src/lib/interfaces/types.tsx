@@ -123,6 +123,17 @@ export interface LocationItem {
   coordinates: Coordinates;
 }
 
+export interface LocationData {
+  id: number;
+  datecreated: string;
+  amenitytypes: string[];
+  longlat: {
+    type: string;
+    coordinates: number[];
+  };
+  radius: number;
+}
+
 export interface Data {
   Id: number;
   Longlat: Location;
