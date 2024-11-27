@@ -1,67 +1,56 @@
 "use client";
 
-import { LocationItem } from "@/lib/interfaces/types";
+import { LocationData } from "@/lib/interfaces/types";
 import { ColumnDef } from "@tanstack/react-table";
 
-const formatKey = (key: string) => {
-  return key
-    .split(/(?=[A-Z])|_/)
-    .map(
-      (word: string) =>
-        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    )
-    .join(" ");
-};
-
-export const columns: ColumnDef<LocationItem>[] = [
+export const columns: ColumnDef<LocationData>[] = [
+  {
+    accessorKey: "id",
+    header: "ID",
+  },
   {
     accessorKey: "datecreated",
-    header: "Date",
-    cell: ({ row }) => new Date(row.getValue("date")).toLocaleDateString(),
+    header: "Date Created",
+    cell: ({ row }) =>
+      new Date(row.getValue("datecreated")).toLocaleDateString(),
   },
-  // {
-  //   accessorKey: "location",
-  //   header: "Location",
-  // },
   {
-    header: "Amenities",
-    accessorKey: "amenities",
-    cell: ({ row }) => {
-      console.log("AMENITIES ROW>>>", row);
-
-      const amenities = row.original.amenities;
-      return (
-        <div className="flex flex-wrap gap-2 text-sm">
-          {Object.entries(amenities).map(([key, value]) => (
-            <div
-              key={key}
-              className="flex items-center gap-2 bg-gray-50 rounded-md p-2 min-w-[80px] border border-gray-500"
-            >
-              <span className="font-medium">{formatKey(key)}:</span>
-              <span className="text-gray-600">{value}</span>
-            </div>
-          ))}
-        </div>
-      );
-    },
+    header: "Amenity Types",
+    accessorKey: "amenitytypes",
+    cell: ({ row }) => (
+      <div className="flex flex-wrap gap-2">
+        {row.getValue<string[]>("amenitytypes").map((type) => (
+          <span
+            key={type}
+            className="bg-gray-50 rounded-md p-2 text-sm border border-gray-500"
+          >
+            {type.replace("_", " ")}
+          </span>
+        ))}
+      </div>
+    ),
   },
   {
     header: "Coordinates",
     cell: ({ row }) => {
-      const coords = row.original.coordinates;
-      return `${coords.latitude}, ${coords.longitude}`;
+      const longlat = row.original.longlat;
+      return `${longlat.coordinates[1]}, ${longlat.coordinates[0]}`;
     },
+  },
+  {
+    header: "Radius (m)",
+    accessorKey: "radius",
   },
   {
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-2">
         <button
-          onClick={() =>
-            window.open(
-              `https://maps.google.com/?q=${row.original.coordinates.latitude},${row.original.coordinates.longitude}`
-            )
-          }
+          className="text-blue-600 hover:text-blue-800"
+          onClick={() => {
+            const coords = row.original.longlat.coordinates;
+            window.open(`https://maps.google.com/?q=${coords[1]},${coords[0]}`);
+          }}
         >
           View on Map
         </button>
