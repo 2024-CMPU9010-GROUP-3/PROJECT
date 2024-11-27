@@ -1,3 +1,5 @@
+import { ColumnDef } from "@tanstack/react-table";
+
 export interface Coordinates {
   latitude: number;
   longitude: number;
@@ -165,4 +167,11 @@ export interface ImageConfig {
   value: string;
   id: string;
   path: string;
+}
+
+export interface DataTableProps<TData> {
+  columns: ColumnDef<TData>[];
+  data: TData[];
+  rowSelection?: Record<string, boolean>;
+  setRowSelection: (value: Record<string, boolean>) => void;
 }
