@@ -38,6 +38,7 @@ import {
 } from "@/lib/interfaces/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Toaster } from "@/components/ui/toaster";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
@@ -576,6 +577,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
+      <Toaster />
       {/* Onboarding help button */}
       <div
         className="absolute bottom-[5%] left-[1%] z-[999]"
