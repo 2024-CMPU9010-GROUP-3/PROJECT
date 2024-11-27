@@ -3,8 +3,38 @@
 import { LocationData } from "@/lib/interfaces/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
+import { CircleX } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const columns: ColumnDef<LocationData>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <div className="flex items-center justify-center h-8 w-8">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+          className="p-2"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center h-8 w-8">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+          className="p-2"
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
   {
     accessorKey: "id",
     header: "ID",
@@ -38,10 +68,10 @@ export const columns: ColumnDef<LocationData>[] = [
       return `${longlat.coordinates[1]}, ${longlat.coordinates[0]}`;
     },
   },
-  {
-    header: "Radius (m)",
-    accessorKey: "radius",
-  },
+  // {
+  //   header: "Radius (m)",
+  //   accessorKey: "radius",
+  // },
   {
     id: "actions",
     cell: ({ row }) => {
@@ -69,12 +99,12 @@ export const columns: ColumnDef<LocationData>[] = [
       return (
         <div className="flex gap-2">
           <Button
-            variant="destructive"
+            className="bg-white text-red-600 hover:bg-red-200 hover:text-red-800 transition-all duration-500"
             size="sm"
             onClick={handleDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? "Deleting..." : "Delete"}
+            <CircleX />
           </Button>
         </div>
       );
