@@ -1,6 +1,5 @@
 "use client";
 import {
-  ColumnDef,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -16,16 +15,38 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-interface DataTableProps<TData> {
-  columns: ColumnDef<TData>[];
-  data: TData[];
-}
-export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
+import { DataTableProps } from "@/lib/interfaces/types";
+
+export function DataTable<TData>({
+  columns,
+  data,
+  rowSelection,
+  setRowSelection,
+}: DataTableProps<TData>) {
   const table = useReactTable({
-    data: data ?? [], // Provide empty array fallback
+    data: data ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onRowSelectionChange: (updaterOrValue) => {
+      if (typeof updaterOrValue === "function") {
+        interface RowSelectionState {
+          [key: string]: boolean;
+        }
+
+        type RowSelectionUpdater = (
+          prev: RowSelectionState
+        ) => RowSelectionState;
+
+        const updater = updaterOrValue as RowSelectionUpdater;
+        setRowSelection(updater(rowSelection ?? {}));
+      } else {
+        setRowSelection(updaterOrValue);
+      }
+    },
+    state: {
+      rowSelection,
+    },
   });
 
   return (
