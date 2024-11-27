@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.14.0/deployment-apps-v1.json
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -20,10 +21,26 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/2024-cmpu9010-group-3/frontend:0.9.0@sha256:7840177b3e46212185ed3d9bcdc15762d4e046cb5a32365f2b89dd95509d6f23
+          image: ghcr.io/2024-cmpu9010-group-3/frontend:0.9.0@sha256:a5ac7f847d42f023c47b09483b5371066ffd016e6c92ce51e949ba78e7883b3f
           resources: {}
           ports:
             - containerPort: 3000
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:3000/
+            failureThreshold: 1
+            periodSeconds: 30
+          startupProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:3000/
+            failureThreshold: 30
+            periodSeconds: 10
           env:
             - name: NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
               valueFrom:
