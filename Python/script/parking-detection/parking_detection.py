@@ -8,6 +8,7 @@ import os
 import numpy as np
 import math
 import pandas as pd
+import random
 from geopy.distance import geodesic
 from sklearn.cluster import DBSCAN
 from hdbscan import HDBSCAN
@@ -534,7 +535,7 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
 
 def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=25, lot_min_spots=5, clustering_eps=50, clustering_min_samples=3):
     """
-    Classifies parking spots as public(on the street parking) or private(residential) based on their proximity to the road (calculated using the road mask)
+    Classifies parking spots as public(on the street parking), private(residential) or parking lot based on their proximity to the road (calculated using the road mask)
 
     Params:
         all_parking_spots (list): List of all parking spots(by the model and then the empty parking detection) 
@@ -550,6 +551,7 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
         classified_spots (list): List of parking spots with classification added
     """
     classified_spots = []
+    cluster_labels = []
 
     road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
     road_contours, _ = cv2.findContours(road_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -579,6 +581,7 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
     for idx, spot in enumerate(all_parking_spots):
         x_center, y_center = pixel_coords[idx]
         cluster_label = labels[idx]
+        cluster_labels.append(cluster_label)
 
         min_distance = float("inf")
 
@@ -599,7 +602,45 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
         classified_spots.append([spot[0], spot[1], classification])
         print(classification)
 
-    return classified_spots
+    return classified_spots, cluster_labels
+
+def draw_clusters_and_labels(image_path, spots, cluster_labels, center_long, center_lat):
+    """
+    Draws cluster labels and classifications labels on the image for each spot.
+
+    Params:
+        image_path (str): Path of the image
+        spots (list): List of parking spot coordinates and classification labels (public, private or parking lot)
+        cluster_labels (list): List of cluster labels corresponding to each spot
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image
+    """
+    image = cv2.imread(image_path)
+
+    unique_clusters = set(cluster_labels)
+    cluster_colors = {cluster: tuple(random.randint(0, 255) for _ in range(3)) for cluster in unique_clusters}
+
+    classification_colors = {
+        "public": (0, 255, 0),  #green
+        "private": (0, 0, 255), #red
+        "parking_lot": (255, 0, 0) #blue
+    }
+
+    for i, spot in enumerate(spots):
+        cluster_label = cluster_labels[i]
+        classification = spot[2]
+
+        x, y = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+        x, y = int(x), int(y)
+
+        cluster_color = cluster_colors.get(cluster_label, (255, 255, 255))
+        classification_color = classification_colors.get(classification, (255, 255, 255))
+
+        cv2.circle(image, (x, y), 5, cluster_color, -1)
+        label = f"{classification}"
+        cv2.putText(image, label, (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, classification_color, 1)
+
+    cv2.imwrite(image_path, image)
 
 def get_parking_coords_in_image(model, longitude, latitude):
     """
@@ -620,8 +661,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -648,7 +689,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
-        all_detections = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
+        all_detections, cluster_labels = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
+        draw_clusters_and_labels(output_path_bb_image, all_detections, cluster_labels, longitude, latitude)
 
     return all_detections
 
@@ -765,9 +807,9 @@ if __name__ == "__main__":
     #main(-6.2264, 53.4194, -6.2219, 53.4221)#parking lot
     #main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
     #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
-    #main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
-    #main(-6.2751, 53.347, -6.272, 53.3489)#urban area
-    #main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
-    #main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
+    main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
+    main(-6.2751, 53.347, -6.272, 53.3489)#urban area
+    main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
+    main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
 
-    main()
+    #main()
