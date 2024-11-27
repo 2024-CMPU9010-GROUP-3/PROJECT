@@ -23,6 +23,7 @@
 - Team pace seems to be slowing down and excitement for the project seems to have weakened
 - Some features we planned for may not be implemented in time before the major feature freeze
 - Getting professional users who we are targeting for usability testing is tough
+- Some members feel as though they don't get to do enough developping/coding tasks
 
 ### **3. Glad**
 
