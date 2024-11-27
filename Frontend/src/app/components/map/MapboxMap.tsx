@@ -396,27 +396,24 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       if (!amenitiesFilter?.length) {
         throw new Error("Please select at least one amenity type");
       }
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/history?userid=${sessionUUID}`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            amenitytypes: amenitiesFilter,
-            longlat: {
-              type: "Point",
-              coordinates: [
-                currentPositionCords.longitude,
-                currentPositionCords.latitude,
-              ],
-            },
-            radius: sliderValue,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${sessionToken}`,
+      const response = await fetch(`/api/history?userid=${sessionUUID}`, {
+        method: "POST",
+        body: JSON.stringify({
+          amenitytypes: amenitiesFilter,
+          longlat: {
+            type: "Point",
+            coordinates: [
+              currentPositionCords.longitude,
+              currentPositionCords.latitude,
+            ],
           },
-        }
-      );
+          radius: sliderValue,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      });
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new Error(errorData?.message || "Failed to save map");
