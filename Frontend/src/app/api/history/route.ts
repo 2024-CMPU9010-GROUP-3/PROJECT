@@ -32,3 +32,17 @@ export async function POST(request: NextRequest) {
   }
   return NextResponse.json([], { status: 500 });
 }
+
+export async function DELETE(request: NextRequest) {
+  if (process.env.NEXT_PUBLIC_BACKEND_URL) {
+    const userid = request.nextUrl.searchParams.get("userid");
+    const req = new NextRequest(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/history/${userid}`,
+      request
+    );
+    const resp = await fetch(req);
+    const j = await resp.json();
+    return NextResponse.json(j);
+  }
+  return NextResponse.json([], { status: 500 });
+}
