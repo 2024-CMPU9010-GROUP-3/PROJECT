@@ -51,7 +51,7 @@
 
 # List of changes to make
 * Log in straight after sign up - majority vote decided no (26/11)
-* Keep/ditch username (Brendan)
+* Keep/ditch username (Brendan) - majority vote decided keep (26/11)
 * Remove Mac icons from profile menu
 * Make the profile icon more visible on the map
 * Make tutorial icon more visible on the map
@@ -65,7 +65,7 @@
 
 # Done changes (27/11/2024)
 * Water fountain icon
-* Keep username
+* More information when clicking/hovering over the icons
 
 # Pending (27/11/2024)
 * Remove Mac icons from profile menu
@@ -76,4 +76,3 @@
 * Zoom in/out buttons
 * Change "Public Wifi" to "Free Public Wifi"
 * Public Toilet location seem off
-* More information when clicking/hovering over the icons
