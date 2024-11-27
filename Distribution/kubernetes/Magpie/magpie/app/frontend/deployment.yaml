@@ -27,12 +27,18 @@ spec:
             - containerPort: 3000
           livenessProbe:
             exec:
-              command: ["curl --fail http://localhost:3000/ || exit 1"]
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/
             failureThreshold: 1
             periodSeconds: 30
           startupProbe:
             exec:
-              command: ["curl --fail http://localhost:3000/ || exit 1"]
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/
             failureThreshold: 30
             periodSeconds: 10
           env:
