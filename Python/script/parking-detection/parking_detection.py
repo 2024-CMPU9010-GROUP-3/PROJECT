@@ -533,7 +533,7 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
-def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=25, lot_min_spots=5, clustering_eps=50, clustering_min_samples=3):
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=25, lot_min_spots=15, clustering_eps=50, clustering_min_samples=5):
     """
     Classifies parking spots as public(on the street parking), private(residential) or parking lot based on their proximity to the road (calculated using the road mask)
 
@@ -567,12 +567,6 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
     labels = clustering.labels_
 
     #clustering = HDBSCAN(min_cluster_size=clustering_min_samples).fit(pixel_coords)
-    #labels = clustering.labels_
-
-    #clustering = MeanShift(bandwidth=clustering_eps).fit(pixel_coords)
-    #labels = clustering.labels_
-
-    #clustering = AgglomerativeClustering(n_clusters=None, distance_threshold=clustering_eps).fit(pixel_coords)
     #labels = clustering.labels_
 
     #clustering = OPTICS(min_samples=clustering_min_samples).fit(pixel_coords)
@@ -638,7 +632,7 @@ def draw_clusters_and_labels(image_path, spots, cluster_labels, center_long, cen
 
         cv2.circle(image, (x, y), 5, cluster_color, -1)
         label = f"{classification}"
-        cv2.putText(image, label, (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, classification_color, 1)
+        cv2.putText(image, label, (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, classification_color, 2)
 
     cv2.imwrite(image_path, image)
 
@@ -804,9 +798,9 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    #main(-6.2264, 53.4194, -6.2219, 53.4221)#parking lot
-    #main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
-    #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
+    main(-6.2264, 53.4194, -6.2219, 53.4221)#parking lot
+    main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
+    main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
     main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
     main(-6.2751, 53.347, -6.272, 53.3489)#urban area
     main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
