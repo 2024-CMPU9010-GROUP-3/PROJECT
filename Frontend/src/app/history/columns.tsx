@@ -2,9 +2,8 @@
 
 import { LocationData } from "@/lib/interfaces/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { CircleX } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import React from "react";
 
 export const columns: ColumnDef<LocationData>[] = [
   {
@@ -66,48 +65,6 @@ export const columns: ColumnDef<LocationData>[] = [
     cell: ({ row }) => {
       const longlat = row.original.longlat;
       return `${longlat.coordinates[1]}, ${longlat.coordinates[0]}`;
-    },
-  },
-  // {
-  //   header: "Radius (m)",
-  //   accessorKey: "radius",
-  // },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      let isDeleting = false;
-
-      const handleDelete = async () => {
-        if (isDeleting) return;
-        isDeleting = true;
-
-        try {
-          const response = await fetch(`/api/history/${row.original.id}`, {
-            method: "DELETE",
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to delete");
-          }
-        } catch (error) {
-          console.error("Delete failed:", error);
-        } finally {
-          isDeleting = false;
-        }
-      };
-
-      return (
-        <div className="flex gap-2">
-          <Button
-            className="bg-white text-red-600 hover:bg-red-200 hover:text-red-800 transition-all duration-500"
-            size="sm"
-            onClick={handleDelete}
-            disabled={isDeleting}
-          >
-            <CircleX />
-          </Button>
-        </div>
-      );
     },
   },
 ];
