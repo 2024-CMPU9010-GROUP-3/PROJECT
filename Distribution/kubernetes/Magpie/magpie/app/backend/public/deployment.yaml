@@ -27,12 +27,18 @@ spec:
             - containerPort: 8080
           livenessProbe:
             exec:
-              command: ["curl --fail http://localhost:8080/heartbeat || exit 1"]
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/heartbeat
             failureThreshold: 1
             periodSeconds: 30
           startupProbe:
             exec:
-              command: ["curl --fail http://localhost:8080/heartbeat || exit 1"]
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/heartbeat
             failureThreshold: 30
             periodSeconds: 10
           env:
