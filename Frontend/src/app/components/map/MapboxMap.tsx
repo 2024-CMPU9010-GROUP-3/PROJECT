@@ -36,6 +36,8 @@ import {
   GeoJsonCollection,
   MapHoverEvent,
 } from "@/lib/interfaces/types";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
@@ -380,6 +382,57 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
     return geoJsonCollection;
   }
+
+  const { sessionUUID } = useSession();
+  const { toast } = useToast();
+
+  const handleSaveMap = async () => {
+    try {
+      // Validate coordinates
+      if (!currentPositionCords?.latitude || !currentPositionCords?.longitude) {
+        throw new Error("Location coordinates are missing");
+      }
+      // Validate other required data
+      if (!amenitiesFilter?.length) {
+        throw new Error("Please select at least one amenity type");
+      }
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/history?userid=${sessionUUID}`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            amenitytypes: amenitiesFilter,
+            longlat: {
+              type: "Point",
+              coordinates: [
+                currentPositionCords.longitude,
+                currentPositionCords.latitude,
+              ],
+            },
+            radius: sliderValue,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${sessionToken}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(errorData?.message || "Failed to save map");
+      }
+      toast({
+        title: "Map saved",
+        description: "Your map has been saved successfully",
+      });
+    } catch (error) {
+      console.error("Error saving map:", error);
+      toast({
+        title: "Error saving map",
+        description: "Failed to save map",
+      });
+    }
+  };
 
   const fetchPointsFromDB = async (
     longitude: number,
@@ -749,6 +802,18 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               </div>
             </>
           ) : null}
+          {mapBoxApiKey ? (
+            <>
+              <Button
+                className="w-full mx-auto transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
+                onClick={handleSaveMap}
+              >
+                Save Map
+              </Button>
+            </>
+          ) : (
+            ""
+          )}
           {/* Combined Data and Filter Options Card */}
           <div className="px-2 sm:px-3 lg:px-4">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
