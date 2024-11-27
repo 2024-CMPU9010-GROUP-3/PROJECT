@@ -36,17 +36,10 @@
 
 ### **Action Items:**
 
-- Enhance Presentation Dynamics:
-  Encourage equitable participation during presentations. Allocate roles in advance to ensure balanced contribution and professionalism when responding to feedback.
+- Build on feedback from user evaluation:
+  Work on items raised during user evaluation and implement major new features before code freeze
 
-- Strengthen Code Review Processes:
-  Implement a more rigorous code review system to catch potential reintroductions of resolved issues and improve overall code quality.
+- Start the final report:
+  As coding tasks wind down, it is important to start the final report early to give time to all members to write in a lot of details the areas they worked on during this project.
 
-- Prioritize Tool Training:
-  Schedule dedicated training sessions for key tools (e.g., LaTeX, xywhr) early in the project timeline to ensure efficiency and maintain quality standards.
-
-- Address Frontend Criticisms:
-  Act on specific feedback regarding the frontend and explore ways to demonstrate the app’s utility more effectively during evaluations.
-
-- Resolve Login and Other Critical Issues:
-  Allocate resources and establish a timeline to address and resolve persistent technical challenges, such as login functionality. Regularly review progress to ensure timely resolution.
+- Keep up momentum!! We're almost there guys :)'
