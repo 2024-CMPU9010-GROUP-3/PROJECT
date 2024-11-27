@@ -9,6 +9,11 @@ import numpy as np
 import math
 import pandas as pd
 from geopy.distance import geodesic
+from sklearn.cluster import DBSCAN
+from hdbscan import HDBSCAN
+from sklearn.cluster import MeanShift
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.cluster import OPTICS
 
 
 def get_images(imag_save_path, longitude, latitude, mapbox_type):
@@ -527,7 +532,7 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
-def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=25):
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=25, lot_min_spots=5, clustering_eps=50, clustering_min_samples=3):
     """
     Classifies parking spots as public(on the street parking) or private(residential) based on their proximity to the road (calculated using the road mask)
 
@@ -537,6 +542,9 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
         center_long (float): Longitude of the center of the image
         center_lat (float): Latitude of the center of the image
         threshold (int): Threshold in pixels to classify a spot near the road as public
+        lot_min_spots (int): Minimum number of spots in a cluster to classify it as a parking lot
+        clustering_eps (float): Maximum distance between spots in pixels to form a cluster
+        clustering_min_samples (int): Minimum number of samples to form a cluster
 
     Returns:
         classified_spots (list): List of parking spots with classification added
@@ -546,24 +554,50 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
     road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
     road_contours, _ = cv2.findContours(road_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    #print(center_long, center_lat)
+    print(center_long, center_lat)
+    pixel_coords = []
 
     for spot in all_parking_spots:
         x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+        pixel_coords.append([x_center, y_center])
+
+    clustering = DBSCAN(eps=clustering_eps, min_samples=clustering_min_samples).fit(pixel_coords)
+    labels = clustering.labels_
+
+    #clustering = HDBSCAN(min_cluster_size=clustering_min_samples).fit(pixel_coords)
+    #labels = clustering.labels_
+
+    #clustering = MeanShift(bandwidth=clustering_eps).fit(pixel_coords)
+    #labels = clustering.labels_
+
+    #clustering = AgglomerativeClustering(n_clusters=None, distance_threshold=clustering_eps).fit(pixel_coords)
+    #labels = clustering.labels_
+
+    #clustering = OPTICS(min_samples=clustering_min_samples).fit(pixel_coords)
+    #labels = clustering.labels_
+
+    for idx, spot in enumerate(all_parking_spots):
+        x_center, y_center = pixel_coords[idx]
+        cluster_label = labels[idx]
 
         min_distance = float("inf")
+
         for contour in road_contours:
             distance = cv2.pointPolygonTest(contour, (x_center, y_center), measureDist=True)
             min_distance = min(min_distance, abs(distance))
 
+        classification = "private"
+
         if min_distance <= threshold:
             classification = "public"
-        else:
-            classification = "private"
 
-        #print(classification)
+        if cluster_label != -1:
+            cluster_size = np.sum(labels == cluster_label)
+            if cluster_size >= lot_min_spots:
+                classification = "parking lot"
 
         classified_spots.append([spot[0], spot[1], classification])
+        print(classification)
 
     return classified_spots
 
