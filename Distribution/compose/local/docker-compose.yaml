@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=magpie
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "magpie", "-u", "postgres"]
+      test: ["CMD-SHELL", "pg_isready -d magpie -U postgres"]
       interval: 30s
       timeout: 60s
       retries: 5
