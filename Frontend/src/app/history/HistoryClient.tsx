@@ -16,9 +16,8 @@ const HistoryClient = () => {
         },
       });
       const data = await response.json();
-      console.log("DATA", data?.response?.content?.history);
 
-      setHistory(data);
+      setHistory(data?.response?.content?.history);
     }
   };
 
@@ -52,9 +51,7 @@ const HistoryClient = () => {
           {/* Keep your existing DataTable component here */}
           {/* The rest of your content remains unchanged */}
           <div className="relative overflow-hidden rounded-lg border border-gray-200 w-full min-h-[calc(100vh-20rem)]">
-            <div className="overflow-x-auto h-full">
-              <DataTable columns={columns} data={history} />
-            </div>
+            <DataTable columns={columns} data={history ?? []} />
           </div>
         </div>
       </div>
