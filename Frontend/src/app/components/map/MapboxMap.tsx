@@ -428,6 +428,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       toast({
         title: "Error saving map",
         description: "Failed to save map",
+        variant: "destructive",
       });
     }
   };
