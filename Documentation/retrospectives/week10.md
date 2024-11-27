@@ -30,6 +30,7 @@
 - We are on track for submissions and our milestones
 - Backend feature implemented relatively quickly
 - Current bugs are non-critical and won't harm the final result
+- Getting valuable user feedback from the user evaluations and the final product looks better than before
 
 ---
 
