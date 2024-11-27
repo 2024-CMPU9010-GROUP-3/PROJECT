@@ -2,6 +2,7 @@
 
 import { LocationData } from "@/lib/interfaces/types";
 import { ColumnDef } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
 
 export const columns: ColumnDef<LocationData>[] = [
   {
@@ -42,19 +43,41 @@ export const columns: ColumnDef<LocationData>[] = [
     accessorKey: "radius",
   },
   {
-    header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex gap-2">
-        <button
-          className="text-blue-600 hover:text-blue-800"
-          onClick={() => {
-            const coords = row.original.longlat.coordinates;
-            window.open(`https://maps.google.com/?q=${coords[1]},${coords[0]}`);
-          }}
-        >
-          View on Map
-        </button>
-      </div>
-    ),
+    id: "actions",
+    cell: ({ row }) => {
+      let isDeleting = false;
+
+      const handleDelete = async () => {
+        if (isDeleting) return;
+        isDeleting = true;
+
+        try {
+          const response = await fetch(`/api/history/${row.original.id}`, {
+            method: "DELETE",
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete");
+          }
+        } catch (error) {
+          console.error("Delete failed:", error);
+        } finally {
+          isDeleting = false;
+        }
+      };
+
+      return (
+        <div className="flex gap-2">
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting ? "Deleting..." : "Delete"}
+          </Button>
+        </div>
+      );
+    },
   },
 ];
