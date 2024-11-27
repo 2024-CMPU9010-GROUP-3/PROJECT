@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
   data: TData[];
@@ -82,7 +83,13 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
                   colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  {data ? (
+                    <div className="flex items-center justify-center">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    </div>
+                  ) : (
+                    "No results found."
+                  )}
                 </TableCell>
               </TableRow>
             )}
