@@ -533,7 +533,7 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
-def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=30, lot_min_spots=15, clustering_eps=50, clustering_min_samples=5):
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, road_proximity_threshold=30, parking_lot_min_spots=15, clustering_eps=50, clustering_min_samples=5):
     """
     Classifies parking spots as public(on the street parking), private(residential) or parking lot based on their proximity to the road (calculated using the road mask)
 
@@ -542,8 +542,8 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
         road_mask_path (string): Path to road mask
         center_long (float): Longitude of the center of the image
         center_lat (float): Latitude of the center of the image
-        threshold (int): Threshold in pixels to classify a spot near the road as public
-        lot_min_spots (int): Minimum number of spots in a cluster to classify it as a parking lot
+        road_proximity_threshold (int): Threshold in pixels to classify a spot near the road as public
+        parking_lot_min_spots (int): Minimum number of spots in a cluster to classify it as a parking lot
         clustering_eps (float): Maximum distance between spots in pixels to form a cluster
         clustering_min_samples (int): Minimum number of samples to form a cluster
 
@@ -563,14 +563,17 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
         x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
         pixel_coords.append([x_center, y_center])
 
-    clustering = DBSCAN(eps=clustering_eps, min_samples=clustering_min_samples).fit(pixel_coords)
-    labels = clustering.labels_
-
-    #clustering = HDBSCAN(min_cluster_size=clustering_min_samples).fit(pixel_coords)
+    #clustering = DBSCAN(eps=clustering_eps, min_samples=clustering_min_samples).fit(pixel_coords)
     #labels = clustering.labels_
 
-    #clustering = OPTICS(min_samples=clustering_min_samples).fit(pixel_coords)
-    #labels = clustering.labels_
+    num_samples = len(pixel_coords)
+
+    if num_samples == 1:
+        labels = [-1]
+    else:
+        clustering = OPTICS(min_samples=2).fit(pixel_coords)
+        #clustering = HDBSCAN(min_cluster_size=2).fit(pixel_coords)
+        labels = clustering.labels_
 
     for idx, spot in enumerate(all_parking_spots):
         x_center, y_center = pixel_coords[idx]
@@ -585,12 +588,12 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
 
         classification = "private"
 
-        if min_distance <= threshold:
+        if min_distance <= road_proximity_threshold:
             classification = "public"
 
         if cluster_label != -1:
             cluster_size = np.sum(labels == cluster_label)
-            if cluster_size >= lot_min_spots:
+            if cluster_size >= parking_lot_min_spots:
                 classification = "parking lot"
 
         classified_spots.append([spot[0], spot[1], classification])
