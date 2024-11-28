@@ -12,6 +12,7 @@ import (
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
+	util "github.com/2024-CMPU9010-GROUP-3/magpie/internal/util"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/util/env"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5"
@@ -20,7 +21,7 @@ import (
 )
 
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
-	userId, err := p.getUserIdFromRequest(r)
+	userId, err := util.GetUserIdFromRequest(r)
 	if err != nil {
 		resp.SendError(err.(customErrors.CustomError), w)
 		return
@@ -110,7 +111,7 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 	var userDto dtos.UpdateUserDto
-	userId, err := p.getUserIdFromRequest(r)
+	userId, err := util.GetUserIdFromRequest(r)
 	if err != nil {
 		resp.SendError(err.(customErrors.CustomError), w)
 		return
@@ -205,7 +206,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
-	userId, err := p.getUserIdFromRequest(r)
+	userId, err := util.GetUserIdFromRequest(r)
 	if err != nil {
 		resp.SendError(err.(customErrors.CustomError), w)
 		return
@@ -305,15 +306,6 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 // Helper methods
-
-func (p *AuthHandler) getUserIdFromRequest(r *http.Request) (pgtype.UUID, error) {
-	var userId pgtype.UUID
-	userIdPathParam := r.PathValue("id")
-	if err := userId.Scan(userIdPathParam); err != nil {
-		return userId, customErrors.Parameter.InvalidUUIDError
-	}
-	return userId, nil
-}
 
 func (p *AuthHandler) checkForConflicts(userId pgtype.UUID, email string, username string) error {
 	if exists, err := db.New(dbConn).EmailExists(*dbCtx, db.EmailExistsParams{Email: email, ID: userId}); err != nil {
