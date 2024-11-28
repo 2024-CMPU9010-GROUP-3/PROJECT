@@ -20,13 +20,9 @@ import (
 )
 
 func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
-	userIdPathParam := r.PathValue("id")
-	var userId pgtype.UUID
-	err := userId.Scan(userIdPathParam)
-
-	// bad request if parameter is not valid uuid
+	userId, err := p.getUserIdFromRequest(r)
 	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -128,16 +124,10 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
-	var userId pgtype.UUID
 	var userDto dtos.UpdateUserDto
-
-	userIdPathParam := r.PathValue("id")
-
-	err := userId.Scan(userIdPathParam)
-
-	// bad request if parameter is not valid uuid
+	userId, err := p.getUserIdFromRequest(r)
 	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -245,12 +235,9 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
-	var userId pgtype.UUID
-	userIdPathParam := r.PathValue("id")
-	err := userId.Scan(userIdPathParam)
-	// bad request if parameter is not valid uuid
+	userId, err := p.getUserIdFromRequest(r)
 	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -345,4 +332,15 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	resp.SendResponse(dtos.ResponseContentDto{Content: tokenDto, HttpStatus: http.StatusOK}, w)
+}
+
+// Helper methods
+
+func (p *AuthHandler) getUserIdFromRequest(r *http.Request) (pgtype.UUID, error) {
+	var userId pgtype.UUID
+	userIdPathParam := r.PathValue("id")
+	if err := userId.Scan(userIdPathParam); err != nil {
+		return userId, customErrors.Parameter.InvalidUUIDError
+	}
+	return userId, nil
 }
