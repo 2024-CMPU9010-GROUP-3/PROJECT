@@ -1,10 +1,14 @@
+import { Navbar } from "@/components/global/Navbar";
 import HistoryClient from "./HistoryClient";
 
 const page = () => {
   return (
-    <div>
-      <HistoryClient />
-    </div>
+    <>
+      <Navbar />
+      <div className="py-4">
+        <HistoryClient />
+      </div>
+    </>
   );
 };
 export default page;
