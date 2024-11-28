@@ -36,18 +36,19 @@ const HeroSection = () => {
               whileTap={{ scale: 0.98 }}
               className="group px-8 py-3 bg-gradient-to-r from-black to-gray-800 text-white rounded-xl font-medium text-lg flex items-center justify-center hover:shadow-lg transition-all duration-200"
             >
-              <Link href={"/"}>Get Started</Link>
+              <Link href={"/login"}>Get Started</Link>
               <MapPin className="ml-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
             </motion.button>
 
-            <motion.button
+            <motion.a
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              href="#about"
               className="group px-8 py-3 bg-white text-black rounded-xl font-medium text-lg flex items-center justify-center border border-gray-100 hover:border-gray-200 hover:shadow-md transition-all duration-200"
             >
               Learn More
               <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </motion.button>
+            </motion.a>
           </div>
         </motion.div>
       </div>
