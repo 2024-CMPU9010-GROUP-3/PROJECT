@@ -145,16 +145,10 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var passwordHash []byte
-
-	if userDto.Password != nil {
-		passwordHash, err = bcrypt.GenerateFromPassword([]byte(*userDto.Password), 12)
-		if err != nil {
-			resp.SendError(customErrors.Internal.HashingError, w)
-			return
-		}
-	} else {
-		passwordHash = []byte(userLogin.Passwordhash)
+	passwordHash, err := p.getPasswordHash(userDto.Password, userLogin.Passwordhash)
+	if err != nil {
+		resp.SendError(err.(customErrors.CustomError), w)
+		return
 	}
 
 	updateLoginParams := db.UpdateLoginParams{
@@ -320,4 +314,11 @@ func (p *AuthHandler) checkForConflicts(userId pgtype.UUID, email string, userna
 		return customErrors.Payload.UsernameAlreadyExistsError
 	}
 	return nil
+}
+
+func (p *AuthHandler) getPasswordHash(newPassword *string, existingHash string) ([]byte, error) {
+	if newPassword == nil {
+		return []byte(existingHash), nil
+	}
+	return bcrypt.GenerateFromPassword([]byte(*newPassword), 12)
 }
