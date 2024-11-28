@@ -38,6 +38,7 @@
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.462.0",
     "mapbox-gl": "^3.6.0",
+    "mini-svg-data-uri": "^1.4.4",
     "next": "14.2.18",
     "onborda": "^1.2.4",
     "react": "^18.3.1",
