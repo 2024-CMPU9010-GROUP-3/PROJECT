@@ -4,12 +4,17 @@ const WhatIsMagpie = () => {
       <h2 className="text-3xl font-bold text-center mb-8">What is Magpie?</h2>
 
       <div className="space-y-6 text-lg">
-        <p>stub</p>
-      </div>
-      <h2 className="text-3xl font-bold text-center mb-8">Why Magpie?</h2>
-
-      <div className="space-y-6 text-lg">
-        <p>stub</p>
+        <p>
+          Magpie is a cutting-edge geographical information service designed
+          to provide users with a comprehensive view of public services and
+          amenities at a glance. It empowers urban planners, residents, and
+          other stakeholders by offering interactive maps, smart search
+          capabilities, and detailed analysis tools. Whether you&aposre
+          planning infrastructure, exploring local services, or seeking
+          information about your daily routes, Magpie simplifies access to
+          essential data with reliability and precision.
+        </p>
+        <br />
       </div>
 
       <h2 className="text-3xl font-bold text-center mb-8">
