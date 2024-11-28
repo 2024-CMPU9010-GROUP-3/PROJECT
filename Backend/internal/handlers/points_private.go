@@ -15,8 +15,6 @@ import (
 )
 
 func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
-	dbQueries := db.New(dbConn)
-
 	var point dtos.CreatePointDto
 
 	e := point.Decode(r.Body)
@@ -58,7 +56,7 @@ func (p *PointsHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		Details: encodedJson,
 	}
 
-	pointId, err := dbQueries.CreatePoint(*dbCtx, createPointParams)
+	pointId, err := PrivateDb().CreatePoint(*dbCtx, createPointParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -80,8 +78,6 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		resp.SendError(customErrors.Parameter.InvalidIntError, w)
 		return
 	}
-
-	dbQueries := db.New(dbConn)
 
 	var point dtos.CreatePointDto
 	err = point.Decode(r.Body)
@@ -118,7 +114,7 @@ func (p *PointsHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		Details: encodedJson,
 	}
 
-	err = dbQueries.UpdatePoint(*dbCtx, updatePointParams)
+	err = PrivateDb().UpdatePoint(*dbCtx, updatePointParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -138,9 +134,7 @@ func (p *PointsHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	dbQueries := db.New(dbConn)
-
-	err = dbQueries.DeletePoint(*dbCtx, pointId)
+	err = PrivateDb().DeletePoint(*dbCtx, pointId)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return

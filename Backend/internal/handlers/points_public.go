@@ -48,7 +48,7 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 		}
 	}
 
-	points, err := db.New(dbConn).GetPointsInRadius(*dbCtx, db.GetPointsInRadiusParams{Latitude: lat, Longitude: long, Radius: radius, Types: types})
+	points, err := PublicDb().GetPointsInRadius(*dbCtx, db.GetPointsInRadiusParams{Latitude: lat, Longitude: long, Radius: radius, Types: types})
 	if err != nil {
 		if !errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
@@ -84,7 +84,7 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	pointDetailsBytes, err := db.New(dbConn).GetPointDetails(*dbCtx, pointId)
+	pointDetailsBytes, err := PublicDb().GetPointDetails(*dbCtx, pointId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.NotFound.PointNotFoundError, w)

@@ -48,7 +48,7 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 		Off:    int32(offset),
 	}
 
-	rows, err := db.New(dbConn).GetLocationHistory(*dbCtx, getLocationHistoryParams)
+	rows, err := PublicDb().GetLocationHistory(*dbCtx, getLocationHistoryParams)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -95,7 +95,7 @@ func (handler *LocationHistoryHandler) HandleDelete(w http.ResponseWriter, r *ht
 		}
 	}
 
-	err = db.New(dbConn).DeleteLocationHistoryEntries(*dbCtx, idListDto.IdList)
+	err = PublicDb().DeleteLocationHistoryEntries(*dbCtx, idListDto.IdList)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -148,7 +148,7 @@ func (handler *LocationHistoryHandler) HandlePost(w http.ResponseWriter, r *http
 		Radius:       historyEntryDto.Radius,
 	}
 
-	id, err := db.New(dbConn).CreateLocationHistoryEntry(*dbCtx, createLocationHistoryEntryParam)
+	id, err := PublicDb().CreateLocationHistoryEntry(*dbCtx, createLocationHistoryEntryParam)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return

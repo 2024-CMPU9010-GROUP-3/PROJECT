@@ -27,7 +27,7 @@ func (p *AuthHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDetails, err := db.New(dbConn).GetUserDetails(*dbCtx, userId)
+	userDetails, err := PublicDb().GetUserDetails(*dbCtx, userId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.NotFound.UserNotFoundError, w)
@@ -84,14 +84,14 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 
 	// converting the hash to a string here is not ideal, but sqlc interprets char(72) as a string so here we are
 	createUserParams := db.CreateUserParams{Username: userDto.Username, Email: userDto.Email, Passwordhash: string(passwordHash)}
-	userId, err := db.New(dbConn).WithTx(tx).CreateUser(*dbCtx, createUserParams)
+	userId, err := PublicDb().WithTx(tx).CreateUser(*dbCtx, createUserParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
 
 	createUserDetailParams := db.CreateUserDetailsParams{ID: userId, Firstname: userDto.FirstName, Lastname: userDto.LastName, Profilepicture: userDto.ProfilePicture}
-	userId, err = db.New(dbConn).WithTx(tx).CreateUserDetails(*dbCtx, createUserDetailParams)
+	userId, err = PublicDb().WithTx(tx).CreateUserDetails(*dbCtx, createUserDetailParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -134,7 +134,7 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userLogin, err := db.New(dbConn).GetLoginById(*dbCtx, userId)
+	userLogin, err := PublicDb().GetLoginById(*dbCtx, userId)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			resp.SendError(customErrors.NotFound.UserNotFoundError, w)
@@ -183,13 +183,13 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	err = db.New(dbConn).WithTx(tx).UpdateLogin(*dbCtx, updateLoginParams)
+	err = PublicDb().WithTx(tx).UpdateLogin(*dbCtx, updateLoginParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
 	}
 
-	err = db.New(dbConn).WithTx(tx).UpdateUserDetails(*dbCtx, updateUserDetailsParams)
+	err = PublicDb().WithTx(tx).UpdateUserDetails(*dbCtx, updateUserDetailsParams)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -212,7 +212,7 @@ func (p *AuthHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.New(dbConn).DeleteUser(*dbCtx, userId)
+	err = PublicDb().DeleteUser(*dbCtx, userId)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -240,10 +240,10 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var userLogin db.Login
 	var err error
 
-	userLogin, err = db.New(dbConn).GetLoginByEmail(*dbCtx, loginDto.UsernameOrEmail)
+	userLogin, err = PublicDb().GetLoginByEmail(*dbCtx, loginDto.UsernameOrEmail)
 	if err != nil {
 		// try again with username
-		userLogin, err = db.New(dbConn).GetLoginByUsername(*dbCtx, loginDto.UsernameOrEmail)
+		userLogin, err = PublicDb().GetLoginByUsername(*dbCtx, loginDto.UsernameOrEmail)
 	}
 
 	if err != nil {
@@ -291,7 +291,7 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// set last logged in in database
-	err = db.New(dbConn).UpdateLastLogin(*dbCtx, userLogin.ID)
+	err = PublicDb().UpdateLastLogin(*dbCtx, userLogin.ID)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -308,13 +308,13 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 // Helper methods
 
 func (p *AuthHandler) checkForConflicts(userId pgtype.UUID, email string, username string) error {
-	if exists, err := db.New(dbConn).EmailExists(*dbCtx, db.EmailExistsParams{Email: email, ID: userId}); err != nil {
+	if exists, err := PublicDb().EmailExists(*dbCtx, db.EmailExistsParams{Email: email, ID: userId}); err != nil {
 		return customErrors.Database.UnknownDatabaseError.WithCause(err)
 	} else if exists {
 		return customErrors.Payload.EmailAlreadyExistsError
 	}
 
-	if exists, err := db.New(dbConn).UsernameExists(*dbCtx, db.UsernameExistsParams{Username: username, ID: userId}); err != nil {
+	if exists, err := PublicDb().UsernameExists(*dbCtx, db.UsernameExistsParams{Username: username, ID: userId}); err != nil {
 		return customErrors.Database.UnknownDatabaseError.WithCause(err)
 	} else if exists {
 		return customErrors.Payload.UsernameAlreadyExistsError
