@@ -21,7 +21,7 @@ const HeroSection = () => {
               Magpie
             </span>
             <span className="block mt-2 text-2xl sm:text-3xl md:text-4xl text-gray-600 font-medium">
-              Services at a glance
+              Services at a Glance
             </span>
           </h1>
 
