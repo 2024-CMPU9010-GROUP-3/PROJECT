@@ -102,4 +102,4 @@ INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius) VALUES (
 RETURNING Id;
 
 -- name: DeleteLocationHistoryEntries :exec
-DELETE FROM location_history WHERE Id = ANY(@ids::BIGINT[]);
+DELETE FROM location_history WHERE Id = ANY(@ids::BIGINT[]) AND UserId = @userid;

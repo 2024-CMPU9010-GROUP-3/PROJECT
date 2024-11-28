@@ -11,6 +11,7 @@ import (
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
 	customErrors "github.com/2024-CMPU9010-GROUP-3/magpie/internal/errors"
 	resp "github.com/2024-CMPU9010-GROUP-3/magpie/internal/responses"
+	util "github.com/2024-CMPU9010-GROUP-3/magpie/internal/util"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/twpayne/go-geom"
@@ -18,9 +19,6 @@ import (
 )
 
 func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.Request) {
-	var userId pgtype.UUID
-
-	userIdPathParam := r.PathValue("id")
 	limitQueryParam := r.URL.Query().Get("limit")
 	offsetQueryParam := r.URL.Query().Get("offset")
 
@@ -36,9 +34,9 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 		return
 	}
 
-	err = userId.Scan(userIdPathParam)
+	userId, err := util.GetUserIdFromRequest(r)
 	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -73,13 +71,10 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 
 func (handler *LocationHistoryHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	var idListDto dtos.IntIdListDto
-	var userId pgtype.UUID
 
-	userIdPathParam := r.PathValue("id")
-
-	err := userId.Scan(userIdPathParam)
+	userId, err := util.GetUserIdFromRequest(r)
 	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -95,7 +90,7 @@ func (handler *LocationHistoryHandler) HandleDelete(w http.ResponseWriter, r *ht
 		}
 	}
 
-	err = PublicDb().DeleteLocationHistoryEntries(*dbCtx, idListDto.IdList)
+	err = PublicDb().DeleteLocationHistoryEntries(*dbCtx, db.DeleteLocationHistoryEntriesParams{Ids: idListDto.IdList, Userid: userId})
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return

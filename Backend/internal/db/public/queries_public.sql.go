@@ -89,11 +89,16 @@ func (q *Queries) CreateUserDetails(ctx context.Context, arg CreateUserDetailsPa
 }
 
 const deleteLocationHistoryEntries = `-- name: DeleteLocationHistoryEntries :exec
-DELETE FROM location_history WHERE Id = ANY($1::BIGINT[])
+DELETE FROM location_history WHERE Id = ANY($1::BIGINT[]) AND UserId = $2
 `
 
-func (q *Queries) DeleteLocationHistoryEntries(ctx context.Context, ids []int64) error {
-	_, err := q.db.Exec(ctx, deleteLocationHistoryEntries, ids)
+type DeleteLocationHistoryEntriesParams struct {
+	Ids    []int64     `json:"ids"`
+	Userid pgtype.UUID `json:"userid"`
+}
+
+func (q *Queries) DeleteLocationHistoryEntries(ctx context.Context, arg DeleteLocationHistoryEntriesParams) error {
+	_, err := q.db.Exec(ctx, deleteLocationHistoryEntries, arg.Ids, arg.Userid)
 	return err
 }
 
