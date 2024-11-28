@@ -64,23 +64,26 @@ const HistoryClient = () => {
   }, [rowSelection]);
 
   return (
-    <div className="max-w-[100rem] mx-auto p-6 space-y-6">
-      {/* Modern Header */}
-      <div className="bg-white rounded-xl shadow-sm p-8">
-        <h1 className="text-3xl font-semibold text-gray-900 mb-2">History</h1>
-        <p className="text-gray-600">
+    // Adjust main container padding for smaller screens
+    <div className="max-w-[100rem] mx-auto p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-6">
+      {/* Responsive Header */}
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 md:p-8">
+        <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-1 sm:mb-2">
+          History
+        </h1>
+        <p className="text-sm sm:text-base text-gray-600">
           View and manage your past location searches and saved amenities.
         </p>
       </div>
 
-      {/* Main Content Area */}
-      <div className="bg-white rounded-xl shadow-sm p-8">
-        <div className="flex flex-col space-y-6">
+      {/* Responsive Main Content Area */}
+      <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col space-y-4 sm:space-y-6">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
               Welcome back!
             </h2>
-            <p className="text-gray-600 mt-1">
+            <p className="text-sm sm:text-base text-gray-600 mt-1">
               Here&apos;s a list of your saved locations for amenities!
             </p>
           </div>
