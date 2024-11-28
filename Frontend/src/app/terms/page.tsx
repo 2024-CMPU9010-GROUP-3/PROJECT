@@ -22,7 +22,7 @@ const TermsAndPrivacyPage = () => {
     <section className="mb-10">
       <h2 className="text-2xl font-semibold mb-4">Terms of Service</h2>
       <p className="mb-4">
-        Welcome to our website. By accessing or using our site, you agree to comply with and be bound by the following terms and conditions. Please review them carefully.
+        Welcome to <i>Magpie</i>. By accessing or using our site, you agree to comply with and be bound by the following terms and conditions. Please review them carefully.
       </p>
       <ul className="list-disc pl-5">
         <li>Use of the site is subject to all applicable laws and regulations.</li>
@@ -36,7 +36,6 @@ const TermsAndPrivacyPage = () => {
       <ul className="list-disc pl-5 mb-4">
         <li>Name</li>
         <li>Email address</li>
-        <li>Location data</li>
       </ul>
     </section>
 
@@ -58,7 +57,7 @@ const TermsAndPrivacyPage = () => {
         Under GDPR, you have the right to access, rectify, or erase your personal data. You also have the right to restrict or object to our processing of your data.
       </p>
       <p className="mb-4">
-        If you have any questions or concerns about our terms or privacy practices, please contact us at [your contact information].
+        If you have any questions or concerns about our terms or privacy practices, please contact us at <a href="mailto:Burgesssaul@gmail.com">Burgesssaul@gmail.com.</a>
       </p>
     </section>
       </div>

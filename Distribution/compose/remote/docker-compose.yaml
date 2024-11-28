@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=magpie
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "magpie", "-u", "postgres"]
+      test: ["CMD-SHELL", "pg_isready -d magpie -U postgres"]
       interval: 30s
       timeout: 60s
       retries: 5
@@ -20,11 +20,17 @@ services:
       - app-network
 
   private-service:
-    image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.10.0@sha256:e0f3571d8ecea130414b06f8c91501abca9e8e2ab46c827f9d4b23ef2700d1a4
+    image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.12.0@sha256:e99289cac03d606d15f7f61f8b55fad7f80c2eede21ad81ac7811256eebc7d4a
     container_name: private-backend
     depends_on:
       postgis-service:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
     ports:
       - "8081:8080"
     networks:
@@ -37,11 +43,17 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   public-service:
-    image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.10.0@sha256:198cbd95f823d3f7ded0646c4710e3a8267e1008c1fd43920cfe2a1dd31861c3
+    image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.12.0@sha256:ce873e67bcfdb8000d2770da4ff8ed198ff252cd83f14f3dd755457953180b24
     container_name: public-backend
     depends_on:
       postgis-service:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
     ports:
       - "8082:8080"
     networks:
@@ -54,11 +66,13 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   frontend-service:
-    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.8.0@sha256:3d659ae1055cd3ac026648b1137a832e63841cc939875e7151d1f0bd31d66725
+    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.9.0@sha256:87beeacaa4ff2e32618c595bd8044d5a7030f594a147c88a514de3df33c3da27
     container_name: frontend
     depends_on:
-      - private-service
-      - public-service
+      private-service:
+        condition: service_healthy
+      public-service:
+        condition: service_healthy
     ports:
       - "3000:3000"
     environment:

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.14.0/deployment-apps-v1.json
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -20,10 +21,26 @@ spec:
     spec:
       containers:
         - name: public-backend
-          image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.10.0@sha256:198cbd95f823d3f7ded0646c4710e3a8267e1008c1fd43920cfe2a1dd31861c3
+          image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.12.0@sha256:ce873e67bcfdb8000d2770da4ff8ed198ff252cd83f14f3dd755457953180b24
           resources: {}
           ports:
             - containerPort: 8080
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/heartbeat
+            failureThreshold: 1
+            periodSeconds: 30
+          startupProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/heartbeat
+            failureThreshold: 30
+            periodSeconds: 10
           env:
             - name: LOGIN
               valueFrom:
@@ -51,7 +68,7 @@ spec:
                 secretKeyRef:
                   name: secret-magpie-db-user
                   key: MAGPIE_JWT_SECRET
-                  
+
             - name: MAGPIE_CORS_ALLOWED_ORIGINS
               value: "http://frontend-service.magpie.svc.cluster.local https://magpie.solonsstuff.com"
             - name: MAGPIE_CORS_ALLOWED_METHODS

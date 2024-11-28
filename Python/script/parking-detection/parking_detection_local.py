@@ -137,7 +137,7 @@ def new_mask(image_path, save_path, threshold=240):
     cv2.imwrite(save_path, combined_mask)
 
 
-def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
+def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model, conf_threshold=0.4):
     """
     Detect cars in the image using the retrained YOLO model and draws them on the image.
 
@@ -145,7 +145,9 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         image_path (str): Path of the image
         road_mask_path (str): Path of the saved mask
         output_image_path (str): Path to save the image with bounding boxes, red for parking and blue cars on the road
-        model : YOLO model.
+        model : YOLO model
+        conf_threshold (float): Minimum confidence threshold for a predictions to be considered
+
         
     Returns:
         detections_parking (list): List of the bounding boxes for the cars not on the road [x_center, y_center, width, height, angle_degrees]
@@ -167,6 +169,10 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
             x_center, y_center, width, height, angle_radians = map(float, box.xywhr[0])
             angle_degrees = angle_radians * (180 / math.pi) 
             cls = int(box.cls[0])
+            conf = float(box.conf[0])
+
+            if conf < conf_threshold:#we ignore the predictions that have a low confidance score as they are more likely to be misclassifications
+                continue
 
             if cls == 0:
                 if -45 <= angle_degrees <= 45 or 135 <= angle_degrees <= 225:
@@ -398,10 +404,16 @@ def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_
     for spot, rotation, alignment in empty_spots:
         x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
 
-        x_min = int(x_center - avg_spot_width / 2)
-        x_max = int(x_center + avg_spot_width / 2)
-        y_min = int(y_center - avg_spot_length / 2)
-        y_max = int(y_center + avg_spot_length / 2)
+        if alignment == 'horizontal':
+            x_min = int(x_center - avg_spot_width / 2)
+            x_max = int(x_center + avg_spot_width / 2)
+            y_min = int(y_center - avg_spot_length / 2)
+            y_max = int(y_center + avg_spot_length / 2)
+        else:
+            x_min = int(x_center - avg_spot_length / 2)
+            x_max = int(x_center + avg_spot_length / 2)
+            y_min = int(y_center - avg_spot_width / 2)
+            y_max = int(y_center + avg_spot_width / 2)
 
         car_region = road_mask[y_min:y_max, x_min:x_max]
         road_pixels = cv2.countNonZero(car_region)
@@ -484,6 +496,41 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
 
     cv2.imwrite(image_path, image)
 
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, threshold=25):
+    """
+    Classifies parking spots as public(on the street parking) or private(residential) based on their proximity to the road (calculated using the road mask)
+
+    Params:
+        all_parking_spots (list): List of all parking spots(by the model and then the empty parking detection) 
+        road_mask_path (string): Path to road mask
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image
+        threshold (int): Threshold in pixels to classify a spot near the road as public
+
+    Returns:
+        classified_spots (list): List of parking spots with classification added
+    """
+    classified_spots = []
+
+    road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
+    road_contours, _ = cv2.findContours(road_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for spot in all_parking_spots:
+        x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+
+        min_distance = float("inf")
+        for contour in road_contours:
+            distance = cv2.pointPolygonTest(contour, (x_center, y_center), measureDist=True)
+            min_distance = min(min_distance, abs(distance))
+
+        if min_distance <= threshold:
+            classification = "public"
+        else:
+            classification = "private"
+
+        classified_spots.append([spot[0], spot[1], classification])
+
+    return classified_spots
 
 def get_parking_coords_in_image(model, input_path, longitude, latitude):
     """
@@ -496,7 +543,7 @@ def get_parking_coords_in_image(model, input_path, longitude, latitude):
         latitude (float): Latitude value
 
     Returns: 
-        all_detections (list): List of all coordinates of parking spots found in the image in the format log, lat, width, height, angle
+        all_detections (list): List of all coordinates of parking spots found in the image in the format long, lat, classification 
     """
     output_folder = 'temp_images'
     input_path_satelite_image = os.path.join(input_path, f'{longitude}_{latitude}_satellite.png')
@@ -527,6 +574,7 @@ def get_parking_coords_in_image(model, input_path, longitude, latitude):
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
+        all_detections = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
 
     return all_detections
 
@@ -637,12 +685,12 @@ def main():
     for idx, (long, lat) in enumerate(coords):
         detections = get_parking_coords_in_image(model, input_path, long, lat)
         for detection in detections:
-            all_detections.append(detection) #as we don't want a list of lists but rather a normal list
+            all_detections.append([detection[0], detection[1], detection[2]]) #as we don't want a list of lists but rather a normal list
         percent_done = (idx/len(coords))*100.0
         sys.stdout.write("\rProcessing images... [{}/{}]({:.2f}%): {} Detections".format(idx, len(coords), percent_done, len(all_detections)))
 
     sys.stdout.write("\rSuccessfully processed {} images. Writing to output file: {}\n".format(len(coords) * 2, output_file_path))
-    df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
+    df = pd.DataFrame(all_detections, columns=["longitude", "latitude", "type"])
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
     df.to_csv(output_file_path, index=False)
     print("Done.")

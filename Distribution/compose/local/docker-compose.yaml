@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=magpie
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "magpie", "-u", "postgres"]
+      test: [ "CMD-SHELL", "pg_isready -d magpie -U postgres" ]
       interval: 30s
       timeout: 60s
       retries: 5
@@ -27,6 +27,12 @@ services:
     depends_on:
       postgis-service:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1" ]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
     ports:
       - "8081:8080"
     networks:
@@ -46,6 +52,12 @@ services:
     depends_on:
       postgis-service:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1" ]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
     ports:
       - "8082:8080"
     networks:
@@ -56,15 +68,16 @@ services:
       - MAGPIE_JWT_EXPIRY=24h
       - MAGPIE_CORS_ALLOWED_ORIGINS=http://localhost:3000 https://localhost:3000 http://example.com
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
-
   frontend-service:
     build:
       context: ../../../Frontend
       dockerfile: Dockerfile
     container_name: frontend
     depends_on:
-      - private-service
-      - public-service
+      private-service:
+        condition: service_healthy
+      public-service:
+        condition: service_healthy
     ports:
       - "3000:3000"
     environment:

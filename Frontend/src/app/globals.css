@@ -93,3 +93,31 @@ button {
   top: 0;
   left: 0;
 }
+
+.popup-header {
+  margin: 0;
+  margin-bottom: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #222; 
+  text-align: left; 
+  border-bottom: 1px solid #ccc; 
+  padding-bottom: 4px;
+}
+
+
+.key-value-pair {
+  display: flex;
+  gap: 8px; 
+}
+
+.key {
+  font-weight: bold;
+}
+
+.value {
+  color: #555; 
+  overflow-wrap: break-word; 
+}
+
+
