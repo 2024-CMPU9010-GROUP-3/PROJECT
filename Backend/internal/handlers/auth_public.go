@@ -58,23 +58,8 @@ func (p *AuthHandler) HandlePost(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	emailExists, err := db.New(dbConn).EmailExists(*dbCtx, db.EmailExistsParams{Email: userDto.Email, ID: pgtype.UUID{}})
-	if err != nil {
-		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
-		return
-	}
-	if emailExists {
-		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
-		return
-	}
-
-	usernameExists, err := db.New(dbConn).UsernameExists(*dbCtx, db.UsernameExistsParams{Username: userDto.Username, ID: pgtype.UUID{}})
-	if err != nil {
-		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
-		return
-	}
-	if usernameExists {
-		resp.SendError(customErrors.Payload.UsernameAlreadyExistsError, w)
+	if err := p.checkForConflicts(pgtype.UUID{}, userDto.Email, userDto.Username); err != nil {
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -143,23 +128,8 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	emailExists, err := db.New(dbConn).EmailExists(*dbCtx, db.EmailExistsParams{Email: userDto.Email, ID: userId})
-	if err != nil {
-		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
-		return
-	}
-	if emailExists {
-		resp.SendError(customErrors.Payload.EmailAlreadyExistsError, w)
-		return
-	}
-
-	usernameExists, err := db.New(dbConn).UsernameExists(*dbCtx, db.UsernameExistsParams{Username: userDto.Username, ID: userId})
-	if err != nil {
-		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
-		return
-	}
-	if usernameExists {
-		resp.SendError(customErrors.Payload.UsernameAlreadyExistsError, w)
+	if err := p.checkForConflicts(userId, userDto.Email, userDto.Username); err != nil {
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -343,4 +313,19 @@ func (p *AuthHandler) getUserIdFromRequest(r *http.Request) (pgtype.UUID, error)
 		return userId, customErrors.Parameter.InvalidUUIDError
 	}
 	return userId, nil
+}
+
+func (p *AuthHandler) checkForConflicts(userId pgtype.UUID, email string, username string) error {
+	if exists, err := db.New(dbConn).EmailExists(*dbCtx, db.EmailExistsParams{Email: email, ID: userId}); err != nil {
+		return customErrors.Database.UnknownDatabaseError.WithCause(err)
+	} else if exists {
+		return customErrors.Payload.EmailAlreadyExistsError
+	}
+
+	if exists, err := db.New(dbConn).UsernameExists(*dbCtx, db.UsernameExistsParams{Username: username, ID: userId}); err != nil {
+		return customErrors.Database.UnknownDatabaseError.WithCause(err)
+	} else if exists {
+		return customErrors.Payload.UsernameAlreadyExistsError
+	}
+	return nil
 }
