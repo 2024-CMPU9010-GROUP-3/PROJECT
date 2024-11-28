@@ -11,10 +11,6 @@ import pandas as pd
 import random
 from geopy.distance import geodesic
 from sklearn.cluster import DBSCAN
-from hdbscan import HDBSCAN
-from sklearn.cluster import MeanShift
-from sklearn.cluster import AgglomerativeClustering
-from sklearn.cluster import OPTICS
 
 
 def get_images(imag_save_path, longitude, latitude, mapbox_type):
@@ -533,7 +529,7 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
-def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, road_proximity_threshold=30, parking_lot_min_spots=15, clustering_eps=50, clustering_min_samples=5):
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, road_proximity_threshold=30, parking_lot_min_spots=18, clustering_eps=55, clustering_min_samples=5):
     """
     Classifies parking spots as public(on the street parking), private(residential) or parking lot based on their proximity to the road (calculated using the road mask)
 
@@ -563,17 +559,8 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
         x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
         pixel_coords.append([x_center, y_center])
 
-    #clustering = DBSCAN(eps=clustering_eps, min_samples=clustering_min_samples).fit(pixel_coords)
-    #labels = clustering.labels_
-
-    num_samples = len(pixel_coords)
-
-    if num_samples == 1:
-        labels = [-1]
-    else:
-        clustering = OPTICS(min_samples=2).fit(pixel_coords)
-        #clustering = HDBSCAN(min_cluster_size=2).fit(pixel_coords)
-        labels = clustering.labels_
+    clustering = DBSCAN(eps=clustering_eps, min_samples=clustering_min_samples).fit(pixel_coords)
+    labels = clustering.labels_
 
     for idx, spot in enumerate(all_parking_spots):
         x_center, y_center = pixel_coords[idx]
