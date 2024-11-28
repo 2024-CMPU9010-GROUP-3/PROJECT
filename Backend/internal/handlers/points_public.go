@@ -34,18 +34,10 @@ func (p *PointsHandler) HandleGetByRadius(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var types []db.PointType
-	if len(typesString) != 0 {
-		typesSplit := strings.Split(typesString, ",")
-		for _, t := range typesSplit {
-			parsedType := db.PointType(t)
-			if parsedType.IsValid() {
-				types = append(types, parsedType)
-			} else {
-				resp.SendError(customErrors.Parameter.InvalidPointTypeError.WithCause(fmt.Errorf("Type '%s' is not supported", t)), w)
-				return
-			}
-		}
+	types, err := parseTypes(typesString)
+	if err != nil {
+		resp.SendError(err.(customErrors.CustomError), w)
+		return
 	}
 
 	points, err := PublicDb().GetPointsInRadius(*dbCtx, db.GetPointsInRadiusParams{Latitude: lat, Longitude: long, Radius: radius, Types: types})
@@ -104,4 +96,22 @@ func (p *PointsHandler) HandleGetPointDetails(w http.ResponseWriter, r *http.Req
 	}
 
 	resp.SendResponse(dtos.ResponseContentDto{Content: decodedDetails, HttpStatus: http.StatusOK}, w)
+}
+
+func parseTypes(typesString string) ([]db.PointType, error) {
+	if len(typesString) == 0 {
+			return nil, nil
+	}
+
+	typesSplit := strings.Split(typesString, ",")
+	types := make([]db.PointType, 0, len(typesSplit))
+
+	for _, t := range typesSplit {
+			parsedType := db.PointType(t)
+			if !parsedType.IsValid() {
+					return nil, customErrors.Parameter.InvalidPointTypeError.WithCause(fmt.Errorf("Type '%s' is not supported", t))
+			}
+			types = append(types, parsedType)
+	}
+	return types, nil
 }
