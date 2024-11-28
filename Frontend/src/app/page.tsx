@@ -1,4 +1,4 @@
-import LoginPage from "./login/page";
+import LandingPage from "./landing/page";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { getQueryClient } from "@/app/get-query-client";
 
@@ -8,7 +8,7 @@ const Page = () => {
   return (
     <>
       <HydrationBoundary state={dehydrate(queryClient)}>
-        <LoginPage />
+        <LandingPage />
       </HydrationBoundary>
     </>
   );
