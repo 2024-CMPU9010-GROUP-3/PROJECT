@@ -151,48 +151,9 @@ func (p *AuthHandler) HandlePut(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	updateLoginParams := db.UpdateLoginParams{
-		ID:           userId,
-		Username:     userDto.Username,
-		Email:        userDto.Email,
-		Passwordhash: string(passwordHash),
-	}
-
-	updateUserDetailsParams := db.UpdateUserDetailsParams{
-		ID:             userId,
-		Firstname:      userDto.FirstName,
-		Lastname:       userDto.LastName,
-		Profilepicture: userDto.ProfilePicture.String,
-	}
-
-	tx, err := dbConn.Begin(*dbCtx)
+	err = p.updateUser(userId, userDto, passwordHash)
 	if err != nil {
-		resp.SendError(customErrors.Database.TransactionStartError, w)
-		return
-	}
-	defer func() {
-		// potential error from rollback is not fatal, ignoring for now
-		if tx != nil {
-			_ = tx.Rollback(*dbCtx)
-		}
-	}()
-
-	err = PublicDb().WithTx(tx).UpdateLogin(*dbCtx, updateLoginParams)
-	if err != nil {
-		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
-		return
-	}
-
-	err = PublicDb().WithTx(tx).UpdateUserDetails(*dbCtx, updateUserDetailsParams)
-	if err != nil {
-		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
-		return
-	}
-
-	// only commit the transaction once both the user and the user details have been created successfully
-	err = tx.Commit(*dbCtx)
-	if err != nil {
-		resp.SendError(customErrors.Database.TransactionCommitError, w)
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -321,4 +282,30 @@ func (p *AuthHandler) getPasswordHash(newPassword *string, existingHash string) 
 		return []byte(existingHash), nil
 	}
 	return bcrypt.GenerateFromPassword([]byte(*newPassword), 12)
+}
+
+func (p *AuthHandler) updateUser(userId pgtype.UUID, userDto dtos.UpdateUserDto, passwordHash []byte) error {
+	return withTransaction(func(tx pgx.Tx) error {
+		// Update login data
+		if err := db.New(dbConn).WithTx(tx).UpdateLogin(*dbCtx, db.UpdateLoginParams{
+			ID:           userId,
+			Username:     userDto.Username,
+			Email:        userDto.Email,
+			Passwordhash: string(passwordHash),
+		}); err != nil {
+			return customErrors.Database.UnknownDatabaseError.WithCause(err)
+		}
+
+		// Update user details
+		if err := db.New(dbConn).WithTx(tx).UpdateUserDetails(*dbCtx, db.UpdateUserDetailsParams{
+			ID:             userId,
+			Firstname:      userDto.FirstName,
+			Lastname:       userDto.LastName,
+			Profilepicture: userDto.ProfilePicture.String,
+		}); err != nil {
+			return customErrors.Database.UnknownDatabaseError.WithCause(err)
+		}
+
+		return nil
+	})
 }
