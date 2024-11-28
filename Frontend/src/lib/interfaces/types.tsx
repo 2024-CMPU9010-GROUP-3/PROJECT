@@ -1,3 +1,5 @@
+import { ColumnDef } from "@tanstack/react-table";
+
 export interface Coordinates {
   latitude: number;
   longitude: number;
@@ -97,6 +99,42 @@ interface Location {
   coordinates: [number, number];
   type: string;
 }
+export interface ImageConfig {
+  id: string;
+  path: string;
+}
+interface Amenities {
+  parkingMeters?: number;
+  bikeStand?: number;
+  publicWiFi?: number;
+  library?: number;
+  multiStoreyCar?: number;
+  drinkingWater?: number;
+  publicToilet?: number;
+  bikeStationSharing?: number;
+  parking?: number;
+  accessibleParking?: number;
+  publicBins?: number;
+  coachingPark?: number;
+}
+export interface LocationItem {
+  id: number;
+  date: string;
+  amenities: Amenities;
+  location: string;
+  coordinates: Coordinates;
+}
+
+export interface LocationData {
+  id: number;
+  datecreated: string;
+  amenitytypes: string[];
+  longlat: {
+    type: string;
+    coordinates: number[];
+  };
+  radius: number;
+}
 
 export interface Data {
   Id: number;
@@ -129,4 +167,11 @@ export interface ImageConfig {
   value: string;
   id: string;
   path: string;
+}
+
+export interface DataTableProps<TData> {
+  columns: ColumnDef<TData>[];
+  data: TData[];
+  rowSelection?: Record<string, boolean>;
+  setRowSelection: (value: Record<string, boolean>) => void;
 }
