@@ -218,30 +218,9 @@ func (p *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// all env variables should be moved into a separate package and checked on startup in the future
-	secret, set := env.Get(env.EnvJwtSecret)
-	if !set {
-		resp.SendError(customErrors.Internal.JwtSecretMissingError, w)
-		return
-	}
-	expiry, _ := env.Get(env.EnvJwtExpiry)
-
-	parsedExpiry, err := time.ParseDuration(expiry)
+	tokenString, err := createJWTToken(userLogin.ID)
 	if err != nil {
-		resp.SendError(customErrors.Internal.UnknownError.WithCause(fmt.Errorf("Could not parse JWT expiry duration")), w)
-		return
-	}
-
-	// generate bearer token with user id in payload
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": userLogin.ID,
-		"exp": time.Now().Add(parsedExpiry).Unix(),
-		"iat": time.Now().Unix(),
-	})
-
-	tokenString, err := token.SignedString([]byte(secret))
-	if err != nil {
-		resp.SendError(customErrors.Internal.UnknownError.WithCause(fmt.Errorf("Could not sign JWT")), w)
+		resp.SendError(err.(customErrors.CustomError), w)
 		return
 	}
 
@@ -308,4 +287,26 @@ func (p *AuthHandler) updateUser(userId pgtype.UUID, userDto dtos.UpdateUserDto,
 
 		return nil
 	})
+}
+
+func createJWTToken(userId pgtype.UUID) (string, error) {
+	secret, set := env.Get(env.EnvJwtSecret)
+	if !set {
+		return "", customErrors.Internal.JwtSecretMissingError
+	}
+	expiry, _ := env.Get(env.EnvJwtExpiry)
+	parsedExpiry, err := time.ParseDuration(expiry)
+	if err != nil {
+		return "", customErrors.Internal.UnknownError.WithCause(fmt.Errorf("Could not parse JWT expiry duration: %w", err))
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": userId,
+		"exp": time.Now().Add(parsedExpiry).Unix(),
+		"iat": time.Now().Unix(),
+	})
+	tokenString, err := token.SignedString([]byte(secret))
+	if err != nil {
+		err = customErrors.Internal.UnknownError.WithCause(fmt.Errorf("Could not sign JWT"))
+	}
+	return tokenString, err
 }
