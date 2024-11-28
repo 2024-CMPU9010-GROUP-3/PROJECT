@@ -145,6 +145,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     [coordinates]
   );
 
+  // Search state
+  const [searchValue, setSearchValue] = useState<string>("");
+
   // Hover State
   const [hoverEntryTimeout, setEntryHoverTimeout] =
     useState<NodeJS.Timeout | null>(null);
@@ -171,28 +174,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_toilet: false,
   });
 
-  const [circleCoordinates, setCircleCoordinates] = useState<number[][]>(() => {
-    const radiusInMeters = sliderValue * 100; // Convert slider value to meters
-    const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
-    const numPoints = 64; // Number of points to define the circle
-    const angleStep = (2 * Math.PI) / numPoints;
-    const coordinates = [];
-
-    for (let i = 0; i < numPoints; i++) {
-      const angle = i * angleStep;
-      const x =
-        markerCoords[0] +
-        (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(markerCoords[1] * (Math.PI / 180));
-      const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
-      coordinates.push([x, y]);
-    }
-
-    // Close the circle
-    coordinates.push(coordinates[0]);
-
-    return coordinates;
-  });
+  const [circleCoordinates, setCircleCoordinates] = useState<number[][]>([]);
 
   interface MapLoadEvent {
     target: mapboxgl.Map;
@@ -245,7 +227,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     );
   };
 
-  const [resetSelection, setResetSelection] = useState(false);
+  const [resetSelection, setResetSelection] = useState(true);
   const handleGlobalAmenitiesFilter = () => {
     setAmenitiesFilter(() =>
       resetSelection ? [] : mapElements.map((option) => option.value)
@@ -397,7 +379,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const handleSaveMap = async () => {
     try {
       // Validate coordinates
-      if (!currentPositionCords?.latitude || !currentPositionCords?.longitude) {
+      if (!coordinates?.latitude || !coordinates?.longitude) {
         throw new Error("Location coordinates are missing");
       }
       // Validate other required data
@@ -411,8 +393,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           longlat: {
             type: "Point",
             coordinates: [
-              currentPositionCords.longitude,
-              currentPositionCords.latitude,
+              coordinates.longitude,
+              coordinates.latitude,
             ],
           },
           radius: sliderValue * 100,
@@ -464,6 +446,27 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     setPointsGeoJson(geoJson);
   };
 
+  const getLocationFromText = async (event: unknown) => {
+    const response = await fetch(`/api/search?q=${searchValue}&limit=1`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        authorization: "Bearer " + sessionToken,
+      },
+    });
+
+    const data = await response.json();
+
+    const foundLong = parseFloat(data[0].lon);
+    const foundLat = parseFloat(data[0].lat);
+
+    if (foundLat || foundLong) {
+      setCoordinates({ latitude: foundLat, longitude: foundLong });
+      setMarkerIsVisible(true);
+    }
+  };
+
+
   const fetchPointById = async (id: number) => {
     const response = await fetch(`/api/details?id=${id}`, {
       method: "GET",
@@ -490,22 +493,22 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
     const numPoints = 64; // Number of points to define the circle
     const angleStep = (2 * Math.PI) / numPoints;
-    const coordinates = [];
+    const localCoordinates = [];
 
     for (let i = 0; i < numPoints; i++) {
       const angle = i * angleStep;
       const x =
-        markerCoords[0] +
+        coordinates.longitude +
         (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(markerCoords[1] * (Math.PI / 180));
-      const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
-      coordinates.push([x, y]);
+        Math.cos(coordinates.latitude * (Math.PI / 180));
+      const y = coordinates.latitude + radiusInDegrees * Math.sin(angle);
+      localCoordinates.push([x, y]);
     }
 
     // Close the circle
-    coordinates.push(coordinates[0]);
+    localCoordinates.push(localCoordinates[0]);
 
-    setCircleCoordinates(coordinates);
+    setCircleCoordinates(localCoordinates);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sliderValueDisplay, markerCoords]);
 
@@ -851,6 +854,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                     <div className="text-sm lg:text-base font-medium text-gray-600 flex space-x-2">
                       <Input
                         className="mx-auto"
+                        onChange={(e) => setSearchValue(e.target.value)}
                         type="text" id="search" placeholder="Location Search"
                       />
                       <TooltipProvider>
@@ -858,7 +862,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                           <TooltipTrigger asChild>
                             <Button
                               className="w-15 mx-auto bg-neutral-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
-                              onClick={handleSaveMap}
+                              onClick={getLocationFromText}
                             >
                               <Search size={16} />
                             </Button>
