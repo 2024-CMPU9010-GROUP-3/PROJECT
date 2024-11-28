@@ -19,6 +19,21 @@ services:
     networks:
       - app-network
 
+  nominatim:
+    container_name: nominatim
+    image: mediagis/nominatim:4.5
+    ports:
+      - "8084:8080"
+    environment:
+      # Update URLs to point to Dublin data
+      PBF_URL: https://download.geofabrik.de/europe/ireland-and-northern-ireland-latest.osm.pbf
+      REPLICATION_URL: https://download.geofabrik.de/europe/ireland-and-northern-ireland-updates/
+      NOMINATIM_PASSWORD: ${NOMINATIM_PASSWORD}
+    volumes:
+      # Add a volume mount for the local Dublin PBF file
+      - nominatim-data:/var/lib/postgresql/16/main
+    shm_size: 1gb
+
   private-service:
     image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.12.0@sha256:e99289cac03d606d15f7f61f8b55fad7f80c2eede21ad81ac7811256eebc7d4a
     container_name: private-backend
@@ -26,7 +41,8 @@ services:
       postgis-service:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1"]
+      test:
+        ["CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1"]
       interval: 30s
       timeout: 30s
       retries: 3
@@ -49,7 +65,8 @@ services:
       postgis-service:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1"]
+      test:
+        ["CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1"]
       interval: 30s
       timeout: 30s
       retries: 3

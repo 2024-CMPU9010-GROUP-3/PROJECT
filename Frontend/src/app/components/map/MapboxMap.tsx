@@ -10,7 +10,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { Grid } from "react-loader-spinner";
 import Map, { Layer, LayerProps, Marker, Popup, Source } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Save, Search } from "lucide-react";
 import Image from "next/image";
 import { useOnborda } from "onborda";
 import { useSession } from "@/app/context/SessionContext";
@@ -39,6 +39,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import { Input } from "@/components/ui/input"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
@@ -138,6 +145,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     [coordinates]
   );
 
+  // Search state
+  const [searchValue, setSearchValue] = useState<string>("");
+
   // Hover State
   const [hoverEntryTimeout, setEntryHoverTimeout] =
     useState<NodeJS.Timeout | null>(null);
@@ -164,28 +174,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     custom_toilet: false,
   });
 
-  const [circleCoordinates, setCircleCoordinates] = useState<number[][]>(() => {
-    const radiusInMeters = sliderValue * 100; // Convert slider value to meters
-    const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
-    const numPoints = 64; // Number of points to define the circle
-    const angleStep = (2 * Math.PI) / numPoints;
-    const coordinates = [];
-
-    for (let i = 0; i < numPoints; i++) {
-      const angle = i * angleStep;
-      const x =
-        markerCoords[0] +
-        (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
-      const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
-      coordinates.push([x, y]);
-    }
-
-    // Close the circle
-    coordinates.push(coordinates[0]);
-
-    return coordinates;
-  });
+  const [circleCoordinates, setCircleCoordinates] = useState<number[][]>([]);
 
   interface MapLoadEvent {
     target: mapboxgl.Map;
@@ -238,7 +227,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     );
   };
 
-  const [resetSelection, setResetSelection] = useState(false);
+  const [resetSelection, setResetSelection] = useState(true);
   const handleGlobalAmenitiesFilter = () => {
     setAmenitiesFilter(() =>
       resetSelection ? [] : mapElements.map((option) => option.value)
@@ -390,7 +379,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   const handleSaveMap = async () => {
     try {
       // Validate coordinates
-      if (!currentPositionCords?.latitude || !currentPositionCords?.longitude) {
+      if (!coordinates?.latitude || !coordinates?.longitude) {
         throw new Error("Location coordinates are missing");
       }
       // Validate other required data
@@ -404,8 +393,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           longlat: {
             type: "Point",
             coordinates: [
-              currentPositionCords.longitude,
-              currentPositionCords.latitude,
+              coordinates.longitude,
+              coordinates.latitude,
             ],
           },
           radius: sliderValue * 100,
@@ -440,8 +429,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${
-        sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
@@ -457,6 +445,27 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
     setPointsGeoJson(geoJson);
   };
+
+  const getLocationFromText = async () => {
+    const response = await fetch(`/api/search?q=${searchValue}&limit=1`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        authorization: "Bearer " + sessionToken,
+      },
+    });
+
+    const data = await response.json();
+
+    const foundLong = parseFloat(data[0].lon);
+    const foundLat = parseFloat(data[0].lat);
+
+    if (foundLat || foundLong) {
+      setCoordinates({ latitude: foundLat, longitude: foundLong });
+      setMarkerIsVisible(true);
+    }
+  };
+
 
   const fetchPointById = async (id: number) => {
     const response = await fetch(`/api/details?id=${id}`, {
@@ -484,22 +493,22 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     const radiusInDegrees = radiusInMeters / 111320; // Convert meters to degrees (approximation)
     const numPoints = 64; // Number of points to define the circle
     const angleStep = (2 * Math.PI) / numPoints;
-    const coordinates = [];
+    const localCoordinates = [];
 
     for (let i = 0; i < numPoints; i++) {
       const angle = i * angleStep;
       const x =
-        markerCoords[0] +
+        coordinates.longitude +
         (radiusInDegrees * Math.cos(angle)) /
-          Math.cos(markerCoords[1] * (Math.PI / 180));
-      const y = markerCoords[1] + radiusInDegrees * Math.sin(angle);
-      coordinates.push([x, y]);
+        Math.cos(coordinates.latitude * (Math.PI / 180));
+      const y = coordinates.latitude + radiusInDegrees * Math.sin(angle);
+      localCoordinates.push([x, y]);
     }
 
     // Close the circle
-    coordinates.push(coordinates[0]);
+    localCoordinates.push(localCoordinates[0]);
 
-    setCircleCoordinates(coordinates);
+    setCircleCoordinates(localCoordinates);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sliderValueDisplay, markerCoords]);
 
@@ -707,7 +716,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       "
         id="onboarding-step-1"
       >
-        <div className="space-y-3 sm:space-y-4 lg:space-y-6 max-w-lg mx-auto lg:max-w-none">
+        <div className="space-y-3 sm:space-y-3 lg:space-y-3 max-w-lg mx-auto lg:max-w-none">
           {mapBoxApiKey ? (
             <>
               <div className="px-2 sm:px-3 lg:px-4">
@@ -751,69 +760,139 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                     </div>
                     <div className="text-sm lg:text-base font-medium text-gray-600 flex space-x-2">
                       {sliderValueDisplay * 100} meters
-                      <button
-                        onClick={() => {
-                          setCoordinates({ latitude: 0, longitude: 0 });
-                          setMarkerIsVisible(false);
-                        }}
-                        className="px-2 py-1 bg-gray-200 rounded ml-auto"
-                      >
-                        Clear
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSliderValueDisplay(1);
-                          setSliderValue(1);
-                        }}
-                        className="px-2 py-1 bg-gray-200 rounded"
-                      >
-                        100m
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSliderValueDisplay(2);
-                          setSliderValue(2);
-                        }}
-                        className="px-2 py-1 bg-gray-200 rounded"
-                      >
-                        200m
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSliderValueDisplay(5);
-                          setSliderValue(5);
-                        }}
-                        className="px-2 py-1 bg-gray-200 rounded"
-                      >
-                        500m
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSliderValueDisplay(10);
-                          setSliderValue(10);
-                        }}
-                        className="px-2 py-1 bg-gray-200 rounded"
-                      >
-                        1000m
-                      </button>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                setCoordinates({ latitude: 0, longitude: 0 });
+                                setMarkerIsVisible(false);
+                              }}
+                              className="px-2 py-1 bg-gray-200 hover:bg-gray-300 transition-all duration-200 rounded ml-auto"
+                            >
+                              Clear
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Clear the currently selected point</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                setSliderValueDisplay(1);
+                                setSliderValue(1);
+                              }}
+                              className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                            >
+                              100m
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Set search radius to 100m</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                setSliderValueDisplay(2);
+                                setSliderValue(2);
+                              }}
+                              className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                            >
+                              200m
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Set search radius to 200m</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                setSliderValueDisplay(5);
+                                setSliderValue(5);
+                              }}
+                              className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                            >
+                              500m
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Set search radius to 500m</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={() => {
+                                setSliderValueDisplay(10);
+                                setSliderValue(10);
+                              }}
+                              className="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded"
+                            >
+                              1000m
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Set search radius to 1000m</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <div className="text-sm lg:text-base font-medium text-gray-600 flex space-x-2">
+                      <Input
+                        className="mx-auto"
+                        onChange={(e) => setSearchValue(e.target.value)}
+                        type="text" id="search" placeholder="Location Search"
+                      />
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              className="w-15 mx-auto bg-neutral-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
+                              onClick={getLocationFromText}
+                            >
+                              <Search size={16} />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Search for location</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              className="w-15 mx-auto bg-neutral-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
+                              onClick={handleSaveMap}
+                            >
+                              <Save size={16} />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Save the currently selected information</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </div>
                 </div>
               </div>
             </>
           ) : null}
-          {mapBoxApiKey ? (
-            <>
-              <Button
-                className="w-full mx-auto transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
-                onClick={handleSaveMap}
-              >
-                Save Map
-              </Button>
-            </>
-          ) : (
-            ""
-          )}
           {/* Combined Data and Filter Options Card */}
           <div className="px-2 sm:px-3 lg:px-4">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
@@ -867,11 +946,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                           return (
                             <tr
                               key={option.value}
-                              className={`${
-                                !amenitiesFilter.includes(option.value)
-                                  ? "bg-gray-100"
-                                  : ""
-                              }`}
+                              className={`${!amenitiesFilter.includes(option.value)
+                                ? "bg-gray-100"
+                                : ""
+                                }`}
                             >
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {imageConfig && (
@@ -880,11 +958,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                                     alt={option.label}
                                     width={24}
                                     height={24}
-                                    className={`w-6 h-6 ${
-                                      !amenitiesFilter.includes(option.value)
-                                        ? "filter grayscale"
-                                        : ""
-                                    }`}
+                                    className={`w-6 h-6 ${!amenitiesFilter.includes(option.value)
+                                      ? "filter grayscale"
+                                      : ""
+                                      }`}
                                   />
                                 )}
                               </td>
@@ -895,20 +972,20 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                                 {amenitiesFilter.includes(option.value) ? (
                                   (
                                     pointsGeoJson?.[
-                                      option.value
+                                    option.value
                                     ] as GeoJSON.FeatureCollection
                                   )?.features?.length > 0 ? (
                                     <span className="font-bold">
                                       {(
                                         pointsGeoJson?.[
-                                          option.value
+                                        option.value
                                         ] as GeoJSON.FeatureCollection
                                       )?.features?.length || 0}
                                     </span>
                                   ) : (
                                     (
                                       pointsGeoJson?.[
-                                        option.value
+                                      option.value
                                       ] as GeoJSON.FeatureCollection
                                     )?.features?.length || 0
                                   )
@@ -939,7 +1016,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 
