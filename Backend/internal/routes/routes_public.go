@@ -19,6 +19,7 @@ func public() *http.ServeMux {
 	router := http.NewServeMux()
 	router.Handle("/points/", http.StripPrefix("/points", pointsPublic()))
 	router.Handle("/auth/", http.StripPrefix("/auth", auth()))
+	router.Handle("/history/", http.StripPrefix("/history", locationHistory()))
 	return router
 }
 
@@ -45,6 +46,18 @@ func auth() *http.ServeMux {
 	router.Handle("GET /User/{id}", middleware.Access.Protected(http.HandlerFunc(authHandler.HandleGet)))
 	router.Handle("PUT /User/{id}", middleware.Access.Protected(http.HandlerFunc(authHandler.HandlePut)))
 	router.Handle("DELETE /User/{id}", middleware.Access.Protected(http.HandlerFunc(authHandler.HandleDelete)))
+
+	return router
+}
+
+func locationHistory() *http.ServeMux {
+	router := http.NewServeMux()
+	locationHistoryHandler := &handlers.LocationHistoryHandler{}
+
+	// Protected access
+	router.Handle("GET /{id}", middleware.Access.Protected(http.HandlerFunc(locationHistoryHandler.HandleGet)))
+	router.Handle("DELETE /{id}", middleware.Access.Protected(http.HandlerFunc(locationHistoryHandler.HandleDelete)))
+	router.Handle("POST /{id}", middleware.Access.Protected(http.HandlerFunc(locationHistoryHandler.HandlePost)))
 
 	return router
 }

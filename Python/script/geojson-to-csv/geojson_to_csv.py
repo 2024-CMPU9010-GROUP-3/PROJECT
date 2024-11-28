@@ -50,9 +50,9 @@ def main(geojson_path, csv_path):
     """
     Main function
     """
-    #read_geojson_save_as_csv(geojson_path, csv_path)
-    read_geojson_save_as_csv_for_files_with_problems_in_format(geojson_path, csv_path)
+    read_geojson_save_as_csv(geojson_path, csv_path)
+    #read_geojson_save_as_csv_for_files_with_problems_in_format(geojson_path, csv_path)
 
 
 if __name__ == "__main__":
-    main('bleeperbike_map.geojson', 'bleeperbike_map.csv')
+    main('stops.geojson', 'stops.csv')

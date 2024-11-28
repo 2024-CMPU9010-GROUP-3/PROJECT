@@ -42,7 +42,7 @@ export const steps: Tour[] = [
                     <br /> <br />
                     Note: the <strong>larger the radius- the longer it&apos;ll take to load the data!</strong>
                 </>,
-                selector: "#onboarding-step-2",
+                selector: "#onboarding-step-1",
                 side: "left-top",
                 showControls: true,
                 pointerPadding: 10,
@@ -55,7 +55,7 @@ export const steps: Tour[] = [
                 content: <>
                     Information about the selected location will be displayed here!
                 </>,
-                selector: "#onboarding-step-3",
+                selector: "#onboarding-step-1",
                 side: "left-top",
                 showControls: true,
                 pointerPadding: 10,
@@ -77,8 +77,8 @@ export const steps: Tour[] = [
                     </div>
 
                 </>,
-                selector: "#onboarding-step-4",
-                side: "left",
+                selector: "#onboarding-step-1",
+                side: "left-top",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,
@@ -93,8 +93,8 @@ export const steps: Tour[] = [
                     <br /> <br />
                     You can zoom by <strong>scrolling</strong> with a mouse or <strong>pinching</strong> on a touchpad (or touchscreen).
                 </>,
-                selector: "#onboarding-step-5",
-                side: "left-bottom",
+                selector: "#onboarding-step-2",
+                side: "right-top",
                 showControls: true,
                 pointerPadding: 10,
                 pointerRadius: 10,
@@ -108,7 +108,7 @@ export const steps: Tour[] = [
                     <br /> <br />
                     Enjoy using <i>Magpie</i>!
                 </>,
-                selector: "#onboarding-step-6",
+                selector: "#onboarding-step-3",
                 side: "right-bottom",
                 showControls: true,
                 pointerPadding: 10,

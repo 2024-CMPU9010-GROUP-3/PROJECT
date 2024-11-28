@@ -8,6 +8,7 @@ import (
 
 type PointsHandler struct{}
 type AuthHandler struct{}
+type LocationHistoryHandler struct {}
 
 var dbCtx *context.Context
 var dbConn db.DBConn

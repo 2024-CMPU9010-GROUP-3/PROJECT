@@ -25,12 +25,13 @@ const (
 	codeInvalidParameterLatitudeError  = 1206
 	codeInvalidParameterPointTypeError = 1207
 
-	codeInvalidPayloadPointError   = 1211
-	codeInvalidPayloadUserError    = 1212
-	codeInvalidPayloadLoginError   = 1213
-	codePasswordTooLongError       = 1214
-	codeUsernameAlreadyExistsError = 1221
-	codeEmailAlreadyExistsError    = 1222
+	codeInvalidPayloadPointError           = 1211
+	codeInvalidPayloadUserError            = 1212
+	codeInvalidPayloadLoginError           = 1213
+	codePasswordTooLongError               = 1214
+	codeInvalidPayloadLocationHistoryEntry = 1215
+	codeUsernameAlreadyExistsError         = 1221
+	codeEmailAlreadyExistsError            = 1222
 
 	codeUserNotFoundError  = 1301
 	codePointNotFoundError = 1302
@@ -179,6 +180,12 @@ var passwordTooLongError = CustomError{
 	ErrorMsg:   "Password too long (max. 72 bytes)",
 }
 
+var invalidPayloadLocationHistoryEntry = CustomError{
+	HttpStatus: http.StatusBadRequest,
+	ErrorCode:  codeInvalidPayloadLocationHistoryEntry,
+	ErrorMsg:   "Payload (History Entry) not valid",
+}
+
 var usernameAlreadyExistsError = CustomError{
 	HttpStatus: http.StatusBadRequest,
 	ErrorCode:  codeUsernameAlreadyExistsError,
@@ -278,19 +285,21 @@ var Parameter = struct {
 }
 
 var Payload = struct {
-	InvalidPayloadPointError   CustomError
-	InvalidPayloadUserError    CustomError
-	InvalidPayloadLoginError   CustomError
-	PasswordTooLongError       CustomError
-	UsernameAlreadyExistsError CustomError
-	EmailAlreadyExistsError    CustomError
+	InvalidPayloadPointError                CustomError
+	InvalidPayloadUserError                 CustomError
+	InvalidPayloadLoginError                CustomError
+	PasswordTooLongError                    CustomError
+	InvalidPayloadLocationHistoryEntryError CustomError
+	UsernameAlreadyExistsError              CustomError
+	EmailAlreadyExistsError                 CustomError
 }{
-	InvalidPayloadPointError:   invalidPayloadPointError,
-	InvalidPayloadUserError:    invalidPayloadUserError,
-	InvalidPayloadLoginError:   invalidPayloadLoginError,
-	PasswordTooLongError:       passwordTooLongError,
-	UsernameAlreadyExistsError: usernameAlreadyExistsError,
-	EmailAlreadyExistsError:    emailAlreadyExistsError,
+	InvalidPayloadPointError:                invalidPayloadPointError,
+	InvalidPayloadUserError:                 invalidPayloadUserError,
+	InvalidPayloadLoginError:                invalidPayloadLoginError,
+	PasswordTooLongError:                    passwordTooLongError,
+	InvalidPayloadLocationHistoryEntryError: invalidPayloadLocationHistoryEntry,
+	UsernameAlreadyExistsError:              usernameAlreadyExistsError,
+	EmailAlreadyExistsError:                 emailAlreadyExistsError,
 }
 
 var NotFound = struct {
