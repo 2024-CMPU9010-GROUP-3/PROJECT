@@ -446,7 +446,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     setPointsGeoJson(geoJson);
   };
 
-  const getLocationFromText = async (event: unknown) => {
+  const getLocationFromText = async () => {
     const response = await fetch(`/api/search?q=${searchValue}&limit=1`, {
       method: "GET",
       credentials: "include",
