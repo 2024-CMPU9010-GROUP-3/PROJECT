@@ -9,7 +9,7 @@ const WhatIsMagpie = () => {
           to provide users with a comprehensive view of public services and
           amenities at a glance. It empowers urban planners, residents, and
           other stakeholders by offering interactive maps, smart search
-          capabilities, and detailed analysis tools. Whether you&aposre
+          capabilities, and detailed analysis tools. Whether you&apos;re
           planning infrastructure, exploring local services, or seeking
           information about your daily routes, Magpie simplifies access to
           essential data with reliability and precision.
@@ -18,7 +18,7 @@ const WhatIsMagpie = () => {
       </div>
 
       <h2 className="text-3xl font-bold text-center mb-8">
-        How Magpie uses Machine Learning?
+        How does Magpie use Machine Learning?
       </h2>
 
       <div className="space-y-6 text-lg">

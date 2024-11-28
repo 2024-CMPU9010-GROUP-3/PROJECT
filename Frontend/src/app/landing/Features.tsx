@@ -31,7 +31,7 @@ export const Features = () => (
       >
         <h2 className="text-3xl sm:text-4xl font-extrabold">
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-800">
-            Features That Make Magpie Unmatched
+            Unique Features of Magpie
           </span>
         </h2>
       </motion.div>

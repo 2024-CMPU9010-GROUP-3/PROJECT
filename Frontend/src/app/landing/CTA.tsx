@@ -23,7 +23,7 @@ export const CTA = () => (
             Ready to Transform How You Plan?
           </span>
           <span className="block text-gray-200 mt-2 text-2xl sm:text-3xl">
-            Join countless professionals making smarter decisions.
+            Making data driven decisions starts here.
           </span>
         </h2>
       </motion.div>

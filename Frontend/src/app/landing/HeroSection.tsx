@@ -27,7 +27,7 @@ const HeroSection = () => {
 
           <p className="max-w-xl mx-auto text-lg sm:text-xl text-gray-600 leading-relaxed">
             Access Dublin&apos;s most comprehensive database of public
-            services—quickly, easily, and reliably.
+            services; quickly, easily, and reliably.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
