@@ -44,6 +44,8 @@
 \usepackage{amsmath} % Allows for mathematical symbols
 \usepackage{mdframed} % Allows for framing of text
 
+\definecolor{tudublinblue}{HTML}{004C6C}
+
 %----------------------------------------------------------------------------------------
 %	MARGINS AND SPACING
 %----------------------------------------------------------------------------------------
@@ -82,6 +84,8 @@
 
 \renewcommand{\headrulewidth}{0.0pt} % No header rule
 \renewcommand{\footrulewidth}{0.4pt} % Thin footer rule
+\renewcommand{\footrule}{\color{tudublinblue}\hrule width \headwidth height \footrulewidth}
+
 
 \renewcommand{\sectionmark}[1]{\markboth{#1}{}} % Removes the section number from the header when \leftmark is used
 
@@ -89,13 +93,13 @@
 
 % Headers
 \lhead{} % Left header
-\chead{\fontfamily{phv}\selectfont\textit{\thetitle}} % Center header - currently printing the article title
+\chead{\fontfamily{phv}\selectfont\textit{\textcolor{tudublinblue}\thetitle}} % Center header - currently printing the article title
 \rhead{} % Right header
 
 % Footers
 \lfoot{} % Left footer
 \cfoot{} % Center footer
-\rfoot{\fontfamily{phv}\selectfont\footnotesize Page \thepage\ of \pageref{LastPage}} % Right footer, "Page 1 of 2"
+\rfoot{\fontfamily{phv}\selectfont\footnotesize\textcolor{tudublinblue}{Page \thepage\ of \pageref{LastPage}}} % Right footer, "Page 1 of 2"
 
 \fancypagestyle{firstpage}{ % Page style for the first page with the title
 	\fancyhf{}
@@ -109,8 +113,6 @@
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
-
-\definecolor{tudublinblue}{HTML}{004C6C}
 
 \newcommand{\authorstyle}[1]{{\large\usefont{OT1}{phv}{b}{n}\color{tudublinblue}#1}} % Authors style (Helvetica)
 
