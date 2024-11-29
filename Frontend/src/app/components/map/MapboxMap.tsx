@@ -1,7 +1,7 @@
 "use client";
 
 // React core
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState, useRef } from "react";
 
 // Third-party packages
 import DeckGL from "@deck.gl/react";
@@ -14,6 +14,7 @@ import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useOnborda } from "onborda";
 import { useSession } from "@/app/context/SessionContext";
+import { NavigationControl } from 'react-map-gl';
 
 // Local components
 import { Slider } from "@/components/ui/slider";
@@ -25,6 +26,7 @@ import { getCookiesAccepted } from "@/lib/cookies";
 import { cn } from "@/lib/utils";
 import packageJson from "../../../../package.json";
 import MapSources from "./utils/MapSources";
+import mapboxgl from 'mapbox-gl';
 
 // Types and interfaces
 import {
@@ -513,6 +515,17 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     fetchMapboxKey();
   }, []);
 
+  // const mapRef = useRef<mapboxgl.Map | null>(null);
+  // const mapContainerRef = useRef<HTMLDivElement | null>(null);
+
+  // useEffect(() => {
+  //   console.log("mapRef", mapRef.current);
+  //   if (mapRef.current) {
+  //     mapRef.current.addControl(new mapboxgl.NavigationControl());
+  //   }
+  // }, []); 
+
+
   // Queries
   useEffect(() => {
     fetchPointsFromDB(
@@ -603,6 +616,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           lg:h-screen
         "
         id="onboarding-step-2"
+
       >
         {mapBoxApiKey ? (
           <DeckGL
@@ -613,72 +627,81 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             onHover={handleHover}
             style={{ width: "100%", height: "100%" }}
           >
-            <Map
-              mapboxAccessToken={mapBoxApiKey}
-              mapStyle="mapbox://styles/mapbox/streets-v12"
-              antialias={true}
-              style={{ width: "100%", height: "100%" }}
-              onLoad={handleMapLoad}
-            >
-              {/* Map content remains the same */}
-              {markerIsVisible && (
+              <Map  
+                mapboxAccessToken={mapBoxApiKey}
+                mapStyle="mapbox://styles/mapbox/streets-v12"
+                antialias={true}
+                style={{ width: "100%", height: "100%" }}
+                onLoad={handleMapLoad}
+              >
+                <NavigationControl 
+                  
+                  visualizePitch={true}
+                  showCompass={true}
+                  showZoom={true}
+                  style={{
+                    zIndex: 9999
+                  }}
+                />
+                {/* Map content remains the same */}
+                {markerIsVisible && (
+                  <Marker
+                    longitude={coordinates?.longitude}
+                    latitude={coordinates?.latitude}
+                    anchor="center"
+                  >
+                    <div>
+                      <FaLocationDot size={50} color="FFA15A" />
+                    </div>
+                  </Marker>
+                )}
                 <Marker
-                  longitude={coordinates?.longitude}
-                  latitude={coordinates?.latitude}
-                  anchor="center"
+                  latitude={currentPositionCords?.latitude}
+                  longitude={currentPositionCords?.longitude}
                 >
                   <div>
-                    <FaLocationDot size={50} color="FFA15A" />
+                    <FaLocationDot size={35} color="blue" />
                   </div>
                 </Marker>
-              )}
-              <Marker
-                latitude={currentPositionCords?.latitude}
-                longitude={currentPositionCords?.longitude}
-              >
-                <div>
-                  <FaLocationDot size={35} color="blue" />
-                </div>
-              </Marker>
-              {toolTipIsVisible && (
-                <Popup
-                  latitude={toolTipX}
-                  longitude={toolTipY}
-                  closeButton={false}
-                  style={{ whiteSpace: "pre-wrap", padding: "8px" }}
-                  maxWidth="350px"
-                  anchor="bottom"
+                {toolTipIsVisible && (
+                  <Popup
+                    latitude={toolTipX}
+                    longitude={toolTipY}
+                    closeButton={false}
+                    style={{ whiteSpace: "pre-wrap", padding: "8px" }}
+                    maxWidth="350px"
+                    anchor="bottom"
+                  >
+                    <div className="popup-content">
+                      <h3 className="popup-header">Amenity Details</h3>
+                      {Object.entries(toolTipContent).map(([key, value]) => (
+                        <div className="key-value-pair" key={key}>
+                          <span className="key">{key}:</span>
+                          <span className="value">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Popup>
+                )}
+                <Source
+                  id="circle"
+                  type="geojson"
+                  data={{
+                    type: "Feature",
+                    geometry: {
+                      type: "Polygon",
+                      coordinates: [circleCoordinates],
+                    },
+                  }}
                 >
-                  <div className="popup-content">
-                    <h3 className="popup-header">Amenity Details</h3>
-                    {Object.entries(toolTipContent).map(([key, value]) => (
-                      <div className="key-value-pair" key={key}>
-                        <span className="key">{key}:</span>
-                        <span className="value">{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </Popup>
-              )}
-              <Source
-                id="circle"
-                type="geojson"
-                data={{
-                  type: "Feature",
-                  geometry: {
-                    type: "Polygon",
-                    coordinates: [circleCoordinates],
-                  },
-                }}
-              >
-                <Layer {...layerStyle} />
-              </Source>
-              <MapSources
-                pointsGeoJson={pointsGeoJson}
-                imagesLoaded={imagesLoaded}
-                amenitiesFilter={amenitiesFilter}
-              />
-            </Map>
+                  <Layer {...layerStyle} />
+                </Source>
+                <MapSources
+                  pointsGeoJson={pointsGeoJson}
+                  imagesLoaded={imagesLoaded}
+                  amenitiesFilter={amenitiesFilter}
+                />
+              </Map>
           </DeckGL>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">

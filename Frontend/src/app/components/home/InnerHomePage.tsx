@@ -1,22 +1,22 @@
 import LocationAggregatorMap from "../map/MapboxMap";
-import ProtectedRoute from "../ProtectedRoute";
+// import ProtectedRoute from "../ProtectedRoute";
 import Nav from "@/app/nav/page";
 import CookieConsent from "../banner/CookieConsent";
-import ZoomControls from "../zoom/page";
 
 
 const InnerHomePage = () => {
   return (
-    <ProtectedRoute>
+    // <ProtectedRoute>
+    <div>
       <LocationAggregatorMap />
       <div className="nav-container">
         <div className="absolute top-5 left-5 z-[999]">
-          <ZoomControls />
-  <CookieConsent />
+          <CookieConsent />
           <Nav />
         </div>
       </div>
-    </ProtectedRoute>
+      </div>
+    // </ProtectedRoute> 
   );
 };
 
