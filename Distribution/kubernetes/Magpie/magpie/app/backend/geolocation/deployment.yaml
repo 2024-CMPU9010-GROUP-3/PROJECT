@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.14.0/deployment-apps-v1.json
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nominatim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nominatim
+  template:
+    metadata:
+      labels:
+        app: nominatim
+    spec:
+      containers:
+        - name: nominatim
+          image: mediagis/nominatim:4.5
+          resources: {}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PBF_URL
+              value: "https://download.geofabrik.de/europe/ireland-and-northern-ireland-latest.osm.pbf"
+            - name: REPLICATION_URL
+              value: "https://download.geofabrik.de/europe/ireland-and-northern-ireland-updates/"
+            - name: NOMINATIM_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: secret-magpie-db-user
+                  key: NOMINATIM_PASSWORD
+          volumeMounts:
+            - name: nominatim-data
+              mountPath: /var/lib/postgresql/16/main/data
+      volumes:
+        - name: nominatim-data
+          persistentVolumeClaim:
+            claimName: nominatim-pvc

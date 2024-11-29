@@ -4,3 +4,4 @@ resources:
 - db-secret.yaml
 - private
 - public
+- geolocation

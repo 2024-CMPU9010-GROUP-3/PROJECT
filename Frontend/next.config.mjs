@@ -8,7 +8,11 @@ const nextConfig = {
             port: '',
             pathname: '/**',
         }]
-    }
+    },
+    crossOrigin: 'use-credentials',
+    devIndicators: {
+        buildActivityPosition: 'bottom-right',
+    },
 };
 
 export default nextConfig;

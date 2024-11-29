@@ -8,7 +8,9 @@ import os
 import numpy as np
 import math
 import pandas as pd
+import random
 from geopy.distance import geodesic
+from sklearn.cluster import DBSCAN
 
 
 def get_images(imag_save_path, longitude, latitude, mapbox_type):
@@ -156,7 +158,7 @@ def new_mask(image_path, save_path, threshold=240):
 
     cv2.imwrite(save_path, combined_mask)
 
-def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model):
+def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model, conf_threshold=0.4):
     """
     Detect cars in the image using the retrained YOLO model and draws them on the image.
 
@@ -164,7 +166,8 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
         image_path (str): Path of the image
         road_mask_path (str): Path of the saved mask
         output_image_path (str): Path to save the image with bounding boxes, red for parking and blue cars on the road
-        model : YOLO model.
+        model : YOLO model
+        conf_threshold (float): Minimum confidence threshold for a predictions to be considered
         
     Returns:
         detections_parking (list): List of the bounding boxes for the cars not on the road [x_center, y_center, width, height, angle_degrees]
@@ -187,6 +190,10 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
             x_center, y_center, width, height, angle_radians = map(float, box.xywhr[0])
             angle_degrees = angle_radians * (180 / math.pi) 
             cls = int(box.cls[0])
+            conf = float(box.conf[0])
+
+            if conf < conf_threshold:#we ignore the predictions that have a low confidance score as they are more likely to be misclassifications
+                continue
 
             if cls == 0:
                 if -45 <= angle_degrees <= 45 or 135 <= angle_degrees <= 225:
@@ -522,6 +529,104 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     cv2.imwrite(image_path, image)
 
 
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, road_proximity_threshold=30, parking_lot_min_spots=18, clustering_eps=55, clustering_min_samples=5):
+    """
+    Classifies parking spots as public(on the street parking), private(residential) or parking lot based on their proximity to the road (calculated using the road mask).
+    Parking lots are identified through clustering using DBSCAN
+
+    Params:
+        all_parking_spots (list): List of all parking spots(by the model and then the empty parking detection) 
+        road_mask_path (string): Path to road mask
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image
+        road_proximity_threshold (int): Threshold in pixels to classify a spot near the road as public
+        parking_lot_min_spots (int): Minimum number of spots in a cluster to classify it as a parking lot
+        clustering_eps (float): Maximum distance between spots in pixels to form a cluster
+        clustering_min_samples (int): Minimum number of samples to form a cluster
+
+    Returns:
+        classified_spots (list): List of parking spots with classification added
+    """
+    classified_spots = []
+    cluster_labels = []
+
+    road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
+    road_contours, _ = cv2.findContours(road_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    #print(center_long, center_lat)
+    pixel_coords = []
+
+    for spot in all_parking_spots:
+        x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+        pixel_coords.append([x_center, y_center])
+
+    clustering = DBSCAN(eps=clustering_eps, min_samples=clustering_min_samples).fit(pixel_coords)
+    labels = clustering.labels_
+
+    for idx, spot in enumerate(all_parking_spots):
+        x_center, y_center = pixel_coords[idx]
+        cluster_label = labels[idx]
+        cluster_labels.append(cluster_label)
+
+        min_distance = float("inf")
+
+        for contour in road_contours:
+            distance = cv2.pointPolygonTest(contour, (x_center, y_center), measureDist=True)
+            min_distance = min(min_distance, abs(distance))
+
+        classification = "private"
+
+        if min_distance <= road_proximity_threshold:
+            classification = "public"
+
+        if cluster_label != -1:
+            cluster_size = np.sum(labels == cluster_label)
+            if cluster_size >= parking_lot_min_spots:
+                classification = "parking lot"
+
+        classified_spots.append([spot[0], spot[1], classification])
+        #print(classification)
+
+    return classified_spots, cluster_labels
+
+def draw_clusters_and_labels(image_path, spots, cluster_labels, center_long, center_lat):
+    """
+    Draws cluster labels and classifications labels on the image for each spot.
+
+    Params:
+        image_path (str): Path of the image
+        spots (list): List of parking spot coordinates and classification labels (public, private or parking lot)
+        cluster_labels (list): List of cluster labels corresponding to each spot
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image
+    """
+    image = cv2.imread(image_path)
+
+    unique_clusters = set(cluster_labels)
+    cluster_colors = {cluster: tuple(random.randint(0, 255) for _ in range(3)) for cluster in unique_clusters}
+
+    classification_colors = {
+        "public": (0, 255, 0),  #green
+        "private": (0, 0, 255), #red
+        "parking_lot": (255, 0, 0) #blue
+    }
+
+    for i, spot in enumerate(spots):
+        cluster_label = cluster_labels[i]
+        classification = spot[2]
+
+        x, y = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+        x, y = int(x), int(y)
+
+        cluster_color = cluster_colors.get(cluster_label, (255, 255, 255))
+        classification_color = classification_colors.get(classification, (255, 255, 255))
+
+        cv2.circle(image, (x, y), 5, cluster_color, -1)
+        label = f"{classification}"
+        cv2.putText(image, label, (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, classification_color, 2)
+
+    cv2.imwrite(image_path, image)
+
 def get_parking_coords_in_image(model, longitude, latitude):
     """
     Detects all the parking spaces in the image (at longitude/latitude) and returns a list of coordinates, agregating
@@ -533,7 +638,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
         latitude (float): Latitude value
 
     Returns: 
-        all_detections (list): List of all coordinates of parking spots found in the image in the format log, lat, width, height, angle
+        all_detections (list): List of all coordinates of parking spots found in the image in the format long, lat, classification
     """
     output_folder = 'image_output'
     output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
@@ -569,6 +674,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
+        all_detections, cluster_labels = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
+        draw_clusters_and_labels(output_path_bb_image, all_detections, cluster_labels, longitude, latitude)
 
     return all_detections
 
@@ -674,9 +781,9 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     for long, lat in centers:
         detections = get_parking_coords_in_image(model, long, lat)
         for detection in detections:
-            all_detections.append([detection[0], detection[1]])
+            all_detections.append([detection[0], detection[1], detection[2]])
 
-    df = pd.DataFrame(all_detections, columns=["longitude", "latitude"])
+    df = pd.DataFrame(all_detections, columns=["longitude", "latitude", "type"])
     df = df.drop_duplicates(subset=["longitude", "latitude"], keep="first")# remove duplicate coords as there is potential overlap in the images
     df.to_csv(f"coordinates_in_{top_left_longitude}_{top_left_latitude}-{bottom_right_longitude}_{bottom_right_latitude}.csv", index=False)
     
@@ -687,4 +794,11 @@ if __name__ == "__main__":
     #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
     #main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
     #main(-6.2751, 53.347, -6.272, 53.3489)#urban area
+    #main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
+    #main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
+    #main(-6.2859, 53.3636, -6.2823, 53.3656)#residential area
+    #main(-6.2754, 53.3471, -6.2732, 53.3483)#urban area
+    #main(-6.2652, 53.3525, -6.2625, 53.3541)#urban with parking lot
+
     main()
+

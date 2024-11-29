@@ -4,6 +4,8 @@ This is the backend of our application. It has two configurations (private and p
 
 The backend is written in Go using the net/http package of the standard library. The server is equipped with a middleware that will log the URL, status code and response time of any request to std out.
 
+The server implements a graceful shutdown procedure. When the server is asked to shut down by a SIGINT or SIGTERM signal, it will stop accepting new connections and complete handling existing connections for a configurable amount of time (default 10s) before exiting.
+
 ## Requirements
 
 ### Database
@@ -31,6 +33,7 @@ postgres://postgres:mysecretpassword@localhost:5432/postgres
 - [Private Routes](./routes-private.md)
 
 ## Error Codes
+
 A list of all cutom error codes can be found [here](./readme_errors.md).
 
 ## Usage
@@ -107,14 +110,17 @@ The server will then be reachable on `localhost:8080`
 
 The server is configured through environment variables. This can be achieved by providing a `.env` file, the content of which will be automatically loaded into the environment at runtime. The following enviroment variables are used by the server.
 
-| Variable Name               | Description                                            | Default | Optional |
-| --------------------------- | ------------------------------------------------------ | ------- | -------- |
-| MAGPIE_DB_URL               | A valid PostgreSQL connection URL                      | -       | No\*     |
-| MAGPIE_PORT                 | The port the server will listen on                     | 8080    | Yes      |
-| MAGPIE_JWT_SECRET           | The secret used to generate JWTs for authentication    | -       | No       |
-| MAGPIE_JWT_EXPIRY           | The expiry time for JWTs (must be in hours or minutes) | 24h     | Yes      |
-| MAGPIE_CORS_ALLOWED_ORIGINS | Space separated list of allowed origins for CORS       | -       | Yes      |
-| MAGPIE_CORS_ALLOWED_METHODS | Space separated list of allowed methods for CORS       | -       | Yes      |
+| Variable Name               | Description                                                                              | Default | Optional |
+| --------------------------- | ---------------------------------------------------------------------------------------- | ------- | -------- |
+| MAGPIE_DB_URL               | A valid PostgreSQL connection URL                                                        | -       | No\*     |
+| MAGPIE_PORT                 | The port the server will listen on                                                       | 8080    | Yes      |
+| MAGPIE_JWT_SECRET           | The secret used to generate JWTs for authentication                                      | -       | No       |
+| MAGPIE_JWT_EXPIRY           | The expiry time for JWTs (must be in hours or minutes)                                   | 24h     | Yes      |
+| MAGPIE_CORS_ALLOWED_ORIGINS | Space separated list of allowed origins for CORS                                         | -       | Yes      |
+| MAGPIE_CORS_ALLOWED_METHODS | Space separated list of allowed methods for CORS                                         | -       | Yes      |
+| MAGPIE_DB_RETRIES           | The number of times the backend tries to connect to the database on startup              | 6       | Yes      |
+| MAGPIE_DB_RETRY_INTERVAL    | The interval in seconds between database connection retries on startup                   | 10      | Yes      |
+| MAGPIE_SHUTDOWN_TIMEOUT     | The amount of seconds the server has to handle existing connections before shutting down | 10      | Yes      |
 
 \* `MAGPIE_DB_URL` can be omitted if the connection information is instead given as separate environment variables (`LOGIN`, `PASSWORD`, `HOST` and `DATABASE_NAME`). This is useful for deployments using Kubernetes. If both `MAGPIE_DB_URL` and the separate environment variables are set, only `MAGPIE_DB_URL` will be used to establish a connection.
 
