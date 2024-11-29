@@ -14,6 +14,5 @@
 * andrej.malik@stwarchitects.com = sent to schedule
 * bryan.boyle@ucc.ie = Agreed - sent to schedule
 * mairatsa@gmail.com = Agreed - schedule Wednesday 20/11 @15:00
-* jmurphy@longfordcoco.ie = Waiting
 
 ## Random (whoever we can find??)
