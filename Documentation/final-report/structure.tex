@@ -145,14 +145,17 @@
 
 \usepackage{tocloft}
 
-
+% dots connecting to page numbers
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 
 % fonts for TOC
 \renewcommand{\cfttoctitlefont}{\fontfamily{phv}\selectfont\Large\bfseries}
 \renewcommand{\cftsecfont}{\fontfamily{phv}\selectfont\bfseries}
 \renewcommand{\cftsecpagefont}{\fontfamily{phv}\selectfont}
-\renewcommand{\cftsubsecfont}{\fontfamily{phv}\selectfont\itshape}
+\renewcommand{\cftsubsecfont}{\fontfamily{phv}\selectfont}
 \renewcommand{\cftsubsecpagefont}{\fontfamily{phv}\selectfont}
+\renewcommand{\cftsubsubsecfont}{\fontfamily{phv}\selectfont\itshape}
+\renewcommand{\cftsubsubsecpagefont}{\fontfamily{phv}\selectfont}
 
 \renewcommand{\cftloftitlefont}{\fontfamily{phv}\selectfont\Large\bfseries} % List of Figures title
 \renewcommand{\cftlottitlefont}{\fontfamily{phv}\selectfont\Large\bfseries} % List of Tables title
