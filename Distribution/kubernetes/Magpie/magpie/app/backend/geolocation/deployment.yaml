@@ -32,7 +32,7 @@ spec:
                   key: NOMINATIM_PASSWORD
           volumeMounts:
             - name: nominatim-data
-              mountPath: /var/lib/postgresql/16/main
+              mountPath: /var/lib/postgresql/16/main/data
       volumes:
         - name: nominatim-data
           persistentVolumeClaim:
