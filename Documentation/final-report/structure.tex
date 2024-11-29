@@ -102,6 +102,10 @@
 	\renewcommand{\footrulewidth}{0.0pt} % Suppress footer rule
 }
 
+\makeatletter{}
+\renewcommand{\thepage}{\textsf{\@arabic\c@page}}
+\makeatother{}
+
 %----------------------------------------------------------------------------------------
 %	TITLE SECTION
 %----------------------------------------------------------------------------------------
