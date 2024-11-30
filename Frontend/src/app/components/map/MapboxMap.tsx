@@ -389,6 +389,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       if (!amenitiesFilter?.length) {
         throw new Error("Please select at least one amenity type");
       }
+      const locationName = await getNameFromLocation()
       const response = await fetch(`/api/history?userid=${sessionUUID}`, {
         method: "POST",
         body: JSON.stringify({
@@ -401,6 +402,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             ],
           },
           radius: sliderValue * 100,
+          displayName: locationName
         }),
         headers: {
           "Content-Type": "application/json",
@@ -468,6 +470,36 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       setMarkerIsVisible(true);
     }
   };
+
+  const getNameFromLocation = async () => {
+    const response = await fetch(`/api/location-lookup?lat=${coordinates.latitude}&lon=${coordinates.longitude}&format=jsonv2`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        authorization: "Bearer " + sessionToken,
+      },
+    });
+
+    const data = await response.json();
+
+    if(!data.address){
+      return null;
+    }
+
+    const road = data.address.road;
+    const city = data.address.city || data.address.town || data.address.village || data.address.municipality;
+    const country = data.address.country;
+    
+    if(!road && !city){
+      if(country){
+        return `Somewhere in ${country}`;
+      } else {
+        return null;
+      }
+    }
+
+    return [road, city].filter(x => !!x).join(", ")
+  }
 
 
   const fetchPointById = async (id: number) => {
