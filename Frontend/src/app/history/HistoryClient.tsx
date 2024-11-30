@@ -105,14 +105,12 @@ const HistoryClient = () => {
               Delete
             </Button>
           </div>
-          <div className="relative overflow-hidden rounded-lg border border-gray-200 w-full min-h-[calc(100vh-20rem)]">
             <DataTable
               columns={columns}
               data={history ?? []}
               setRowSelection={setRowSelection} // Add this prop
               rowSelection={rowSelection} // Add this prop
             />
-          </div>
         </div>
       </div>
     </div>

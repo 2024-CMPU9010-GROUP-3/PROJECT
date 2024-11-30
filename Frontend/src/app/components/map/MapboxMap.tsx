@@ -389,11 +389,22 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       if (!amenitiesFilter?.length) {
         throw new Error("Please select at least one amenity type");
       }
+
+      console.log();
       const locationName = await getNameFromLocation()
       const response = await fetch(`/api/history?userid=${sessionUUID}`, {
         method: "POST",
         body: JSON.stringify({
-          amenitytypes: amenitiesFilter,
+          amenitytypes: amenitiesFilter.map(value => {
+            return{
+              count: (
+                pointsGeoJson?.[
+                value
+                ] as GeoJSON.FeatureCollection
+              )?.features?.length || 0,
+              type: value
+            }
+          }),
           longlat: {
             type: "Point",
             coordinates: [

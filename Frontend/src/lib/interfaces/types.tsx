@@ -128,7 +128,10 @@ export interface LocationItem {
 export interface LocationData {
   id: number;
   datecreated: string;
-  amenitytypes: string[];
+  amenitytypes: {
+    type: string,
+    count: number
+  }[];
   longlat: {
     type: string;
     coordinates: number[];

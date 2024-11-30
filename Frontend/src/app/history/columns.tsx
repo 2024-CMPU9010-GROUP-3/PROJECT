@@ -77,14 +77,17 @@ export const getColumns = (handleShowOnMap : (row:Row<LocationData>) => void) : 
       accessorKey: "amenitytypes",
       cell: ({ row }) => (
         <div className="flex flex-wrap gap-2">
-          {row.getValue<string[]>("amenitytypes").map((type) => (
-            <span
-              key={type}
-              className="bg-gray-50 rounded-md p-2 text-sm border border-gray-500"
-            >
-              {type.replace("_", " ")}
-            </span>
-          ))}
+          {row.getValue<LocationData["amenitytypes"]>("amenitytypes")?
+          row.getValue<LocationData["amenitytypes"]>("amenitytypes").map((type) => (
+            <div key={type.type} className=" rounded-md py-1 px-2 text-s border border-gray-200 flex gap-1 flex-row flex-nowrap">
+              <div className="font-bold">
+                {type.type.split("_").map(word => word.charAt(0).toUpperCase() + word.substring(1)).join(' ') + ":"}
+              </div>
+              <div>
+                {type.count}
+              </div>
+            </div>
+          )):<div/>}
         </div>
       ),
     },
