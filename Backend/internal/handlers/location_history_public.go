@@ -41,8 +41,20 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 			resp.SendError(customErrors.Internal.GeoJsonEncodingError.WithCause(err), w)
 			return
 		}
+
+		typeRows, err := db.New(dbConn).GetAmenityTypeCount(*dbCtx, row.ID)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+			return
+		}
+		var amenityCounts []dtos.AmenityTypeWithCount
+
+		for _, typeRow := range typeRows {
+			amenityCounts = append(amenityCounts, dtos.AmenityTypeWithCount{AmenityType: typeRow.Type, Count: int(typeRow.Count)})
+		}
+
 		dto := dtos.LocationHistoryEntryDto{
-			ID: row.ID, Datecreated: row.Datecreated, Amenitytypes: row.Amenitytypes, Longlat: *longlat, Radius: row.Radius, DisplayName: row.Displayname.String,
+			ID: row.ID, Datecreated: row.Datecreated, Amenitytypes: amenityCounts, Longlat: *longlat, Radius: row.Radius, DisplayName: row.Displayname.String,
 		}
 		entries = append(entries, dto)
 	}
@@ -121,16 +133,41 @@ func (handler *LocationHistoryHandler) HandlePost(w http.ResponseWriter, r *http
 	}
 
 	createLocationHistoryEntryParam := db.CreateLocationHistoryEntryParams{
-		Userid:       userId,
-		Amenitytypes: historyEntryDto.Amenitytypes,
-		Longlat:      longlat,
-		Radius:       historyEntryDto.Radius,
-		Displayname:  historyEntryDto.DisplayName,
+		Userid:      userId,
+		Longlat:     longlat,
+		Radius:      historyEntryDto.Radius,
+		Displayname: historyEntryDto.DisplayName,
 	}
 
-	id, err := db.New(dbConn).CreateLocationHistoryEntry(*dbCtx, createLocationHistoryEntryParam)
+	tx, err := dbConn.Begin(*dbCtx)
+	if err != nil {
+		resp.SendError(customErrors.Database.TransactionStartError, w)
+		return
+	}
+	defer func() {
+		// potential error from rollback is not fatal, ignoring for now
+		if tx != nil {
+			_ = tx.Rollback(*dbCtx)
+		}
+	}()
+
+	id, err := db.New(dbConn).WithTx(tx).CreateLocationHistoryEntry(*dbCtx, createLocationHistoryEntryParam)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+
+	for _, entry := range historyEntryDto.Amenitytypes {
+		err = db.New(dbConn).WithTx(tx).CreateAmenityCountEntry(*dbCtx, db.CreateAmenityCountEntryParams{Historyentryid: id, Type: entry.AmenityType, Count: int32(entry.Count)})
+		if err != nil {
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+			return
+		}
+	}
+
+	err = tx.Commit(*dbCtx)
+	if err != nil {
+		resp.SendError(customErrors.Database.TransactionCommitError, w)
 		return
 	}
 

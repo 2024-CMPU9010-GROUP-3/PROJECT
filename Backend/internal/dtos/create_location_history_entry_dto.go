@@ -13,11 +13,16 @@ import (
 	"github.com/twpayne/go-geom/encoding/geojson"
 )
 
+type AmenityTypeWithCount struct {
+	AmenityType db.PointType `json:"type"`
+	Count       int          `json:"count"`
+}
+
 type CreateLocationHistoryEntryDto struct {
-	Amenitytypes []db.PointType   `json:"amenitytypes"`
-	Longlat      geojson.Geometry `json:"longlat"`
-	Radius       int32            `json:"radius"`
-	DisplayName  pgtype.Text           `json:"displayname"`
+	Amenitytypes []AmenityTypeWithCount `json:"amenitytypes"`
+	Longlat      geojson.Geometry       `json:"longlat"`
+	Radius       int32                  `json:"radius"`
+	DisplayName  pgtype.Text            `json:"displayname"`
 }
 
 func (self *CreateLocationHistoryEntryDto) Decode(r io.Reader) error {
@@ -37,8 +42,8 @@ func (self *CreateLocationHistoryEntryDto) Validate() error {
 		return err
 	}
 	for _, t := range self.Amenitytypes {
-		if !t.IsValid() {
-			err := customErrors.Parameter.InvalidPointTypeError.WithCause(fmt.Errorf("Type '%s' is not supported", t))
+		if !t.AmenityType.IsValid() {
+			err := customErrors.Parameter.InvalidPointTypeError.WithCause(fmt.Errorf("Type '%s' is not supported", t.AmenityType))
 			return err
 		}
 	}

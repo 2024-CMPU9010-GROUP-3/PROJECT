@@ -89,16 +89,26 @@ WHERE Id = $1;
 DELETE FROM logins WHERE Id = $1;
 
 -- name: GetLocationHistory :many
-SELECT Id, DateCreated, AmenityTypes, LongLat, Radius, DisplayName
+SELECT Id, DateCreated, LongLat, Radius, DisplayName
 FROM location_history
 WHERE UserId = @userid
 ORDER BY Id ASC;
 
+-- name: GetAmenityTypeCount :many
+SELECT Type, Count
+FROM history_amenity_counts
+WHERE HistoryEntryId = @id;
+
 -- name: CreateLocationHistoryEntry :one
-INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius, DisplayName) VALUES (
-  @userid, @amenitytypes, @longlat, @radius, @displayname
+INSERT INTO location_history (UserId, LongLat, Radius, DisplayName) VALUES (
+  @userid, @longlat, @radius, @displayname
 )
 RETURNING Id;
+
+-- name: CreateAmenityCountEntry :exec
+INSERT INTO history_amenity_counts (HistoryEntryId, Type, Count) VALUES (
+  @historyentryid, @type, @count
+);
 
 -- name: DeleteLocationHistoryEntries :exec
 DELETE FROM location_history WHERE Id = ANY(@ids::BIGINT[]);
