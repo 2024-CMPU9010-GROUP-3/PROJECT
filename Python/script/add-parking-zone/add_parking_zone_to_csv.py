@@ -33,8 +33,11 @@ def main(parking_csv, zones_geojson):
     #parking_gdf.plot(ax=ax, color='red', markersize=5)
     #plt.show()
 
+    parking_with_zones['zone'] = parking_with_zones['zone'].fillna('blue') #for the rest of dublin outside of the areas covered in the geojson, the zone is blue
+    parking_with_zones['tarif'] = parking_with_zones['tarif'].fillna(0.80) # and the cost is 0.8
+
     parking_with_zones.drop(columns='geometry', inplace=True)
     parking_with_zones.to_csv(parking_csv, index=False)
 
 if __name__ == "__main__":
-    main("coordinates_in_-6.2705_53.3466--6.2698_53.3468.csv", "tarif_zones.geojson") # replace with the final file name
+    main("coordinates_in_-6.3072_53.4044--6.3031_53.4068.csv", "tarif_zones.geojson") # replace with the final file name
