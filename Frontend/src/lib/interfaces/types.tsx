@@ -134,6 +134,7 @@ export interface LocationData {
     coordinates: number[];
   };
   radius: number;
+  displayname: string;
 }
 
 export interface Data {

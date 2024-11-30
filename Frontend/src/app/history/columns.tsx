@@ -38,10 +38,39 @@ export const getColumns = (handleShowOnMap : (row:Row<LocationData>) => void) : 
       enableHiding: false,
     },
     {
-      accessorKey: "datecreated",
-      header: "Date Created",
-      cell: ({ row }) =>
-        new Date(row.getValue("datecreated")).toLocaleString(),
+      header: "Location",
+      cell: ({ row }) => {
+        const name = row.original.displayname;
+        const longlat = row.original.longlat;
+        if(name) {
+          return (
+            <div>
+              <div className="font-bold">{name}</div>
+              <div className="font-mono text-neutral-500 text-xs size-fit whitespace-nowrap">
+                <div>lat: {longlat.coordinates[1].toFixed(6)}</div>
+                <div>lng: {longlat.coordinates[0].toFixed(6)}</div>
+              </div>
+            </div>
+          )
+        }
+        return (
+        <div className="font-mono  whitespace-nowrap">
+          <div>lat: {longlat.coordinates[1].toFixed(6)}</div>
+          <div>lng: {longlat.coordinates[0].toFixed(6)}</div>
+        </div>);
+      },
+    },
+    {
+      accessorKey: "radius",
+      header: "Radius",
+      cell: ({ row }) => {
+        const radius : number = row.getValue("radius")
+        return (
+        <div className="w-fit whitespace-nowrap">
+          {radius.toLocaleString()} m
+        </div>)
+
+      }
     },
     {
       header: "Amenity Types",
@@ -60,11 +89,10 @@ export const getColumns = (handleShowOnMap : (row:Row<LocationData>) => void) : 
       ),
     },
     {
-      header: "Coordinates",
-      cell: ({ row }) => {
-        const longlat = row.original.longlat;
-        return `${longlat.coordinates[1]}, ${longlat.coordinates[0]}`;
-      },
+      accessorKey: "datecreated",
+      header: "Date Created",
+      cell: ({ row }) =>
+        new Date(row.getValue("datecreated")).toLocaleString(),
     },
     {
       header: "Show on Map",
