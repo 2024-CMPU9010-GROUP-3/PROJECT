@@ -10,7 +10,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { Grid } from "react-loader-spinner";
 import Map, { Layer, LayerProps, Marker, Popup, Source } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Eye, EyeOff, Save, Search } from "lucide-react";
+import { Eye, EyeOff, Loader2, Save, Search } from "lucide-react";
 import Image from "next/image";
 import { useOnborda } from "onborda";
 import { useSession } from "@/app/context/SessionContext";
@@ -147,6 +147,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   );
 
   const searchParams = useSearchParams();
+
+  const [savingMap, setSavingMap] = useState(false);
 
   // Search state
   const [searchValue, setSearchValue] = useState<string>("");
@@ -389,7 +391,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       if (!amenitiesFilter?.length) {
         throw new Error("Please select at least one amenity type");
       }
-
+      setSavingMap(true);
       console.log();
       const locationName = await getNameFromLocation()
       const response = await fetch(`/api/history?userid=${sessionUUID}`, {
@@ -435,6 +437,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         description: "Failed to save map",
         variant: "destructive",
       });
+    } finally {
+      setSavingMap(false);
     }
   };
 
@@ -948,10 +952,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
+                              disabled={savingMap}
                               className="w-15 mx-auto bg-neutral-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
                               onClick={handleSaveMap}
                             >
-                              <Save size={16} />
+                              {savingMap ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
