@@ -100,7 +100,7 @@ def create_mask(image_path, save_path, threshold=240):
     orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
     yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
 
-    dilation_kernel = np.ones((10, 10), np.uint8)#we thicken the road width for highways as the road doesn't take into account the multiple lanes (to reduce misclassifications)
+    dilation_kernel = np.ones((15, 15), np.uint8)#we thicken the road width for highways as the road doesn't take into account the multiple lanes (to reduce misclassifications)
     orange_mask_dilated = cv2.dilate(orange_mask, dilation_kernel, iterations=1)
     yellow_mask_dilated = cv2.dilate(yellow_mask, dilation_kernel, iterations=1)
 
