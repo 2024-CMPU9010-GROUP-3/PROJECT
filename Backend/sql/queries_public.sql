@@ -92,8 +92,7 @@ DELETE FROM logins WHERE Id = $1;
 SELECT Id, DateCreated, AmenityTypes, LongLat, Radius
 FROM location_history
 WHERE UserId = @userid
-ORDER BY Id ASC
-LIMIT @lim OFFSET @off;
+ORDER BY Id ASC;
 
 -- name: CreateLocationHistoryEntry :one
 INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius) VALUES (

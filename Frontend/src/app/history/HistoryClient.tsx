@@ -82,17 +82,6 @@ const HistoryClient = () => {
       {/* Main Content Area */}
       <div className="bg-white rounded-xl shadow-sm p-8">
         <div className="flex flex-col space-y-6">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Welcome back!
-            </h2>
-            <p className="text-gray-600 mt-1">
-              Here&apos;s a list of your saved locations for amenities!
-            </p>
-          </div>
-
-          {/* Keep your existing DataTable component here */}
-          {/* The rest of your content remains unchanged */}
           <div className="flex w-full justify-end">
             <Button
               className="bg-white text-red-700 hover:bg-red-500 hover:text-white transition-colors duration-300"

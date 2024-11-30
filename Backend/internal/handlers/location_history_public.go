@@ -5,7 +5,6 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
@@ -21,34 +20,14 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 	var userId pgtype.UUID
 
 	userIdPathParam := r.PathValue("id")
-	limitQueryParam := r.URL.Query().Get("limit")
-	offsetQueryParam := r.URL.Query().Get("offset")
 
-	limit, err := strconv.Atoi(limitQueryParam)
-	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidIntError, w)
-		return
-	}
-
-	offset, err := strconv.Atoi(offsetQueryParam)
-	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidIntError, w)
-		return
-	}
-
-	err = userId.Scan(userIdPathParam)
+	err := userId.Scan(userIdPathParam)
 	if err != nil {
 		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
 		return
 	}
 
-	getLocationHistoryParams := db.GetLocationHistoryParams{
-		Userid: userId,
-		Lim:    int32(limit),
-		Off:    int32(offset),
-	}
-
-	rows, err := db.New(dbConn).GetLocationHistory(*dbCtx, getLocationHistoryParams)
+	rows, err := db.New(dbConn).GetLocationHistory(*dbCtx, userId)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -68,7 +47,7 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 		entries = append(entries, dto)
 	}
 
-	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.GetLocationHistoryListDto{HistoryEntries: entries, NextOffset: int32(offset + limit)}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.GetLocationHistoryListDto{HistoryEntries: entries}, HttpStatus: http.StatusOK}, w)
 }
 
 func (handler *LocationHistoryHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {

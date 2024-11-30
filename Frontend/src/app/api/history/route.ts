@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
     if (process.env.NEXT_PUBLIC_BACKEND_URL) {
       const userid = request.nextUrl.searchParams.get("userid");
       const req = new NextRequest(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/history/${userid}?limit=10&offset=0`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/v1/public/history/${userid}`,
         request
       );
       const resp = await fetch(req);

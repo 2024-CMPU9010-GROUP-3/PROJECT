@@ -129,14 +129,7 @@ SELECT Id, DateCreated, AmenityTypes, LongLat, Radius
 FROM location_history
 WHERE UserId = $1
 ORDER BY Id ASC
-LIMIT $3 OFFSET $2
 `
-
-type GetLocationHistoryParams struct {
-	Userid pgtype.UUID `json:"userid"`
-	Off    int32       `json:"off"`
-	Lim    int32       `json:"lim"`
-}
 
 type GetLocationHistoryRow struct {
 	ID           int64            `json:"id"`
@@ -146,8 +139,8 @@ type GetLocationHistoryRow struct {
 	Radius       int32            `json:"radius"`
 }
 
-func (q *Queries) GetLocationHistory(ctx context.Context, arg GetLocationHistoryParams) ([]GetLocationHistoryRow, error) {
-	rows, err := q.db.Query(ctx, getLocationHistory, arg.Userid, arg.Off, arg.Lim)
+func (q *Queries) GetLocationHistory(ctx context.Context, userid pgtype.UUID) ([]GetLocationHistoryRow, error) {
+	rows, err := q.db.Query(ctx, getLocationHistory, userid)
 	if err != nil {
 		return nil, err
 	}
