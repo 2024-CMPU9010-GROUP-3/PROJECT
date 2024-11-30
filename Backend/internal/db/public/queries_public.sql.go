@@ -15,8 +15,8 @@ import (
 )
 
 const createLocationHistoryEntry = `-- name: CreateLocationHistoryEntry :one
-INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius) VALUES (
-  $1, $2, $3, $4
+INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius, DisplayName) VALUES (
+  $1, $2, $3, $4, $5
 )
 RETURNING Id
 `
@@ -26,6 +26,7 @@ type CreateLocationHistoryEntryParams struct {
 	Amenitytypes []PointType    `json:"amenitytypes"`
 	Longlat      *go_geom.Point `json:"longlat"`
 	Radius       int32          `json:"radius"`
+	Displayname  pgtype.Text    `json:"displayname"`
 }
 
 func (q *Queries) CreateLocationHistoryEntry(ctx context.Context, arg CreateLocationHistoryEntryParams) (int64, error) {
@@ -34,6 +35,7 @@ func (q *Queries) CreateLocationHistoryEntry(ctx context.Context, arg CreateLoca
 		arg.Amenitytypes,
 		arg.Longlat,
 		arg.Radius,
+		arg.Displayname,
 	)
 	var id int64
 	err := row.Scan(&id)
@@ -125,7 +127,7 @@ func (q *Queries) EmailExists(ctx context.Context, arg EmailExistsParams) (bool,
 }
 
 const getLocationHistory = `-- name: GetLocationHistory :many
-SELECT Id, DateCreated, AmenityTypes, LongLat, Radius
+SELECT Id, DateCreated, AmenityTypes, LongLat, Radius, DisplayName
 FROM location_history
 WHERE UserId = $1
 ORDER BY Id ASC
@@ -137,6 +139,7 @@ type GetLocationHistoryRow struct {
 	Amenitytypes []PointType      `json:"amenitytypes"`
 	Longlat      *go_geom.Point   `json:"longlat"`
 	Radius       int32            `json:"radius"`
+	Displayname  pgtype.Text      `json:"displayname"`
 }
 
 func (q *Queries) GetLocationHistory(ctx context.Context, userid pgtype.UUID) ([]GetLocationHistoryRow, error) {
@@ -154,6 +157,7 @@ func (q *Queries) GetLocationHistory(ctx context.Context, userid pgtype.UUID) ([
 			&i.Amenitytypes,
 			&i.Longlat,
 			&i.Radius,
+			&i.Displayname,
 		); err != nil {
 			return nil, err
 		}

@@ -125,6 +125,7 @@ func (handler *LocationHistoryHandler) HandlePost(w http.ResponseWriter, r *http
 		Amenitytypes: historyEntryDto.Amenitytypes,
 		Longlat:      longlat,
 		Radius:       historyEntryDto.Radius,
+		Displayname:  historyEntryDto.DisplayName,
 	}
 
 	id, err := db.New(dbConn).CreateLocationHistoryEntry(*dbCtx, createLocationHistoryEntryParam)

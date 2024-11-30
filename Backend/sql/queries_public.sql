@@ -89,14 +89,14 @@ WHERE Id = $1;
 DELETE FROM logins WHERE Id = $1;
 
 -- name: GetLocationHistory :many
-SELECT Id, DateCreated, AmenityTypes, LongLat, Radius
+SELECT Id, DateCreated, AmenityTypes, LongLat, Radius, DisplayName
 FROM location_history
 WHERE UserId = @userid
 ORDER BY Id ASC;
 
 -- name: CreateLocationHistoryEntry :one
-INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius) VALUES (
-  @userid, @amenitytypes, @longlat, @radius
+INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius, DisplayName) VALUES (
+  @userid, @amenitytypes, @longlat, @radius, @displayname
 )
 RETURNING Id;
 

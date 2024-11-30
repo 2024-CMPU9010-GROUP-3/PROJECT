@@ -74,6 +74,7 @@ type LocationHistory struct {
 	Amenitytypes []PointType      `json:"amenitytypes"`
 	Longlat      *go_geom.Point   `json:"longlat"`
 	Radius       int32            `json:"radius"`
+	Displayname  pgtype.Text      `json:"displayname"`
 }
 
 type Login struct {
