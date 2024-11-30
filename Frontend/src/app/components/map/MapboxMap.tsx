@@ -626,14 +626,18 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     const types = paramTypes.split(",")
     
     if(longitude && latitude && radius && types) {
-      setCoordinates({ latitude, longitude });
-      setSliderValue(radius / 100);
-      setSliderValueDisplay(radius / 100);
-      setMarkerIsVisible(true);
-
-      setAmenitiesFilter(() =>
-        types
-      );
+      // Reason for this timeout: coordinates getting set to 0,0 after this fires during map load
+      // I think this happens only in the dev environment (strict mode)
+      // If the points are not loading after loading from history, re-enable this timeout
+      // setTimeout(() => {
+        setCoordinates({ latitude, longitude });
+        setSliderValue(radius / 100);
+        setSliderValueDisplay(radius / 100);
+        setMarkerIsVisible(true);
+        setAmenitiesFilter(() =>
+          types
+        );
+      //},1000);
     }
   }, [searchParams]);
 
