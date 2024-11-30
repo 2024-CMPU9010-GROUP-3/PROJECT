@@ -14,4 +14,5 @@ type LocationHistoryEntryDto struct {
 	Amenitytypes []db.PointType   `json:"amenitytypes"`
 	Longlat      geojson.Geometry `json:"longlat"`
 	Radius       int32            `json:"radius"`
+	DisplayName  string           `json:"displayname"`
 }

@@ -42,7 +42,7 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 			return
 		}
 		dto := dtos.LocationHistoryEntryDto{
-			ID: row.ID, Datecreated: row.Datecreated, Amenitytypes: row.Amenitytypes, Longlat: *longlat, Radius: row.Radius,
+			ID: row.ID, Datecreated: row.Datecreated, Amenitytypes: row.Amenitytypes, Longlat: *longlat, Radius: row.Radius, DisplayName: row.Displayname.String,
 		}
 		entries = append(entries, dto)
 	}
