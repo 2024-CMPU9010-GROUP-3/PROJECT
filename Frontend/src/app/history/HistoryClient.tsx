@@ -70,10 +70,6 @@ const HistoryClient = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionToken]);
 
-  useEffect(() => {
-    console.log("ROW SELECTION", rowSelection);
-  }, [rowSelection]);
-
   return (
     <div className="max-w-[100rem] mx-auto p-6 space-y-6">
       <Button className="absolute top-5 left-5 z-[999] h-10 w-10 bg-white rounded-full p-2 hover:bg-neutral-100" onClick={() => {router.back()}}>
@@ -107,7 +103,7 @@ const HistoryClient = () => {
           </div>
             <DataTable
               columns={columns}
-              data={history ?? []}
+              data={history}
               setRowSelection={setRowSelection} // Add this prop
               rowSelection={rowSelection} // Add this prop
             />

@@ -101,11 +101,10 @@ export function DataTable<TData>({
               <TableRow>
                 <TableCell
                   colSpan={table.getAllColumns().length}
-                  className="h-24 text-center"
-                >
-                  <div>
-                    No results found.
-                  </div>
+                  className="h-24 text-center">
+                    <div>
+                      No results found.
+                    </div>
                 </TableCell>
               </TableRow>
             )}
