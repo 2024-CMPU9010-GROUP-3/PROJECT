@@ -35,14 +35,10 @@ export const columns: ColumnDef<LocationData>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: "ID",
-  },
-  {
     accessorKey: "datecreated",
     header: "Date Created",
     cell: ({ row }) =>
-      new Date(row.getValue("datecreated")).toLocaleDateString(),
+      new Date(row.getValue("datecreated")).toLocaleString(),
   },
   {
     header: "Amenity Types",
