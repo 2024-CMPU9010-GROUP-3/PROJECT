@@ -60,7 +60,7 @@ const HistoryClient = () => {
 
   const handleShowOnMap = (row:Row<LocationData>) => {
     const longlat = row.original.longlat;
-    router.push(`/home?marker_long=${longlat.coordinates[0]}&marker_lat=${longlat.coordinates[1]}&marker_rad=${row.original.radius}&marker_types=${row.original.amenitytypes}`)
+    router.push(`/home?marker_long=${longlat.coordinates[0]}&marker_lat=${longlat.coordinates[1]}&marker_rad=${row.original.radius}&marker_types=${row.original.amenitytypes.map(entry => entry.type)}`)
   }
 
   const columns = getColumns(handleShowOnMap)
