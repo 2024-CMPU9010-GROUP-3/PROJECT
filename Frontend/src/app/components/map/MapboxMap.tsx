@@ -46,6 +46,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {useSearchParams} from "next/navigation";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
@@ -144,6 +145,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     () => [coordinates?.longitude, coordinates?.latitude],
     [coordinates]
   );
+
+  const searchParams = useSearchParams();
 
   // Search state
   const [searchValue, setSearchValue] = useState<string>("");
@@ -560,6 +563,32 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   useEffect(() => {
     navigator.geolocation.getCurrentPosition(success, error, options);
   });
+
+  useEffect(() => {
+    const paramLon = searchParams.get("marker_long")
+    const paramLat = searchParams.get("marker_lat")
+    const paramRad = searchParams.get("marker_rad")
+    const paramTypes = searchParams.get("marker_types")
+
+    if(!paramLon || !paramLat || !paramRad || !paramTypes){
+      return;
+    }
+    const latitude = parseFloat(paramLat)
+    const longitude = parseFloat(paramLon)
+    const radius = parseInt(paramRad)
+    const types = paramTypes.split(",")
+    
+    if(longitude && latitude && radius && types) {
+      setCoordinates({ latitude, longitude });
+      setSliderValue(radius / 100);
+      setSliderValueDisplay(radius / 100);
+      setMarkerIsVisible(true);
+
+      setAmenitiesFilter(() =>
+        types
+      );
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     closeOnborda();

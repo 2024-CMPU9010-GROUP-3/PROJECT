@@ -1,13 +1,14 @@
 "use client";
 
 import { DataTable } from "./data-table";
-import { columns } from "./columns";
+import { getColumns } from "./columns";
 import { useEffect, useState } from "react";
 import { useSession } from "../context/SessionContext";
 import { Button } from "@/components/ui/button";
 import { LocationData } from "@/lib/interfaces/types";
 import {ArrowLeft} from "lucide-react";
 import {useRouter} from "next/navigation";
+import {Row} from "@tanstack/react-table";
 
 const HistoryClient = () => {
   const [history, setHistory] = useState<LocationData[]>([]);
@@ -56,6 +57,13 @@ const HistoryClient = () => {
       setIsDeleting(false);
     }
   };
+
+  const handleShowOnMap = (row:Row<LocationData>) => {
+    const longlat = row.original.longlat;
+    router.push(`/home?marker_long=${longlat.coordinates[0]}&marker_lat=${longlat.coordinates[1]}&marker_rad=${row.original.radius}&marker_types=${row.original.amenitytypes}`)
+  }
+
+  const columns = getColumns(handleShowOnMap)
 
   useEffect(() => {
     fetchHistory(sessionToken);
