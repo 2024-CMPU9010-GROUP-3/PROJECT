@@ -6,12 +6,15 @@ import { useEffect, useState } from "react";
 import { useSession } from "../context/SessionContext";
 import { Button } from "@/components/ui/button";
 import { LocationData } from "@/lib/interfaces/types";
+import {ArrowLeft} from "lucide-react";
+import {useRouter} from "next/navigation";
 
 const HistoryClient = () => {
   const [history, setHistory] = useState<LocationData[]>([]);
   const [isDeleting, setIsDeleting] = useState(false);
   const [rowSelection, setRowSelection] = useState({});
   const { sessionToken, sessionUUID } = useSession();
+  const router = useRouter();
   const fetchHistory = async (sessionToken: string) => {
     if (sessionToken) {
       const response = await fetch(`/api/history?userid=${sessionUUID}`, {
@@ -65,6 +68,9 @@ const HistoryClient = () => {
 
   return (
     <div className="max-w-[100rem] mx-auto p-6 space-y-6">
+      <Button className="absolute top-5 left-5 z-[999] h-10 w-10 bg-white rounded-full p-2 hover:bg-neutral-100" onClick={() => {router.back()}}>
+        <ArrowLeft color="black" className="w-full h-full"/>
+      </Button>
       {/* Modern Header */}
       <div className="bg-white rounded-xl shadow-sm p-8">
         <h1 className="text-3xl font-semibold text-gray-900 mb-2">History</h1>
