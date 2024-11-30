@@ -99,8 +99,13 @@ def create_mask(image_path, save_path, threshold=240):
 
     orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
     yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
-    combined_mask = cv2.bitwise_or(road_mask, orange_mask)
-    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+    dilation_kernel = np.ones((10, 10), np.uint8)#we thicken the road width for highways as the road doesn't take into account the multiple lanes (to reduce misclassifications)
+    orange_mask_dilated = cv2.dilate(orange_mask, dilation_kernel, iterations=1)
+    yellow_mask_dilated = cv2.dilate(yellow_mask, dilation_kernel, iterations=1)
+
+    combined_mask = cv2.bitwise_or(road_mask, orange_mask_dilated)
+    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask_dilated)
 
     kernel = np.ones((2, 2), np.uint8)#use smaller kernel as it works better
     combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel)#cv2.MORPH_CLOSE actually works better
@@ -646,8 +651,8 @@ def get_parking_coords_in_image(model, longitude, latitude):
     output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
     output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
 
-    get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
+    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -800,5 +805,12 @@ if __name__ == "__main__":
     #main(-6.2754, 53.3471, -6.2732, 53.3483)#urban area
     #main(-6.2652, 53.3525, -6.2625, 53.3541)#urban with parking lot
 
-    main()
+    main(-6.3818, 53.3315, -6.3808, 53.3321)
+    main(-6.3828, 53.3326, -6.3818, 53.3332)
+    main(-6.3906, 53.3558, -6.3895, 53.3564)
+    main(-6.2374, 53.3692, -6.2364, 53.3698)
+    main(-6.2422, 53.3719, -6.2412, 53.3725)
+    main(-6.2301, 53.4097, -6.2269, 53.4115)
+
+    #main()
 
