@@ -14,7 +14,6 @@ import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
 import { useOnborda } from "onborda";
 import { useSession } from "@/app/context/SessionContext";
-import { NavigationControl } from 'react-map-gl';
 
 // Local components
 import { Slider } from "@/components/ui/slider";
@@ -26,7 +25,6 @@ import { getCookiesAccepted } from "@/lib/cookies";
 import { cn } from "@/lib/utils";
 import packageJson from "../../../../package.json";
 import MapSources from "./utils/MapSources";
-import mapboxgl from 'mapbox-gl';
 
 // Types and interfaces
 import {
@@ -41,6 +39,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
+import mapboxgl from 'mapbox-gl';
+import CustomNavigationControl from "../zoom/page";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
@@ -218,10 +218,21 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     }
   };
 
-  const handleMapLoad = (event: MapLoadEvent) => {
-    const map = event.target;
+  const mapRef = useRef<mapboxgl.Map | null>(null);
 
-    loadImages(map).catch((error) =>
+  // Load custom icons to the map from the ImageConfig array
+  // Note, if you add more icons, you need to add them to the IMAGES array and also edit LoadImages
+  const handleMapLoad = (event: { target: mapboxgl.Map }) => {
+    mapRef.current = event.target;
+    
+    // 添加导航控件
+    const nav = new mapboxgl.NavigationControl({
+      visualizePitch: true
+    });
+    mapRef.current.addControl(nav, 'top-right');
+
+    // 执行其他地图加载相关操作
+    loadImages(mapRef.current).catch((error) =>
       console.error("Error loading images:", error)
     );
   };
@@ -515,17 +526,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     fetchMapboxKey();
   }, []);
 
-  // const mapRef = useRef<mapboxgl.Map | null>(null);
-  // const mapContainerRef = useRef<HTMLDivElement | null>(null);
-
-  // useEffect(() => {
-  //   console.log("mapRef", mapRef.current);
-  //   if (mapRef.current) {
-  //     mapRef.current.addControl(new mapboxgl.NavigationControl());
-  //   }
-  // }, []); 
-
-
   // Queries
   useEffect(() => {
     fetchPointsFromDB(
@@ -591,6 +591,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
+      <CustomNavigationControl mapInstance={mapRef.current} />
       <Toaster />
       {/* Onboarding help button */}
       <div
@@ -627,81 +628,78 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             onHover={handleHover}
             style={{ width: "100%", height: "100%" }}
           >
-              <Map  
-                mapboxAccessToken={mapBoxApiKey}
-                mapStyle="mapbox://styles/mapbox/streets-v12"
-                antialias={true}
-                style={{ width: "100%", height: "100%" }}
-                onLoad={handleMapLoad}
-              >
-                <NavigationControl 
-                  
-                  visualizePitch={true}
-                  showCompass={true}
-                  showZoom={true}
-                  style={{
-                    zIndex: 9999
-                  }}
-                />
-                {/* Map content remains the same */}
-                {markerIsVisible && (
-                  <Marker
-                    longitude={coordinates?.longitude}
-                    latitude={coordinates?.latitude}
-                    anchor="center"
-                  >
-                    <div>
-                      <FaLocationDot size={50} color="FFA15A" />
-                    </div>
-                  </Marker>
-                )}
+            <CustomNavigationControl mapInstance={mapRef.current} />
+            <Map  
+              mapboxAccessToken={mapBoxApiKey}
+              mapStyle="mapbox://styles/mapbox/streets-v12"
+              antialias={true}
+              style={{ width: "100%", height: "100%" }}
+              onLoad={handleMapLoad}
+              ref={(ref) => {
+                if (ref) {
+                  mapRef.current = ref.getMap();
+                }
+              }}
+            >
+              {/* Map content remains the same */}
+              {markerIsVisible && (
                 <Marker
-                  latitude={currentPositionCords?.latitude}
-                  longitude={currentPositionCords?.longitude}
+                  longitude={coordinates?.longitude}
+                  latitude={coordinates?.latitude}
+                  anchor="center"
                 >
                   <div>
-                    <FaLocationDot size={35} color="blue" />
+                    <FaLocationDot size={50} color="FFA15A" />
                   </div>
                 </Marker>
-                {toolTipIsVisible && (
-                  <Popup
-                    latitude={toolTipX}
-                    longitude={toolTipY}
-                    closeButton={false}
-                    style={{ whiteSpace: "pre-wrap", padding: "8px" }}
-                    maxWidth="350px"
-                    anchor="bottom"
-                  >
-                    <div className="popup-content">
-                      <h3 className="popup-header">Amenity Details</h3>
-                      {Object.entries(toolTipContent).map(([key, value]) => (
-                        <div className="key-value-pair" key={key}>
-                          <span className="key">{key}:</span>
-                          <span className="value">{value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </Popup>
-                )}
-                <Source
-                  id="circle"
-                  type="geojson"
-                  data={{
-                    type: "Feature",
-                    geometry: {
-                      type: "Polygon",
-                      coordinates: [circleCoordinates],
-                    },
-                  }}
+              )}
+              <Marker
+                latitude={currentPositionCords?.latitude}
+                longitude={currentPositionCords?.longitude}
+              >
+                <div>
+                  <FaLocationDot size={35} color="blue" />
+                </div>
+              </Marker>
+              {toolTipIsVisible && (
+                <Popup
+                  latitude={toolTipX}
+                  longitude={toolTipY}
+                  closeButton={false}
+                  style={{ whiteSpace: "pre-wrap", padding: "8px" }}
+                  maxWidth="350px"
+                  anchor="bottom"
                 >
-                  <Layer {...layerStyle} />
-                </Source>
-                <MapSources
-                  pointsGeoJson={pointsGeoJson}
-                  imagesLoaded={imagesLoaded}
-                  amenitiesFilter={amenitiesFilter}
-                />
-              </Map>
+                  <div className="popup-content">
+                    <h3 className="popup-header">Amenity Details</h3>
+                    {Object.entries(toolTipContent).map(([key, value]) => (
+                      <div className="key-value-pair" key={key}>
+                        <span className="key">{key}:</span>
+                        <span className="value">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Popup>
+              )}
+              <Source
+                id="circle"
+                type="geojson"
+                data={{
+                  type: "Feature",
+                  geometry: {
+                    type: "Polygon",
+                    coordinates: [circleCoordinates],
+                  },
+                }}
+              >
+                <Layer {...layerStyle} />
+              </Source>
+              <MapSources
+                pointsGeoJson={pointsGeoJson}
+                imagesLoaded={imagesLoaded}
+                amenitiesFilter={amenitiesFilter}
+              />
+            </Map>
           </DeckGL>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">

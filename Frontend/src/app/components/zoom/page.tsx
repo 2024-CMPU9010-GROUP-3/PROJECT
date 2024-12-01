@@ -1,38 +1,47 @@
 "use client";
 
 import React from 'react';
-import { useMap } from 'react-map-gl';
+import mapboxgl from 'mapbox-gl';
+import type { Map } from 'mapbox-gl';
 
-const ZoomControls = () => {
-  const { current: map } = useMap();
+interface CustomNavigationControlProps {
+  mapInstance: Map | null;
+}
 
-  const zoomIn = () => {
-    if (map) {
-      const currentZoom = map.getZoom();
-      map.easeTo({ zoom: currentZoom + 1, duration: 300 });
+const CustomNavigationControl: React.FC<CustomNavigationControlProps> = ({ mapInstance }) => {
+  const handleZoomIn = () => {
+    if (mapInstance) {
+      const currentZoom = mapInstance.getZoom();
+      mapInstance.easeTo({
+        zoom: Math.min(currentZoom + 1, mapInstance.getMaxZoom()),
+        duration: 300
+      });
     }
   };
 
-  const zoomOut = () => {
-    if (map) {
-      const currentZoom = map.getZoom();
-      map.easeTo({ zoom: currentZoom - 1, duration: 300 });
+  const handleZoomOut = () => {
+    if (mapInstance) {
+      const currentZoom = mapInstance.getZoom();
+      mapInstance.easeTo({
+        zoom: Math.max(currentZoom - 1, mapInstance.getMinZoom()),
+        duration: 300
+      });
     }
   };
 
   return (
-    <div className="absolute top-4 right-4 z-10 flex flex-col space-y-2">
+    <div className="absolute top-4 right-4 z-[9999] flex flex-col space-y-2">
       <button
-        onClick={zoomIn}
+        onClick={handleZoomIn}
         className="bg-white p-3 rounded-full shadow hover:bg-gray-100 focus:outline-none"
-        aria-label="Zoom in"
+        aria-label="zoomin"
       >
         +
       </button>
       <button
-        onClick={zoomOut}
+        onClick={handleZoomOut}
         className="bg-white p-3 rounded-full shadow hover:bg-gray-100 focus:outline-none"
-        aria-label="Zoom out"
+        aria-label="zoomout"
       >
         -
       </button>
@@ -40,4 +49,4 @@ const ZoomControls = () => {
   );
 };
 
-export default ZoomControls;
+export default CustomNavigationControl;
