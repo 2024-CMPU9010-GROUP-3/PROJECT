@@ -668,20 +668,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       <Toaster />
-      {/* Onboarding help button */}
-      <div
-        className="absolute bottom-[5%] left-[1%] z-[999]"
-        id="onboarding-step-3"
-      >
-        <div>
-          <button
-            onClick={() => startOnborda("general-onboarding")}
-            className="mt-2 px-4 py-2 bg-white text-gray-800 rounded-full shadow-md"
-          >
-            {"?"}
-          </button>
-        </div>
-      </div>
       {/* Map Container - Taller on mobile */}
       <div
         className="
