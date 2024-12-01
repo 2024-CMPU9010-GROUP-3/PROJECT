@@ -100,9 +100,11 @@ export const getColumns = (handleShowOnMap : (row:Row<LocationData>) => void) : 
     {
       header: "Show on Map",
       cell: ({ row }) => (
-        <Button variant="outline" className="rounded-full w-10 h-10 p-0" onClick={() => {handleShowOnMap(row)}}>
-          <MapPinned className="w-4 h-4"/>
-        </Button>
+        <div className="flex items-center justify-center">
+          <Button variant="outline" className="rounded-full w-10 h-10 p-0" onClick={() => {handleShowOnMap(row)}}>
+            <MapPinned className="w-4 h-4"/>
+          </Button>
+        </div>
       )
     }
   ]
