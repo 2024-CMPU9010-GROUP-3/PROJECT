@@ -5,7 +5,6 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	db "github.com/2024-CMPU9010-GROUP-3/magpie/internal/db/public"
 	"github.com/2024-CMPU9010-GROUP-3/magpie/internal/dtos"
@@ -21,34 +20,14 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 	var userId pgtype.UUID
 
 	userIdPathParam := r.PathValue("id")
-	limitQueryParam := r.URL.Query().Get("limit")
-	offsetQueryParam := r.URL.Query().Get("offset")
 
-	limit, err := strconv.Atoi(limitQueryParam)
-	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidIntError, w)
-		return
-	}
-
-	offset, err := strconv.Atoi(offsetQueryParam)
-	if err != nil {
-		resp.SendError(customErrors.Parameter.InvalidIntError, w)
-		return
-	}
-
-	err = userId.Scan(userIdPathParam)
+	err := userId.Scan(userIdPathParam)
 	if err != nil {
 		resp.SendError(customErrors.Parameter.InvalidUUIDError, w)
 		return
 	}
 
-	getLocationHistoryParams := db.GetLocationHistoryParams{
-		Userid: userId,
-		Lim:    int32(limit),
-		Off:    int32(offset),
-	}
-
-	rows, err := db.New(dbConn).GetLocationHistory(*dbCtx, getLocationHistoryParams)
+	rows, err := db.New(dbConn).GetLocationHistory(*dbCtx, userId)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
 		return
@@ -62,13 +41,25 @@ func (handler *LocationHistoryHandler) HandleGet(w http.ResponseWriter, r *http.
 			resp.SendError(customErrors.Internal.GeoJsonEncodingError.WithCause(err), w)
 			return
 		}
+
+		typeRows, err := db.New(dbConn).GetAmenityTypeCount(*dbCtx, row.ID)
+		if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+			return
+		}
+		var amenityCounts []dtos.AmenityTypeWithCount
+
+		for _, typeRow := range typeRows {
+			amenityCounts = append(amenityCounts, dtos.AmenityTypeWithCount{AmenityType: typeRow.Type, Count: int(typeRow.Count)})
+		}
+
 		dto := dtos.LocationHistoryEntryDto{
-			ID: row.ID, Datecreated: row.Datecreated, Amenitytypes: row.Amenitytypes, Longlat: *longlat, Radius: row.Radius,
+			ID: row.ID, Datecreated: row.Datecreated, Amenitytypes: amenityCounts, Longlat: *longlat, Radius: row.Radius, DisplayName: row.Displayname.String,
 		}
 		entries = append(entries, dto)
 	}
 
-	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.GetLocationHistoryListDto{HistoryEntries: entries, NextOffset: int32(offset + limit)}, HttpStatus: http.StatusAccepted}, w)
+	resp.SendResponse(dtos.ResponseContentDto{Content: dtos.GetLocationHistoryListDto{HistoryEntries: entries}, HttpStatus: http.StatusOK}, w)
 }
 
 func (handler *LocationHistoryHandler) HandleDelete(w http.ResponseWriter, r *http.Request) {
@@ -142,15 +133,41 @@ func (handler *LocationHistoryHandler) HandlePost(w http.ResponseWriter, r *http
 	}
 
 	createLocationHistoryEntryParam := db.CreateLocationHistoryEntryParams{
-		Userid:       userId,
-		Amenitytypes: historyEntryDto.Amenitytypes,
-		Longlat:      longlat,
-		Radius:       historyEntryDto.Radius,
+		Userid:      userId,
+		Longlat:     longlat,
+		Radius:      historyEntryDto.Radius,
+		Displayname: historyEntryDto.DisplayName,
 	}
 
-	id, err := db.New(dbConn).CreateLocationHistoryEntry(*dbCtx, createLocationHistoryEntryParam)
+	tx, err := dbConn.Begin(*dbCtx)
+	if err != nil {
+		resp.SendError(customErrors.Database.TransactionStartError, w)
+		return
+	}
+	defer func() {
+		// potential error from rollback is not fatal, ignoring for now
+		if tx != nil {
+			_ = tx.Rollback(*dbCtx)
+		}
+	}()
+
+	id, err := db.New(dbConn).WithTx(tx).CreateLocationHistoryEntry(*dbCtx, createLocationHistoryEntryParam)
 	if err != nil {
 		resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+		return
+	}
+
+	for _, entry := range historyEntryDto.Amenitytypes {
+		err = db.New(dbConn).WithTx(tx).CreateAmenityCountEntry(*dbCtx, db.CreateAmenityCountEntryParams{Historyentryid: id, Type: entry.AmenityType, Count: int32(entry.Count)})
+		if err != nil {
+			resp.SendError(customErrors.Database.UnknownDatabaseError.WithCause(err), w)
+			return
+		}
+	}
+
+	err = tx.Commit(*dbCtx)
+	if err != nil {
+		resp.SendError(customErrors.Database.TransactionCommitError, w)
 		return
 	}
 

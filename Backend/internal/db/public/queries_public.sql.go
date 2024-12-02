@@ -14,26 +14,43 @@ import (
 	go_geom "github.com/twpayne/go-geom"
 )
 
+const createAmenityCountEntry = `-- name: CreateAmenityCountEntry :exec
+INSERT INTO history_amenity_counts (HistoryEntryId, Type, Count) VALUES (
+  $1, $2, $3
+)
+`
+
+type CreateAmenityCountEntryParams struct {
+	Historyentryid int64     `json:"historyentryid"`
+	Type           PointType `json:"type"`
+	Count          int32     `json:"count"`
+}
+
+func (q *Queries) CreateAmenityCountEntry(ctx context.Context, arg CreateAmenityCountEntryParams) error {
+	_, err := q.db.Exec(ctx, createAmenityCountEntry, arg.Historyentryid, arg.Type, arg.Count)
+	return err
+}
+
 const createLocationHistoryEntry = `-- name: CreateLocationHistoryEntry :one
-INSERT INTO location_history (UserId, AmenityTypes, LongLat, Radius) VALUES (
+INSERT INTO location_history (UserId, LongLat, Radius, DisplayName) VALUES (
   $1, $2, $3, $4
 )
 RETURNING Id
 `
 
 type CreateLocationHistoryEntryParams struct {
-	Userid       pgtype.UUID    `json:"userid"`
-	Amenitytypes []PointType    `json:"amenitytypes"`
-	Longlat      *go_geom.Point `json:"longlat"`
-	Radius       int32          `json:"radius"`
+	Userid      pgtype.UUID    `json:"userid"`
+	Longlat     *go_geom.Point `json:"longlat"`
+	Radius      int32          `json:"radius"`
+	Displayname pgtype.Text    `json:"displayname"`
 }
 
 func (q *Queries) CreateLocationHistoryEntry(ctx context.Context, arg CreateLocationHistoryEntryParams) (int64, error) {
 	row := q.db.QueryRow(ctx, createLocationHistoryEntry,
 		arg.Userid,
-		arg.Amenitytypes,
 		arg.Longlat,
 		arg.Radius,
+		arg.Displayname,
 	)
 	var id int64
 	err := row.Scan(&id)
@@ -124,30 +141,54 @@ func (q *Queries) EmailExists(ctx context.Context, arg EmailExistsParams) (bool,
 	return exists, err
 }
 
+const getAmenityTypeCount = `-- name: GetAmenityTypeCount :many
+SELECT Type, Count
+FROM history_amenity_counts
+WHERE HistoryEntryId = $1
+`
+
+type GetAmenityTypeCountRow struct {
+	Type  PointType `json:"type"`
+	Count int32     `json:"count"`
+}
+
+func (q *Queries) GetAmenityTypeCount(ctx context.Context, id int64) ([]GetAmenityTypeCountRow, error) {
+	rows, err := q.db.Query(ctx, getAmenityTypeCount, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAmenityTypeCountRow
+	for rows.Next() {
+		var i GetAmenityTypeCountRow
+		if err := rows.Scan(&i.Type, &i.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getLocationHistory = `-- name: GetLocationHistory :many
-SELECT Id, DateCreated, AmenityTypes, LongLat, Radius
+SELECT Id, DateCreated, LongLat, Radius, DisplayName
 FROM location_history
 WHERE UserId = $1
 ORDER BY Id ASC
-LIMIT $3 OFFSET $2
 `
 
-type GetLocationHistoryParams struct {
-	Userid pgtype.UUID `json:"userid"`
-	Off    int32       `json:"off"`
-	Lim    int32       `json:"lim"`
-}
-
 type GetLocationHistoryRow struct {
-	ID           int64            `json:"id"`
-	Datecreated  pgtype.Timestamp `json:"datecreated"`
-	Amenitytypes []PointType      `json:"amenitytypes"`
-	Longlat      *go_geom.Point   `json:"longlat"`
-	Radius       int32            `json:"radius"`
+	ID          int64            `json:"id"`
+	Datecreated pgtype.Timestamp `json:"datecreated"`
+	Longlat     *go_geom.Point   `json:"longlat"`
+	Radius      int32            `json:"radius"`
+	Displayname pgtype.Text      `json:"displayname"`
 }
 
-func (q *Queries) GetLocationHistory(ctx context.Context, arg GetLocationHistoryParams) ([]GetLocationHistoryRow, error) {
-	rows, err := q.db.Query(ctx, getLocationHistory, arg.Userid, arg.Off, arg.Lim)
+func (q *Queries) GetLocationHistory(ctx context.Context, userid pgtype.UUID) ([]GetLocationHistoryRow, error) {
+	rows, err := q.db.Query(ctx, getLocationHistory, userid)
 	if err != nil {
 		return nil, err
 	}
@@ -158,9 +199,9 @@ func (q *Queries) GetLocationHistory(ctx context.Context, arg GetLocationHistory
 		if err := rows.Scan(
 			&i.ID,
 			&i.Datecreated,
-			&i.Amenitytypes,
 			&i.Longlat,
 			&i.Radius,
+			&i.Displayname,
 		); err != nil {
 			return nil, err
 		}
