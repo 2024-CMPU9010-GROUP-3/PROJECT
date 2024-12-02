@@ -370,13 +370,6 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
             angle_radians = math.atan2(y_next - y_current, x_next - x_current)
             angle_degrees = math.degrees(angle_radians)
 
-            if alignment == "horizontal":
-                angle_current = angle_current % 180
-                angle_next = angle_next % 180
-            elif alignment == "vertical":
-                angle_current = (angle_current - 90) % 180
-                angle_next = (angle_next - 90) % 180
-
             angle_deviation = abs(angle_current - angle_next)
             angle_deviation = min(angle_deviation, 360 - angle_deviation)
 
