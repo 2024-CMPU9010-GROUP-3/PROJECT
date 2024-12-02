@@ -79,7 +79,7 @@ const HistoryClient = () => {
       <div className="bg-white rounded-xl shadow-sm p-8">
         <h1 className="text-3xl font-semibold text-gray-900 mb-2">Saved Locations</h1>
         <p className="text-gray-600">
-          Here's a list of your saved amenity locations!
+          Here&apos;s a list of your saved amenity locations!
         </p>
       </div>
 
