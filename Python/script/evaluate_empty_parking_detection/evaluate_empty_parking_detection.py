@@ -33,8 +33,13 @@ def create_mask(image_path, save_path, threshold=240):
 
     orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
     yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
-    combined_mask = cv2.bitwise_or(road_mask, orange_mask)
-    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+    dilation_kernel = np.ones((15, 15), np.uint8)#we thicken the road width for highways as the road doesn't take into account the multiple lanes (to reduce misclassifications)
+    orange_mask_dilated = cv2.dilate(orange_mask, dilation_kernel, iterations=2)
+    yellow_mask_dilated = cv2.dilate(yellow_mask, dilation_kernel, iterations=2)
+
+    combined_mask = cv2.bitwise_or(road_mask, orange_mask_dilated)
+    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask_dilated)
 
     kernel = np.ones((2, 2), np.uint8)#use smaller kernel as it works better
     combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel)#cv2.MORPH_CLOSE actually works better

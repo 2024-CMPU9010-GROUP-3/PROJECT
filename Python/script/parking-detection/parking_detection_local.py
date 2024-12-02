@@ -12,50 +12,6 @@ from geopy.distance import geodesic
 from sklearn.cluster import DBSCAN
 
 
-def create_mask_using_canny(image_path, save_path, low_threshold=50, high_threshold=200):
-   """
-    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets) using Canny edge detction
-    Gives worse results than the original and previous mask as there are too many edges interfering with the road
-
-    Params:
-        image_path (str): Path of the image
-        save_path (str): Path to save the mask
-        low_threshold (int): Lower threshold for Canny edge detection
-        high_threshold (int): Upper threshold for Canny edge detection
-    """
-   img = cv2.imread(image_path)
-   img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-   _, road_mask = cv2.threshold(img_gray, 240, 255, cv2.THRESH_BINARY)
-
-   img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-   lower_orange = np.array([10, 100, 100])
-   upper_orange = np.array([25, 255, 255])
-   lower_yellow = np.array([25, 100, 100])
-   upper_yellow = np.array([35, 255, 255])
-
-   orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
-   yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
-   combined_mask = cv2.bitwise_or(road_mask, orange_mask)
-   combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
-
-   masked_img = cv2.bitwise_and(img_gray, img_gray, mask=combined_mask)
-   edges = cv2.Canny(masked_img, low_threshold, high_threshold)
-
-   kernel = np.ones((3, 3), np.uint8)
-   edges_cleaned = cv2.dilate(edges, kernel, iterations=1)
-   edges_cleaned = cv2.erode(edges_cleaned, kernel, iterations=1)
-   edges_cleaned = cv2.morphologyEx(edges_cleaned, cv2.MORPH_CLOSE, kernel)
-
-   contours, _ = cv2.findContours(edges_cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-   mask_filtered = np.zeros_like(edges)
-
-   for contour in contours:
-        if cv2.contourArea(contour) > 50: 
-            cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
-
-   cv2.imwrite(save_path, mask_filtered)
-
-
 def create_mask(image_path, save_path, threshold=240):
     """
     Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets).
@@ -80,8 +36,13 @@ def create_mask(image_path, save_path, threshold=240):
 
     orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
     yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
-    combined_mask = cv2.bitwise_or(road_mask, orange_mask)
-    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+    dilation_kernel = np.ones((15, 15), np.uint8)#we thicken the road width for highways as the road doesn't take into account the multiple lanes (to reduce misclassifications)
+    orange_mask_dilated = cv2.dilate(orange_mask, dilation_kernel, iterations=2)
+    yellow_mask_dilated = cv2.dilate(yellow_mask, dilation_kernel, iterations=2)
+
+    combined_mask = cv2.bitwise_or(road_mask, orange_mask_dilated)
+    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask_dilated)
 
     kernel = np.ones((2, 2), np.uint8)#use smaller kernel as it works better
     combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel)#cv2.MORPH_CLOSE actually works better
@@ -94,51 +55,6 @@ def create_mask(image_path, save_path, threshold=240):
             cv2.drawContours(mask_filtered, [contour], -1, 255, thickness=cv2.FILLED)
 
     cv2.imwrite(save_path, mask_filtered)
-
-def old_mask(image_path, save_path, threshold=240):
-    """
-    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets). The roads are in white while the rest of the image is darker
-    Initial mask, that doesn't remove the street names
-
-    Params:
-        image_path (str): Path of the image
-        save_path (str): Path to save the mask
-        threshold (int): Threshold to differentiate the road from the areas outside of the road
-    """
-    img = cv2.imread(image_path)
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
-    cv2.imwrite(save_path, road_mask)
-
-def new_mask(image_path, save_path, threshold=240):
-    """
-    Creates and saves a binary mask from the mapbox image of the road (Mapbox Streets).
-    The roads are in white and some additional roads are in orange/yellow (highways/ roads with more lanes).
-
-    Params:
-        image_path (str): Path of the image
-        save_path (str): Path to save the mask
-        threshold (int): Threshold to differentiate the road from the areas outside of the road
-    """
-    img = cv2.imread(image_path)
-    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    _, road_mask = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
-
-    img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    lower_orange = np.array([10, 100, 100])
-    upper_orange = np.array([25, 255, 255])
-    lower_yellow = np.array([25, 100, 100])
-    upper_yellow = np.array([35, 255, 255])
-
-    orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
-    yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
-
-    combined_mask = cv2.bitwise_or(road_mask, orange_mask)
-    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
-
-    cv2.imwrite(save_path, combined_mask)
-
 
 def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path, model, conf_threshold=0.4):
     """
