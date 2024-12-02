@@ -31,7 +31,7 @@ export function setCookiesAccepted() {
   }
 }
 
-export async function unsetCookiesAccepted() {
+export function unsetCookiesAccepted() {
   Cookies.remove(cookiesAcceptedName, { path: "/" });
   Cookies.remove(tokenCookieName, { path: "/" });
   Cookies.remove(uuidCookieName, { path: "/" });

@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.14.0/deployment-apps-v1.json
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -20,10 +21,26 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/2024-cmpu9010-group-3/frontend:0.6.0@sha256:15da628ff3512196dab3a72336acdd7115515db4959e131ce82d421e045b719d
+          image: ghcr.io/2024-cmpu9010-group-3/frontend:0.12.0@sha256:bd5504f03d99e095481adac65c3e0dad3d18cc22d0c1508e60216c94373063ea
           resources: {}
           ports:
             - containerPort: 3000
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:3000/
+            failureThreshold: 1
+            periodSeconds: 30
+          startupProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:3000/
+            failureThreshold: 30
+            periodSeconds: 10
           env:
             - name: NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
               valueFrom:
@@ -34,3 +51,5 @@ spec:
               value: production
             - name: NEXT_PUBLIC_BACKEND_URL
               value: http://public-backend-service.magpie.svc.cluster.local:8080
+            - name: NEXT_PUBLIC_LOCATION_URL
+              value: http://nominatim-service.magpie.svc.cluster.local:8080

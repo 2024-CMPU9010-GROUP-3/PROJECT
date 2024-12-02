@@ -31,7 +31,7 @@ export function LoginForm() {
   useEffect(() => {
     if (sessionToken) {
       // if user is already logged in, redirect to home
-      router.push("/");
+      router.push("/home");
     }
   }, [sessionToken, router]);
 

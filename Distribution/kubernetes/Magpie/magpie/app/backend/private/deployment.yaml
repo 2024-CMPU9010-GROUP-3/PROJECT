@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://kubernetesjsonschema.dev/v1.14.0/deployment-apps-v1.json
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -20,10 +21,26 @@ spec:
     spec:
       containers:
         - name: private-backend
-          image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.10.0@sha256:e0f3571d8ecea130414b06f8c91501abca9e8e2ab46c827f9d4b23ef2700d1a4
+          image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.12.0@sha256:e010042a8187f49ee5b041707751e2464fea0067fe0fdf0a02833ca0959ee4b6
           resources: {}
           ports:
             - containerPort: 3000
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/heartbeat
+            failureThreshold: 1
+            periodSeconds: 30
+          startupProbe:
+            exec:
+              command:
+                - curl
+                - --fail
+                - http://localhost:8080/heartbeat
+            failureThreshold: 30
+            periodSeconds: 10
           env:
             - name: LOGIN
               valueFrom:
@@ -45,3 +62,9 @@ spec:
                 secretKeyRef:
                   name: secret-magpie-db-user
                   key: DATABASE_NAME
+
+            - name: MAGPIE_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-magpie-db-user
+                  key: MAGPIE_JWT_SECRET

@@ -2,14 +2,14 @@ name: magpie
 
 services:
   postgis-service:
-    image: postgis/postgis:17-3.5-alpine
+    image: postgis/postgis:17-3.5-alpine@sha256:444510983026596565c190b0d43642d76136dbe6a54c5e1cbd93263a00983618
     container_name: postgis
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=magpie
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "magpie", "-u", "postgres"]
+      test: ["CMD-SHELL", "pg_isready -d magpie -U postgres"]
       interval: 30s
       timeout: 60s
       retries: 5
@@ -19,12 +19,34 @@ services:
     networks:
       - app-network
 
+  nominatim:
+    container_name: nominatim
+    image: mediagis/nominatim:4.5@sha256:d6a1f644ebec735839936fee5f1557500f29980446f15df6fbb86ff1cbddc74e
+    ports:
+      - "8084:8080"
+    environment:
+      # Update URLs to point to Dublin data
+      PBF_URL: https://download.geofabrik.de/europe/ireland-and-northern-ireland-latest.osm.pbf
+      REPLICATION_URL: https://download.geofabrik.de/europe/ireland-and-northern-ireland-updates/
+      NOMINATIM_PASSWORD: ${NOMINATIM_PASSWORD}
+    volumes:
+      # Add a volume mount for the local Dublin PBF file
+      - nominatim-data:/var/lib/postgresql/16/main
+    shm_size: 1gb
+
   private-service:
-    image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.10.0@sha256:e0f3571d8ecea130414b06f8c91501abca9e8e2ab46c827f9d4b23ef2700d1a4
+    image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.12.0@sha256:e010042a8187f49ee5b041707751e2464fea0067fe0fdf0a02833ca0959ee4b6
     container_name: private-backend
     depends_on:
       postgis-service:
         condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
     ports:
       - "8081:8080"
     networks:
@@ -37,11 +59,18 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   public-service:
-    image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.10.0@sha256:198cbd95f823d3f7ded0646c4710e3a8267e1008c1fd43920cfe2a1dd31861c3
+    image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.12.0@sha256:0a523dc5110d42bf843c69e260ad7927514051b5b23c963a1161ba3252855bd3
     container_name: public-backend
     depends_on:
       postgis-service:
         condition: service_healthy
+    healthcheck:
+      test:
+        ["CMD-SHELL", "curl --fail http://localhost:8080/heartbeat || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
     ports:
       - "8082:8080"
     networks:
@@ -54,11 +83,13 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   frontend-service:
-    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.6.0@sha256:15da628ff3512196dab3a72336acdd7115515db4959e131ce82d421e045b719d
+    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.12.0@sha256:bd5504f03d99e095481adac65c3e0dad3d18cc22d0c1508e60216c94373063ea
     container_name: frontend
     depends_on:
-      - private-service
-      - public-service
+      private-service:
+        condition: service_healthy
+      public-service:
+        condition: service_healthy
     ports:
       - "3000:3000"
     environment:

@@ -14,4 +14,3 @@
 ## Target users (remote & uncontrolled)
 * redacted = Agreed - schedule Monday 02/12 @10:00
 * redacted = Agreed - schedule Monday 02/12 @16:00
-

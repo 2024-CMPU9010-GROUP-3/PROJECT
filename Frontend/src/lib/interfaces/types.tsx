@@ -1,3 +1,5 @@
+import { ColumnDef } from "@tanstack/react-table";
+
 export interface Coordinates {
   latitude: number;
   longitude: number;
@@ -15,6 +17,21 @@ export interface DistanceScales {
   unitsPerDegree: number[];
   degreesPerUnit: number[];
 }
+
+// Type for the GeoJsonCollection
+export type GeoJsonCollection =
+  | "parking_meter"
+  | "bike_stand"
+  | "public_wifi_access_point"
+  | "library"
+  | "multistorey_car_parking"
+  | "drinking_water_fountain"
+  | "public_toilet"
+  | "bike_sharing_station"
+  | "parking"
+  | "accessible_parking"
+  | "public_bins"
+  | "coach_parking";
 
 // Interface for the viewport details
 export interface Viewport {
@@ -65,9 +82,62 @@ export interface MapClickEvent {
   pixelRatio: number;
 }
 
+export interface MapHoverEvent {
+  color: Uint8Array | null; // Updated to match DeckGL's expected type
+  layer: string | null;
+  viewport: Viewport;
+  index: number;
+  picked: boolean;
+  x: number;
+  y: number;
+  pixel: [number, number]; // Pixel coordinates
+  coordinate: [number, number]; // Geographic coordinates (longitude, latitude)
+  pixelRatio: number;
+}
+
 interface Location {
   coordinates: [number, number];
   type: string;
+}
+export interface ImageConfig {
+  id: string;
+  path: string;
+}
+interface Amenities {
+  parkingMeters?: number;
+  bikeStand?: number;
+  publicWiFi?: number;
+  library?: number;
+  multiStoreyCar?: number;
+  drinkingWater?: number;
+  publicToilet?: number;
+  bikeStationSharing?: number;
+  parking?: number;
+  accessibleParking?: number;
+  publicBins?: number;
+  coachingPark?: number;
+}
+export interface LocationItem {
+  id: number;
+  date: string;
+  amenities: Amenities;
+  location: string;
+  coordinates: Coordinates;
+}
+
+export interface LocationData {
+  id: number;
+  datecreated: string;
+  amenitytypes: {
+    type: string,
+    count: number
+  }[];
+  longlat: {
+    type: string;
+    coordinates: number[];
+  };
+  radius: number;
+  displayname: string;
 }
 
 export interface Data {
@@ -98,6 +168,14 @@ export type Point = {
 };
 
 export interface ImageConfig {
+  value: string;
   id: string;
   path: string;
+}
+
+export interface DataTableProps<TData> {
+  columns: ColumnDef<TData>[];
+  data: TData[];
+  rowSelection?: Record<string, boolean>;
+  setRowSelection: (value: Record<string, boolean>) => void;
 }

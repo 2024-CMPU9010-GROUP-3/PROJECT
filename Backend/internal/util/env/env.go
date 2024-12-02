@@ -24,6 +24,7 @@ const (
 	EnvDbName          = "DATABASE_NAME"
 	EnvDbRetries       = "MAGPIE_DB_RETRIES"
 	EnvDbRetryInterval = "MAGPIE_DB_RETRY_INTERVAL"
+	EnvShutdownTimeout = "MAGPIE_SHUTDOWN_TIMEOUT"
 )
 
 var (
@@ -41,6 +42,7 @@ var (
 		EnvDbName:          "",
 		EnvDbRetries:       "6",
 		EnvDbRetryInterval: "10",
+		EnvShutdownTimeout: "10",
 	}
 )
 

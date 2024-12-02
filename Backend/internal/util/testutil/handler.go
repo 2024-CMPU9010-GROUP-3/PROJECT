@@ -27,6 +27,15 @@ type HandlerTestDefinition struct {
 	ExpectedResponseFields map[string]string
 }
 
+type RawRequestTestDefinition struct {
+	Name             string
+	Method           string
+	Route            string
+	MockSetup        func(mock pgxmock.PgxPoolIface)
+	ExpectedStatus   int
+	ExpectedResponse string
+}
+
 func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
 	tt.MockSetup(mock)
 
@@ -84,7 +93,7 @@ func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func
 				expectedPattern := regexp.MustCompile(v)
 				valueStr, ok := content[k].(string)
 				if !ok || !expectedPattern.MatchString(valueStr) {
-						t.Errorf("expected field %s to match pattern \"%v\", got type %T and value %q", k, v, content[k], valueStr)
+					t.Errorf("expected field %s to match pattern \"%v\", got type %T and value %q", k, v, content[k], valueStr)
 				}
 			}
 		}
@@ -110,10 +119,43 @@ func executeHandlerTest(t *testing.T, tt HandlerTestDefinition, handlerFunc func
 	}
 }
 
+func executeRawRequestTests(t *testing.T, tt RawRequestTestDefinition, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface) {
+	tt.MockSetup(mock)
+
+	req, err := http.NewRequest(tt.Method, tt.Route, bytes.NewBuffer([]byte{}))
+	if err != nil {
+		t.Fatalf("failed to create request: %v", err)
+	}
+
+	rr := httptest.NewRecorder()
+
+	// FUNCTION OF INTEREST
+	handlerFunc(rr, req)
+
+	if status := rr.Code; status != tt.ExpectedStatus {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, tt.ExpectedStatus)
+	}
+	if responseBody := rr.Body.String(); responseBody != tt.ExpectedResponse {
+		t.Errorf("handler returned wrong response body: got %v want %v", responseBody, tt.ExpectedResponse)
+	}
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %v", err)
+	}
+}
+
 func RunHandlerTests(t *testing.T, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface, tests []HandlerTestDefinition) {
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			executeHandlerTest(t, tt, handlerFunc, mock)
+		})
+	}
+}
+
+func RunRawRequestTests(t *testing.T, handlerFunc func(rr http.ResponseWriter, req *http.Request), mock pgxmock.PgxPoolIface, tests []RawRequestTestDefinition) {
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			executeRawRequestTests(t, tt, handlerFunc, mock)
 		})
 	}
 }
