@@ -1,0 +1,123 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Wenneker Article LaTeX Template Version 2.0 (28/2/17)
+%
+% This template was downloaded from: http://www.LaTeXTemplates.com
+%
+% Authors: Vel (vel@LaTeXTemplates.com) Frits Wenneker
+%
+% License: CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[10pt, a4paper, twocolumn]{article} % 10pt font size (11 and 12 also possible), A4 paper (letterpaper for US letter) and two column layout (remove for one column)
+
+\input{structure.tex} % Specifies the document structure and loads requires packages
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{
+  Final Report: \textit{Magpie -- Services at a Glance}
+  } % The article title
+
+\author{
+	\authorstyle{
+    \begin{tabular}{p{0.425\columnwidth} p{0.5\columnwidth} p{0.425\columnwidth} p{0.5\columnwidth}}
+		Saul Burgess & C19349793 & Andreas Kraus & D23125112 \\
+		Kaustubh Trivedi & D23124940 & Jessica Fornetti & D23124588 \\
+		Anais Blenet & D22127697 & Yuanshuo Du & D22125495
+    \end{tabular}
+		} % Authors
+}
+
+% Example of a one line author/institution relationship
+%\author{\newauthor{John Marston} \newinstitution{Universidad Nacional Autónoma de México, Mexico City, Mexico}}
+
+\date{\today} % Add a date here if you would like one to appear underneath the title block, use \today for the current date, leave empty for no date
+
+%----------------------------------------------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+  \begin{center}
+      {\Large\usefont{OT1}{phv}{b}{n}\color{tudublinblue}
+        \includegraphics[width=0.5\textwidth]{images/TUDublin_Colour_RGB.png}
+
+        \vspace{1cm}
+        MSc in Computing \\
+        Advanced Software Development \rule[-1mm]{1.5pt}{1.1em} Data Science \\
+        \vspace{1cm}
+        Team Project \\
+        \vspace{1cm}
+        Final Report \\
+
+        \vspace{2.5cm}
+
+        \Huge\textbf{Magpie} \\
+        \vspace{0.25cm}
+        \Large{Services at a Glance}
+
+        \vspace{2.5cm}
+
+        \Large
+        Group 3 \\
+        \vspace{0.25cm}
+        \setlength\arrayrulewidth{1.5pt}
+        \begin{tabular}{l l | l l}
+          Saul Burgess & C19349793 & Andreas Kraus & D23125112 \\
+          Kaustubh Trivedi & D23124940 & Jessica Fornetti & D23124588 \\
+          Anais Blenet & D22127697 & Yuanshuo Du & D22125495
+        \end{tabular}
+
+        \vspace{2.5cm}
+
+        \today
+      }
+
+  \end{center}
+\end{titlepage}
+
+\input{tables.tex}
+
+%----------------------------------------------------------------------------------------
+%	ARTICLE CONTENTS
+%----------------------------------------------------------------------------------------
+
+\section{Introduction}
+\input{pages/introduction.tex}
+
+\section{User Scenario}
+\input{pages/user_scenario.tex}
+
+\section{Technical Problem}
+\input{pages/technical_problem.tex}
+
+\section{Technical Solution}
+\input{pages/technical_solution/_main.tex}
+
+\section{Software Management}
+\input{pages/software_management.tex}
+
+\section{Evaluation}
+\input{pages/evaluation/_main.tex}
+
+\section{Future Work}
+\input{pages/future_work/_main.tex}
+
+\section{Conclusion}
+\input{pages/conclusion.tex}
+
+\cleardoublepage{}
+\onecolumn{}
+\input{pages/appendix/_main.tex}
+
+\cleardoublepage{}
+\addcontentsline{toc}{section}{Bibliography}
+\printbibliography[]
+
+\end{document}
