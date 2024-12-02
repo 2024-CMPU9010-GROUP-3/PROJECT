@@ -345,10 +345,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
     """
     empty_spots = []
     
-    #horizontal_cars_sorted_by_long = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[0]) 
     horizontal_cars_sorted_by_lat = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[1])
     vertical_cars_sorted_by_long = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[0])  
-    #vertical_cars_sorted_by_lat = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[1]) 
 
     def find_empty_spots(sorted_cars, alignment, gap_dimension, gap_threshold_meters):
         """ Detects empty spots in the sorted list of cars for a specific alignment (horizontal or vertical) 
@@ -385,9 +383,7 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     empty_spots.append(([empty_x_center, empty_y_center], angle_degrees, alignment))
                     print(f"Empty parking spot at {empty_x_center}, {empty_y_center}")
 
-    #find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters=9) #Horizontal spots stacked in a column
     find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters) #Horizontal spots in a row
-    #find_empty_spots(vertical_cars_sorted_by_lat, 'vertical', avg_spot_length, gap_threshold_meters=9) # Vertical spots side by side in a row
     find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters)  #Vertical spots in columns
 
     empty_spots = sorted(empty_spots, key=lambda spot: (spot[0][0], spot[0][1]))
@@ -686,7 +682,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
         all_detections, cluster_labels = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
-        #draw_clusters_and_labels(output_path_bb_image, all_detections, cluster_labels, longitude, latitude)
+        draw_clusters_and_labels(output_path_bb_image, all_detections, cluster_labels, longitude, latitude)
 
     return all_detections
 
@@ -810,13 +806,6 @@ if __name__ == "__main__":
     main(-6.2859, 53.3636, -6.2823, 53.3656)#residential area
     main(-6.2754, 53.3471, -6.2732, 53.3483)#urban area
     main(-6.2652, 53.3525, -6.2625, 53.3541)#urban with parking lot
-
-    '''main(-6.3818, 53.3315, -6.3808, 53.3321)
-    main(-6.3828, 53.3326, -6.3818, 53.3332)
-    main(-6.3906, 53.3558, -6.3895, 53.3564)
-    main(-6.2374, 53.3692, -6.2364, 53.3698)
-    main(-6.2422, 53.3719, -6.2412, 53.3725)
-    main(-6.2301, 53.4097, -6.2269, 53.4115)'''
 
     #main()
 

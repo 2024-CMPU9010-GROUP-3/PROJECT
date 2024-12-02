@@ -238,10 +238,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
     """
     empty_spots = []
     
-    #horizontal_cars_sorted_by_long = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[0]) 
     horizontal_cars_sorted_by_lat = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[1])
     vertical_cars_sorted_by_long = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[0])  
-    #vertical_cars_sorted_by_lat = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[1]) 
 
     def find_empty_spots(sorted_cars, alignment, gap_dimension, gap_threshold_meters):
         """ Detects empty spots in the sorted list of cars for a specific alignment (horizontal or vertical) 
@@ -278,9 +276,7 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
                     empty_spots.append((empty_x_center, empty_y_center, avg_width_pixels, avg_length_pixels, angle_degrees, alignment))
                     print(f"Empty parking spot at {empty_x_center}, {empty_y_center}")
 
-    #find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters=9) #Horizontal spots stacked in a column
     find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters) #Horizontal spots in a row
-    #find_empty_spots(vertical_cars_sorted_by_lat, 'vertical', avg_spot_length, gap_threshold_meters=9) # Vertical spots side by side in a row
     find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters)  #Vertical spots in columns
 
     empty_spots = sorted(empty_spots, key=lambda spot: (spot[0], spot[1]))
