@@ -360,8 +360,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
         """
         for i in range(len(sorted_cars) - 1):
-            x_current, y_current, _, _, _, _ = sorted_cars[i]
-            x_next, y_next, _, _, _, _ = sorted_cars[i + 1]
+            x_current, y_current, _, _, angle_current, _ = sorted_cars[i]
+            x_next, y_next, _, _, angle_next, _ = sorted_cars[i + 1]
 
             gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
             avg_half_dim = gap_dimension / 2
@@ -369,6 +369,19 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
 
             angle_radians = math.atan2(y_next - y_current, x_next - x_current)
             angle_degrees = math.degrees(angle_radians)
+
+            if alignment == "horizontal":
+                angle_current = angle_current % 180
+                angle_next = angle_next % 180
+            elif alignment == "vertical":
+                angle_current = (angle_current - 90) % 180
+                angle_next = (angle_next - 90) % 180
+
+            angle_deviation = abs(angle_current - angle_next)
+            angle_deviation = min(angle_deviation, 360 - angle_deviation)
+
+            if angle_deviation > 15:
+                continue
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > gap_dimension:
                 num_spots = int(adjusted_gap // gap_dimension)
@@ -379,10 +392,10 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     empty_spots.append(([empty_x_center, empty_y_center], angle_degrees, alignment))
                     print(f"Empty parking spot at {empty_x_center}, {empty_y_center}")
 
-    find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters) #Horizontal spots in a row
-    find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters=9 ) #Horizontal spots stacked in a column
-    find_empty_spots(vertical_cars_sorted_by_lat, 'vertical', avg_spot_length, gap_threshold_meters) #Vertical spots in columns
-    find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters=9)  # Vertical spots side by side in a row
+    #find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters=9) #Horizontal spots stacked in a column
+    find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters) #Horizontal spots in a row
+    #find_empty_spots(vertical_cars_sorted_by_lat, 'vertical', avg_spot_length, gap_threshold_meters=9) # Vertical spots side by side in a row
+    find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters)  #Vertical spots in columns
 
     empty_spots = sorted(empty_spots, key=lambda spot: (spot[0][0], spot[0][1]))
     unique_empty_spots = []
@@ -680,7 +693,7 @@ def get_parking_coords_in_image(model, longitude, latitude):
         empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
         all_detections.extend(empty_spots_coords)
         all_detections, cluster_labels = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
-        draw_clusters_and_labels(output_path_bb_image, all_detections, cluster_labels, longitude, latitude)
+        #draw_clusters_and_labels(output_path_bb_image, all_detections, cluster_labels, longitude, latitude)
 
     return all_detections
 
@@ -794,23 +807,23 @@ def main(top_left_longitude, top_left_latitude, bottom_right_longitude, bottom_r
     
 
 if __name__ == "__main__":
-    #main(-6.2264, 53.4194, -6.2219, 53.4221)#parking lot
-    #main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
-    #main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
-    #main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
-    #main(-6.2751, 53.347, -6.272, 53.3489)#urban area
-    #main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
-    #main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
-    #main(-6.2859, 53.3636, -6.2823, 53.3656)#residential area
-    #main(-6.2754, 53.3471, -6.2732, 53.3483)#urban area
-    #main(-6.2652, 53.3525, -6.2625, 53.3541)#urban with parking lot
+    main(-6.2264, 53.4194, -6.2219, 53.4221)#parking lot
+    main(-6.2563, 53.3952, -6.2525, 53.3974)#residential area
+    main(-6.289, 53.3653, -6.2842, 53.3681)#residential area
+    main(-6.2737, 53.3436, -6.2709, 53.3452)#urban area
+    main(-6.2751, 53.347, -6.272, 53.3489)#urban area
+    main(-6.2844, 53.3589, -6.2816, 53.3606)#residential area
+    main(-6.2901, 53.3587, -6.2872, 53.3604)#residential area
+    main(-6.2859, 53.3636, -6.2823, 53.3656)#residential area
+    main(-6.2754, 53.3471, -6.2732, 53.3483)#urban area
+    main(-6.2652, 53.3525, -6.2625, 53.3541)#urban with parking lot
 
-    main(-6.3818, 53.3315, -6.3808, 53.3321)
+    '''main(-6.3818, 53.3315, -6.3808, 53.3321)
     main(-6.3828, 53.3326, -6.3818, 53.3332)
     main(-6.3906, 53.3558, -6.3895, 53.3564)
     main(-6.2374, 53.3692, -6.2364, 53.3698)
     main(-6.2422, 53.3719, -6.2412, 53.3725)
-    main(-6.2301, 53.4097, -6.2269, 53.4115)
+    main(-6.2301, 53.4097, -6.2269, 53.4115)'''
 
     #main()
 
