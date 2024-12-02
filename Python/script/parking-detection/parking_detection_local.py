@@ -235,10 +235,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
     """
     empty_spots = []
     
-    horizontal_cars_sorted_by_long = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[0]) 
     horizontal_cars_sorted_by_lat = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[1])
     vertical_cars_sorted_by_long = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[0])  
-    vertical_cars_sorted_by_lat = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[1]) 
 
     def find_empty_spots(sorted_cars, alignment, gap_dimension, gap_threshold_meters):
         """ Detects empty spots in the sorted list of cars for a specific alignment (horizontal or vertical) 
@@ -250,8 +248,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
         """
         for i in range(len(sorted_cars) - 1):
-            x_current, y_current, _, _, _, _ = sorted_cars[i]
-            x_next, y_next, _, _, _, _ = sorted_cars[i + 1]
+            x_current, y_current, _, _, angle_current, _ = sorted_cars[i]
+            x_next, y_next, _, _, angle_next, _ = sorted_cars[i + 1]
 
             gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
             avg_half_dim = gap_dimension / 2
@@ -259,6 +257,12 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
 
             angle_radians = math.atan2(y_next - y_current, x_next - x_current)
             angle_degrees = math.degrees(angle_radians)
+
+            angle_deviation = abs(angle_current - angle_next)
+            angle_deviation = min(angle_deviation, 360 - angle_deviation)
+
+            if angle_deviation > 35:
+                continue
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > gap_dimension:
                 num_spots = int(adjusted_gap // gap_dimension)
@@ -268,10 +272,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_mete
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
                     empty_spots.append(([empty_x_center, empty_y_center], angle_degrees, alignment))
 
-    find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters) #Horizontal spots in a row
-    find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters=9 ) #Horizontal spots stacked in a column
-    find_empty_spots(vertical_cars_sorted_by_lat, 'vertical', avg_spot_length, gap_threshold_meters) #Vertical spots in columns
-    find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters=9)  # Vertical spots side by side in a row
+    find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters) #Horizontal spots in a row
+    find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters)  #Vertical spots in columns
 
     empty_spots = sorted(empty_spots, key=lambda spot: (spot[0][0], spot[0][1]))
     unique_empty_spots = []
