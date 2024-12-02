@@ -6,6 +6,7 @@
 * Does exactly what it says (described)
 * Has potential for user by certain types of users but needs more functionality
 * Presentation of information is very easy to understand
+* User friendly
 
 ## Worst thing about Magpie:
 * Make it more intuitive for users to filter amenities (improve onboarding)
@@ -42,6 +43,7 @@
 * (my own comments) Add map color legend?
 * Add zoning information on parking amenity
 * Add density meter or report generation to show a nice visual breakdown of amenities in the specific search radius
+* Needs more datasets to be potentially commercially viable
 
 ## Main behaviour notes:
 * Tries to click on the elements during onboarding (6 users)
@@ -62,17 +64,20 @@
 * Change Public Wifi to Free Public Wifi
 * Public Toilet location seem off
 * More information when clicking/hovering over the icons
+* Search functionality
 
-# Done changes (27/11/2024)
+# Done changes (02/12/2024)
 * Water fountain icon
 * More information when clicking/hovering over the icons
-
-# Pending (27/11/2024)
 * Remove Mac icons from profile menu
 * Make the profile icon more visible on the map
 * Make tutorial icon more visible on the map
+* Search functionality
+
+# Pending (02/12/2024)
 * Add bus/public transportation data
 * Re-think onboarding (content/steps)
 * Zoom in/out buttons
 * Change "Public Wifi" to "Free Public Wifi"
+* Change "Parking" to "Car Parking"
 * Public Toilet location seem off
