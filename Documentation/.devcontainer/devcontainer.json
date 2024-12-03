@@ -20,6 +20,9 @@
                 "shardulm94.trailing-spaces",
                 "streetsidesoftware.code-spell-checker", // spell checker
                 "stkb.rewrap", // rewrap comments after n characters on one line
+                // D2
+                "terrastruct.d2",
+                "awtnb.d2-arrow",
                 // Other
                 "vscode-icons-team.vscode-icons"
             ],
@@ -38,8 +41,24 @@
                 "files.associations": {
                     "*.tex": "latex"
                 },
-                "latex-workshop.latexindent.path": "latexindent",
-                "latex-workshop.latexindent.args": [
+                "latex-workshop.latex.tools": [
+                    {
+                        "name": "latexmk",
+                        "command": "latexmk",
+                        "args": [
+                            "-shell-escape", // <---- added this line
+                            "-synctex=1",
+                            "-interaction=nonstopmode",
+                            "-file-line-error",
+                            "-pdf",
+                            "-outdir=%OUTDIR%",
+                            "%DOC%"
+                        ],
+                        "env": {}
+                    }
+                ],
+                "latex-workshop.formatting.latexindent.path": "latexindent",
+                "latex-workshop.formatting.latexindent.args": [
                     "-c",
                     "%DIR%/",
                     "%TMPFILE%",
