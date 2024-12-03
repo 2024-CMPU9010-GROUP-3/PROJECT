@@ -694,7 +694,7 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
     return avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr
 
 
-def main(directory, output_file="metrics.csv"):
+def main(directory, output_file="metrics_empty_parking_detection.csv"):
     """
     Main function to evaluate the empty parking detction on the test images and calculate the corresponding performance metrics
     Saves Averages of IoU, Precision, Recall, F1 score, Orientation Accuracy, 
