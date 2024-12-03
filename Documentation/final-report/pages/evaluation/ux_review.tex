@@ -4,45 +4,45 @@ The goal of this review is to evaluate the user interface of Magpie at different
 
 Two session were conducted: one on November 13 after the publication of our first minimum viable product, and the other on \fcolorbox{yellow}{yellow}{INSERT DATE} at the end of the development timeline. Both sessions were conducted online through a videoconference meeting on Teams and took the following form:
 \begin{enumerate}
-    \item Presentation of Magpie
-    \item Free-roaming of the application by Professor Curley
-    \item Questionnaire
-    \item Discussion \& end of review
+  \item Presentation of Magpie
+  \item Free-roaming of the application by Andrea Curley
+  \item Questionnaire
+  \item Discussion \& end of review
 \end{enumerate}
 The questionnaire includes questions on visual design, information architecture, data quality \& integration, technical performance, compliance and overall assessment of Magpie as shown in the table below. Different types of questions were included, such as "Closed" "Scale" and "Open" to allow for both the quantitative and qualitative measure of Magpie. \fcolorbox{yellow}{yellow}{SUPPORTING EVIDENCE ON MIXED SURVEY QUESTIONS}\\ \\
 %table show survey questions and type
 \begin{table}[h!]
-    \centering
-    \caption{Expert Review Questionnaire}
-    \begin{tabular}{|p{0.03\textwidth}|p{0.82\textwidth}|p{0.15\textwidth}|}
-        \hline
-            & \textbf{Question}                                                                                                        & \textbf{Question type} \\
-        \hline
-        Q1  & How user friendly is the log-in/sign up page?                                                                            & Closed                 \\
-        \hline
-        Q2  & How user-friendly is the on-boarding process                                                                             & Closed                 \\
-        \hline
-        Q3  & How effective is the visual hierarchy of the information on the dashboard?                                               & Closed                 \\
-        \hline
-        Q4  & Rate the clarity of the map visualization                                                                                & Closed                 \\
-        \hline
-        Q5  & How intuitive is the organization of amenity data categories?                                                            & Closed                 \\
-        \hline
-        Q6  & Rate the following features from Worst (1) to Best (5)                                                                   & Scale                  \\
-        \hline
-        Q7  & How comprehensive is the amenity data coverage for Dublin city?                                                          & Closed                 \\
-        \hline
-        Q8  & How valuable do you think this tool would be for the following use cases - 1: Not valuable at all, 5: Extremely valuable & Scale                  \\
-        \hline
-        Q9  & Any additional comments on why this tool would useful/impractical for the above use cases?                               & Open                   \\
-        \hline
-        Q10 & Evaluate the following technical aspects from Worst (1) to Best (5)                                                      & Scale                  \\
-        \hline
-        Q11 & Rate the application's compliance with the items below from Worst (1) to Best (5)                                        & Scale                  \\
-        \hline
-        Q12 & Any additional comments regarding our application?                                                                       & Open                   \\
-        \hline
-    \end{tabular}
+  \centering
+  \caption{Expert Review Questionnaire}
+  \begin{tabular}{|p{0.03\textwidth}|p{0.82\textwidth}|p{0.15\textwidth}|}
+    \hline
+        & \textbf{Question}                                                                                                        & \textbf{Question type} \\
+    \hline
+    Q1  & How user friendly is the log-in/sign up page?                                                                            & Closed                 \\
+    \hline
+    Q2  & How user-friendly is the on-boarding process                                                                             & Closed                 \\
+    \hline
+    Q3  & How effective is the visual hierarchy of the information on the dashboard?                                               & Closed                 \\
+    \hline
+    Q4  & Rate the clarity of the map visualization                                                                                & Closed                 \\
+    \hline
+    Q5  & How intuitive is the organization of amenity data categories?                                                            & Closed                 \\
+    \hline
+    Q6  & Rate the following features from Worst (1) to Best (5)                                                                   & Scale                  \\
+    \hline
+    Q7  & How comprehensive is the amenity data coverage for Dublin city?                                                          & Closed                 \\
+    \hline
+    Q8  & How valuable do you think this tool would be for the following use cases - 1: Not valuable at all, 5: Extremely valuable & Scale                  \\
+    \hline
+    Q9  & Any additional comments on why this tool would useful/impractical for the above use cases?                               & Open                   \\
+    \hline
+    Q10 & Evaluate the following technical aspects from Worst (1) to Best (5)                                                      & Scale                  \\
+    \hline
+    Q11 & Rate the application's compliance with the items below from Worst (1) to Best (5)                                        & Scale                  \\
+    \hline
+    Q12 & Any additional comments regarding our application?                                                                       & Open                   \\
+    \hline
+  \end{tabular}
 \end{table}
 
 \subsubsection{Session 1}
@@ -58,8 +58,8 @@ The icons on the map are not visible enough, and zooming in \& out on the map ma
 Currently, Professor Curley noted that there is a disconnect between the map and the dashboard whereas they should be looked as one. She suggested adding amenity icons to the dashboard to help bridge that gap.\\
 %figure for the old confusing dashboard
 \begin{figure}
-    \fbox{\includegraphics[width=\textwidth]{images/old-dashboard_opt.png}}
-    \caption{V.0.1 Magpie Dashboard \& Map when 2 amenities are selected}
+  \fbox{\includegraphics[width=\textwidth]{images/old-dashboard_opt.png}}
+  \caption{V.0.1 Magpie Dashboard \& Map when 2 amenities are selected}
 \end{figure}
 
 \textbf{Filters: }
@@ -69,9 +69,9 @@ When trying to log in with credentials that don't exist, the system should retur
 Magpie was conceived with the idea of providing a service to working professionals; therefore logging in will allow the implementation of further features such as safeguarding their previous searches, storing exported reports, connecting with other members of your organization and much more.
 %figure for the log in error
 \begin{figure}
-    \centering
-    \fbox{\includegraphics[width=0.4\textwidth]{images/old-login-error.png}}
-    \caption{Error message when using inexistant username and password}
+  \centering
+  \fbox{\includegraphics[width=0.4\textwidth]{images/old-login-error.png}}
+  \caption{Error message when using inexistant username and password}
 \end{figure}
 
 \textbf{Survey response: }
@@ -84,27 +84,27 @@ Overall, Magpie scored \underline{3.13 out of 5} for this first UX review sessio
 To conclude the first session, Professor Curley found our interface sleek and minimalistic. However, she suggested that if we want to remain with this style, we need to ensure there is as little room as possible for ambiguity and confusion. The user needs to find it easy to move from one feature to another and understand the triggers. Currently, Magpie looks so sleek that the user may not be able to see what they want.
 %figure of 1st survey responses = UI
 \begin{figure}
-    \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-ui.png}}
-    \caption{UX Expert survey response on Magpie UI}
+  \centering
+  \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-ui.png}}
+  \caption{UX Expert survey response on Magpie UI}
 \end{figure}
 %figure of 1st survey responses = Data
 \begin{figure}
-    \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-data.png}}
-    \caption{UX Expert survey response on Magpie Information Architecture}
+  \centering
+  \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-data.png}}
+  \caption{UX Expert survey response on Magpie Information Architecture}
 \end{figure}
 %figure of 1st survey responses = Technical
 \begin{figure}
-    \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-technical.png}}
-    \caption{UX Expert survey response on Magpie Technical Performance}
+  \centering
+  \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-technical.png}}
+  \caption{UX Expert survey response on Magpie Technical Performance}
 \end{figure}
 %figure of 1st survey responses = Summary
 \begin{figure}
-    \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-summary.png}}
-    \caption{UX Expert score of Magpie}
+  \centering
+  \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-summary.png}}
+  \caption{UX Expert score of Magpie}
 \end{figure}
 
 \subsubsection{Session 2}
