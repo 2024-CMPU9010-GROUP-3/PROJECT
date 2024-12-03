@@ -1,0 +1,30 @@
+\subsubsection{Data collection process}
+Satellite images collected using Mapbox (Mapbox Streets and Mapbox Satelite)
+
+
+\subsubsection{Yolo model used for car detection}
+
+
+\subsubsection{Parking spot detection}
+To identify the parking spots from the cars detected by the Yolo model, the cars are classified into on the road or parked, based on a road mask.
+
+\subsubsection{Road mask generation}
+Different iterations of the road mask were used, the main iterations and their differences are listed below.
+The original mask was a very simple binary mask which identified the road pixels by their color, as the majority of roads are depicted in white.
+Then through testing and analysing the Mapbox street view, we discovered certain motorways or national roads were shown in yellow or orange, so 2 additional color masks were concatenated to the original binary wise through bitwise operations.
+
+Removing street names through morphological operations, different kernels and parameters tested, different contours.
+
+Then Canny edge, but results were terrible.
+
+Then finally added larger roads for highways.
+
+\subsubsection{Classifiction into on the road vs parked}
+
+
+
+\subsubsection{Empty parking spot detection}
+
+
+\subsubsection{Classification of all spots}
+
