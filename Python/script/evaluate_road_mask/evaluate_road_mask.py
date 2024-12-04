@@ -116,11 +116,11 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
 
                 if road_pixels / total_pixels > 0.5:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is on the road")
-                    detections_parking.append([x_center, y_center, width, height, 0])
+                    detections_parking.append([x_center, y_center, width, height, 1])
                     cv2.polylines(img, [box_points], isClosed=True, color=(255, 0, 0), thickness=2) #blue if on the road
                 else:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
-                    detections_parking.append([x_center, y_center, width, height, 1])
+                    detections_parking.append([x_center, y_center, width, height, 0])
                     cv2.polylines(img, [box_points], isClosed=True, color=(0, 0, 255), thickness=2) #red if parked
 
     cv2.imwrite(output_image_path, img)
@@ -180,7 +180,7 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
             for line in file:
                 parts = line.strip().split()
                 
-                if len(parts) != 6:
+                if len(parts) != 5:
                     print(f"Warning: Skipping line due to unexpected format: {line}")
                     continue
                 
@@ -202,7 +202,7 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
 def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
     """
     Evaluates our predictions in an image with the true labels
-    Returns Average IoU, Precision, Recall, F1 score, Spot Detection Ratio, Spot Detection Error, False Positive Rate, False Negative Rate
+    Returns Average IoU, Precision, Recall, F1 Score, Accuracy, Specificity per class and the overall Balanced Accuracy.
 
     Params:
         predictions (list): List of predictions
@@ -210,7 +210,7 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
         iou_threshold (float): IoU threshold to consider a prediction correct
 
     Returns:
-        avg_iou, precision, recall, f1_score, spot_detection_ratio, spot_detection_error, fpr, fnr (float): Average IoU, Precision, Recall, F1 score, Spot Detection Ratio, Spot Detection Error, FPR, FNR
+        avg_iou, precision_parked, recall_parked, f1_score_parked, accuracy_parked, specificity_parked, precision_road, recall_road, f1_score_road, accuracy_road, specificity_road, balanced_accuracy (float): Metrics per class and overall balanced average and average iou
     """
 
     def calculate_iou(box1, box2):
@@ -240,60 +240,69 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
 
         return intersection_area / union_area
 
-    true_positives = 0
-    false_positives = 0
-    false_negatives = 0
+    true_positives = {0: 0, 1: 0}
+    false_positives = {0: 0, 1: 0}
+    false_negatives = {0: 0, 1: 0}
+    true_negatives = {0: 0, 1: 0}
     iou_scores = []
 
     matched_labels = set()
 
-    #For each predictions find the closest label and compare
+    # For each prediction, find the closest label and compare
     for pred in predictions:
         best_iou = 0
         best_match = None
+        pred_box, pred_class = pred[:4], pred[4]
         for i, gt in enumerate(true_labels):
-            iou = calculate_iou(pred, gt)
-            if iou > best_iou:
+            gt_box, gt_class = gt[:4], gt[4]
+            iou = calculate_iou(pred_box, gt_box)
+            if iou > best_iou and pred_class == gt_class:
                 best_iou = iou
                 best_match = i
 
         if best_iou >= iou_threshold:
             if best_match not in matched_labels:
-                true_positives += 1
+                true_positives[pred_class] += 1
                 iou_scores.append(best_iou)
                 matched_labels.add(best_match)
+        else:
+            false_positives[pred_class] += 1
 
-    false_positives = len(predictions) - true_positives
-    false_negatives = len(true_labels) - len(matched_labels)
+    for i, gt in enumerate(true_labels):
+        gt_class = gt[4]
+        if i not in matched_labels:
+            false_negatives[gt_class] += 1
 
-    precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
-    recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0
-    f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+    for cls in [0, 1]:
+        true_negatives[cls] = sum(len(true_labels) - true_positives[c] - false_negatives[c] - false_positives[c] for c in [0, 1] if c != cls)
+
+    metrics = {}
+    for cls in [0, 1]: 
+        tp = true_positives[cls]
+        fp = false_positives[cls]
+        fn = false_negatives[cls]
+        tn = true_negatives[cls]
+
+        precision = tp / (tp + fp) if (tp + fp) > 0 else (None if tp == 0 and fp == 0 else 0)
+        recall = tp / (tp + fn) if (tp + fn) > 0 else (None if tp == 0 and fn == 0 else 0)
+        f1_score = 2 * (precision * recall) / (precision + recall) if precision is not None and recall is not None and (precision + recall) > 0 else 0
+        accuracy = (tp + tn) / (tp + fp + fn + tn) if (tp + fp + fn + tn) > 0 else (None if tp + tn == 0 and fp + fn == 0 else 0)
+        specificity = tn / (tn + fp) if (tn + fp) > 0 else (None if tn == 0 and fp == 0 else 0)
+
+        metrics[cls] = (precision, recall, f1_score, accuracy, specificity)
+
+    balanced_accuracy = sum((metrics[cls][1] if metrics[cls][1] is not None else 0) + (metrics[cls][4] if metrics[cls][4] is not None else 0) for cls in [0, 1]) / 4
     avg_iou = sum(iou_scores) / len(iou_scores) if iou_scores else 0
 
-    nb_predictions = len(predictions)
-    nb_true_labels = len(true_labels)
-    spot_detection_ratio = nb_predictions / nb_true_labels if nb_true_labels > 0 else 0
-    spot_detection_error = abs(nb_predictions - nb_true_labels)
-
-    fpr = false_positives / (false_positives + true_positives) if (false_positives + true_positives) > 0 else 0
-    fnr = false_negatives / (false_negatives + true_positives) if (false_negatives + true_positives) > 0 else 0
-
-    #print(true_positives, false_positives, false_negatives)
-
-    #for labels in true_labels:
-    #    for pred in predictions:
-    #        iou = calculate_iou(labels, pred)
-    #        print(f"True Labels: {labels}, Predictions: {pred}, IoU: {iou}")
-
-    return avg_iou, precision, recall, f1_score, spot_detection_ratio, spot_detection_error, fpr, fnr
-
+    return (avg_iou,
+        metrics[0][0], metrics[0][1], metrics[0][2], metrics[0][3], metrics[0][4],  #Parked car metrics
+        metrics[1][0], metrics[1][1], metrics[1][2], metrics[1][3], metrics[1][4],  #Car on road metrics
+        balanced_accuracy)
 
 def main(directory, output_file="metrics_road_mask.csv"):
     """
     Main function to evaluate the classification of cars into on the road vs parked on the test images and calculate the corresponding performance metrics
-    Saves Averages of IoU, Precision, Recall, F1 score, Spot Detection Ratio, Spot Detection Error, False Positive Rate and False Negative Rate in a csv 
-    file for each image as well as the overall average metrics.
+    Saves all metrics in a csv file for each image as well as the overall average metrics.
 
     Params:
         directory(str): Path to the directory containing the images and the labels in json format 
@@ -321,14 +330,17 @@ def main(directory, output_file="metrics_road_mask.csv"):
 
     metrics = {
         "iou": [],
-        "precision": [],
-        "recall": [],
-        "f1_score": [],
-        "spot_detection_ratio": [],
-        "spot_detection_error": [],
-        "fpr": [],
-        "fnr": []
-    }
+        "precision_parked": [],
+        "precision_road": [],
+        "recall_parked": [],
+        "recall_road": [],
+        "f1_score_parked": [],
+        "f1_score_road": [],
+        "accuracy_parked": [],
+        "accuracy_road": [],
+        "specificity_parked": [],
+        "specificity_road": [],
+        "balanced_accuracy": []}
 
     image_metrics = []
 
@@ -340,68 +352,54 @@ def main(directory, output_file="metrics_road_mask.csv"):
         #print(predictions)
         #print(true_labels)
 
-        iou, precision, recall, f1_score, spot_detection_ratio, spot_detection_error, fpr, fnr = evaluate_predictions(predictions, true_labels)
+        iou, precision_parked, recall_parked, f1_score_parked, accuracy_parked, specificity_parked, precision_road, recall_road, f1_score_road, accuracy_road, specificity_road, balanced_accuracy  = evaluate_predictions(predictions, true_labels)
 
         metrics["iou"].append(iou)
-        metrics["precision"].append(precision)
-        metrics["recall"].append(recall)
-        metrics["f1_score"].append(f1_score)
-        metrics["spot_detection_ratio"].append(spot_detection_ratio)
-        metrics["spot_detection_error"].append(spot_detection_error)
-        metrics["fpr"].append(fpr)
-        metrics["fnr"].append(fnr)
+        metrics["precision_parked"].append(precision_parked)
+        metrics["precision_road"].append(precision_road)
+        metrics["recall_parked"].append(recall_parked)
+        metrics["recall_road"].append(recall_road)
+        metrics["f1_score_parked"].append(f1_score_parked)
+        metrics["f1_score_road"].append(f1_score_road)
+        metrics["accuracy_parked"].append(accuracy_parked)
+        metrics["accuracy_road"].append(accuracy_road)
+        metrics["specificity_parked"].append(specificity_parked)
+        metrics["specificity_road"].append(specificity_road)
+        metrics["balanced_accuracy"].append(balanced_accuracy)
 
         image_metrics.append({
             "longitude": long,
             "latitude": lat,
             "iou": iou,
-            "precision": precision,
-            "recall": recall,
-            "f1_score": f1_score,
-            "spot_detection_ratio": spot_detection_ratio,
-            "spot_detection_error": spot_detection_error,
-            "fpr": fpr,
-            "fnr": fnr
+            "precision_parked": precision_parked,
+            "precision_road": precision_road,
+            "recall_parked": recall_parked,
+            "recall_road": recall_road,
+            "f1_score_parked": f1_score_parked,
+            "f1_score_road": f1_score_road,
+            "accuracy_parked": accuracy_parked,
+            "accuracy_road": accuracy_road,
+            "specificity_parked": specificity_parked,
+            "specificity_road": specificity_road,
+            "balanced_accuracy": balanced_accuracy,
         })
 
-        print(f"Metrics for image {long}, {lat}: IoU={iou:.2f}, Precision={precision:.2f}, Recall={recall:.2f}, F1 Score={f1_score:.2f}, Spot Detection Ratio={spot_detection_ratio:.2f}, Spot Detection Error={spot_detection_error:.2f}, FPR={fpr:.2f}, FNR={fnr:.2f}")
+        print(f"Metrics for image {long}, {lat}: IoU={iou}, Precision Parked={precision_parked}, Precision Road={precision_road}, Recall Parked={recall_parked}, Recall Road={recall_road}, F1 Score Parked={f1_score_parked}, F1 Score Road={f1_score_road}, Accuracy Parked={accuracy_parked}, Accuracy Road={accuracy_road}, Specificity Parked={specificity_parked}, Specificity Road={specificity_road},  Balanced Accuracy ={balanced_accuracy}")
 
-    avg_iou = sum(metrics["iou"]) / len(metrics["iou"])
-    avg_precision = sum(metrics["precision"]) / len(metrics["precision"])
-    avg_recall = sum(metrics["recall"]) / len(metrics["recall"])
-    avg_f1 = sum(metrics["f1_score"]) / len(metrics["f1_score"])
-    avg_SDR = sum(metrics["spot_detection_ratio"]) / len(metrics["spot_detection_ratio"])
-    avg_SDE = sum(metrics["spot_detection_error"]) / len(metrics["spot_detection_error"])
-    avg_FPR = sum(metrics["fpr"]) / len(metrics["fpr"])
-    avg_FNR = sum(metrics["fnr"]) / len(metrics["fnr"])
-
-    overall_metrics = {
-        "longitude": "Overall",
-        "latitude": "Metrics",
-        "iou": avg_iou,
-        "precision": avg_precision,
-        "recall": avg_recall,
-        "f1_score": avg_f1,
-        "spot_detection_ratio": avg_SDR,
-        "spot_detection_error": avg_SDE,
-        "fpr": avg_FPR,
-        "fnr": avg_FNR
-    }
+    overall_metrics = {key: np.nanmean([value for value in values if value is not None]) if len(values) > 0 else None for key, values in metrics.items()}
+    overall_metrics["longitude"] = "Overall"
+    overall_metrics["latitude"] = "Metrics"
 
     print("Overall Metrics:")
-    print(f"Average IoU: {avg_iou:.2f}")
-    print(f"Average Precision: {avg_precision:.2f}")
-    print(f"Average Recall: {avg_recall:.2f}")
-    print(f"Average F1 Score: {avg_f1:.2f}")
-    print(f"Average Spot Detection Ratio (SDR): {avg_SDR:.2f}")
-    print(f"Average Spot Detection Error (SDE): {avg_SDE:.2f}")
-    print(f"Average False Positive Rate (FPR): {avg_FPR:.2f}")
-    print(f"Average False Negative Rate (FNR): {avg_FNR:.2f}")
+    for key, value in overall_metrics.items():
+        if key not in {"longitude", "latitude"}:
+            print(f"Average {key.replace('_', ' ').title()}: {value:.2f}")
 
     with open(output_file, mode="w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=[
-            "longitude", "latitude", "iou", "precision", "recall", "f1_score",
-            "spot_detection_ratio", "spot_detection_error", "fpr", "fnr"
+            "longitude", "latitude", "iou", "precision_parked", "precision_road", "recall_parked", "recall_road",
+            "f1_score_parked", "f1_score_road", "accuracy_parked", "accuracy_road", "specificity_parked",
+            "specificity_road", "balanced_accuracy"
         ])
         writer.writeheader()
         writer.writerows(image_metrics)
