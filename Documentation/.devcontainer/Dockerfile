@@ -7,7 +7,8 @@ RUN apt update && apt install -y \
     inkscape \
     libdrm2 \
     libgbm1 \
-    libasound2
+    libasound2 \
+    python3-pygments
 
 # Install d2lang
 RUN curl -fsSL https://d2lang.com/install.sh | sh -s --
