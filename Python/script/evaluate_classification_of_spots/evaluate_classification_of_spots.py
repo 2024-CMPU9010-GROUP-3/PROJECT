@@ -351,47 +351,9 @@ def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_
         total_pixels = car_region.size
 
         if total_pixels > 0 and road_pixels / total_pixels <= 0.4:
-            filtered_empty_spots.append((spot, rotation, alignment))
+            filtered_empty_spots.append((spot[0], spot[1], avg_spot_width, avg_spot_length, rotation, alignment))
 
     return filtered_empty_spots
-
-def draw_empty_spots_on_image(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
-    """
-    Draws the empty parking spots on the image
-
-    Params:
-        image_path (str): Path to the image
-        empty_spots (list): List of empty parking spots' center coordinates, roation and alignment
-        center_long (float): Longitude of the center of the image
-        center_lat (float): Latitude of the center of the image
-        avg_spot_width (float): Average width of a parking spot in pixels
-        avg_spot_length (float): Average length of a parking spot in pixels
-    """
-    
-    image = cv2.imread(image_path)
-
-    for i, (spot, rotation, orientation) in enumerate(empty_spots):
-        x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
-
-        width = avg_spot_width if orientation == 'horizontal' else avg_spot_length
-        height = avg_spot_length if orientation == 'horizontal' else avg_spot_width
-        
-        if i > 0:
-            prev_rotation = empty_spots[i - 1][1]
-            rotation_diff = abs(rotation - prev_rotation)
-
-            if rotation_diff < 15:
-                rotation = prev_rotation
-            elif abs(rotation % 90) < 10:
-                rotation = round(rotation / 90) * 90
-
-        rect = ((x_pixel, y_pixel), (width, height), rotation)
-        box_points = cv2.boxPoints(rect)
-        box_points = np.int32(box_points)
-
-        cv2.polylines(image, [box_points], isClosed=True, color=(0, 255, 0), thickness=2)
-
-    cv2.imwrite(image_path, image)
 
 
 def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
@@ -409,8 +371,8 @@ def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, cen
     """
     image = cv2.imread(image_path)
 
-    for spot, _, orientation in empty_spots:
-        x_pixel, y_pixel = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+    for long, lat, _, _, _, orientation in empty_spots:
+        x_pixel, y_pixel = convert_coordinates_to_bounding_box(long, lat, center_long, center_lat)
         
         if orientation == 'horizontal':
             x1 = int(x_pixel - avg_spot_width // 2)
@@ -455,8 +417,8 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
     #print(center_long, center_lat)
     pixel_coords = []
 
-    for spot in all_parking_spots:
-        x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+    for long, lat, width, length, _, _ in all_parking_spots:
+        x_center, y_center = convert_coordinates_to_bounding_box(long, lat, center_long, center_lat)
         pixel_coords.append([x_center, y_center])
 
     clustering = DBSCAN(eps=clustering_eps, min_samples=clustering_min_samples).fit(pixel_coords)
@@ -483,7 +445,7 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
             if cluster_size >= parking_lot_min_spots:
                 classification = "parking lot"
 
-        classified_spots.append([spot[0], spot[1], classification])
+        classified_spots.append([x_center, y_center, width, length, classification])
         #print(classification)
 
     return classified_spots, cluster_labels
@@ -512,10 +474,9 @@ def draw_clusters_and_labels(image_path, spots, cluster_labels, center_long, cen
 
     for i, spot in enumerate(spots):
         cluster_label = cluster_labels[i]
-        classification = spot[2]
+        classification = spot[4]
 
-        x, y = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
-        x, y = int(x), int(y)
+        x, y = int(spot[0]), int(spot[1])
 
         cluster_color = cluster_colors.get(cluster_label, (255, 255, 255))
         classification_color = classification_colors.get(classification, (255, 255, 255))
@@ -526,7 +487,7 @@ def draw_clusters_and_labels(image_path, spots, cluster_labels, center_long, cen
 
     cv2.imwrite(image_path, image)
 
-def get_parking_coords_in_image(model, longitude, latitude):
+def get_predictions_in_image(model, longitude, latitude):
     """
     Detects all the parking spaces in the image (at longitude/latitude) and returns a list of coordinates, agregating
     the cars (of the road) found by the Yolo model and the empty parking spots found (which are drawn and added to the image) 
@@ -571,35 +532,11 @@ def get_parking_coords_in_image(model, longitude, latitude):
         empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
         #print(f'Filtered spots after road mask: {len(empty_spots_filtered)}')
         draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
-        empty_spots_coords = [spot for spot, _, _ in empty_spots_filtered]
-        all_detections.extend(empty_spots_coords)
+        all_detections.extend(empty_spots_filtered)
         all_detections, cluster_labels = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
         draw_clusters_and_labels(output_path_bb_image, all_detections, cluster_labels, longitude, latitude)
 
     return all_detections
-
-def get_predictions_in_image(model, long, lat, directory):
-    """
-    Returns all empty parking spot predictions in an image in the correct format (with the pixel coordinates needed for evaluation)
-
-    Params:
-        model : YOLO model
-        longitude (float): Longitude value of the image
-        latitude (float): Latitude value of the image
-        directory(str): Path to the directory containing the images and the labels in json format 
-
-
-    Returns:
-            empty_detections (list): List of all the empty parking spots found in the image in the format x, y, width, height, orientation (x and y being pixel values)
-    """
-    parking = []
-
-    detections = get_parking_coords_in_image(model, long, lat, directory)
-    for x_center, y_center, classification  in detections:
-        x_pixel, y_pixel =  convert_coordinates_to_bounding_box(x_center, y_center, long, lat)
-        parking.append([x_pixel, y_pixel, classification])
-
-    return parking
 
 def get_true_labels(long, lat, directory, image_width=400, image_height=400):
     """
@@ -636,8 +573,10 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
                 try:
                     x_pixel = float(parts[1])*image_width #the values given by label studio are normalized and we want the denormalized values to compare with the predictions
                     y_pixel = float(parts[2])*image_height
+                    width = float(parts[3])*image_width
+                    height = float(parts[4])*image_height
                     classification = float(parts[0])
-                    true_labels.append([x_pixel, y_pixel, classification])
+                    true_labels.append([x_pixel, y_pixel, width, height, classification])
                 except ValueError:
                     print(f"Warning: Invalid data format in line: {line}")
                     continue
@@ -716,15 +655,16 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.4):
 
         return intersection_area / union_area
 
-    true_positives = {0: 0, 1: 0}
-    false_positives = {0: 0, 1: 0}
-    false_negatives = {0: 0, 1: 0}
-    true_negatives = {0: 0, 1: 0}
+    all_classes = set([p[4] for p in predictions] + [t[4] for t in true_labels])# we dynamically set the number of classes to handle the cases when not all classes are present in the image
+
+    true_positives = {cls: 0 for cls in all_classes}
+    false_positives = {cls: 0 for cls in all_classes}
+    false_negatives = {cls: 0 for cls in all_classes}
+    true_negatives = {cls: 0 for cls in all_classes}
     iou_scores = []
 
     matched_labels = set()
 
-    # For each prediction, find the closest label and compare
     for pred in predictions:
         best_iou = 0
         best_match = None
@@ -749,11 +689,15 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.4):
         if i not in matched_labels:
             false_negatives[gt_class] += 1
 
-    for cls in [0, 1]:
-        true_negatives[cls] = sum(len(true_labels) - true_positives[c] - false_negatives[c] - false_positives[c] for c in [0, 1] if c != cls)
+    for cls in all_classes:
+        true_negatives[cls] = sum(
+            len(true_labels) - true_positives[c] - false_negatives[c] - false_positives[c]
+            for c in all_classes if c != cls
+        )
 
-    metrics = {}
-    for cls in [0, 1]: 
+    metrics_per_class = {}
+
+    for cls in all_classes:
         tp = true_positives[cls]
         fp = false_positives[cls]
         fn = false_negatives[cls]
@@ -765,15 +709,23 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.4):
         accuracy = (tp + tn) / (tp + fp + fn + tn) if (tp + fp + fn + tn) > 0 else (None if tp + tn == 0 and fp + fn == 0 else 0)
         specificity = tn / (tn + fp) if (tn + fp) > 0 else (None if tn == 0 and fp == 0 else 0)
 
-        metrics[cls] = (precision, recall, f1_score, accuracy, specificity)
+        metrics_per_class[cls] = {
+            "precision": precision,
+            "recall": recall,
+            "f1_score": f1_score,
+            "accuracy": accuracy,
+            "specificity": specificity
+        }
 
-    balanced_accuracy = sum((metrics[cls][1] if metrics[cls][1] is not None else 0) + (metrics[cls][4] if metrics[cls][4] is not None else 0) for cls in [0, 1]) / 4
+    balanced_accuracy = sum(
+        (metrics_per_class[cls]["recall"] if metrics_per_class[cls]["recall"] is not None else 0) +
+        (metrics_per_class[cls]["specificity"] if metrics_per_class[cls]["specificity"] is not None else 0)
+        for cls in all_classes
+    ) / (2 * len(all_classes))
+
     avg_iou = sum(iou_scores) / len(iou_scores) if iou_scores else 0
 
-    return (avg_iou,
-        metrics[0][0], metrics[0][1], metrics[0][2], metrics[0][3], metrics[0][4],  #Parked car metrics
-        metrics[1][0], metrics[1][1], metrics[1][2], metrics[1][3], metrics[1][4],  #Car on road metrics
-        balanced_accuracy)
+    return avg_iou, metrics_per_class, balanced_accuracy
 
 def main(directory, output_file="metrics_spots_classification.csv"):
     """
@@ -806,62 +758,55 @@ def main(directory, output_file="metrics_spots_classification.csv"):
 
     metrics = {
         "iou": [],
-        "precision_parked": [],
-        "precision_road": [],
-        "recall_parked": [],
-        "recall_road": [],
-        "f1_score_parked": [],
-        "f1_score_road": [],
-        "accuracy_parked": [],
-        "accuracy_road": [],
-        "specificity_parked": [],
-        "specificity_road": [],
-        "balanced_accuracy": []}
+        "balanced_accuracy": [],
+    }
+    classes = ["public", "private", "parking lot"]
+    for cls in classes:
+        metrics.update({
+            f"precision_{cls}": [],
+            f"recall_{cls}": [],
+            f"f1_score_{cls}": [],
+            f"accuracy_{cls}": [],
+            f"specificity_{cls}": [],
+        })
 
     image_metrics = []
 
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
-        if not predictions and not true_labels:# if there are no detections and no true labels we want to skip the calculation of the metrics
+        if not predictions and not true_labels:  #skip images if there are no detections and no true labels
             continue
-        #draw_true_labels(true_labels, directory, long, lat)
-        #print(predictions)
-        #print(true_labels)
 
-        iou, precision_parked, recall_parked, f1_score_parked, accuracy_parked, specificity_parked, precision_road, recall_road, f1_score_road, accuracy_road, specificity_road, balanced_accuracy  = evaluate_predictions(predictions, true_labels)
+        results = evaluate_predictions(predictions, true_labels)
+        iou = results[0]
+        per_class_metrics = results[1:]
 
         metrics["iou"].append(iou)
-        metrics["precision_parked"].append(precision_parked)
-        metrics["precision_road"].append(precision_road)
-        metrics["recall_parked"].append(recall_parked)
-        metrics["recall_road"].append(recall_road)
-        metrics["f1_score_parked"].append(f1_score_parked)
-        metrics["f1_score_road"].append(f1_score_road)
-        metrics["accuracy_parked"].append(accuracy_parked)
-        metrics["accuracy_road"].append(accuracy_road)
-        metrics["specificity_parked"].append(specificity_parked)
-        metrics["specificity_road"].append(specificity_road)
-        metrics["balanced_accuracy"].append(balanced_accuracy)
+        for cls_index, cls in enumerate(classes):
+            metrics[f"precision_{cls}"].append(per_class_metrics[cls_index][0])
+            metrics[f"recall_{cls}"].append(per_class_metrics[cls_index][1])
+            metrics[f"f1_score_{cls}"].append(per_class_metrics[cls_index][2])
+            metrics[f"accuracy_{cls}"].append(per_class_metrics[cls_index][3])
+            metrics[f"specificity_{cls}"].append(per_class_metrics[cls_index][4])
+
+        metrics["balanced_accuracy"].append(results[-1])
 
         image_metrics.append({
             "longitude": long,
             "latitude": lat,
             "iou": iou,
-            "precision_parked": precision_parked,
-            "precision_road": precision_road,
-            "recall_parked": recall_parked,
-            "recall_road": recall_road,
-            "f1_score_parked": f1_score_parked,
-            "f1_score_road": f1_score_road,
-            "accuracy_parked": accuracy_parked,
-            "accuracy_road": accuracy_road,
-            "specificity_parked": specificity_parked,
-            "specificity_road": specificity_road,
-            "balanced_accuracy": balanced_accuracy,
+            **{f"precision_{cls}": per_class_metrics[cls_index][0] for cls_index, cls in enumerate(classes)},
+            **{f"recall_{cls}": per_class_metrics[cls_index][1] for cls_index, cls in enumerate(classes)},
+            **{f"f1_score_{cls}": per_class_metrics[cls_index][2] for cls_index, cls in enumerate(classes)},
+            **{f"accuracy_{cls}": per_class_metrics[cls_index][3] for cls_index, cls in enumerate(classes)},
+            **{f"specificity_{cls}": per_class_metrics[cls_index][4] for cls_index, cls in enumerate(classes)},
+            "balanced_accuracy": results[-1],
         })
 
-        print(f"Metrics for image {long}, {lat}: IoU={iou}, Precision Parked={precision_parked}, Precision Road={precision_road}, Recall Parked={recall_parked}, Recall Road={recall_road}, F1 Score Parked={f1_score_parked}, F1 Score Road={f1_score_road}, Accuracy Parked={accuracy_parked}, Accuracy Road={accuracy_road}, Specificity Parked={specificity_parked}, Specificity Road={specificity_road},  Balanced Accuracy ={balanced_accuracy}")
+        print(f"Metrics for image {long}, {lat}: IoU={iou}")
+        for cls_index, cls in enumerate(classes):
+            print(f"  {cls.capitalize()} - Precision={per_class_metrics[cls_index][0]}, Recall={per_class_metrics[cls_index][1]}, F1 Score={per_class_metrics[cls_index][2]}")
 
     overall_metrics = {key: np.nanmean([value for value in values if value is not None]) if len(values) > 0 else None for key, values in metrics.items()}
     overall_metrics["longitude"] = "Overall"
@@ -872,12 +817,10 @@ def main(directory, output_file="metrics_spots_classification.csv"):
         if key not in {"longitude", "latitude"}:
             print(f"Average {key.replace('_', ' ').title()}: {value:.2f}")
 
+    fieldnames = ["longitude", "latitude", "iou", *[f"{metric}_{cls}" for cls in classes for metric in ["precision", "recall", "f1_score", "accuracy", "specificity"]], "balanced_accuracy"]
+    
     with open(output_file, mode="w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=[
-            "longitude", "latitude", "iou", "precision_parked", "precision_road", "recall_parked", "recall_road",
-            "f1_score_parked", "f1_score_road", "accuracy_parked", "accuracy_road", "specificity_parked",
-            "specificity_road", "balanced_accuracy"
-        ])
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(image_metrics)
         writer.writerow(overall_metrics)
