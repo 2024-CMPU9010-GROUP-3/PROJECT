@@ -1,0 +1,31 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{Table of Contents}{\textsf {I}}{}%
+\contentsline {section}{List of Figures}{\textsf {II}}{}%
+\contentsline {section}{List of Tables}{\textsf {III}}{}%
+\contentsline {section}{\numberline {0.1}Introduction}{1}{}%
+\contentsline {section}{\numberline {0.2}User Scenario}{1}{}%
+\contentsline {section}{\numberline {0.3}Technical Problem}{1}{}%
+\contentsline {section}{\numberline {0.4}Technical Solution}{1}{}%
+\contentsline {subsection}{\numberline {0.4.1}System Overview}{1}{}%
+\contentsline {subsection}{\numberline {0.4.2}System Architecture}{1}{}%
+\contentsline {subsection}{\numberline {0.4.3}Data Sources}{1}{}%
+\contentsline {subsection}{\numberline {0.4.4}Machine Learning}{1}{}%
+\contentsline {subsection}{\numberline {0.4.5}Frontend}{1}{}%
+\contentsline {section}{\numberline {0.5}Prototyping}{1}{}%
+\contentsline {paragraph}{A prototype is a useful design tool for testing concepts, clarifying requirements, and starting user interaction and feedback. Prototyping methods can be categorized by fidelity—ranging from low-fidelity sketches to high-fidelity digital mockup.}{1}{}%
+\contentsline {subsection}{\numberline {0.5.1}Low-fidelity prototypes}{1}{}%
+\contentsline {paragraph}{Low-fidelity prototypes, which often consist of simple sketches particularly valuable in the early stages of design}{1}{}%
+\contentsline {subsection}{\numberline {0.5.2}Backend}{2}{}%
+\contentsline {subsection}{\numberline {0.5.3}Deployment}{2}{}%
+\contentsline {section}{\numberline {0.6}Software Management}{2}{}%
+\contentsline {section}{\numberline {0.7}Evaluation}{2}{}%
+\contentsline {subsection}{\numberline {0.7.1}User Evaluation}{2}{}%
+\contentsline {subsection}{\numberline {0.7.2}Expert Review}{2}{}%
+\contentsline {section}{\numberline {0.8}Future Work}{2}{}%
+\contentsline {subsection}{\numberline {0.8.1}Machine Learning}{2}{}%
+\contentsline {subsection}{\numberline {0.8.2}Frontend}{2}{}%
+\contentsline {subsection}{\numberline {0.8.3}Backend}{2}{}%
+\contentsline {subsection}{\numberline {0.8.4}Deployment}{2}{}%
+\contentsline {section}{\numberline {0.9}Conclusion}{2}{}%
+\contentsline {section}{\numberline {0.10}Appendix A: ABC}{3}{}%
+\contentsline {section}{\numberline {0.11}Appendix B: XYZ}{3}{}%
