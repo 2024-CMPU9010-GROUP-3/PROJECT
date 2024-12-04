@@ -59,5 +59,33 @@ The frontend of the Magpie project is central to delivering a seamless, responsi
         \item  \textbf{API Integration:}
         The frontend communicates with a \emph{Go} backend via \emph{REST APIs} to fetch, update, and display data. Authentication is handled through JSON Web Tokens (JWT), ensuring secure access.
     \end{enumerate}
+    \item \textbf{User-Centric Features and Functionalities:}
+    \begin{enumerate}
+        \item \textbf{Interactive Maps:}\\
+        The interactive map interface is at the heart of Magpie, offering dynamic, user-friendly visualization tools to meet the needs of both expert users like urban planners and casual users seeking localized information. Users can:
+        \begin{itemize}
+            \item \textbf{View Amenities:} Quickly toggle between layers for parking, bike infrastructure, public transport stops, and other amenities, providing a clear, categorized overview of available resources.
+            \item \textbf{Analyze Data:} Heatmaps and clustering options enable users to identify areas of low or high amenity density, offering insights for urban planning or resource allocation.
+            \item \textbf{Custom Views:} Save personalized configurations, such as predefined radii or selected amenities, for recurring analysis or quick future access.
+            \item \textbf{Interactive Elements:} Users can click on markers for detailed information about specific amenities, including types, availability, and proximity to other key locations.
+        \end{itemize}
+        \item \textbf{Accessibility and Inclusivity:}\\
+        Accessibility is a core design principle of Magpie, ensuring the platform is inclusive for all users:
+        \begin{itemize}
+            \item \textbf{Screen Reader Support:} ARIA labels and meaningful descriptions provide complete compatibility with assistive technologies, enabling visually impaired users to navigate and interact with the platform effectively.
+            \item \textbf{Keyboard-Friendly Navigation:} All interactive elements are fully operable using keyboard shortcuts, ensuring users with motor impairments can access the platform seamlessly.
+            \item \textbf{Responsive Design:} The interface dynamically adjusts to various screen sizes and resolutions, making it equally accessible on smartphones, tablets, and desktops.
+            \item \textbf{Tutorial Guidance:} An onboarding experience guides first-time users, offering step-by-step instructions to ensure inclusivity even for non-technical audiences.
+        \end{itemize}
+        \item \textbf{Performance Optimization:}\\
+        Magpie delivers a high-performance experience tailored for quick data access and seamless user interaction:
+        \begin{itemize}
+            \item \textbf{Lazy Loading:} Data and map layers are loaded incrementally, prioritizing visible content and reducing initial load times, even for data-intensive regions.
+            \item \textbf{SSR and SSG:} Server-side rendering (SSR) and static site generation (SSG) optimize the platform’s response times and enable fast, efficient navigation, particularly for large datasets or slow network connections.
+            \item \textbf{Caching Strategies:} Frequently accessed data is cached locally, minimizing redundant server requests and ensuring faster access during repeated visits. This also helps reduce latency for users operating in areas with limited connectivity.
+            \item \textbf{Error Handling:} Advanced error prevention mechanisms guide users through potential pitfalls, such as incorrect radius adjustments or unavailable data points.
+        \end{itemize}
+        These features combine to provide a smooth, intuitive, and robust experience for diverse user groups, ensuring Magpie remains a valuable tool for urban analysis and decision-making.
+    \end{enumerate}
 
 \end{enumerate}
