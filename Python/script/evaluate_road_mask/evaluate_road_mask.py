@@ -199,7 +199,36 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
 
     return true_labels
 
-def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
+def draw_true_labels(true_labels, directory, longitude, latitude):
+    """
+    Draws true labels to visualize the evaluation
+
+    Params:
+        true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, orientation
+        directory(str): Path to the directory containing the images and the labels in a txt file in the YOLO format 
+        longitude (float): Longitude of the image
+        latitude (float): Latitude of the image
+    """
+    image_path = os.path.join(directory, f'{longitude}_{latitude}_bounding_boxes.png')
+    image = cv2.imread(image_path)
+
+    for x_pixel, y_pixel, width, height, classification in true_labels:
+        
+        x1 = int(x_pixel - width // 2)
+        y1 = int(y_pixel - height // 2)
+        x2 = int(x_pixel + width // 2)            
+        y2 = int(y_pixel + height // 2)
+
+        if classification == 0: #Draw parked true labels in pink
+            color = (180, 105, 255)
+        else:  #Draw on the road true labels in cyan
+            color = (255, 255, 0) 
+
+        cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
+
+    cv2.imwrite(image_path, image)
+
+def evaluate_predictions(predictions, true_labels, iou_threshold=0.4):
     """
     Evaluates our predictions in an image with the true labels
     Returns Average IoU, Precision, Recall, F1 Score, Accuracy, Specificity per class and the overall Balanced Accuracy.
@@ -349,6 +378,7 @@ def main(directory, output_file="metrics_road_mask.csv"):
         true_labels = get_true_labels(long, lat, directory)
         if not predictions and not true_labels:# if there are no detections and no true labels we want to skip the calculation of the metrics
             continue
+        draw_true_labels(true_labels, directory, long, lat)
         #print(predictions)
         #print(true_labels)
 
