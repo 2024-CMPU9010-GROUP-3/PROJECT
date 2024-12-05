@@ -397,15 +397,15 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
             distance = cv2.pointPolygonTest(contour, (x_center, y_center), measureDist=True)
             min_distance = min(min_distance, abs(distance))
 
-        classification = 0 #private
+        classification = 1 #private
 
         if min_distance <= road_proximity_threshold:
-            classification = 1 #public
+            classification = 2 #public
 
         if cluster_label != -1:
             cluster_size = np.sum(labels == cluster_label)
             if cluster_size >= parking_lot_min_spots:
-                classification = 2 #parking lot
+                classification = 0 #parking lot
 
         classified_spots.append([pixel_coords[idx][0], pixel_coords[idx][1], spot[2], spot[3], spot[5], classification])
         #print(classification)
@@ -439,11 +439,11 @@ def draw_classification(image_path, spots):
             y2 = int(y_pixel + width // 2)
             
 
-        if classification == 0: #Draw private in red
+        if classification == 1: #Draw private in red
             color = (0, 0, 255)
-        elif classification == 1:  #Draw public in green
+        elif classification == 2:  #Draw public in green
             color = (0, 255, 0)
-        elif classification == 2: #Draw parking lot in blue
+        elif classification == 0: #Draw parking lot in blue
             color = (255, 0, 0) 
 
         cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
@@ -564,11 +564,11 @@ def draw_true_labels(true_labels, directory, longitude, latitude):
         x2 = int(x_pixel + width // 2)            
         y2 = int(y_pixel + height // 2)
 
-        if classification == 0: #Draw private true labels in pink
+        if classification == 1: #Draw private true labels in pink
             color = (180, 105, 255)
-        elif classification == 1:  #Draw public true labels in teal
-            color = (0, 128, 128)
-        else: #Draw parking lot true label in cyan
+        elif classification == 2:  #Draw public true labels in teal
+            color = (128, 128, 0)
+        elif classification == 0: #Draw parking lot true label in cyan
             color = (255, 255, 0) 
 
         cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
@@ -735,39 +735,40 @@ def main(directory, output_file="metrics_spots_classification.csv"):
 
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
-        '''true_labels = get_true_labels(long, lat, directory)
+        true_labels = get_true_labels(long, lat, directory)
+        draw_true_labels(true_labels, directory, long, lat)
         if not predictions and not true_labels:  #skip images if there are no detections and no true labels
             continue
 
-        results = evaluate_predictions(predictions, true_labels)
-        iou = results[0]
-        per_class_metrics = results[1:]
+        avg_iou, per_class_metrics, balanced_accuracy = evaluate_predictions(predictions, true_labels)
 
-        metrics["iou"].append(iou)
-        for cls_index, cls in enumerate(classes):
-            metrics[f"precision_{cls}"].append(per_class_metrics[cls_index][0])
-            metrics[f"recall_{cls}"].append(per_class_metrics[cls_index][1])
-            metrics[f"f1_score_{cls}"].append(per_class_metrics[cls_index][2])
-            metrics[f"accuracy_{cls}"].append(per_class_metrics[cls_index][3])
-            metrics[f"specificity_{cls}"].append(per_class_metrics[cls_index][4])
+        metrics["iou"].append(avg_iou)
+        for cls in classes:
+            if cls in per_class_metrics:
+                cls_metrics = per_class_metrics[cls]
+                metrics[f"precision_{cls}"].append(cls_metrics["precision"])
+                metrics[f"recall_{cls}"].append(cls_metrics["recall"])
+                metrics[f"f1_score_{cls}"].append(cls_metrics["f1_score"])
+                metrics[f"accuracy_{cls}"].append(cls_metrics["accuracy"])
+                metrics[f"specificity_{cls}"].append(cls_metrics["specificity"])
 
-        metrics["balanced_accuracy"].append(results[-1])
+        metrics["balanced_accuracy"].append(balanced_accuracy)
 
-        image_metrics.append({
-            "longitude": long,
+        image_metrics.append({"longitude": long,
             "latitude": lat,
-            "iou": iou,
-            **{f"precision_{cls}": per_class_metrics[cls_index][0] for cls_index, cls in enumerate(classes)},
-            **{f"recall_{cls}": per_class_metrics[cls_index][1] for cls_index, cls in enumerate(classes)},
-            **{f"f1_score_{cls}": per_class_metrics[cls_index][2] for cls_index, cls in enumerate(classes)},
-            **{f"accuracy_{cls}": per_class_metrics[cls_index][3] for cls_index, cls in enumerate(classes)},
-            **{f"specificity_{cls}": per_class_metrics[cls_index][4] for cls_index, cls in enumerate(classes)},
-            "balanced_accuracy": results[-1],
-        })
+            "iou": avg_iou,
+            **{f"precision_{cls}": per_class_metrics[cls]["precision"] if cls in per_class_metrics else None for cls in classes},
+            **{f"recall_{cls}": per_class_metrics[cls]["recall"] if cls in per_class_metrics else None for cls in classes},
+            **{f"f1_score_{cls}": per_class_metrics[cls]["f1_score"] if cls in per_class_metrics else None for cls in classes},
+            **{f"accuracy_{cls}": per_class_metrics[cls]["accuracy"] if cls in per_class_metrics else None for cls in classes},
+            **{f"specificity_{cls}": per_class_metrics[cls]["specificity"] if cls in per_class_metrics else None for cls in classes},
+            "balanced_accuracy": balanced_accuracy})
 
-        print(f"Metrics for image {long}, {lat}: IoU={iou}")
-        for cls_index, cls in enumerate(classes):
-            print(f"  {cls.capitalize()} - Precision={per_class_metrics[cls_index][0]}, Recall={per_class_metrics[cls_index][1]}, F1 Score={per_class_metrics[cls_index][2]}")
+        print(f"Metrics for image {long}, {lat}: IoU={avg_iou}")
+        for cls in classes:
+            if cls in per_class_metrics:
+                print(f"  {cls.capitalize()} - Precision={per_class_metrics[cls]['precision']}, Recall={per_class_metrics[cls]['recall']}, F1 Score={per_class_metrics[cls]['f1_score']}")
+        print(f"Balanced Accuracy={balanced_accuracy}")
 
     overall_metrics = {key: np.nanmean([value for value in values if value is not None]) if len(values) > 0 else None for key, values in metrics.items()}
     overall_metrics["longitude"] = "Overall"
@@ -776,7 +777,10 @@ def main(directory, output_file="metrics_spots_classification.csv"):
     print("Overall Metrics:")
     for key, value in overall_metrics.items():
         if key not in {"longitude", "latitude"}:
-            print(f"Average {key.replace('_', ' ').title()}: {value:.2f}")
+            if value is not None:
+                print(f"Average {key.replace('_', ' ').title()}: {value:.2f}")
+            else:
+                print(f"Average {key.replace('_', ' ').title()}: None")
 
     fieldnames = ["longitude", "latitude", "iou", *[f"{metric}_{cls}" for cls in classes for metric in ["precision", "recall", "f1_score", "accuracy", "specificity"]], "balanced_accuracy"]
     
@@ -786,8 +790,7 @@ def main(directory, output_file="metrics_spots_classification.csv"):
         writer.writerows(image_metrics)
         writer.writerow(overall_metrics)
 
-    print(f"Metrics saved to {output_file}")'''
+    print(f"Metrics saved to {output_file}")
 
 if __name__ == "__main__":
-    #main("all_test_images_classification")
     main("classification_test_set")
