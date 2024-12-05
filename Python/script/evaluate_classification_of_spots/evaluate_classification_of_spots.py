@@ -440,11 +440,11 @@ def draw_classification(image_path, spots):
             
 
         if classification == 0: #Draw private in red
-            color = (255, 0, 0)
+            color = (0, 0, 255)
         elif classification == 1:  #Draw public in green
             color = (0, 255, 0)
         elif classification == 2: #Draw parking lot in blue
-            color = (0, 0, 255) 
+            color = (255, 0, 0) 
 
         cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
 
