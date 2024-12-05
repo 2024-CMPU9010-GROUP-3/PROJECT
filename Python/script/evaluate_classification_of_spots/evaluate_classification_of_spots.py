@@ -708,7 +708,7 @@ def main(directory, output_file="metrics_spots_classification.csv"):
 
     coordinates = []
     for file in files:
-        if file.endswith(".png") and "road" in file:
+        if file.endswith(".txt"):
             try:
                 long, lat, _ = file.split("_")
                 long, lat = float(long), float(lat)
