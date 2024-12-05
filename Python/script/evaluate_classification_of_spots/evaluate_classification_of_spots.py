@@ -117,11 +117,9 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
 
                 if road_pixels / total_pixels > 0.5:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is on the road")
-                    cv2.polylines(img, [box_points], isClosed=True, color=(255, 0, 0), thickness=2) #blue if on the road
                 else:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
                     detections_parking.append([x_center, y_center, width, height, angle_degrees, orientation])
-                    cv2.polylines(img, [box_points], isClosed=True, color=(0, 0, 255), thickness=2) #red if parked
 
     cv2.imwrite(output_image_path, img)
     return detections_parking
@@ -356,40 +354,6 @@ def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_
     return filtered_empty_spots
 
 
-def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
-    """
-    Original function which seems to work better even though it doesn't take the rotation into account
-    Draws the empty parking spots on the image
-
-    Params:
-        image_path (str): Path to the image
-        empty_spots (list): List of empty parking spots' center coordinates
-        center_long (float): Longitude of the center of the image
-        center_lat (float): Latitude of the center of the image.
-        avg_spot_width (float): Average width of a parking spot in pixels
-        avg_spot_length (float): Average length of a parking spot in pixels
-    """
-    image = cv2.imread(image_path)
-
-    for long, lat, _, _, _, orientation in empty_spots:
-        x_pixel, y_pixel = convert_coordinates_to_bounding_box(long, lat, center_long, center_lat)
-        
-        if orientation == 'horizontal':
-            x1 = int(x_pixel - avg_spot_width // 2)
-            y1 = int(y_pixel - avg_spot_length // 2)
-            x2 = int(x_pixel + avg_spot_width // 2)
-            y2 = int(y_pixel + avg_spot_length // 2)
-        else: 
-            x1 = int(x_pixel - avg_spot_length // 2)
-            y1 = int(y_pixel - avg_spot_width // 2)
-            x2 = int(x_pixel + avg_spot_length // 2)
-            y2 = int(y_pixel + avg_spot_width // 2)  
-        
-        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-    cv2.imwrite(image_path, image)
-
-
 def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, road_proximity_threshold=30, parking_lot_min_spots=18, clustering_eps=55, clustering_min_samples=5):
     """
     Classifies parking spots as public(on the street parking), private(residential) or parking lot based on their proximity to the road (calculated using the road mask).
@@ -409,7 +373,6 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
         classified_spots (list): List of parking spots with classification added
     """
     classified_spots = []
-    cluster_labels = []
 
     road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
     road_contours, _ = cv2.findContours(road_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -417,7 +380,7 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
     #print(center_long, center_lat)
     pixel_coords = []
 
-    for long, lat, width, length, _, _ in all_parking_spots:
+    for long, lat, _, _, _, _ in all_parking_spots:
         x_center, y_center = convert_coordinates_to_bounding_box(long, lat, center_long, center_lat)
         pixel_coords.append([x_center, y_center])
 
@@ -427,7 +390,6 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
     for idx, spot in enumerate(all_parking_spots):
         x_center, y_center = pixel_coords[idx]
         cluster_label = labels[idx]
-        cluster_labels.append(cluster_label)
 
         min_distance = float("inf")
 
@@ -435,22 +397,22 @@ def classify_parking_spots(all_parking_spots, road_mask_path, center_long, cente
             distance = cv2.pointPolygonTest(contour, (x_center, y_center), measureDist=True)
             min_distance = min(min_distance, abs(distance))
 
-        classification = "private"
+        classification = 0 #private
 
         if min_distance <= road_proximity_threshold:
-            classification = "public"
+            classification = 1 #public
 
         if cluster_label != -1:
             cluster_size = np.sum(labels == cluster_label)
             if cluster_size >= parking_lot_min_spots:
-                classification = "parking lot"
+                classification = 2 #parking lot
 
-        classified_spots.append([x_center, y_center, width, length, classification])
+        classified_spots.append([pixel_coords[idx][0], pixel_coords[idx][1], spot[2], spot[3], spot[5], classification])
         #print(classification)
 
-    return classified_spots, cluster_labels
+    return classified_spots
 
-def draw_clusters_and_labels(image_path, spots, cluster_labels, center_long, center_lat):
+def draw_classification(image_path, spots):
     """
     Draws cluster labels and classifications labels on the image for each spot.
 
@@ -463,27 +425,28 @@ def draw_clusters_and_labels(image_path, spots, cluster_labels, center_long, cen
     """
     image = cv2.imread(image_path)
 
-    unique_clusters = set(cluster_labels)
-    cluster_colors = {cluster: tuple(random.randint(0, 255) for _ in range(3)) for cluster in unique_clusters}
+    for x_pixel, y_pixel, width, height, orientation, classification in spots:
 
-    classification_colors = {
-        "public": (0, 255, 0),  #green
-        "private": (0, 0, 255), #red
-        "parking_lot": (255, 0, 0) #blue
-    }
+        if orientation == "horizontal":
+            x1 = int(x_pixel - width // 2)
+            y1 = int(y_pixel - height // 2)
+            x2 = int(x_pixel + width // 2)            
+            y2 = int(y_pixel + height // 2)
+        else:
+            x1 = int(x_pixel - height // 2)
+            y1 = int(y_pixel - width // 2)
+            x2 = int(x_pixel + height // 2)            
+            y2 = int(y_pixel + width // 2)
+            
 
-    for i, spot in enumerate(spots):
-        cluster_label = cluster_labels[i]
-        classification = spot[4]
+        if classification == 0: #Draw private in red
+            color = (255, 0, 0)
+        elif classification == 1:  #Draw public in green
+            color = (0, 255, 0)
+        elif classification == 2: #Draw parking lot in blue
+            color = (0, 0, 255) 
 
-        x, y = int(spot[0]), int(spot[1])
-
-        cluster_color = cluster_colors.get(cluster_label, (255, 255, 255))
-        classification_color = classification_colors.get(classification, (255, 255, 255))
-
-        cv2.circle(image, (x, y), 5, cluster_color, -1)
-        label = f"{classification}"
-        cv2.putText(image, label, (x + 10, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, classification_color, 2)
+        cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
 
     cv2.imwrite(image_path, image)
 
@@ -528,11 +491,10 @@ def get_predictions_in_image(model, longitude, latitude, directory):
         empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
         empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
         #print(f'Filtered spots after road mask: {len(empty_spots_filtered)}')
-        draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
         all_detections.extend(empty_spots_filtered)
-        all_detections, cluster_labels = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
-        draw_clusters_and_labels(output_path_bb_image, all_detections, cluster_labels, longitude, latitude)
-
+        all_detections = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
+        draw_classification(output_path_bb_image, all_detections)
+        all_detections = [[x_pixel, y_pixel, width, height, classification] for x_pixel, y_pixel, width, height, _, classification in all_detections]
     return all_detections
 
 def get_true_labels(long, lat, directory, image_width=400, image_height=400):
@@ -602,9 +564,11 @@ def draw_true_labels(true_labels, directory, longitude, latitude):
         x2 = int(x_pixel + width // 2)            
         y2 = int(y_pixel + height // 2)
 
-        if classification == 0: #Draw parked true labels in pink
+        if classification == 0: #Draw private true labels in pink
             color = (180, 105, 255)
-        else:  #Draw on the road true labels in cyan
+        elif classification == 1:  #Draw public true labels in teal
+            color = (0, 128, 128)
+        else: #Draw parking lot true label in cyan
             color = (255, 255, 0) 
 
         cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
@@ -742,7 +706,7 @@ def main(directory, output_file="metrics_spots_classification.csv"):
 
     coordinates = []
     for file in files:
-        if file.endswith(".txt"):
+        if file.endswith(".png") and "road" in file:
             try:
                 long, lat, _ = file.split("_")
                 long, lat = float(long), float(lat)
@@ -771,7 +735,7 @@ def main(directory, output_file="metrics_spots_classification.csv"):
 
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
-        true_labels = get_true_labels(long, lat, directory)
+        '''true_labels = get_true_labels(long, lat, directory)
         if not predictions and not true_labels:  #skip images if there are no detections and no true labels
             continue
 
@@ -822,7 +786,8 @@ def main(directory, output_file="metrics_spots_classification.csv"):
         writer.writerows(image_metrics)
         writer.writerow(overall_metrics)
 
-    print(f"Metrics saved to {output_file}")
+    print(f"Metrics saved to {output_file}")'''
 
 if __name__ == "__main__":
-    main("all_test_images_classification")
+    #main("all_test_images_classification")
+    main("classification_test_set")
