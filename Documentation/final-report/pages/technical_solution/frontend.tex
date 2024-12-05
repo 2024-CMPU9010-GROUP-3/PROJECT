@@ -5,13 +5,10 @@ The frontend of the Magpie project is central to delivering a seamless, responsi
     \item \textbf{Core Technologies and Frameworks:}
     \begin{enumerate}
         \item \textbf{React and Next.js:} \\
-        The combination of React and Next.js is pivotal to the frontend's architecture. React's component-driven approach enables reusable, modular UI elements, fostering rapid development. Next.js enhances this with features like server-side rendering (SSR) and static site generation (SSG), which significantly improve page load times and SEO.\\
-        \linebreak
-        \textbf{Key benefits: }
         \begin{itemize}
-            \item \textbf{Component Reusability:} Components such as data visualization widgets, navigation bars, and filter panels can be reused across multiple pages.
-            \item \textbf{SEO Optimization:} With SSR, content is preloaded on the server, making the application more search-engine-friendly.
-            \item \textbf{Routing:} Next.js simplifies dynamic and nested routing, accommodating the needs of a complex application.
+            \item \textbf{React} serves as the backbone of the user interface, enabling a component-driven architecture. This approach ensures that UI components are modular, reusable, and easy to maintain.
+            \item \textbf{Next.js}, a React framework, introduces server-side rendering (SSR) and static site generation (SSG). These features improve page load times, enhance SEO performance, and deliver a seamless user experience. For instance, the SSR capability ensures that essential data for urban planners, such as maps and analytics, loads efficiently on the client side.
+            \item The use of Next.js's routing capabilities facilitates dynamic navigation within the application, ensuring smooth transitions between different sections, such as data visualization dashboards and user account management pages.
         \end{itemize}
         \item \textbf{TailwindCSS}
         A utility-first CSS framework, TailwindCSS, provides a consistent design language across the application. Its predefined utility classes simplify styling while allowing for quick prototyping. 
@@ -86,6 +83,64 @@ The frontend of the Magpie project is central to delivering a seamless, responsi
             \item \textbf{Error Handling:} Advanced error prevention mechanisms guide users through potential pitfalls, such as incorrect radius adjustments or unavailable data points.
         \end{itemize}
         These features combine to provide a smooth, intuitive, and robust experience for diverse user groups, ensuring Magpie remains a valuable tool for urban analysis and decision-making.
+    \end{enumerate}
+
+\end{enumerate}
+
+\subsubsection{Future Roadmap for Magpie Based on User Feedback}
+Based on the detailed usability and field-testing feedback provided by various users, the following additions to the future roadmap for the Magpie frontend are proposed. These additions focus on addressing usability challenges, enhancing functionality, and broadening the system’s appeal to professional and casual users.
+
+\begin{enumerate}
+    \item \textbf{Advanced Mapping Features}
+    \begin{enumerate}
+        \item \textbf{Improved Map Interaction:}
+        Several users struggled with map navigation. Enhancements should include:
+        \begin{itemize}
+            \item \textbf{Zoom Buttons:} Add visible zoom controls to the map interface for easier navigation.
+            \item \textbf{Search Bar:} Include a search bar to allow users to quickly locate specific areas or addresses.
+            \item \textbf{Radius Adjustment Slider:} Replace manual radius adjustments with an interactive slider.
+        \end{itemize}
+        \item \textbf{Additional Map Layers:}
+        Users highlighted the need for diverse map layers to support various use cases:
+        \begin{itemize}
+            \item \textbf{Satellite View:} Offer an aerial view for detailed spatial analysis.
+            \item Transport Overlays: Include layers for bus stops, tram stations, and train lines.
+            \item \textbf{Infrastructure Layers:} Add overlays for utilities such as sewage systems, water grids, and power lines.
+        \end{itemize}
+        \item \textbf{Data Export and Sharing:}
+        Enable professionals to export data and share insights:
+        \begin{itemize}
+            \item Add an export feature to save maps and data visualizations as PNG or PDF files.
+            \item Introduce social sharing options to disseminate information quickly.
+        \end{itemize}
+    \end{enumerate}
+    \item \textbf{Accessibility and Inclusivity Improvements}
+    \begin{enumerate}
+        \item \textbf{Enhanced Onboarding}
+        Users found the tutorial challenging to follow. Improvements should include:
+        \begin{itemize}
+            \item \textbf{Step-by-Step Instructions:} Improve \textbf{contrast ratios} for better visibility, especially for users with visual impairments.
+            \item \textbf{Scenario-Based Tutorials:} Optimize fonts and UI elements for users with dyslexia or other reading difficulties.
+            \item \textbf{Tooltips and Help Icons:} Ensure the \textbf{profile icon} is more prominent and distinguishable from other map elements.
+        \end{itemize}
+        \item \textbf{UI Design Tweaks}
+        To ensure inclusivity:
+        \begin{itemize}
+            \item \textbf{Step-by-Step Instructions:} Split onboarding into manageable steps, highlighting key features interactively.
+            \item \textbf{Scenario-Based Tutorials:} Provide context-specific scenarios to guide users based on their professional needs.
+            \item \textbf{Tooltips and Help Icons:} Place contextual help options throughout the interface for quick user assistance.
+        \end{itemize}
+    \end{enumerate}
+    
+    \item \textbf{Feature Expansion}
+    \begin{enumerate}
+        \item \textbf{New Amenity Categories}
+        Users found the tutorial challenging to follow. Improvements should include:
+        \begin{itemize}
+            \item \textbf{Step-by-Step Instructions:} Split onboarding into manageable steps, highlighting key features interactively.
+            \item \textbf{Scenario-Based Tutorials:} Provide context-specific scenarios to guide users based on their professional needs.
+            \item \textbf{Tooltips and Help Icons:} Place contextual help options throughout the interface for quick user assistance.
+        \end{itemize}
     \end{enumerate}
 
 \end{enumerate}
