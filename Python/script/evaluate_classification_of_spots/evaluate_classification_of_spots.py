@@ -534,7 +534,7 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
                     y_pixel = float(parts[2])*image_height
                     width = float(parts[3])*image_width
                     height = float(parts[4])*image_height
-                    classification = float(parts[0])
+                    classification = int(parts[0])
                     true_labels.append([x_pixel, y_pixel, width, height, classification])
                 except ValueError:
                     print(f"Warning: Invalid data format in line: {line}")
@@ -686,6 +686,8 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.4):
 
     avg_iou = sum(iou_scores) / len(iou_scores) if iou_scores else 0
 
+    #print(metrics_per_class)
+
     return avg_iou, metrics_per_class, balanced_accuracy
 
 def main(directory, output_file="metrics_spots_classification.csv"):
@@ -721,7 +723,7 @@ def main(directory, output_file="metrics_spots_classification.csv"):
         "iou": [],
         "balanced_accuracy": [],
     }
-    classes = ["public", "private", "parking lot"]
+    classes = [0, 1, 2]
     for cls in classes:
         metrics.update({
             f"precision_{cls}": [],
@@ -739,6 +741,8 @@ def main(directory, output_file="metrics_spots_classification.csv"):
         draw_true_labels(true_labels, directory, long, lat)
         if not predictions and not true_labels:  #skip images if there are no detections and no true labels
             continue
+        #print(true_labels)
+        #print(predictions)
 
         avg_iou, per_class_metrics, balanced_accuracy = evaluate_predictions(predictions, true_labels)
 
@@ -767,7 +771,7 @@ def main(directory, output_file="metrics_spots_classification.csv"):
         print(f"Metrics for image {long}, {lat}: IoU={avg_iou}")
         for cls in classes:
             if cls in per_class_metrics:
-                print(f"  {cls.capitalize()} - Precision={per_class_metrics[cls]['precision']}, Recall={per_class_metrics[cls]['recall']}, F1 Score={per_class_metrics[cls]['f1_score']}")
+                print(f"  {cls} - Precision={per_class_metrics[cls]['precision']}, Recall={per_class_metrics[cls]['recall']}, F1 Score={per_class_metrics[cls]['f1_score']}, Accuracy={per_class_metrics[cls]['accuracy']}, Specificity={per_class_metrics[cls]['specificity']}")
         print(f"Balanced Accuracy={balanced_accuracy}")
 
     overall_metrics = {key: np.nanmean([value for value in values if value is not None]) if len(values) > 0 else None for key, values in metrics.items()}
@@ -775,6 +779,7 @@ def main(directory, output_file="metrics_spots_classification.csv"):
     overall_metrics["latitude"] = "Metrics"
 
     print("Overall Metrics:")
+    print("0: Parking lot, 1: Private, 2: Public")
     for key, value in overall_metrics.items():
         if key not in {"longitude", "latitude"}:
             if value is not None:
