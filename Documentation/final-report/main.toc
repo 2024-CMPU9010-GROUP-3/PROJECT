@@ -14,18 +14,25 @@
 \contentsline {section}{\numberline {0.5}Prototyping}{1}{}%
 \contentsline {paragraph}{A prototype is a useful design tool for testing concepts, clarifying requirements, and starting user interaction and feedback. Prototyping methods can be categorized by fidelity—ranging from low-fidelity sketches to high-fidelity digital mockup.}{1}{}%
 \contentsline {subsection}{\numberline {0.5.1}Low-fidelity prototypes}{1}{}%
-\contentsline {paragraph}{Low-fidelity prototypes, which often consist of simple sketches particularly valuable in the early stages of design}{1}{}%
-\contentsline {subsection}{\numberline {0.5.2}Backend}{2}{}%
-\contentsline {subsection}{\numberline {0.5.3}Deployment}{2}{}%
-\contentsline {section}{\numberline {0.6}Software Management}{2}{}%
-\contentsline {section}{\numberline {0.7}Evaluation}{2}{}%
-\contentsline {subsection}{\numberline {0.7.1}User Evaluation}{2}{}%
-\contentsline {subsection}{\numberline {0.7.2}Expert Review}{2}{}%
-\contentsline {section}{\numberline {0.8}Future Work}{2}{}%
-\contentsline {subsection}{\numberline {0.8.1}Machine Learning}{2}{}%
-\contentsline {subsection}{\numberline {0.8.2}Frontend}{2}{}%
-\contentsline {subsection}{\numberline {0.8.3}Backend}{2}{}%
-\contentsline {subsection}{\numberline {0.8.4}Deployment}{2}{}%
-\contentsline {section}{\numberline {0.9}Conclusion}{2}{}%
-\contentsline {section}{\numberline {0.10}Appendix A: ABC}{3}{}%
-\contentsline {section}{\numberline {0.11}Appendix B: XYZ}{3}{}%
+\contentsline {paragraph}{We used figjam for the sketch concept, which allowed us to do a full online brainstorm. we started out with a card format, where the top right side displays the filter and the bottom side displays the rotation of the three icon styles, and the top left and bottom left side have the branding icon and the cookie component, which made the whole page more cluttered. This made the whole page more complicated, so we updated it so that the filter, radius range are on the right as a whole dashboard, and the branding icon is also moved to the dashboard, so that users can better remember our brand.}{1}{}%
+\contentsline {paragraph}{Wireframe as a low-fidelity tool, unlike sketches, sketches, wireframes show the structure of an interface design, but often lack detail or colour. We also made wireframes of individual pages to build on, such as the home page and the login/signup page in Figure~\ref {fig:wireframe-home} and Figure~\ref {fig:wireframe-signup}, which lay out the structure of the prototype.}{2}{}%
+\contentsline {subsection}{\numberline {0.5.2}Medium Fidelity Prototyping}{2}{}%
+\contentsline {paragraph}{Medium-fidelity prototypes offer more detail, serving as a transitional phase between initial ideas and advanced user testing.}{2}{}%
+\contentsline {subsection}{\numberline {0.5.3}High Fidelity Prototyping}{2}{}%
+\contentsline {paragraph}{High-fidelity prototypes closely resemble the final product in both form and function. }{2}{}%
+\contentsline {subsection}{\numberline {0.5.4}Prototype methods}{2}{}%
+\contentsline {paragraph}{We use Evolutionary prototyping to continuously update our prototypes.Part of the prototyping process involves dealing with feedback and subsequent revisions. It helps designers test and retest their ideas over and over again. The faster designers are able to test their design concepts and make improvements, the faster they can get to a satisfactory final version. In addition, our team uses Agile development methodologies in prototyping. Agile increases flexibility, collaboration, and rapid feedback cycles to create product prototypes in rapid iterations with continuous ones after collecting feedback and guided ones.}{2}{}%
+\contentsline {subsection}{\numberline {0.5.5}Backend}{3}{}%
+\contentsline {subsection}{\numberline {0.5.6}Deployment}{3}{}%
+\contentsline {section}{\numberline {0.6}Software Management}{3}{}%
+\contentsline {section}{\numberline {0.7}Evaluation}{3}{}%
+\contentsline {subsection}{\numberline {0.7.1}User Evaluation}{3}{}%
+\contentsline {subsection}{\numberline {0.7.2}Expert Review}{3}{}%
+\contentsline {section}{\numberline {0.8}Future Work}{3}{}%
+\contentsline {subsection}{\numberline {0.8.1}Machine Learning}{3}{}%
+\contentsline {subsection}{\numberline {0.8.2}Frontend}{3}{}%
+\contentsline {subsection}{\numberline {0.8.3}Backend}{3}{}%
+\contentsline {subsection}{\numberline {0.8.4}Deployment}{3}{}%
+\contentsline {section}{\numberline {0.9}Conclusion}{3}{}%
+\contentsline {section}{\numberline {0.10}Appendix A: ABC}{4}{}%
+\contentsline {section}{\numberline {0.11}Appendix B: XYZ}{4}{}%

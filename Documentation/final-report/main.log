@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.12.1)  4 DEC 2024 23:30
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.12.1)  5 DEC 2024 03:51
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -977,7 +977,8 @@ LaTeX Font Info:    Font shape `T1/XCharter-TLF/m/n' will be
 (Font)              scaled to size 10.0pt on input line 46.
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
- (./main.aux)
+
+No file main.aux.
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
@@ -1010,7 +1011,7 @@ LaTeX Info: Redefining \showhyphens on input line 46.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
- (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-bch.cfg
+(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-bch.cfg
 File: mt-bch.cfg 2007/03/03 v1.5 microtype config. file: Bitstream Charter (RS)
 ) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -1213,44 +1214,103 @@ LaTeX Font Info:    Font shape `T1/XCharter-TLF/b/n' will be
  (./pages/technical_solution/system_overview.tex) (./pages/technical_solution/system_architecture.tex) (./pages/technical_solution/data_sources.tex) (./pages/technical_solution/machine_learning.tex) (./pages/technical_solution/frontend.tex
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/b/n' will be
 (Font)              scaled to size 10.0pt on input line 6.
-<images/sketch.jpg, id=23, 869.12202pt x 402.37828pt>
+
+
+./pages/technical_solution/frontend.tex:8: LaTeX Error: Lonely \item--perhaps a missing list environment.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.8 \item \textbf
+                 {Sketches}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \hbox (badness 10000) detected at line 8
+[][]
+ []
+
+<images/sketch.jpg, id=23, 872.8861pt x 406.51875pt>
 File: images/sketch.jpg Graphic file (type jpg)
 <use images/sketch.jpg>
-Package pdftex.def Info: images/sketch.jpg  used on input line 12.
-(pdftex.def)             Requested size: 483.69687pt x 223.9427pt.
+Package pdftex.def Info: images/sketch.jpg  used on input line 14.
+(pdftex.def)             Requested size: 232.17242pt x 108.12393pt.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 13.
+(Font)              scaled to size 9.0pt on input line 15.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/b/n' will be
-(Font)              scaled to size 9.0pt on input line 13.
+(Font)              scaled to size 9.0pt on input line 15.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 13.
-) (./pages/technical_solution/backend.tex) (./pages/technical_solution/deployment.tex)) (./pages/software_management.tex) (./pages/evaluation/_main.tex (./pages/evaluation/user_evaluation.tex) (./pages/evaluation/expert_review.tex)) (./pages/future_work/_main.tex (./pages/future_work/machine_learning.tex) (./pages/future_work/frontend.tex) (./pages/future_work/backend.tex) (./pages/future_work/deployment.tex)) (./pages/conclusion.tex)
+(Font)              scaled to size 9.0pt on input line 15.
+
+./pages/technical_solution/frontend.tex:21: LaTeX Error: Lonely \item--perhaps a missing list environment.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.21 \item \textbf
+                  {Wireframe}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \hbox (badness 10000) detected at line 21
+[][]
+ []
+
+<images/wireframe-home.jpg, id=24, 537.50812pt x 337.63641pt>
+File: images/wireframe-home.jpg Graphic file (type jpg)
+<use images/wireframe-home.jpg>
+Package pdftex.def Info: images/wireframe-home.jpg  used on input line 27.
+(pdftex.def)             Requested size: 232.17242pt x 145.84027pt.
+<images/wireframe-signup.jpg, id=25, 570.25546pt x 356.45673pt>
+File: images/wireframe-signup.jpg Graphic file (type jpg)
+<use images/wireframe-signup.jpg>
+Package pdftex.def Info: images/wireframe-signup.jpg  used on input line 34.
+(pdftex.def)             Requested size: 232.17242pt x 145.12566pt.
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: Reference `fig:wireframe-home' on page 1 undefined on input line 40.
+
+
+LaTeX Warning: Reference `fig:wireframe-signup' on page 1 undefined on input line 40.
+
+
 
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 119.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 40.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 119.
+(Font)              scaled to size 8.0pt on input line 40.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/b/n' will be
-(Font)              scaled to size 8.0pt on input line 119.
+(Font)              scaled to size 8.0pt on input line 40.
 
-LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 119.
+LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 40.
 
 [1
 
 
 
 
-{d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/enc/dvips/xcharter/xch_rydp4l.enc} <./images/sketch.jpg>]
+{d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/enc/dvips/xcharter/xch_rydp4l.enc} <./images/sketch.jpg>]) (./pages/technical_solution/backend.tex) (./pages/technical_solution/deployment.tex)) (./pages/software_management.tex) (./pages/evaluation/_main.tex (./pages/evaluation/user_evaluation.tex) (./pages/evaluation/expert_review.tex)) (./pages/future_work/_main.tex (./pages/future_work/machine_learning.tex) (./pages/future_work/frontend.tex) (./pages/future_work/backend.tex) (./pages/future_work/deployment.tex)) (./pages/conclusion.tex)
 
 
 LaTeX Warning: Reference `LastPage' on page 2 undefined on input line 119.
 
-[2] (./pages/appendix/_main.tex (./pages/appendix/A.tex) (./pages/appendix/B.tex))
+[2 <./images/wireframe-home.jpg> <./images/wireframe-signup.jpg>]
 
 
-LaTeX Warning: Reference `LastPage' on page 3 undefined on input line 122.
+LaTeX Warning: Reference `LastPage' on page 3 undefined on input line 119.
 
-[3
+[3] (./pages/appendix/_main.tex (./pages/appendix/A.tex) (./pages/appendix/B.tex))
+
+
+LaTeX Warning: Reference `LastPage' on page 4 undefined on input line 122.
+
+[4
 
 ]
 
@@ -1283,18 +1343,18 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 26006 strings out of 473330
- 536885 string characters out of 5711019
- 1501550 words of memory out of 5000000
- 48573 multiletter control sequences out of 15000+600000
- 654389 words of font info for 108 fonts, out of 8000000 for 9000
+ 26041 strings out of 473330
+ 537780 string characters out of 5711019
+ 1503559 words of memory out of 5000000
+ 48603 multiletter control sequences out of 15000+600000
+ 655633 words of font info for 114 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 99i,11n,96p,1980b,1748s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,11n,96p,1980b,1750s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/xcharter/XCharter-Bold.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/xcharter/XCharter-Italic.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfss1000.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on main.pdf (7 pages, 290372 bytes).
+Output written on main.pdf (8 pages, 377566 bytes).
 PDF statistics:
- 69 PDF objects out of 1000 (max. 8388607)
- 43 compressed objects within 1 object stream
+ 76 PDF objects out of 1000 (max. 8388607)
+ 45 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 36887 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 39457 words of extra memory for PDF output out of 42996 (max. 10000000)
 

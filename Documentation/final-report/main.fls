@@ -285,9 +285,6 @@ INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcharter/T1X
 INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcharter/T1XCharter-TLF.fd
 INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcharter/T1XCharter-TLF.fd
 INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Roman-tlf-t1.tfm
-INPUT ./main.aux
-INPUT ./main.aux
-INPUT main.aux
 OUTPUT main.aux
 INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-bch.cfg
 INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-bch.cfg
@@ -411,6 +408,40 @@ INPUT ./images/sketch.jpg
 INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Roman-tlf-t1.tfm
 INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Bold-tlf-t1.tfm
 INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Italic-tlf-t1.tfm
+INPUT ./images/wireframe-home.jpg
+INPUT ./images/wireframe-home.jpg
+INPUT ./images/wireframe-home.jpg
+INPUT ./images/wireframe-home.jpg
+INPUT ./images/wireframe-home.jpg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
+INPUT ./images/wireframe-signup.jpg
+INPUT ./images/wireframe-signup.jpg
+INPUT ./images/wireframe-signup.jpg
+INPUT ./images/wireframe-signup.jpg
+INPUT ./images/wireframe-signup.jpg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvro8t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr8t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Roman-tlf-t1.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Bold-tlf-t1.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvro8t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvro8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/public/xcharter/XCharter-Bold-tlf-t1.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Bold-tlf-t1--base.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/enc/dvips/xcharter/xch_rydp4l.enc
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/public/xcharter/XCharter-Bold-tlf-t1.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Bold-tlf-t1--base.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/public/xcharter/XCharter-Italic-tlf-t1.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Italic-tlf-t1--base.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvr8t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/public/xcharter/XCharter-Bold-tlf-t1.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Bold-tlf-t1--base.tfm
 INPUT ./pages/technical_solution/backend.tex
 INPUT ./pages/technical_solution/backend.tex
 INPUT pages/technical_solution/backend.tex
@@ -447,25 +478,6 @@ INPUT pages/future_work/deployment.tex
 INPUT ./pages/conclusion.tex
 INPUT ./pages/conclusion.tex
 INPUT pages/conclusion.tex
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvro8t.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr8t.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Roman-tlf-t1.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Bold-tlf-t1.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvro8t.vf
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvro8r.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/public/xcharter/XCharter-Bold-tlf-t1.vf
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Bold-tlf-t1--base.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/enc/dvips/xcharter/xch_rydp4l.enc
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/public/xcharter/XCharter-Italic-tlf-t1.vf
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Italic-tlf-t1--base.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvr8t.vf
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr8r.tfm
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/public/xcharter/XCharter-Bold-tlf-t1.vf
-INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/xcharter/XCharter-Bold-tlf-t1--base.tfm
 INPUT ./pages/appendix/_main.tex
 INPUT ./pages/appendix/_main.tex
 INPUT pages/appendix/_main.tex
