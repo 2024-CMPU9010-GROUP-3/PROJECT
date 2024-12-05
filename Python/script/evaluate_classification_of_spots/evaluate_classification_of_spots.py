@@ -487,7 +487,7 @@ def draw_clusters_and_labels(image_path, spots, cluster_labels, center_long, cen
 
     cv2.imwrite(image_path, image)
 
-def get_predictions_in_image(model, longitude, latitude):
+def get_predictions_in_image(model, longitude, latitude, directory):
     """
     Detects all the parking spaces in the image (at longitude/latitude) and returns a list of coordinates, agregating
     the cars (of the road) found by the Yolo model and the empty parking spots found (which are drawn and added to the image) 
@@ -496,18 +496,15 @@ def get_predictions_in_image(model, longitude, latitude):
         model : YOLO model
         longitude (float): Longitude value
         latitude (float): Latitude value
+        directory(str): Path to the directory containing the images and the labels in a txt file in the YOLO format 
 
     Returns: 
         all_detections (list): List of all coordinates of parking spots found in the image in the format long, lat, classification
     """
-    output_folder = 'image_output'
-    output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satelite.png')
-    output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
-    output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
-    output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
-
-    #get_images(output_path_satelite_image, longitude, latitude, 'satellite-v9')
-    #get_images(output_path_road_image, longitude, latitude, 'streets-v12')
+    output_path_satelite_image = os.path.join(directory, f'{longitude}_{latitude}_satellite.png')
+    output_path_road_image = os.path.join(directory, f'{longitude}_{latitude}_road.png')
+    output_path_mask_image = os.path.join(directory, f'{longitude}_{latitude}_mask.png')
+    output_path_bb_image = os.path.join(directory, f'{longitude}_{latitude}_bounding_boxes.png')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
