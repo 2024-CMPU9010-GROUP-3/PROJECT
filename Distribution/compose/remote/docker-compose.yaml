@@ -83,7 +83,7 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   frontend-service:
-    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.12.0@sha256:0a610d8a14457e91f07f113e8cf8cd600e1a763a0cab4014a229dfe5611a3ea7
+    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.12.0@sha256:31f89376528ca6275a5bfd95754b9f49764da3af79ac7766f38e773db6340d68
     container_name: frontend
     depends_on:
       private-service:
