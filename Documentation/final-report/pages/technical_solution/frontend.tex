@@ -56,6 +56,21 @@ The frontend of the Magpie project is central to delivering a seamless, responsi
         \item  \textbf{API Integration:}
         The frontend communicates with a \emph{Go} backend via \emph{REST APIs} to fetch, update, and display data. Authentication is handled through JSON Web Tokens (JWT), ensuring secure access.
     \end{enumerate}
+    \item \textbf{Data Management and State Handling:}\\
+    Efficient state management is critical for a responsive frontend application. Magpie employs a combination of React Query and Zod to handle data fetching, validation, and state management.\\
+    \begin{enumerate}
+        \item \textbf{React Query:}\\
+        \begin{itemize}
+            \item React Query simplifies the process of fetching, caching, and synchronizing data between the client and backend. It ensures that users always have access to the latest data without unnecessary reloads.
+            \item Features such as background updates and optimistic rendering enhance the user experience by providing real-time feedback during interactions, such as updating map layers or filtering amenities.
+        \end{itemize}
+        \item \textbf{Data Validation with Zod:}\\
+        \begin{itemize}
+            \item \textbf{Zod} a TypeScript-first schema declaration and validation library, ensures the integrity of data passed between the frontend and backend. By validating API responses and user inputs, Zod prevents errors and enhances the platform's robustness.
+        \end{itemize}
+        \item  \textbf{API Integration:}
+        The frontend communicates with a \emph{Go} backend via \emph{REST APIs} to fetch, update, and display data. Authentication is handled through JSON Web Tokens (JWT), ensuring secure access.
+    \end{enumerate}
     \item \textbf{User-Centric Features and Functionalities:}
     \begin{enumerate}
         \item \textbf{Interactive Maps:}\\
