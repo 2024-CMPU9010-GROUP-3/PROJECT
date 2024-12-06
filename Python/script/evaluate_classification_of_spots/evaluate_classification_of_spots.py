@@ -4,10 +4,11 @@ import cv2
 import os
 import numpy as np
 import math
+import pandas as pd
+import random
 import csv
 from geopy.distance import geodesic
-from shapely.geometry import box
-
+from sklearn.cluster import DBSCAN
 
 def create_mask(image_path, save_path, threshold=240):
     """
@@ -116,11 +117,9 @@ def detect_parking_spots_in_image(image_path, road_mask_path, output_image_path,
 
                 if road_pixels / total_pixels > 0.5:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is on the road")
-                    cv2.polylines(img, [box_points], isClosed=True, color=(255, 0, 0), thickness=2) #blue if on the road
                 else:
                     print(f"Car at [{x_min}, {y_min}, {x_max}, {y_max}] is not on the road (possibly parked)")
                     detections_parking.append([x_center, y_center, width, height, angle_degrees, orientation])
-                    cv2.polylines(img, [box_points], isClosed=True, color=(0, 0, 255), thickness=2) #red if parked
 
     cv2.imwrite(output_image_path, img)
     return detections_parking
@@ -215,9 +214,9 @@ def calculate_avg_spot_dimensions(cars):
     avg_width_meters = 3.05
     avg_length_meters = 3.05
 
-    return avg_width_meters, avg_length_meters, float(avg_width_pixels), float(avg_length_pixels)
+    return avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels
 
-def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, avg_length_pixels, gap_threshold_meters=12, duplicate_threshold_meters=1, overlap_threshold_meters=1.25):
+def detect_empty_spots(cars, avg_spot_width, avg_spot_length, gap_threshold_meters=12, duplicate_threshold_meters=1, overlap_threshold_meters=1.25):
     """
     Detects empty spots in a group of parked cars in an image, based on the detected car bounding box centers.
     There are 4 cases: horizontal in a row, horizontal stacked, vertical in a column and vertical side by side.
@@ -227,8 +226,6 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
         cars (list): List of car bounding box centers with orientation horizontal or vertical
         avg_spot_width (float): Average width of a parking spot in meters
         avg_spot_length (float): Average length of a parking spot in meters
-        avg_width_pixels (float): Average width of a parking spot in pixels
-        avg_length_pixels (float): Average length of a parking spot in pixels
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
         duplicate_threshold_meters (float): Threshold to differenciate between spots that are considered identical in meters
         overlap_threshold_meters (float): Threshold to remove empty spots overlapping with detected cars
@@ -273,31 +270,31 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
                 for j in range(1, num_spots + 1):
                     empty_x_center = x_current + j * (x_next - x_current) / (num_spots + 1)
                     empty_y_center = y_current + j * (y_next - y_current) / (num_spots + 1)
-                    empty_spots.append((empty_x_center, empty_y_center, avg_width_pixels, avg_length_pixels, angle_degrees, alignment))
+                    empty_spots.append(([empty_x_center, empty_y_center], angle_degrees, alignment))
                     print(f"Empty parking spot at {empty_x_center}, {empty_y_center}")
 
     find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters) #Horizontal spots in a row
     find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters)  #Vertical spots in columns
 
-    empty_spots = sorted(empty_spots, key=lambda spot: (spot[0], spot[1]))
+    empty_spots = sorted(empty_spots, key=lambda spot: (spot[0][0], spot[0][1]))
     unique_empty_spots = []
 
     for i, spot in enumerate(empty_spots):
         if i == 0:
             unique_empty_spots.append(spot)
         else:
-            distance_to_prev = geodesic((spot[1], spot[0]), (empty_spots[i - 1][1], empty_spots[i - 1][0])).meters
+            distance_to_prev = geodesic((spot[0][1], spot[0][0]), (empty_spots[i - 1][0][1], empty_spots[i - 1][0][0])).meters
             
-            if distance_to_prev >= duplicate_threshold_meters or spot[5] != empty_spots[i - 1][5]:
+            if distance_to_prev >= duplicate_threshold_meters or spot[2] != empty_spots[i - 1][2]:
                 unique_empty_spots.append(spot)
-            #else:
-                #print(f"Removed spot at {spot[0]}, {spot[1]} due to proximity to {empty_spots[i - 1][0]}, {empty_spots[i - 1][1]}. Distance: {distance_to_prev:.2f}")
+            else:
+                print(f"Removed spot at {spot[0]} due to proximity to {empty_spots[i - 1][0]}. Distance: {distance_to_prev:.2f}")
 
 
     filtered_empty_spots = []
 
     for empty_spot in unique_empty_spots:
-        empty_x, empty_y = empty_spot[0], empty_spot[1] 
+        empty_x, empty_y = empty_spot[0]
         overlap = False
         for car in cars:
             car_x, car_y, _, _, _, _ = car
@@ -333,9 +330,9 @@ def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_
 
     filtered_empty_spots = []
     
-    for long, lat, width, length, rotation, alignment in empty_spots:
-        x_center, y_center = convert_coordinates_to_bounding_box(long, lat, center_long, center_lat)
-        
+    for spot, rotation, alignment in empty_spots:
+        x_center, y_center = convert_coordinates_to_bounding_box(spot[0], spot[1], center_long, center_lat)
+
         if alignment == 'horizontal':
             x_min = int(x_center - avg_spot_width / 2)
             x_max = int(x_center + avg_spot_width / 2)
@@ -352,66 +349,125 @@ def filter_empty_spots_on_road(empty_spots, road_mask_path, center_long, center_
         total_pixels = car_region.size
 
         if total_pixels > 0 and road_pixels / total_pixels <= 0.4:
-            filtered_empty_spots.append((long, lat, width, length, rotation, alignment))
+            filtered_empty_spots.append((spot[0], spot[1], avg_spot_width, avg_spot_length, rotation, alignment))
 
     return filtered_empty_spots
 
 
-def draw_empty_spots_on_image_original(image_path, empty_spots, center_long, center_lat, avg_spot_width, avg_spot_length):
+def classify_parking_spots(all_parking_spots, road_mask_path, center_long, center_lat, road_proximity_threshold=30, parking_lot_min_spots=18, clustering_eps=55, clustering_min_samples=5):
     """
-    Original function which seems to work better even though it doesn't take the rotation into account
-    Draws the empty parking spots on the image
+    Classifies parking spots as public(on the street parking), private(residential) or parking lot based on their proximity to the road (calculated using the road mask).
+    Parking lots are identified through clustering using DBSCAN
 
     Params:
-        image_path (str): Path to the image
-        empty_spots (list): List of empty parking spots' center coordinates
+        all_parking_spots (list): List of all parking spots(by the model and then the empty parking detection) 
+        road_mask_path (string): Path to road mask
         center_long (float): Longitude of the center of the image
-        center_lat (float): Latitude of the center of the image.
-        avg_spot_width (float): Average width of a parking spot in pixels
-        avg_spot_length (float): Average length of a parking spot in pixels
+        center_lat (float): Latitude of the center of the image
+        road_proximity_threshold (int): Threshold in pixels to classify a spot near the road as public
+        parking_lot_min_spots (int): Minimum number of spots in a cluster to classify it as a parking lot
+        clustering_eps (float): Maximum distance between spots in pixels to form a cluster
+        clustering_min_samples (int): Minimum number of samples to form a cluster
+
+    Returns:
+        classified_spots (list): List of parking spots with classification added
+    """
+    classified_spots = []
+
+    road_mask = cv2.imread(road_mask_path, cv2.IMREAD_GRAYSCALE)
+    road_contours, _ = cv2.findContours(road_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    #print(center_long, center_lat)
+    pixel_coords = []
+
+    for long, lat, _, _, _, _ in all_parking_spots:
+        x_center, y_center = convert_coordinates_to_bounding_box(long, lat, center_long, center_lat)
+        pixel_coords.append([x_center, y_center])
+
+    clustering = DBSCAN(eps=clustering_eps, min_samples=clustering_min_samples).fit(pixel_coords)
+    labels = clustering.labels_
+
+    for idx, spot in enumerate(all_parking_spots):
+        x_center, y_center = pixel_coords[idx]
+        cluster_label = labels[idx]
+
+        min_distance = float("inf")
+
+        for contour in road_contours:
+            distance = cv2.pointPolygonTest(contour, (x_center, y_center), measureDist=True)
+            min_distance = min(min_distance, abs(distance))
+
+        classification = 1 #private
+
+        if min_distance <= road_proximity_threshold:
+            classification = 2 #public
+
+        if cluster_label != -1:
+            cluster_size = np.sum(labels == cluster_label)
+            if cluster_size >= parking_lot_min_spots:
+                classification = 0 #parking lot
+
+        classified_spots.append([pixel_coords[idx][0], pixel_coords[idx][1], spot[2], spot[3], spot[5], classification])
+        #print(classification)
+
+    return classified_spots
+
+def draw_classification(image_path, spots):
+    """
+    Draws cluster labels and classifications labels on the image for each spot.
+
+    Params:
+        image_path (str): Path of the image
+        spots (list): List of parking spot coordinates and classification labels (public, private or parking lot)
+        cluster_labels (list): List of cluster labels corresponding to each spot
+        center_long (float): Longitude of the center of the image
+        center_lat (float): Latitude of the center of the image
     """
     image = cv2.imread(image_path)
 
-    for long, lat, _, _, _, alignment  in empty_spots:
-        x_pixel, y_pixel = convert_coordinates_to_bounding_box(long, lat, center_long, center_lat)
-        
-        if alignment == 'horizontal':
-            x1 = int(x_pixel - avg_spot_width // 2)
-            y1 = int(y_pixel - avg_spot_length // 2)
-            x2 = int(x_pixel + avg_spot_width // 2)
-            y2 = int(y_pixel + avg_spot_length // 2)
-        else: 
-            x1 = int(x_pixel - avg_spot_length // 2)
-            y1 = int(y_pixel - avg_spot_width // 2)
-            x2 = int(x_pixel + avg_spot_length // 2)
-            y2 = int(y_pixel + avg_spot_width // 2)  
-        
-        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+    for x_pixel, y_pixel, width, height, orientation, classification in spots:
+
+        if orientation == "horizontal":
+            x1 = int(x_pixel - width // 2)
+            y1 = int(y_pixel - height // 2)
+            x2 = int(x_pixel + width // 2)            
+            y2 = int(y_pixel + height // 2)
+        else:
+            x1 = int(x_pixel - height // 2)
+            y1 = int(y_pixel - width // 2)
+            x2 = int(x_pixel + height // 2)            
+            y2 = int(y_pixel + width // 2)
+            
+
+        if classification == 1: #Draw private in red
+            color = (0, 0, 255)
+        elif classification == 2:  #Draw public in green
+            color = (0, 255, 0)
+        elif classification == 0: #Draw parking lot in blue
+            color = (255, 0, 0) 
+
+        cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
 
     cv2.imwrite(image_path, image)
 
-
-def get_empty_parking_in_image(model, longitude, latitude, directory):
+def get_predictions_in_image(model, longitude, latitude, directory):
     """
     Detects all the parking spaces in the image (at longitude/latitude) and returns a list of coordinates, agregating
-    the cars (of the road) found by the Yolo model and the empty parking spots found (which are drawn and added to the image).
-    It returns only the empty parking spots found for evaluation. 
+    the cars (of the road) found by the Yolo model and the empty parking spots found (which are drawn and added to the image) 
 
     Params:
         model : YOLO model
         longitude (float): Longitude value
         latitude (float): Latitude value
-        directory(str): Path to the directory containing the images and the labels in json format 
-
+        directory(str): Path to the directory containing the images and the labels in a txt file in the YOLO format 
 
     Returns: 
-        all_detections (list): List of all empty parking spots detected in the image in the format log, lat, width, height, angle, orientation
+        all_detections (list): List of all coordinates of parking spots found in the image in the format long, lat, classification
     """
-    output_folder = directory
-    output_path_satelite_image = os.path.join(output_folder, f'{longitude}_{latitude}_satellite.png')
-    output_path_road_image = os.path.join(output_folder, f'{longitude}_{latitude}_road.png')
-    output_path_mask_image = os.path.join(output_folder, f'{longitude}_{latitude}_mask.png')
-    output_path_bb_image = os.path.join(output_folder, f'{longitude}_{latitude}_bounding_boxes.png')
+    output_path_satelite_image = os.path.join(directory, f'{longitude}_{latitude}_satellite.png')
+    output_path_road_image = os.path.join(directory, f'{longitude}_{latitude}_road.png')
+    output_path_mask_image = os.path.join(directory, f'{longitude}_{latitude}_mask.png')
+    output_path_bb_image = os.path.join(directory, f'{longitude}_{latitude}_bounding_boxes.png')
 
     create_mask(output_path_road_image, output_path_mask_image)
     detections = detect_parking_spots_in_image(output_path_satelite_image, output_path_mask_image, output_path_bb_image, model)
@@ -432,37 +488,14 @@ def get_empty_parking_in_image(model, longitude, latitude, directory):
 
     if all_detections:
         avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels = calculate_avg_spot_dimensions(all_detections)
-        empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters, avg_width_pixels, avg_length_pixels)
+        empty_spots = detect_empty_spots(all_detections, avg_width_meters, avg_length_meters)
         empty_spots_filtered = filter_empty_spots_on_road(empty_spots, output_path_mask_image, longitude, latitude, avg_width_pixels, avg_length_pixels)
         #print(f'Filtered spots after road mask: {len(empty_spots_filtered)}')
-        draw_empty_spots_on_image_original(output_path_bb_image, empty_spots_filtered, longitude, latitude, avg_width_pixels, avg_length_pixels)
-    
-    return empty_spots_filtered
-
-
-def get_predictions_in_image(model, long, lat, directory):
-    """
-    Returns all empty parking spot predictions in an image in the correct format (with the pixel coordinates needed for evaluation)
-
-    Params:
-        model : YOLO model
-        longitude (float): Longitude value of the image
-        latitude (float): Latitude value of the image
-        directory(str): Path to the directory containing the images and the labels in json format 
-
-
-    Returns:
-            empty_detections (list): List of all the empty parking spots found in the image in the format x, y, width, height, orientation (x and y being pixel values)
-    """
-    empty_detections = []
-
-    detections = get_empty_parking_in_image(model, long, lat, directory)
-    for x_center, y_center, width, height, _, orientation in detections:
-        x_pixel, y_pixel =  convert_coordinates_to_bounding_box(x_center, y_center, long, lat)
-        empty_detections.append([x_pixel, y_pixel, width, height, orientation])
-
-    return empty_detections
-
+        all_detections.extend(empty_spots_filtered)
+        all_detections = classify_parking_spots(all_detections, output_path_mask_image, longitude, latitude)
+        draw_classification(output_path_bb_image, all_detections)
+        all_detections = [[x_pixel, y_pixel, width, height, classification] for x_pixel, y_pixel, width, height, _, classification in all_detections]
+    return all_detections
 
 def get_true_labels(long, lat, directory, image_width=400, image_height=400):
     """
@@ -492,55 +525,6 @@ def get_true_labels(long, lat, directory, image_width=400, image_height=400):
             for line in file:
                 parts = line.strip().split()
                 
-                if len(parts) != 6:
-                    print(f"Warning: Skipping line due to unexpected format: {line}")
-                    continue
-                
-                try:
-                    x_pixel = float(parts[1])*image_width #the values given by label studio are normalized and we want the denormalized values to compare with the predictions
-                    y_pixel = float(parts[2])*image_height
-                    width = float(parts[3])*image_width
-                    height = float(parts[4])*image_height
-                    orientation = parts[5]
-                    true_labels.append([x_pixel, y_pixel, width, height, orientation])
-                except ValueError:
-                    print(f"Warning: Invalid data format in line: {line}")
-                    continue
-    except IOError as e:
-        print(f"Error reading file {true_labels_file}: {e}")
-
-    return true_labels
-
-def get_true_labels_automatic_orientation_labelling(long, lat, directory, image_width=400, image_height=400):
-    """
-    Retrieve the true labels for a specific image.
-    The orientation is automatically labelled and the writen in the file
-
-    Params:
-        long (float): Longitude of the image
-        lat (float): Latitude of the image
-        directory(str): Path to the directory containing the images and the labels in a txt file in the YOLO format 
-        image_width (int): Image width in pixels
-        image_height (int): Image height in pixels
-
-    Returns:
-        true_labels (list): List of true labels bounding boxes in the format x_pixel, y_pixel, width, height, orientation
-    """
-    true_labels_file = f"{long}_{lat}_satellite.txt"
-    file_path = os.path.join(directory, true_labels_file)
-
-    if not os.path.exists(file_path):
-        print(f"Error: Label file {true_labels_file} does not exist in {directory}.")
-        return []
-
-    true_labels = []
-    updated_lines = []
-
-    try:
-        with open(file_path, 'r') as file:
-            for line in file:
-                parts = line.strip().split()
-                
                 if len(parts) != 5:
                     print(f"Warning: Skipping line due to unexpected format: {line}")
                     continue
@@ -550,26 +534,15 @@ def get_true_labels_automatic_orientation_labelling(long, lat, directory, image_
                     y_pixel = float(parts[2])*image_height
                     width = float(parts[3])*image_width
                     height = float(parts[4])*image_height
-                    if width >= height:
-                        orientation = "horizontal"
-                    else:
-                        orientation = "vertical"
-                    true_labels.append([x_pixel, y_pixel, width, height, orientation])
-
-                    updated_line = f"{parts[0]} {parts[1]} {parts[2]} {parts[3]} {parts[4]} {orientation}"
-                    updated_lines.append(updated_line)
-
+                    classification = int(parts[0])
+                    true_labels.append([x_pixel, y_pixel, width, height, classification])
                 except ValueError:
                     print(f"Warning: Invalid data format in line: {line}")
                     continue
-
-        with open(file_path, 'w') as file:
-            file.write("\n".join(updated_lines))
     except IOError as e:
         print(f"Error reading file {true_labels_file}: {e}")
 
     return true_labels
-
 
 def draw_true_labels(true_labels, directory, longitude, latitude):
     """
@@ -584,22 +557,28 @@ def draw_true_labels(true_labels, directory, longitude, latitude):
     image_path = os.path.join(directory, f'{longitude}_{latitude}_bounding_boxes.png')
     image = cv2.imread(image_path)
 
-    for x_pixel, y_pixel, width, height, _ in true_labels:#here we don't need the orientation as in the labelling the width and height are correct (but in the model predictions width is almost always larger than height)
+    for x_pixel, y_pixel, width, height, classification in true_labels:
         
         x1 = int(x_pixel - width // 2)
         y1 = int(y_pixel - height // 2)
         x2 = int(x_pixel + width // 2)            
         y2 = int(y_pixel + height // 2)
 
-        cv2.rectangle(image, (x1, y1), (x2, y2), (180, 105, 255), 2)
+        if classification == 1: #Draw private true labels in pink
+            color = (180, 105, 255)
+        elif classification == 2:  #Draw public true labels in teal
+            color = (128, 128, 0)
+        elif classification == 0: #Draw parking lot true label in cyan
+            color = (255, 255, 0) 
+
+        cv2.rectangle(image, (x1, y1), (x2, y2), color, 2)
 
     cv2.imwrite(image_path, image)
 
-def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
+def evaluate_predictions(predictions, true_labels, iou_threshold=0.4):
     """
     Evaluates our predictions in an image with the true labels
-    Returns Average IoU, Precision, Recall, F1 score, Orientation Accuracy, 
-    Spot Detection Ratio, Spot Detection Error, False Positive Rate, False Negative Rate
+    Returns Average IoU, Precision, Recall, F1 Score, Accuracy, Specificity per class and the overall Balanced Accuracy.
 
     Params:
         predictions (list): List of predictions
@@ -607,17 +586,14 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
         iou_threshold (float): IoU threshold to consider a prediction correct
 
     Returns:
-        avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr (float): Average IoU, Precision, Recall, F1 score, Orientation Accuracy, Spot Detection Ratio, Spot Detection Error, FPR, FNR
+        avg_iou, precision_parked, recall_parked, f1_score_parked, accuracy_parked, specificity_parked, precision_road, recall_road, f1_score_road, accuracy_road, specificity_road, balanced_accuracy (float): Metrics per class and overall balanced average and average iou
     """
 
     def calculate_iou(box1, box2):
         """Calculates IoU for two bounding boxes.
         Box1 is the predictions and box2 is the true label"""
-        x1, y1, w1, h1, orientation = box1
-        x2, y2, w2, h2, _ = box2
-
-        if orientation == 'vertical':
-            w1, h1 = h1, w1  #swap width and height in the vertical case for the model predictions
+        x1, y1, w1, h1 = box1
+        x2, y2, w2, h2 = box2
 
         box1_tl = (x1 - w1 / 2, y1 - h1 / 2)
         box1_br = (x1 + w1 / 2, y1 + h1 / 2)
@@ -640,66 +616,84 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
 
         return intersection_area / union_area
 
-    true_positives = 0
-    false_positives = 0
-    false_negatives = 0
+    all_classes = set([p[4] for p in predictions] + [t[4] for t in true_labels])# we dynamically set the number of classes to handle the cases when not all classes are present in the image
+
+    true_positives = {cls: 0 for cls in all_classes}
+    false_positives = {cls: 0 for cls in all_classes}
+    false_negatives = {cls: 0 for cls in all_classes}
+    true_negatives = {cls: 0 for cls in all_classes}
     iou_scores = []
-    orientation_matches = 0
 
     matched_labels = set()
 
-    #For each predictions find the closest label and compare
     for pred in predictions:
         best_iou = 0
         best_match = None
+        pred_box, pred_class = pred[:4], pred[4]
         for i, gt in enumerate(true_labels):
-            iou = calculate_iou(pred, gt)
-            if iou > best_iou:
+            gt_box, gt_class = gt[:4], gt[4]
+            iou = calculate_iou(pred_box, gt_box)
+            if iou > best_iou and pred_class == gt_class:
                 best_iou = iou
                 best_match = i
 
         if best_iou >= iou_threshold:
             if best_match not in matched_labels:
-                true_positives += 1
+                true_positives[pred_class] += 1
                 iou_scores.append(best_iou)
                 matched_labels.add(best_match)
+        else:
+            false_positives[pred_class] += 1
 
-                if pred[4] == true_labels[best_match][4]:
-                    orientation_matches += 1
+    for i, gt in enumerate(true_labels):
+        gt_class = gt[4]
+        if i not in matched_labels:
+            false_negatives[gt_class] += 1
 
-    false_positives = len(predictions) - true_positives
-    false_negatives = len(true_labels) - len(matched_labels)
+    for cls in all_classes:
+        true_negatives[cls] = sum(
+            len(true_labels) - true_positives[c] - false_negatives[c] - false_positives[c]
+            for c in all_classes if c != cls
+        )
 
-    precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
-    recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0
-    f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0
+    metrics_per_class = {}
+
+    for cls in all_classes:
+        tp = true_positives[cls]
+        fp = false_positives[cls]
+        fn = false_negatives[cls]
+        tn = true_negatives[cls]
+
+        precision = tp / (tp + fp) if (tp + fp) > 0 else (None if tp == 0 and fp == 0 else 0)
+        recall = tp / (tp + fn) if (tp + fn) > 0 else (None if tp == 0 and fn == 0 else 0)
+        f1_score = 2 * (precision * recall) / (precision + recall) if precision is not None and recall is not None and (precision + recall) > 0 else 0
+        accuracy = (tp + tn) / (tp + fp + fn + tn) if (tp + fp + fn + tn) > 0 else (None if tp + tn == 0 and fp + fn == 0 else 0)
+        specificity = tn / (tn + fp) if (tn + fp) > 0 else (None if tn == 0 and fp == 0 else 0)
+
+        metrics_per_class[cls] = {
+            "precision": precision,
+            "recall": recall,
+            "f1_score": f1_score,
+            "accuracy": accuracy,
+            "specificity": specificity
+        }
+
+    balanced_accuracy = sum(
+        (metrics_per_class[cls]["recall"] if metrics_per_class[cls]["recall"] is not None else 0) +
+        (metrics_per_class[cls]["specificity"] if metrics_per_class[cls]["specificity"] is not None else 0)
+        for cls in all_classes
+    ) / (2 * len(all_classes))
+
     avg_iou = sum(iou_scores) / len(iou_scores) if iou_scores else 0
-    orientation_accuracy = orientation_matches / len(true_labels) if len(true_labels) > 0 else 0
 
-    nb_predictions = len(predictions)
-    nb_true_labels = len(true_labels)
-    spot_detection_ratio = nb_predictions / nb_true_labels if nb_true_labels > 0 else 0
-    spot_detection_error = abs(nb_predictions - nb_true_labels)
+    #print(metrics_per_class)
 
-    fpr = false_positives / (false_positives + true_positives) if (false_positives + true_positives) > 0 else 0
-    fnr = false_negatives / (false_negatives + true_positives) if (false_negatives + true_positives) > 0 else 0
+    return avg_iou, metrics_per_class, balanced_accuracy
 
-    #print(true_positives, false_positives, false_negatives)
-
-    #for labels in true_labels:
-    #    for pred in predictions:
-    #        iou = calculate_iou(labels, pred)
-    #        print(f"True Labels: {labels}, Predictions: {pred}, IoU: {iou}")
-
-    return avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr
-
-
-def main(directory, output_file="metrics_empty_parking_detection.csv"):
+def main(directory, output_file="metrics_spots_classification.csv"):
     """
-    Main function to evaluate the empty parking detction on the test images and calculate the corresponding performance metrics
-    Saves Averages of IoU, Precision, Recall, F1 score, Orientation Accuracy, 
-    Spot Detection Ratio, Spot Detection Error, False Positive Rate and False Negative Rate in a csv file for each
-    image as well as the overall average metrics.
+    Main function to evaluate the classification of cars into on the road vs parked on the test images and calculate the corresponding performance metrics
+    Saves all metrics in a csv file for each image as well as the overall average metrics.
 
     Params:
         directory(str): Path to the directory containing the images and the labels in json format 
@@ -727,96 +721,76 @@ def main(directory, output_file="metrics_empty_parking_detection.csv"):
 
     metrics = {
         "iou": [],
-        "precision": [],
-        "recall": [],
-        "f1_score": [],
-        "orientation_accuracy": [],
-        "spot_detection_ratio": [],
-        "spot_detection_error": [],
-        "fpr": [],
-        "fnr": []
+        "balanced_accuracy": [],
     }
+    classes = [0, 1, 2]
+    for cls in classes:
+        metrics.update({
+            f"precision_{cls}": [],
+            f"recall_{cls}": [],
+            f"f1_score_{cls}": [],
+            f"accuracy_{cls}": [],
+            f"specificity_{cls}": [],
+        })
 
     image_metrics = []
 
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
-        #true_labels = get_true_labels_automatic_orientation_labelling(long, lat, directory)
-        if not predictions and not true_labels:# when there are no detections and no true labels we want to skip the calculation of the metrics
-            continue
         draw_true_labels(true_labels, directory, long, lat)
-        #print(predictions)
+        if not predictions and not true_labels:  #skip images if there are no detections and no true labels
+            continue
         #print(true_labels)
+        #print(predictions)
 
-        iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr = evaluate_predictions(predictions, true_labels)
+        avg_iou, per_class_metrics, balanced_accuracy = evaluate_predictions(predictions, true_labels)
 
-        metrics["iou"].append(iou)
-        metrics["precision"].append(precision)
-        metrics["recall"].append(recall)
-        metrics["f1_score"].append(f1_score)
-        metrics["orientation_accuracy"].append(orientation_accuracy)
-        metrics["spot_detection_ratio"].append(spot_detection_ratio)
-        metrics["spot_detection_error"].append(spot_detection_error)
-        metrics["fpr"].append(fpr)
-        metrics["fnr"].append(fnr)
+        metrics["iou"].append(avg_iou)
+        for cls in classes:
+            if cls in per_class_metrics:
+                cls_metrics = per_class_metrics[cls]
+                metrics[f"precision_{cls}"].append(cls_metrics["precision"])
+                metrics[f"recall_{cls}"].append(cls_metrics["recall"])
+                metrics[f"f1_score_{cls}"].append(cls_metrics["f1_score"])
+                metrics[f"accuracy_{cls}"].append(cls_metrics["accuracy"])
+                metrics[f"specificity_{cls}"].append(cls_metrics["specificity"])
 
-        image_metrics.append({
-            "longitude": long,
+        metrics["balanced_accuracy"].append(balanced_accuracy)
+
+        image_metrics.append({"longitude": long,
             "latitude": lat,
-            "iou": iou,
-            "precision": precision,
-            "recall": recall,
-            "f1_score": f1_score,
-            "orientation_accuracy": orientation_accuracy,
-            "spot_detection_ratio": spot_detection_ratio,
-            "spot_detection_error": spot_detection_error,
-            "fpr": fpr,
-            "fnr": fnr
-        })
+            "iou": avg_iou,
+            **{f"precision_{cls}": per_class_metrics[cls]["precision"] if cls in per_class_metrics else None for cls in classes},
+            **{f"recall_{cls}": per_class_metrics[cls]["recall"] if cls in per_class_metrics else None for cls in classes},
+            **{f"f1_score_{cls}": per_class_metrics[cls]["f1_score"] if cls in per_class_metrics else None for cls in classes},
+            **{f"accuracy_{cls}": per_class_metrics[cls]["accuracy"] if cls in per_class_metrics else None for cls in classes},
+            **{f"specificity_{cls}": per_class_metrics[cls]["specificity"] if cls in per_class_metrics else None for cls in classes},
+            "balanced_accuracy": balanced_accuracy})
 
-        print(f"Metrics for image {long}, {lat}: IoU={iou:.2f}, Precision={precision:.2f}, Recall={recall:.2f}, F1 Score={f1_score:.2f}, Orientation Accuracy={orientation_accuracy:.2f}, Spot Detection Ratio={spot_detection_ratio:.2f}, Spot Detection Error={spot_detection_error:.2f}, FPR={fpr:.2f}, FNR={fnr:.2f}")
+        print(f"Metrics for image {long}, {lat}: IoU={avg_iou}")
+        for cls in classes:
+            if cls in per_class_metrics:
+                print(f"  {cls} - Precision={per_class_metrics[cls]['precision']}, Recall={per_class_metrics[cls]['recall']}, F1 Score={per_class_metrics[cls]['f1_score']}, Accuracy={per_class_metrics[cls]['accuracy']}, Specificity={per_class_metrics[cls]['specificity']}")
+        print(f"Balanced Accuracy={balanced_accuracy}")
 
-    avg_iou = sum(metrics["iou"]) / len(metrics["iou"])
-    avg_precision = sum(metrics["precision"]) / len(metrics["precision"])
-    avg_recall = sum(metrics["recall"]) / len(metrics["recall"])
-    avg_f1 = sum(metrics["f1_score"]) / len(metrics["f1_score"])
-    avg_orientation_accuracy = sum(metrics["orientation_accuracy"]) / len(metrics["orientation_accuracy"])
-    avg_SDR = sum(metrics["spot_detection_ratio"]) / len(metrics["spot_detection_ratio"])
-    avg_SDE = sum(metrics["spot_detection_error"]) / len(metrics["spot_detection_error"])
-    avg_FPR = sum(metrics["fpr"]) / len(metrics["fpr"])
-    avg_FNR = sum(metrics["fnr"]) / len(metrics["fnr"])
-
-    overall_metrics = {
-        "longitude": "Overall",
-        "latitude": "Metrics",
-        "iou": avg_iou,
-        "precision": avg_precision,
-        "recall": avg_recall,
-        "f1_score": avg_f1,
-        "orientation_accuracy": avg_orientation_accuracy,
-        "spot_detection_ratio": avg_SDR,
-        "spot_detection_error": avg_SDE,
-        "fpr": avg_FPR,
-        "fnr": avg_FNR
-    }
+    overall_metrics = {key: np.nanmean([value for value in values if value is not None]) if len(values) > 0 else None for key, values in metrics.items()}
+    overall_metrics["longitude"] = "Overall"
+    overall_metrics["latitude"] = "Metrics"
 
     print("Overall Metrics:")
-    print(f"Average IoU: {avg_iou:.2f}")
-    print(f"Average Precision: {avg_precision:.2f}")
-    print(f"Average Recall: {avg_recall:.2f}")
-    print(f"Average F1 Score: {avg_f1:.2f}")
-    print(f"Average Orientation Accuracy: {avg_orientation_accuracy:.2f}")
-    print(f"Average Spot Detection Ratio (SDR): {avg_SDR:.2f}")
-    print(f"Average Spot Detection Error (SDE): {avg_SDE:.2f}")
-    print(f"Average False Positive Rate (FPR): {avg_FPR:.2f}")
-    print(f"Average False Negative Rate (FNR): {avg_FNR:.2f}")
+    print("0: Parking lot, 1: Private, 2: Public")
+    for key, value in overall_metrics.items():
+        if key not in {"longitude", "latitude"}:
+            if value is not None:
+                print(f"Average {key.replace('_', ' ').title()}: {value:.2f}")
+            else:
+                print(f"Average {key.replace('_', ' ').title()}: None")
 
+    fieldnames = ["longitude", "latitude", "iou", *[f"{metric}_{cls}" for cls in classes for metric in ["precision", "recall", "f1_score", "accuracy", "specificity"]], "balanced_accuracy"]
+    
     with open(output_file, mode="w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=[
-            "longitude", "latitude", "iou", "precision", "recall", "f1_score", "orientation_accuracy",
-            "spot_detection_ratio", "spot_detection_error", "fpr", "fnr"
-        ])
+        writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(image_metrics)
         writer.writerow(overall_metrics)
@@ -824,4 +798,4 @@ def main(directory, output_file="metrics_empty_parking_detection.csv"):
     print(f"Metrics saved to {output_file}")
 
 if __name__ == "__main__":
-    main("all_test_images")
+    main("classification_test_set")
