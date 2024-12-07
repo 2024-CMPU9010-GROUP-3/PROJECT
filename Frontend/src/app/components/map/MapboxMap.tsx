@@ -672,6 +672,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       setSliderValueDisplay(radius / 100);
       setMarkerIsVisible(true);
       setAmenitiesFilter(() => types);
+      setViewState((prevState) => ({
+        ...prevState,
+        zoom: 11,
+      }));
       //},1000);
     }
   }, [searchParams]);
