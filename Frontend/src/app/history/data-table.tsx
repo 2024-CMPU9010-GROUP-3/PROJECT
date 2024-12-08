@@ -14,7 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { DataTableProps } from "@/lib/interfaces/types";
 
 export function DataTable<TData>({
@@ -62,7 +61,7 @@ export function DataTable<TData>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="py-4 px-6 text-sm font-semibold text-gray-700"
+                    className="py-4 px-6 text-sm font-semibold text-gray-700 whitespace-nowrap"
                   >
                     {header.isPlaceholder
                       ? null
@@ -102,22 +101,17 @@ export function DataTable<TData>({
               <TableRow>
                 <TableCell
                   colSpan={table.getAllColumns().length}
-                  className="h-24 text-center"
-                >
-                  {data ? (
-                    <div className="flex items-center justify-center">
-                      <Loader2 className="h-6 w-6 animate-spin" />
+                  className="h-24 text-center">
+                    <div>
+                      No results found.
                     </div>
-                  ) : (
-                    "No results found."
-                  )}
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="flex items-center justify-end space-x-2 p-4">
         <Button
           variant="outline"
           size="sm"

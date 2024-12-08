@@ -10,7 +10,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { Grid } from "react-loader-spinner";
 import Map, { Layer, LayerProps, Marker, Popup, Source } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Eye, EyeOff, Save, Search } from "lucide-react";
+import { Eye, EyeOff, Loader2, Save, Search } from "lucide-react";
 import Image from "next/image";
 import { useOnborda } from "onborda";
 import { useSession } from "@/app/context/SessionContext";
@@ -46,6 +46,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {useSearchParams} from "next/navigation";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
@@ -144,6 +145,10 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     () => [coordinates?.longitude, coordinates?.latitude],
     [coordinates]
   );
+
+  const searchParams = useSearchParams();
+
+  const [savingMap, setSavingMap] = useState(false);
 
   // Search state
   const [searchValue, setSearchValue] = useState<string>("");
@@ -386,10 +391,22 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       if (!amenitiesFilter?.length) {
         throw new Error("Please select at least one amenity type");
       }
+      setSavingMap(true);
+      console.log();
+      const locationName = await getNameFromLocation()
       const response = await fetch(`/api/history?userid=${sessionUUID}`, {
         method: "POST",
         body: JSON.stringify({
-          amenitytypes: amenitiesFilter,
+          amenitytypes: amenitiesFilter.map(value => {
+            return{
+              count: (
+                pointsGeoJson?.[
+                value
+                ] as GeoJSON.FeatureCollection
+              )?.features?.length || 0,
+              type: value
+            }
+          }),
           longlat: {
             type: "Point",
             coordinates: [
@@ -398,6 +415,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             ],
           },
           radius: sliderValue * 100,
+          displayName: locationName
         }),
         headers: {
           "Content-Type": "application/json",
@@ -419,6 +437,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         description: "Failed to save map",
         variant: "destructive",
       });
+    } finally {
+      setSavingMap(false);
     }
   };
 
@@ -465,6 +485,36 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       setMarkerIsVisible(true);
     }
   };
+
+  const getNameFromLocation = async () => {
+    const response = await fetch(`/api/location-lookup?lat=${coordinates.latitude}&lon=${coordinates.longitude}&format=jsonv2`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        authorization: "Bearer " + sessionToken,
+      },
+    });
+
+    const data = await response.json();
+
+    if(!data.address){
+      return null;
+    }
+
+    const road = data.address.road;
+    const city = data.address.city || data.address.town || data.address.village || data.address.municipality;
+    const country = data.address.country;
+    
+    if(!road && !city){
+      if(country){
+        return `Somewhere in ${country}`;
+      } else {
+        return null;
+      }
+    }
+
+    return [road, city].filter(x => !!x).join(", ")
+  }
 
 
   const fetchPointById = async (id: number) => {
@@ -562,6 +612,36 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   });
 
   useEffect(() => {
+    const paramLon = searchParams.get("marker_long")
+    const paramLat = searchParams.get("marker_lat")
+    const paramRad = searchParams.get("marker_rad")
+    const paramTypes = searchParams.get("marker_types")
+
+    if(!paramLon || !paramLat || !paramRad || !paramTypes){
+      return;
+    }
+    const latitude = parseFloat(paramLat)
+    const longitude = parseFloat(paramLon)
+    const radius = parseInt(paramRad)
+    const types = paramTypes.split(",")
+    
+    if(longitude && latitude && radius && types) {
+      // Reason for this timeout: coordinates getting set to 0,0 after this fires during map load
+      // I think this happens only in the dev environment (strict mode)
+      // If the points are not loading after loading from history, re-enable this timeout
+      // setTimeout(() => {
+        setCoordinates({ latitude, longitude });
+        setSliderValue(radius / 100);
+        setSliderValueDisplay(radius / 100);
+        setMarkerIsVisible(true);
+        setAmenitiesFilter(() =>
+          types
+        );
+      //},1000);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     closeOnborda();
     if (sessionToken && getCookiesAccepted() === false) {
       // Onborda seems to load before the map, so we need to wait a bit before starting the onboarding
@@ -588,20 +668,6 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       <Toaster />
-      {/* Onboarding help button */}
-      <div
-        className="absolute bottom-[5%] left-[1%] z-[999]"
-        id="onboarding-step-3"
-      >
-        <div>
-          <button
-            onClick={() => startOnborda("general-onboarding")}
-            className="mt-2 px-4 py-2 bg-white text-gray-800 rounded-full shadow-md"
-          >
-            {"?"}
-          </button>
-        </div>
-      </div>
       {/* Map Container - Taller on mobile */}
       <div
         className="
@@ -876,10 +942,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
+                              disabled={savingMap}
                               className="w-15 mx-auto bg-neutral-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
                               onClick={handleSaveMap}
                             >
-                              <Save size={16} />
+                              {savingMap ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>

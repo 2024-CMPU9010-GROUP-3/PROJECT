@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nominatim
-          image: mediagis/nominatim:4.5
+          image: mediagis/nominatim:4.5@sha256:d6a1f644ebec735839936fee5f1557500f29980446f15df6fbb86ff1cbddc74e
           resources: {}
           ports:
             - containerPort: 8080

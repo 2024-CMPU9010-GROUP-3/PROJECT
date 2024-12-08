@@ -2,7 +2,7 @@ name: magpie
 
 services:
   postgis-service:
-    image: postgis/postgis:17-3.5-alpine
+    image: postgis/postgis:17-3.5-alpine@sha256:d9380cc7c99ab83a5abe1143f9e62cdd4f7ba09f3ab834dd14be58c2d69d51ae
     container_name: postgis
     environment:
       - POSTGRES_USER=postgres
@@ -21,7 +21,7 @@ services:
 
   nominatim:
     container_name: nominatim
-    image: mediagis/nominatim:4.5
+    image: mediagis/nominatim:4.5@sha256:d6a1f644ebec735839936fee5f1557500f29980446f15df6fbb86ff1cbddc74e
     ports:
       - "8084:8080"
     environment:
@@ -35,7 +35,7 @@ services:
     shm_size: 1gb
 
   private-service:
-    image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.12.0@sha256:e99289cac03d606d15f7f61f8b55fad7f80c2eede21ad81ac7811256eebc7d4a
+    image: ghcr.io/2024-cmpu9010-group-3/backend-private:0.12.0@sha256:a2543890e106064d399625cb048736e84b573b7a4ed2ef3ffb7c19b030b81fb4
     container_name: private-backend
     depends_on:
       postgis-service:
@@ -59,7 +59,7 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   public-service:
-    image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.12.0@sha256:ce873e67bcfdb8000d2770da4ff8ed198ff252cd83f14f3dd755457953180b24
+    image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.12.0@sha256:3cd940e0fe31d7779701d7f462bf6a88a8c0cfb17c05c38b74d4a38e9248e432
     container_name: public-backend
     depends_on:
       postgis-service:
@@ -83,7 +83,7 @@ services:
       - MAGPIE_CORS_ALLOWED_METHODS=GET POST PUT DELETE
 
   frontend-service:
-    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.11.0@sha256:142d5f4ce14c11cfcdaec3a675fcf2ea936e5ca535cc9e3a59c10ef6a675802b
+    image: ghcr.io/2024-cmpu9010-group-3/frontend:0.12.0@sha256:31f89376528ca6275a5bfd95754b9f49764da3af79ac7766f38e773db6340d68
     container_name: frontend
     depends_on:
       private-service:
