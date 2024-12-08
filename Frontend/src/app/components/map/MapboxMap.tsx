@@ -831,14 +831,14 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         {/* <NavigationButtons /> */}
         <Button
           id="zoom-plus"
-          className="p-2 bg-white text-black hover:bg-slate-100 rounded-full transition-all duration-500"
+          className="p-2 bg-white text-black hover:bg-slate-100 rounded-full transition-all duration-500 w-10 h-10"
           onClick={handleZoomIn}
         >
           <PlusIcon />
         </Button>
         <Button
           id="zoom-minus"
-          className="p-2 bg-white text-black hover:bg-slate-100 rounded-full transition-all duration-500"
+          className="p-2 bg-white text-black hover:bg-slate-100 rounded-full transition-all duration-500 w-10 h-10"
           onClick={handleZoomOut}
         >
           <MinusIcon />
