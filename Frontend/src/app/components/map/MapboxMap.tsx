@@ -553,6 +553,20 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     return data;
   };
 
+  function getZoomLevelFromRadius(radiusInMeters: number): number {
+    // Mapbox zoom level formula: zoom = log2(earthCircumference / (radius * 2π))
+    const earthCircumference = 40075016.686; // in meters at equator
+
+    // Calculate zoom based on radius
+    let zoom = Math.log2(earthCircumference / (radiusInMeters * 2 * Math.PI));
+
+    // Clamp zoom level between 0 and 22 (Mapbox's limits)
+    zoom = Math.min(Math.max(zoom, 0), 22);
+
+    // Round to 2 decimal places
+    return Math.round(zoom * 100) / 100;
+  }
+
   const handleZoomIn = () => {
     setViewState((prevState) => ({
       ...prevState,
@@ -674,11 +688,13 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       setAmenitiesFilter(() => types);
       setViewState((prevState) => ({
         ...prevState,
-        zoom: 11,
+        zoom: getZoomLevelFromRadius(sliderValue * 100),
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
       }));
       //},1000);
     }
-  }, [searchParams]);
+  }, [coordinates.latitude, coordinates.longitude, searchParams, sliderValue]);
 
   useEffect(() => {
     closeOnborda();
