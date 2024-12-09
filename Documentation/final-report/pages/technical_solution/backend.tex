@@ -1,56 +1,77 @@
 \subsubsection{Backend Technologies}
 \paragraph{Go}
-At the start of the project, a portion of the team deliberated about which technologies to choose for the backend.
-Options using JavaScript such as NodeJS or Deno with accompanying frameworks like ExpressJS or NestJS were considered, as was Rust and its Rocket framework.
-They would have been excellent choices as they are well established in the industry and tried-and-tested.\\
+At the start of the project, a portion of the team deliberated about which
+technologies to choose for the backend. Options using JavaScript such as NodeJS
+or Deno with accompanying frameworks like ExpressJS or NestJS were considered,
+as was Rust and its Rocket framework. They would have been excellent choices as
+they are well established in the industry and tried-and-tested.
 
-\noindent
-The majority of the team had development experience in JavaScript, so going with that would have made a lot of sense.
-However, it was planned from the very beginning to deploy this application on a server hosted by one of the team members.
-Therefore, the usage of computing and memory resources were very important to them, as they did not want to strain their Kubernetes cluster more than necessary.
-Since NodeJS runs the JavaScript runtime V8, which also powers Google Chrome, it is quite resource intensive to run.\\
+The majority of the team has development experience with JavaScript, so going
+with that would have made a lot of sense. However, it was planned from the very
+beginning to deploy this application on a server hosted by one of the team
+members. Therefore, the usage of computing and memory resources was very
+important to them, as they did not want to strain their Kubernetes cluster more
+than necessary. Since NodeJS runs on the JavaScript runtime V8, which also
+powers Google Chrome, our experience indicated that it would be quite resource
+intensive to run.
 
-\noindent
-Due to this, the team shifted towards using compiled rather than interpreted languages, as these are generally more resource efficient.
-Both Rust and Go were considered at this point.\\
+Due to this, the team shifted towards using compiled rather than interpreted
+languages, as these are generally more resource efficient. Since small
+executables and low memory usage was desired, languages and frameworks that run
+on virtual machines such as Java with Spring or C\# with .Net were not deemed to
+be viable options. As a result, only Rust and Go were seriously considered at
+this point.
 
-\noindent
-Rust offered a small package size, strong memory safety and an excellent ecosystem and build-tools.
-Additionally, the team member that would focus on backend development had recent experience in writing Rust code.
-They did however comment, that Rust development can be very tricky and time consuming in case not everything works perfectly.
-In a project with a fixed deadline and the expectation of rapid development, choosing Rust would have been counterproductive.
-The team recognised that choosing Rust would come with many drawbacks while offering only few benefits.\\
+Rust offers a small package size, strong memory safety, an excellent
+ecosystem and build-tools. The team member that would focus on backend
+development had recent experience in writing Rust code. However, Rust
+development can be very tricky and time consuming. Additionally, in our
+experience Rust has above average compilation times. In a project with a fixed
+deadline and the expectation of rapid development, choosing Rust would have been
+detrimental. The team recognised that choosing Rust would come with many
+drawbacks while offering only few benefits.
 
-\noindent
-Since small executables and low memory usage was desired, languages and frameworks that run on virtual machines such as Java with Spring or C\# with .Net were not deemed to be viable options.\\
-
-\noindent
-This left choosing Go as the logical conclusion.
-A large drawback that the team identified with Go was the missing experience in the team. Two team members had used Go before, but they last used it a few years back.
-However, since Go syntax and the languages concepts hadn't changed much since then, it was deemed possible to quickly get up to speed, much more quickly than Rust would have allowed.
-The final decision fell on using Go, as it offered small binaries, great memory efficiency, a solid ecosystem of libraries and build-tools and a feature-rich, built-in library for creating REST-APIs.
-Go also removes a lot of the pitfalls that Rust suffers from, it has a simple and approachable syntax and a very low-friction, high-speed development experience.
-This last point was the deciding factor, since it was made clear to the team that getting an MVP up and running as quickly as possible was imperative for the project.
+This left choosing Go as the logical conclusion. A large drawback that the team
+identified with Go was the missing experience in the team. Two team members had
+used Go before, but they last used it a few years back. However, since Go syntax
+and the languages concepts hadn't changed much since then, it was deemed
+possible to quickly get up to speed, much more quickly than Rust would have
+allowed. The final decision fell on using Go, as it offered small binaries,
+great memory efficiency, a solid ecosystem of libraries and build-tools and a
+feature-rich, built-in library for creating REST-APIs. Go also removes a lot of
+the pitfalls that Rust suffers from: it has a simple and approachable syntax and
+a very low-friction, high-speed development experience. This was also the
+deciding factor, since it was made clear to the team that getting an MVP up and
+running as quickly as possible was imperative for the project.
 \paragraph{sqlc and pgx}
 \paragraph{bcrypt}
+\paragraph{golang-migrate}
 
 \subsubsection{Backend Development}
-As discussed in \ref{systemarchitecture} \nameref{systemarchitecture}, the backend is comprised of two standalone REST-API servers.
-Right after the decision to split the backend was taken, a first implementation using two separate codebases was created.
-This approach was functional, meaning it was able to produce two distinct backends with different feature sets. \\
+As discussed in \ref{systemarchitecture} \nameref{systemarchitecture}, the
+backend is comprised of two standalone REST-API servers. Right after the
+decision to split the backend was taken, a first implementation using two
+separate codebases was created. This approach was functional, meaning it was
+able to produce two distinct backends with different feature sets.
 
-\noindent
-But it soon became obvious that this approach was not sustainable.
-While simply splitting the backend into two codebases was a quick and easy solution, it would almost certainly lead to significantly increased development times in the future.
-The two backends have a fair amount of identical functionality and differ just in the route handlers and the database queries.
-Leaving the codebases separate would result in many changes being made twice -- once in the private backend and once in the public backend.\\
+But it soon became obvious that this approach was not sustainable. While simply
+splitting the backend into two codebases was a quick and easy solution, it would
+almost certainly lead to significantly increased development times in the
+future. The two backends have a fair amount of identical functionality and
+differ just in the route handlers and the database queries. Leaving the
+codebases separate would result in many changes being made twice -- once in the
+private backend and once in the public backend.
 
-\noindent
-After careful consideration and discussions with the team, the decision was made to revert the change that split the backend.
-The desired result of two distinct backends would have to be achieved in a different way. \\
+After careful consideration and discussions with the team, the decision was made
+to revert the change that split the backend. The desired result of two distinct
+backends would have to be achieved in a different way.
 
-\noindent
-To accomplish this, a feature of the Go programming language called \textit{build-tags} was utilised.
-Usage examples of this feature showcase it by creating multiple binaries that have different feature sets, for instance multiple different payment tiers for a single software.
-This was a great solution for this problem. It allowed for certain files to be excluded during compilation based on if they were needed for private or public functionality.
-While the development of such a program split by build-tags is more challenging than developing a single binary, it is much more streamlined than keeping functionality identical between two separate projects.
+To accomplish this, a feature of the Go programming language called
+\textit{build-tags} was utilised. Usage examples of this feature showcase it by
+creating multiple binaries that have different feature sets, for instance
+multiple different payment tiers for a single software. This was a great
+solution for this problem. It allowed for certain files to be excluded during
+compilation based on if they were needed for private or public functionality.
+While the development of such a program split by build-tags is more challenging
+than developing a single binary, it is much more streamlined than keeping
+functionality identical between two separate projects.
