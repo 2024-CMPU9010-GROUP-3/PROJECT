@@ -1,38 +1,46 @@
 \subsubsection{Data collection process}
-Satellite images collected using Mapbox (Mapbox Streets and Mapbox Satelite)
+The Mapbox Static Images API was used to retrieve all the satellite images used in this project.
+Initially, a training set of 250 satellite images was collected to train the Yolo model.
 
+Our project has two main Python scripts, parking_detection.py and parking_detection_local.py to localize parking spots.
+In parking_detection.py, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
+From the coordinates of the specific bounding box, the center coordinates of all the images necessary to make up that area are calculated, and the images are then retrieved.
+While in parking_detection_local.py, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the coresponding Mapbox Streets images, covering the entirety of Dublin city.
 
 \subsubsection{Yolo model used for car detection}
 
 
 \subsubsection{Parking spot detection}
-To identify the parking spots from the cars detected by the Yolo model, the cars are classified into on the road or parked, based on a road mask.
+Subsequently, to identify the parking spots in each satellite image, the cars detected by the Yolo model are classified into on the road or parked, based on a road mask.
 
 \subsubsection{Road mask generation}
-Different iterations of the road mask were used, the main iterations and their differences are listed below.
-The original mask was a very simple binary mask which identified the road pixels by their color, as the majority of roads are depicted in white.
-Then through testing and analysing the Mapbox street view, we discovered certain motorways or national roads were shown in yellow or orange, so 2 additional color masks were concatenated to the original binary wise through bitwise operations.
-Given that the Mapbox street view contains additional annotations like street names and white dotted lines which denote (foot path, planter boxes...), the roads aren't that nicely represented by the mask.
-So morphological operations were used to remove the street names (and leave the road just in white) as well as the other annotations.
-Different kernels sizes and parameters (different contour thresholds) were tested to achieve the removal of the street names.
-A different approach using Canny edge was tested, however due to the nature of the Mapbox street view, Canny edge wasn't able to find the correct edges and was picking up unimportant information, performing overall much worse than the current mask at the time.
-Then a final addition to the mask was made to avoid certain misclassification in motorways as the road's width was not correctly reflected on the mapbox street view. The road was enlarged using dilation technique, testing with different kernel sizes, different number of iterations and kernels of different sizes used consecutively.
+Many different iterations of the road mask were used, the main iterations and their differences are explained and showed below.
+The original mask was a very simple binary mask which identified the road pixels by their color, as the majority of roads were depicted in white and darkened the rest of the pixels in the image.
+Through testing and thoroughly analysing the Mapbox Streets images, motorways and national roads were discovered to be depicted in yellow or orange. Therefore, two additional color masks (for orange and yellow) were concatenated to the original binary mask through bitwise operations.
+To refine the mask, and reduce misclassifications, additional annotations contained on the Mapbox Streets images such as street names and white dotted lines which denote a multitude of things (foot paths, planter boxes, pedestrian crosswalks, football fields delimitations ...) were removed through morphological operations, leaving only a plain white line for each road.
+A number of different kernel sizes, different contor thresholds and other parameters were tested to achieve the optimal removal of the street names and additonal annotations.
+A different approach using Canny Edge Detection was tested, however due to the nature of the Mapbox Streets images, the edges picked up were not significant and the overall perfermances was much worse than the current mask at the time.
+A final improvement to the mask was made to avoid certain misclassification due to the Mapbox Streets road width not correctly reflecting all the lanes of the road and therfore classifying on the road cars as parked. This issue was most prominent for motorways and national roads and was resolved by enlarging those roads using a dilation technique. Multiple different kernel sizes, different number of iterations and kernels of different sizes applied consecutively were tested to find the optimal solution.
 
-Add a lot more details, all the different parameters and explain how i did testing.
 
-\subsubsection{Classifiction into on the road vs parked}
-The cars found by the yolo model are the sorted in on the road or off the road based on the road mask.
-The bounding box of the car is computed(we get center, width, height) and if there is overlap between the road pixels by a threshold of 0.5, we discard the model's prediction and only keep the parked cars.
-Different thresholds were tested, but overall it was better to have a harsher threshold as these detections are used later on for the empty parking detection.
-
-Expliquer all the coordinates system and the calculations of the center images
-Also difference entre parking detection and local parking detection files
-Expliquer toutes les fonctions, all the different iterations, what I changed and then added later.
-Sauter une ligne ajoute un nouveau paragraphe
+\subsubsection{Classifiction of cars into on the road or parked}
+The cars detected by the Yolo model are then sorted into on the road or parked based on the road mask previously generated, which is explained in more detail below.
+The model's predictions which are lower than the confidence threshold of 0.4 are discarded as they are more likely to be misclassifications (such as chimneys which were often misclassified).
+A bounding box for each of the model's predictions is computed from the center pixel coordinates, the width and the height returned from the model.
+The overlap between the bounding box and the road pixels is calculated, and if the overlap is higher than the threshold of 0.5, the prediction is discarded, keeping only the parked cars.
+Different thresholds were tested as well, however overall a harsher threshold works better given that these detections are used later on for the empty parking detection.
+For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, roation and orientation based on the angle are saved.
 
 \subsubsection{Empty parking spot detection}
 
 
+\subsubsection{Classification of all spots detected}
 
-\subsubsection{Classification of all spots}
-
+Expliquer drawing of all bb and classification, code couleur
+Expliquer all the coordinates system, mapping from bb pixels coords to real coords and the calculations of the center images
+Expliquer toutes les fonctions, all the different iterations, what I changed and then added later.
+Sauter une ligne ajoute un nouveau paragraphe
+Add a lot more details, all the different parameters and explain how i did testing.
+Add newlines
+Refer to each figures, like say as seen in figure x ...
+Finish all sections then add all the images
