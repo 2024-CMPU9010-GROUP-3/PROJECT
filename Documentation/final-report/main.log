@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.12.1)  5 DEC 2024 03:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.12.1)  9 DEC 2024 13:23
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -977,8 +977,7 @@ LaTeX Font Info:    Font shape `T1/XCharter-TLF/m/n' will be
 (Font)              scaled to size 10.0pt on input line 46.
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
-
-No file main.aux.
+ (./main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
@@ -1011,7 +1010,7 @@ LaTeX Info: Redefining \showhyphens on input line 46.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
-(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-bch.cfg
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-bch.cfg
 File: mt-bch.cfg 2007/03/03 v1.5 microtype config. file: Bitstream Charter (RS)
 ) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -1213,89 +1212,1049 @@ LaTeX Font Info:    Font shape `T1/XCharter-TLF/b/n' will be
 (Font)              scaled to size 12.0pt on input line 1.
  (./pages/technical_solution/system_overview.tex) (./pages/technical_solution/system_architecture.tex) (./pages/technical_solution/data_sources.tex) (./pages/technical_solution/machine_learning.tex) (./pages/technical_solution/frontend.tex
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/b/n' will be
-(Font)              scaled to size 10.0pt on input line 6.
+(Font)              scaled to size 10.0pt on input line 7.
 
 
-./pages/technical_solution/frontend.tex:8: LaTeX Error: Lonely \item--perhaps a missing list environment.
+./pages/technical_solution/frontend.tex:13: LaTeX Error: Lonely \item--perhaps a missing list environment.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.8 \item \textbf
-                 {Sketches}
+l.13 \item \textbf
+                  {Sketches}
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
 
-Underfull \hbox (badness 10000) detected at line 8
+Underfull \hbox (badness 10000) detected at line 13
 [][]
  []
 
 <images/sketch.jpg, id=23, 872.8861pt x 406.51875pt>
 File: images/sketch.jpg Graphic file (type jpg)
 <use images/sketch.jpg>
-Package pdftex.def Info: images/sketch.jpg  used on input line 14.
+Package pdftex.def Info: images/sketch.jpg  used on input line 19.
 (pdftex.def)             Requested size: 232.17242pt x 108.12393pt.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/m/n' will be
-(Font)              scaled to size 9.0pt on input line 15.
+(Font)              scaled to size 9.0pt on input line 20.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/b/n' will be
-(Font)              scaled to size 9.0pt on input line 15.
+(Font)              scaled to size 9.0pt on input line 20.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/m/it' will be
-(Font)              scaled to size 9.0pt on input line 15.
-
-./pages/technical_solution/frontend.tex:21: LaTeX Error: Lonely \item--perhaps a missing list environment.
-
-See the LaTeX manual or LaTeX Companion for explanation.
-Type  H <return>  for immediate help.
- ...                                              
-                                                  
-l.21 \item \textbf
-                  {Wireframe}
-Try typing  <return>  to proceed.
-If that doesn't work, type  X <return>  to quit.
-
-
-Underfull \hbox (badness 10000) detected at line 21
-[][]
- []
-
-<images/wireframe-home.jpg, id=24, 537.50812pt x 337.63641pt>
-File: images/wireframe-home.jpg Graphic file (type jpg)
-<use images/wireframe-home.jpg>
-Package pdftex.def Info: images/wireframe-home.jpg  used on input line 27.
-(pdftex.def)             Requested size: 232.17242pt x 145.84027pt.
-<images/wireframe-signup.jpg, id=25, 570.25546pt x 356.45673pt>
-File: images/wireframe-signup.jpg Graphic file (type jpg)
-<use images/wireframe-signup.jpg>
-Package pdftex.def Info: images/wireframe-signup.jpg  used on input line 34.
-(pdftex.def)             Requested size: 232.17242pt x 145.12566pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-
-LaTeX Warning: Reference `fig:wireframe-home' on page 1 undefined on input line 40.
-
-
-LaTeX Warning: Reference `fig:wireframe-signup' on page 1 undefined on input line 40.
-
+(Font)              scaled to size 9.0pt on input line 20.
 
 
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10> not available
-(Font)              Font shape `T1/phv/m/sl' tried instead on input line 40.
+(Font)              Font shape `T1/phv/m/sl' tried instead on input line 24.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 40.
+(Font)              scaled to size 8.0pt on input line 24.
 LaTeX Font Info:    Font shape `T1/XCharter-TLF/b/n' will be
-(Font)              scaled to size 8.0pt on input line 40.
+(Font)              scaled to size 8.0pt on input line 24.
 
-LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 40.
+LaTeX Warning: Reference `LastPage' on page 1 undefined on input line 24.
 
 [1
 
 
 
 
-{d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/enc/dvips/xcharter/xch_rydp4l.enc} <./images/sketch.jpg>]) (./pages/technical_solution/backend.tex) (./pages/technical_solution/deployment.tex)) (./pages/software_management.tex) (./pages/evaluation/_main.tex (./pages/evaluation/user_evaluation.tex) (./pages/evaluation/expert_review.tex)) (./pages/future_work/_main.tex (./pages/future_work/machine_learning.tex) (./pages/future_work/frontend.tex) (./pages/future_work/backend.tex) (./pages/future_work/deployment.tex)) (./pages/conclusion.tex)
+{d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/enc/dvips/xcharter/xch_rydp4l.enc} <./images/sketch.jpg>]
+
+./pages/technical_solution/frontend.tex:26: LaTeX Error: Lonely \item--perhaps a missing list environment.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.26 \item \textbf
+                  {Wireframe}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Underfull \hbox (badness 10000) detected at line 26
+[][]
+ []
+
+<images/wireframe-home.jpg, id=32, 537.50812pt x 337.63641pt>
+File: images/wireframe-home.jpg Graphic file (type jpg)
+<use images/wireframe-home.jpg>
+Package pdftex.def Info: images/wireframe-home.jpg  used on input line 32.
+(pdftex.def)             Requested size: 232.17242pt x 145.84027pt.
+<images/wireframe-signup.jpg, id=33, 570.25546pt x 356.45673pt>
+File: images/wireframe-signup.jpg Graphic file (type jpg)
+<use images/wireframe-signup.jpg>
+Package pdftex.def Info: images/wireframe-signup.jpg  used on input line 39.
+(pdftex.def)             Requested size: 232.17242pt x 145.12566pt.
+
+LaTeX Warning: Reference `fig:wireframe-home' on page 2 undefined on input line 45.
+
+
+LaTeX Warning: Reference `fig:wireframe-signup' on page 2 undefined on input line 45.
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 第 (U+7B2C)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第
+        一版的prototype设计和sketch设计和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 一 (U+4E00)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一
+           版的prototype设计和sketch设计和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 版 (U+7248)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一版
+              的prototype设计和sketch设计和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 的 (U+7684)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一版的
+                 prototype设计和sketch设计和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 设 (U+8BBE)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一版的prototype设
+                             计和sketch设计和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 计 (U+8BA1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一版的prototype设计
+                                和sketch设计和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 和 (U+548C)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一版的prototype设计和
+                                   sketch设计和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 设 (U+8BBE)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一版的prototype设计和sketch设
+                                            计和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 计 (U+8BA1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一版的prototype设计和sketch设计
+                                               和wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 和 (U+548C)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 第一版的prototype设计和sketch设计和
+                                                  wireframe设计很像, 但...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 设 (U+8BBE)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...totype设计和sketch设计和wireframe设
+                                                  计很像, 但是没有考...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 计 (U+8BA1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...ype设计和sketch设计和wireframe设计
+                                                  很像, 但是没有考虑...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 很 (U+5F88)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...设计和sketch设计和wireframe设计很
+                                                  像, 但是没有考虑到...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 像 (U+50CF)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...计和sketch设计和wireframe设计很像
+                                                  , 但是没有考虑到用...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 但 (U+4F46)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�sketch设计和wireframe设计很像, 但
+                                                  是没有考虑到用户�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 是 (U+662F)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...etch设计和wireframe设计很像, 但是
+                                                  没有考虑到用户的�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 没 (U+6CA1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...h设计和wireframe设计很像, 但是没
+                                                  有考虑到用户的需�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 有 (U+6709)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�计和wireframe设计很像, 但是没有
+                                                  考虑到用户的需求�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 考 (U+8003)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�和wireframe设计很像, 但是没有考
+                                                  虑到用户的需求和�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 虑 (U+8651)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�wireframe设计很像, 但是没有考虑
+                                                  到用户的需求和体�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 到 (U+5230)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...reframe设计很像, 但是没有考虑到
+                                                  用户的需求和体验, ...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 用 (U+7528)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...rame设计很像, 但是没有考虑到用
+                                                  户的需求和体验, 所...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 户 (U+6237)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...e设计很像, 但是没有考虑到用户
+                                                  的需求和体验, 所以...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 的 (U+7684)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�计很像, 但是没有考虑到用户的
+                                                  需求和体验, 所以需...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 需 (U+9700)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�很像, 但是没有考虑到用户的需
+                                                  求和体验, 所以需要...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 求 (U+6C42)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�像, 但是没有考虑到用户的需求
+                                                  和体验, 所以需要进...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 和 (U+548C)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�, 但是没有考虑到用户的需求和
+                                                  体验, 所以需要进行...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 体 (U+4F53)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...但是没有考虑到用户的需求和体
+                                                  验, 所以需要进行迭...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 验 (U+9A8C)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...是没有考虑到用户的需求和体验
+                                                  , 所以需要进行迭代...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 所 (U+6240)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�有考虑到用户的需求和体验, 所
+                                                  以需要进行迭代.卡�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 以 (U+4EE5)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�考虑到用户的需求和体验, 所以
+                                                  需要进行迭代.卡片�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 需 (U+9700)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�虑到用户的需求和体验, 所以需
+                                                  要进行迭代.卡片式�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 要 (U+8981)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�到用户的需求和体验, 所以需要
+                                                  进行迭代.卡片式设�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 进 (U+8FDB)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�用户的需求和体验, 所以需要进
+                                                  行迭代.卡片式设计�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 行 (U+884C)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�户的需求和体验, 所以需要进行
+                                                  迭代.卡片式设计使�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 迭 (U+8FED)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�的需求和体验, 所以需要进行迭
+                                                  代.卡片式设计使得�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 代 (U+4EE3)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�需求和体验, 所以需要进行迭代
+                                                  .卡片式设计使得整�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 卡 (U+5361)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...求和体验, 所以需要进行迭代.卡
+                                                  片式设计使得整个ho...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 片 (U+7247)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...和体验, 所以需要进行迭代.卡片
+                                                  式设计使得整个home�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 式 (U+5F0F)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...体验, 所以需要进行迭代.卡片式
+                                                  设计使得整个home屏�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 设 (U+8BBE)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...验, 所以需要进行迭代.卡片式设
+                                                  计使得整个home屏幕�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 计 (U+8BA1)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ..., 所以需要进行迭代.卡片式设计
+                                                  使得整个home屏幕很�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 使 (U+4F7F)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��以需要进行迭代.卡片式设计使
+                                                  得整个home屏幕很乱�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 得 (U+5F97)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��需要进行迭代.卡片式设计使得
+                                                  整个home屏幕很乱很�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 整 (U+6574)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��要进行迭代.卡片式设计使得整
+                                                  个home屏幕很乱很分�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 个 (U+4E2A)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��进行迭代.卡片式设计使得整个
+                                                  home屏幕很乱很分散�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 屏 (U+5C4F)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�迭代.卡片式设计使得整个home屏
+                                                  幕很乱很分散，login...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 幕 (U+5E55)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�代.卡片式设计使得整个home屏幕
+                                                  很乱很分散，login/si...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 很 (U+5F88)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...�.卡片式设计使得整个home屏幕很
+                                                  乱很分散，login/signu...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 乱 (U+4E71)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��片式设计使得整个home屏幕很乱
+                                                  很分散，login/signup�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 很 (U+5F88)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��式设计使得整个home屏幕很乱很
+                                                  分散，login/signup页�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 分 (U+5206)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��设计使得整个home屏幕很乱很分
+                                                  散，login/signup页面�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 散 (U+6563)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��计使得整个home屏幕很乱很分散
+                                                  ，login/signup页面采�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character ， (U+FF0C)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...��使得整个home屏幕很乱很分散，
+                                                  login/signup页面采用�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 页 (U+9875)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...ome屏幕很乱很分散，login/signup页
+                                                  面采用了原版的shadc...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 面 (U+9762)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...屏幕很乱很分散，login/signup页面
+                                                  采用了原版的shadcn�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 采 (U+91C7)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...幕很乱很分散，login/signup页面采
+                                                  用了原版的shadcn样�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 用 (U+7528)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...很乱很分散，login/signup页面采用
+                                                  了原版的shadcn样式�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 了 (U+4E86)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...乱很分散，login/signup页面采用了
+                                                  原版的shadcn样式需�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 原 (U+539F)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...很分散，login/signup页面采用了原
+                                                  版的shadcn样式需要�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 版 (U+7248)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...分散，login/signup页面采用了原版
+                                                  的shadcn样式需要进�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 的 (U+7684)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...散，login/signup页面采用了原版的
+                                                  shadcn样式需要进行�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 样 (U+6837)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...in/signup页面采用了原版的shadcn样
+                                                  式需要进行定制化�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 式 (U+5F0F)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...signup页面采用了原版的shadcn样式
+                                                  需要进行定制化改�...
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 需 (U+9700)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...nup页面采用了原版的shadcn样式需
+                                                  要进行定制化改进。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 要 (U+8981)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...页面采用了原版的shadcn样式需要
+                                                  进行定制化改进。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 进 (U+8FDB)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...面采用了原版的shadcn样式需要进
+                                                  行定制化改进。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 行 (U+884C)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...采用了原版的shadcn样式需要进行
+                                                  定制化改进。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 定 (U+5B9A)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...用了原版的shadcn样式需要进行定
+                                                  制化改进。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 制 (U+5236)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...了原版的shadcn样式需要进行定制
+                                                  化改进。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 化 (U+5316)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...原版的shadcn样式需要进行定制化
+                                                  改进。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 改 (U+6539)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...版的shadcn样式需要进行定制化改
+                                                  进。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 进 (U+8FDB)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...的shadcn样式需要进行定制化改进
+                                                  。
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+
+./pages/technical_solution/frontend.tex:57: LaTeX Error: Unicode character 。 (U+3002)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57 ...shadcn样式需要进行定制化改进。
+                                                  
+You may provide a definition with
+\DeclareUnicodeCharacter 
+
+) (./pages/technical_solution/backend.tex) (./pages/technical_solution/deployment.tex)) (./pages/software_management.tex) (./pages/evaluation/_main.tex (./pages/evaluation/user_evaluation.tex) (./pages/evaluation/expert_review.tex)) (./pages/future_work/_main.tex (./pages/future_work/machine_learning.tex) (./pages/future_work/frontend.tex) (./pages/future_work/backend.tex) (./pages/future_work/deployment.tex)) (./pages/conclusion.tex)
 
 
 LaTeX Warning: Reference `LastPage' on page 2 undefined on input line 119.
@@ -1343,18 +2302,18 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 26041 strings out of 473330
- 537780 string characters out of 5711019
- 1503559 words of memory out of 5000000
- 48603 multiletter control sequences out of 15000+600000
- 655633 words of font info for 114 fonts, out of 8000000 for 9000
+ 26102 strings out of 473330
+ 538284 string characters out of 5711019
+ 1504550 words of memory out of 5000000
+ 48657 multiletter control sequences out of 15000+600000
+ 656223 words of font info for 117 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,11n,96p,1980b,1750s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/xcharter/XCharter-Bold.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/xcharter/XCharter-Italic.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfss1000.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
-Output written on main.pdf (8 pages, 377566 bytes).
+<d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/xcharter/XCharter-Bold.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/xcharter/XCharter-Italic.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/xcharter/XCharter-Roman.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfss1000.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb>
+Output written on main.pdf (8 pages, 427720 bytes).
 PDF statistics:
- 76 PDF objects out of 1000 (max. 8388607)
- 45 compressed objects within 1 object stream
+ 81 PDF objects out of 1000 (max. 8388607)
+ 48 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 39457 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 41505 words of extra memory for PDF output out of 42996 (max. 10000000)
 
