@@ -33,14 +33,19 @@ For each of the model's predictions for parked cars, the center pixels coordinat
 For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen in Figure ...
 
 \subsubsection{Empty parking spot detection}
-Average parking spot width and length in pixels are calculated and average parking spot width and length in meters is set to 3.05 as found through testing to be the optimal value.
-Empty spots in a group of parked cars are detected in each image, based on the parked cars detected.
-Originally 4 cases were considered, horizontal in a row, horizontal stacked, vertical in a column and vertical side by side. However horizontal stacked and vertical side by side were removed as they lead to too many misclassifications (cars in driveways...).
-The cars are sorted by long/lat and orientation horizontal/vertical. For each consequative spot the distance in meters is calculated, if there is enough space, higher than threshold and the angle deviation is smaller than a certain threshold, the number of cars that fit is claculated and then added to the empty spots detected.
-Say for the half spots that are removed on both sides to account for the cars + how the coords are claculated.
-Duplicate spots (spots that overlapp too much, based on an optimal threshold, found during testing) and spots coinciding with cars identified by the Yolo model are removed afterwards.
-Empty spots that are on the road are also filter out.
-Then all the empty spots found are drawn onto the image in green.
+Subsequently, empty parking spots are detected between parked cars in each image, based on the parked cars detected by the Yolo model and classified using the road mask.
+Originally 4 cases were considered, cars parked horizontally in a row or in a column, cars parked vertically in a column and parked vertically side by side. However horizontally parked in a column and vertically parked side by side were removed as they lead to too many misclassifications, namely the vertically parked side by side lead to adding many additional cars in driveways in residential areas.
+A number of different variations and calculation techniques were tested out, however only the final version will be explained below as well as some crutial changes that will be mentioned.
+Average parking spot width and length in pixels are calculated for each image, to draw the empty spots more uniformly. Average parking spot width and length in meters are set to 3.05 as found to be the optimal value through testing accounting for the variations in size. 
+Setting this value avoids misclassifications as previously the average width and length in meters were calculated dynamically, however in cases where the averages were lesser than 3, spots tended to overlap. 
+The parked cars detected are then sorted by latitude for horizontally aligned cars and by longitude for vertically algned cars, to identify gaps between consecutive cars.
+For each pair of consecutive spots, the distance in meters in between them is calculated. The gap is adjusted to account for the half cars on both sides, as the coordinates of the parked car represent the center of the car.
+For the gaps smaller than the maximum gap threshold of 12 meters and larger than the average size of a car, where there is enough space to fit 1 or more car, and where the angle deviation is smaller than a threshold of 35 degrees, to ensure the spots are sufficiently aligned, the number of cars that fit into the gap is claculated.
+Based on the number of empty spots found, the coordinates for those empty spots are claculated to be aligned with the 2 consecutive cars and then added to a list of empty spots detected.
+Afterwards, duplicate spots defined as spots that overlap too much and where the distance between 2 spots is smaller than a threshold of 1 meter are removed.
+As well, spots coinciding with cars identified by the Yolo model, where the distance between them is smaller than 1.25 meters are removed from the empty spots found.
+Subsequently, empty spots that overlap with the road are filter out similarly to how the road mask classification was done.
+Following the detection of all the empty spots, the bounding boxes coresponding to each spot are drawn onto the sateillte image in green.
 
 \subsubsection{Classification of all spots detected}
 The parking spots detected are then classified into public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
@@ -52,6 +57,8 @@ Clusters are drawn color coded as a circle at the center of the bounding box, an
 The longitude, latitude and classification of all parking spots detected are then saved in a csv file.
 Potential duplicates are dropped, as some cars many be in multiple images as there is overlap between the images(expliquer miex)
 The parking zones and costs are added for each file based on a geojson file.
+
+The csv file is the uploded to the PostgreSQL database, in the backend.
 
 Extensisve testing was done at all stages of the writing of the script (and adding the additonal parts) to find the optimal thresholds/params on test images from Mapbox, in a variety of edge cases like for example residential, urban...
 
@@ -65,4 +72,4 @@ Sauter une ligne ajoute un nouveau paragraphe
 Explain how i did testing
 Add newlines
 Refer to each figures, like say as seen in figure x ...
-Finish all sections then add all the images
+Finish all sections then add all the images, build in latex
