@@ -8,12 +8,28 @@ import DeckGL from "@deck.gl/react";
 import { Feature, GeoJSON } from "geojson";
 import { FaLocationDot } from "react-icons/fa6";
 import { Grid } from "react-loader-spinner";
-import Map, { Layer, LayerProps, Marker, Popup, Source } from "react-map-gl";
+import Map, {
+  Layer,
+  LayerProps,
+  Marker,
+  Popup,
+  Source,
+  MapProvider,
+} from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { Eye, EyeOff, Loader2, Save, Search } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  MinusIcon,
+  PlusIcon,
+  Save,
+  Search,
+} from "lucide-react";
 import Image from "next/image";
 import { useOnborda } from "onborda";
 import { useSession } from "@/app/context/SessionContext";
+import { FlyToInterpolator } from "deck.gl";
 
 // Local components
 import { Slider } from "@/components/ui/slider";
@@ -35,18 +51,19 @@ import {
   ImageConfig,
   GeoJsonCollection,
   MapHoverEvent,
+  ViewState,
 } from "@/lib/interfaces/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip"
-import {useSearchParams} from "next/navigation";
+} from "@/components/ui/tooltip";
+import { useSearchParams } from "next/navigation";
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
@@ -145,6 +162,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     () => [coordinates?.longitude, coordinates?.latitude],
     [coordinates]
   );
+  const [viewState, setViewState] = useState<ViewState>(INITIAL_VIEW_STATE);
 
   const searchParams = useSearchParams();
 
@@ -393,29 +411,24 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       }
       setSavingMap(true);
       console.log();
-      const locationName = await getNameFromLocation()
+      const locationName = await getNameFromLocation();
       const response = await fetch(`/api/history?userid=${sessionUUID}`, {
         method: "POST",
         body: JSON.stringify({
-          amenitytypes: amenitiesFilter.map(value => {
-            return{
-              count: (
-                pointsGeoJson?.[
-                value
-                ] as GeoJSON.FeatureCollection
-              )?.features?.length || 0,
-              type: value
-            }
+          amenitytypes: amenitiesFilter.map((value) => {
+            return {
+              count:
+                (pointsGeoJson?.[value] as GeoJSON.FeatureCollection)?.features
+                  ?.length || 0,
+              type: value,
+            };
           }),
           longlat: {
             type: "Point",
-            coordinates: [
-              coordinates.longitude,
-              coordinates.latitude,
-            ],
+            coordinates: [coordinates.longitude, coordinates.latitude],
           },
           radius: sliderValue * 100,
-          displayName: locationName
+          displayName: locationName,
         }),
         headers: {
           "Content-Type": "application/json",
@@ -449,7 +462,8 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     amenitiesFilter: string[] = []
   ) => {
     const response = await fetch(
-      `/api/points?long=${longitude}&lat=${latitude}&radius=${sliderValue * 100
+      `/api/points?long=${longitude}&lat=${latitude}&radius=${
+        sliderValue * 100
       }&types=${amenitiesFilter.join(",")}`,
       {
         method: "GET",
@@ -487,35 +501,41 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   };
 
   const getNameFromLocation = async () => {
-    const response = await fetch(`/api/location-lookup?lat=${coordinates.latitude}&lon=${coordinates.longitude}&format=jsonv2`, {
-      method: "GET",
-      credentials: "include",
-      headers: {
-        authorization: "Bearer " + sessionToken,
-      },
-    });
+    const response = await fetch(
+      `/api/location-lookup?lat=${coordinates.latitude}&lon=${coordinates.longitude}&format=jsonv2`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          authorization: "Bearer " + sessionToken,
+        },
+      }
+    );
 
     const data = await response.json();
 
-    if(!data.address){
+    if (!data.address) {
       return null;
     }
 
     const road = data.address.road;
-    const city = data.address.city || data.address.town || data.address.village || data.address.municipality;
+    const city =
+      data.address.city ||
+      data.address.town ||
+      data.address.village ||
+      data.address.municipality;
     const country = data.address.country;
-    
-    if(!road && !city){
-      if(country){
+
+    if (!road && !city) {
+      if (country) {
         return `Somewhere in ${country}`;
       } else {
         return null;
       }
     }
 
-    return [road, city].filter(x => !!x).join(", ")
-  }
-
+    return [road, city].filter((x) => !!x).join(", ");
+  };
 
   const fetchPointById = async (id: number) => {
     const response = await fetch(`/api/details?id=${id}`, {
@@ -534,6 +554,38 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     return data;
   };
 
+  function getZoomLevelFromRadius(radiusInMeters: number): number {
+    // Mapbox zoom level formula: zoom = log2(earthCircumference / (radius * 2π))
+    const earthCircumference = 40075016.686; // in meters at equator
+
+    // Calculate zoom based on radius
+    let zoom = Math.log2(earthCircumference / (radiusInMeters * 2 * Math.PI));
+
+    // Clamp zoom level between 0 and 22 (Mapbox's limits)
+    zoom = Math.min(Math.max(zoom, 0), 22);
+
+    // Round to 2 decimal places
+    return Math.round(zoom * 100) / 100;
+  }
+
+  const handleZoomIn = () => {
+    setViewState((prevState) => ({
+      ...prevState,
+      zoom: prevState.zoom + 1,
+      transitionDuration: 300,
+      transitionInterpolator: new FlyToInterpolator(),
+    }));
+  };
+
+  const handleZoomOut = () => {
+    setViewState((prevState) => ({
+      ...prevState,
+      zoom: prevState.zoom - 1,
+      transitionDuration: 300,
+      transitionInterpolator: new FlyToInterpolator(),
+    }));
+  };
+
   const { startOnborda, closeOnborda } = useOnborda();
 
   const version = packageJson.version;
@@ -550,7 +602,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
       const x =
         coordinates.longitude +
         (radiusInDegrees * Math.cos(angle)) /
-        Math.cos(coordinates.latitude * (Math.PI / 180));
+          Math.cos(coordinates.latitude * (Math.PI / 180));
       const y = coordinates.latitude + radiusInDegrees * Math.sin(angle);
       localCoordinates.push([x, y]);
     }
@@ -612,34 +664,38 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
   });
 
   useEffect(() => {
-    const paramLon = searchParams.get("marker_long")
-    const paramLat = searchParams.get("marker_lat")
-    const paramRad = searchParams.get("marker_rad")
-    const paramTypes = searchParams.get("marker_types")
+    const paramLon = searchParams.get("marker_long");
+    const paramLat = searchParams.get("marker_lat");
+    const paramRad = searchParams.get("marker_rad");
+    const paramTypes = searchParams.get("marker_types");
 
-    if(!paramLon || !paramLat || !paramRad || !paramTypes){
+    if (!paramLon || !paramLat || !paramRad || !paramTypes) {
       return;
     }
-    const latitude = parseFloat(paramLat)
-    const longitude = parseFloat(paramLon)
-    const radius = parseInt(paramRad)
-    const types = paramTypes.split(",")
-    
-    if(longitude && latitude && radius && types) {
+    const latitude = parseFloat(paramLat);
+    const longitude = parseFloat(paramLon);
+    const radius = parseInt(paramRad);
+    const types = paramTypes.split(",");
+
+    if (longitude && latitude && radius && types) {
       // Reason for this timeout: coordinates getting set to 0,0 after this fires during map load
       // I think this happens only in the dev environment (strict mode)
       // If the points are not loading after loading from history, re-enable this timeout
       // setTimeout(() => {
-        setCoordinates({ latitude, longitude });
-        setSliderValue(radius / 100);
-        setSliderValueDisplay(radius / 100);
-        setMarkerIsVisible(true);
-        setAmenitiesFilter(() =>
-          types
-        );
+      setCoordinates({ latitude, longitude });
+      setSliderValue(radius / 100);
+      setSliderValueDisplay(radius / 100);
+      setMarkerIsVisible(true);
+      setAmenitiesFilter(() => types);
+      setViewState((prevState) => ({
+        ...prevState,
+        zoom: getZoomLevelFromRadius(sliderValue * 100),
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      }));
       //},1000);
     }
-  }, [searchParams]);
+  }, [coordinates.latitude, coordinates.longitude, searchParams, sliderValue]);
 
   useEffect(() => {
     closeOnborda();
@@ -680,81 +736,87 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
         id="onboarding-step-2"
       >
         {mapBoxApiKey ? (
-          <DeckGL
-            effects={[lightingEffect]}
-            initialViewState={INITIAL_VIEW_STATE}
-            controller={true}
-            onClick={handleMapClick}
-            onHover={handleHover}
-            style={{ width: "100%", height: "100%" }}
-          >
-            <Map
-              mapboxAccessToken={mapBoxApiKey}
-              mapStyle="mapbox://styles/mapbox/streets-v12"
-              antialias={true}
+          <MapProvider>
+            <DeckGL
+              effects={[lightingEffect]}
+              initialViewState={viewState}
+              controller={true}
+              onClick={handleMapClick}
+              onHover={handleHover}
               style={{ width: "100%", height: "100%" }}
-              onLoad={handleMapLoad}
+              onViewStateChange={({ viewState: nextViewState }) => {
+                setViewState(nextViewState as ViewState);
+              }}
             >
-              {/* Map content remains the same */}
-              {markerIsVisible && (
+              <Map
+                id="magpieMap"
+                mapboxAccessToken={mapBoxApiKey}
+                mapStyle="mapbox://styles/mapbox/streets-v12"
+                antialias={true}
+                style={{ width: "100%", height: "100%" }}
+                onLoad={handleMapLoad}
+              >
+                {/* Map content remains the same */}
+                {markerIsVisible && (
+                  <Marker
+                    longitude={coordinates?.longitude}
+                    latitude={coordinates?.latitude}
+                    anchor="center"
+                  >
+                    <div>
+                      <FaLocationDot size={50} color="FFA15A" />
+                    </div>
+                  </Marker>
+                )}
                 <Marker
-                  longitude={coordinates?.longitude}
-                  latitude={coordinates?.latitude}
-                  anchor="center"
+                  latitude={currentPositionCords?.latitude}
+                  longitude={currentPositionCords?.longitude}
                 >
                   <div>
-                    <FaLocationDot size={50} color="FFA15A" />
+                    <FaLocationDot size={35} color="blue" />
                   </div>
                 </Marker>
-              )}
-              <Marker
-                latitude={currentPositionCords?.latitude}
-                longitude={currentPositionCords?.longitude}
-              >
-                <div>
-                  <FaLocationDot size={35} color="blue" />
-                </div>
-              </Marker>
-              {toolTipIsVisible && (
-                <Popup
-                  latitude={toolTipX}
-                  longitude={toolTipY}
-                  closeButton={false}
-                  style={{ whiteSpace: "pre-wrap", padding: "8px" }}
-                  maxWidth="350px"
-                  anchor="bottom"
+                {toolTipIsVisible && (
+                  <Popup
+                    latitude={toolTipX}
+                    longitude={toolTipY}
+                    closeButton={false}
+                    style={{ whiteSpace: "pre-wrap", padding: "8px" }}
+                    maxWidth="350px"
+                    anchor="bottom"
+                  >
+                    <div className="popup-content">
+                      <h3 className="popup-header">Amenity Details</h3>
+                      {Object.entries(toolTipContent).map(([key, value]) => (
+                        <div className="key-value-pair" key={key}>
+                          <span className="key">{key}:</span>
+                          <span className="value">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Popup>
+                )}
+                <Source
+                  id="circle"
+                  type="geojson"
+                  data={{
+                    type: "Feature",
+                    geometry: {
+                      type: "Polygon",
+                      coordinates: [circleCoordinates],
+                    },
+                  }}
                 >
-                  <div className="popup-content">
-                    <h3 className="popup-header">Amenity Details</h3>
-                    {Object.entries(toolTipContent).map(([key, value]) => (
-                      <div className="key-value-pair" key={key}>
-                        <span className="key">{key}:</span>
-                        <span className="value">{value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </Popup>
-              )}
-              <Source
-                id="circle"
-                type="geojson"
-                data={{
-                  type: "Feature",
-                  geometry: {
-                    type: "Polygon",
-                    coordinates: [circleCoordinates],
-                  },
-                }}
-              >
-                <Layer {...layerStyle} />
-              </Source>
-              <MapSources
-                pointsGeoJson={pointsGeoJson}
-                imagesLoaded={imagesLoaded}
-                amenitiesFilter={amenitiesFilter}
-              />
-            </Map>
-          </DeckGL>
+                  <Layer {...layerStyle} />
+                </Source>
+                <MapSources
+                  pointsGeoJson={pointsGeoJson}
+                  imagesLoaded={imagesLoaded}
+                  amenitiesFilter={amenitiesFilter}
+                />
+              </Map>
+            </DeckGL>
+          </MapProvider>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <Grid
@@ -767,6 +829,24 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
             />
           </div>
         )}
+      </div>
+      {/* Zoom buttons */}
+      <div className="fixed bottom-5 left-3 md:left-5 flex flex-col space-y-2 z-10">
+        {/* <NavigationButtons /> */}
+        <Button
+          id="zoom-plus"
+          className="p-2 bg-white text-black hover:bg-slate-100 rounded-full transition-all duration-500 w-10 h-10"
+          onClick={handleZoomIn}
+        >
+          <PlusIcon />
+        </Button>
+        <Button
+          id="zoom-minus"
+          className="p-2 bg-white text-black hover:bg-slate-100 rounded-full transition-all duration-500 w-10 h-10"
+          onClick={handleZoomOut}
+        >
+          <MinusIcon />
+        </Button>
       </div>
       {/* Sidebar - Full width on mobile, scrollable */}
       <div
@@ -921,7 +1001,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                       <Input
                         className="mx-auto"
                         onChange={(e) => setSearchValue(e.target.value)}
-                        type="text" id="search" placeholder="Location Search"
+                        type="text"
+                        id="search"
+                        placeholder="Location Search"
                       />
                       <TooltipProvider>
                         <Tooltip>
@@ -946,7 +1028,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                               className="w-15 mx-auto bg-neutral-700 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]"
                               onClick={handleSaveMap}
                             >
-                              {savingMap ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                              {savingMap ? (
+                                <Loader2 size={16} className="animate-spin" />
+                              ) : (
+                                <Save size={16} />
+                              )}
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -1013,10 +1099,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                           return (
                             <tr
                               key={option.value}
-                              className={`${!amenitiesFilter.includes(option.value)
-                                ? "bg-gray-100"
-                                : ""
-                                }`}
+                              className={`${
+                                !amenitiesFilter.includes(option.value)
+                                  ? "bg-gray-100"
+                                  : ""
+                              }`}
                             >
                               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {imageConfig && (
@@ -1025,10 +1112,11 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                                     alt={option.label}
                                     width={24}
                                     height={24}
-                                    className={`w-6 h-6 ${!amenitiesFilter.includes(option.value)
-                                      ? "filter grayscale"
-                                      : ""
-                                      }`}
+                                    className={`w-6 h-6 ${
+                                      !amenitiesFilter.includes(option.value)
+                                        ? "filter grayscale"
+                                        : ""
+                                    }`}
                                   />
                                 )}
                               </td>
@@ -1039,20 +1127,20 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
                                 {amenitiesFilter.includes(option.value) ? (
                                   (
                                     pointsGeoJson?.[
-                                    option.value
+                                      option.value
                                     ] as GeoJSON.FeatureCollection
                                   )?.features?.length > 0 ? (
                                     <span className="font-bold">
                                       {(
                                         pointsGeoJson?.[
-                                        option.value
+                                          option.value
                                         ] as GeoJSON.FeatureCollection
                                       )?.features?.length || 0}
                                     </span>
                                   ) : (
                                     (
                                       pointsGeoJson?.[
-                                      option.value
+                                        option.value
                                       ] as GeoJSON.FeatureCollection
                                     )?.features?.length || 0
                                   )
@@ -1083,7 +1171,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
