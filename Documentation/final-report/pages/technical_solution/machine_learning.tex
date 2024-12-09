@@ -30,17 +30,39 @@ A bounding box for each of the model's predictions is computed from the center p
 The overlap between the bounding box and the road pixels is calculated, and if the overlap is higher than the threshold of 0.5, the prediction is discarded, keeping only the parked cars.
 Different thresholds were tested as well, however overall a harsher threshold works better given that these detections are used later on for the empty parking detection.
 For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, roation and orientation based on the angle are saved.
+For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen in Figure ...
 
 \subsubsection{Empty parking spot detection}
-
+Average parking spot width and length in pixels are calculated and average parking spot width and length in meters is set to 3.05 as found through testing to be the optimal value.
+Empty spots in a group of parked cars are detected in each image, based on the parked cars detected.
+Originally 4 cases were considered, horizontal in a row, horizontal stacked, vertical in a column and vertical side by side. However horizontal stacked and vertical side by side were removed as they lead to too many misclassifications (cars in driveways...).
+The cars are sorted by long/lat and orientation horizontal/vertical. For each consequative spot the distance in meters is calculated, if there is enough space, higher than threshold and the angle deviation is smaller than a certain threshold, the number of cars that fit is claculated and then added to the empty spots detected.
+Say for the half spots that are removed on both sides to account for the cars + how the coords are claculated.
+Duplicate spots (spots that overlapp too much, based on an optimal threshold, found during testing) and spots coinciding with cars identified by the Yolo model are removed afterwards.
+Empty spots that are on the road are also filter out.
+Then all the empty spots found are drawn onto the image in green.
 
 \subsubsection{Classification of all spots detected}
+The parking spots detected are then classified into public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
+Parking spots are considered public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise they are considered private. This optimal threshold was found through extensive testing.
+Multiple different clustering approaches(HDBSCAN...) were tested to cluster spots together, overall DBSCAN performed the best with it's optimal parameters eps:55 and min_samples:5.
+Parking lots are classified as clusters with 18 spots or more.
+Clusters are drawn color coded as a circle at the center of the bounding box, and the classification label is written to the right of the bounding box. Private in red, public in green and parking lot in white.
 
+The longitude, latitude and classification of all parking spots detected are then saved in a csv file.
+Potential duplicates are dropped, as some cars many be in multiple images as there is overlap between the images(expliquer miex)
+The parking zones and costs are added for each file based on a geojson file.
+
+Extensisve testing was done at all stages of the writing of the script (and adding the additonal parts) to find the optimal thresholds/params on test images from Mapbox, in a variety of edge cases like for example residential, urban...
+
+
+
+Expliquer clustering technique and params better
+Expliquer parking zones and costs mieux en ajoutant la figure du pdf
 Expliquer drawing of all bb and classification, code couleur
-Expliquer all the coordinates system, mapping from bb pixels coords to real coords and the calculations of the center images
-Expliquer toutes les fonctions, all the different iterations, what I changed and then added later.
+Expliquer TOUTES les fonctions
 Sauter une ligne ajoute un nouveau paragraphe
-Add a lot more details, all the different parameters and explain how i did testing.
+Explain how i did testing
 Add newlines
 Refer to each figures, like say as seen in figure x ...
 Finish all sections then add all the images
