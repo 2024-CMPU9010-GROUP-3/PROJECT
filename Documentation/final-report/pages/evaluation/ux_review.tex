@@ -114,7 +114,41 @@ To conclude the first session, Professor Curley found our interface sleek and mi
 
 \newpage
 \subsubsection{Session 2}
-The second session informed us of the points we were able to improve on from the first session as well as features to be looked at in the future. These were the main takeaways:\\
+The second session informed us of the points we were able to improve on from the first session as well as features to be looked at in the future. These were the main takeaways:\\\\
 \textbf{Landing page: }
 The new landing page provides a proper introduction of Magpie, however some adjustments can be made to the navigation bar, some visual feedback to let the user know the button they have clicked works; such as a bold overlay on the navigation item or different colour highlight. In addition, if you really want to push Magpie as a GIS application for professional urban planner users, it needs to be put at the forefront.\\
 Lastly, a log in button should also be present on the main page alongside the "sign up" button.\\\\
+%log in button next to sign up
+\begin{figure}
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{images/landing-page-current.png}}
+    \caption{Magpie Landing page - Sign up button}
+\end{figure}
+\newpage
+\textbf{Dashboard: }
+The rearranged dashboard has immensely improved the flow of selecting/deselecting amenities, adjusting the radius and clearing the map entirely of the points. The disconnect between the map and the dashboard has been addressed with custom icons and colours and labels.\\
+Some suggestions to improve user experience would be to make the amenity row clickable so as to make it easier for the user to select and deselect it, as opposed to having to click the eye directly.\\\\
+%new page following session 1 feedback
+\begin{figure}
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{images/dashboard-current.png}}
+    \caption{Magpie New Dashboard}
+\end{figure}
+\newpage
+\noindent\textbf{Map: }
+The map looks very clean and the points are loading much better. However, one small issue to mention is the amount of icons being loaded within the search radius. At the moment, the icons group together under one when the view is very zoomed out, and expand and disperse the more you zoom in. However, certain icons like the "Public Bins" are more in numbers visually than any other.\\
+This is due to the way we have rendered the points on the map, which initially did not support it so we had to find a way around it through the layers. The items in the top most layer appear the most and "Public Bin" is at the top right now. This is also something that will be detailed in future work.\\\\
+%icon groups maps
+\begin{figure}
+    \centering
+    \fbox{\includegraphics[width=0.8\textwidth]{images/map-icons-group.png}}
+    \caption{Magpie Map - Amenity Icons grouping relative to zoom level}
+\end{figure}
+\newpage
+\textbf{Search \& Save functionality: }
+Good addition however it gives inconsistent results. This is due the the API we are using which does a keyword search through our database to retrieve results instead of a semantic search. Therefore street names with special characters or with many words may not always return accurate or any results unfortunately, or why if the search is saved it may not carry the search term.\\
+The search feature will be further addressed in the future work section of the report on how to switch it to a semantic.\\
+Last suggestion on this point is to be able to press enter to start the search, instead of being confined to the search button.\\\\
+\textbf{Survey responses:}\\\\
+\textbf{Overall: }
+The feedback from the previous review has been onboarded very well, the application looks clean and is easy to use. However, more visual feedback is needed for features like the search functionality and the selection/deselection of amenities, as well as the accuracy of the points displayed.
