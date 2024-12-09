@@ -44,8 +44,34 @@ We also had a short satisfaction survey to quantitatively evaluate each user tes
 \end{figure}
 
 \newpage
-\subsubsection{User 1 - Paul}
-Our first test session was with Paul, a student in technological undergraduate degree. They are classified as a general user, not one we have identified as our target. They left their contact email in the market research survey.\\
+\subsubsection{User 1 - Brendan}
+Brendan is a professor with technological background. They are considered a casual user.\\\\
+This was an uncontrolled test session where Brendan tested each feature of Magpie to find faults, system failures and bugs.\\\\
+\textbf{Main takeaways from Brendan's session: }Magpie has potential for use by certain types of users but needs a lot more functionality. Here is a breakdown of the feedback:
+\begin{itemize}
+    \item \textbf{Log in/Sign up: }why is a username required? Username should be the email. And email verification is a must!
+    \item \textbf{Tutorial: }content of step 2 needs to be reworked, explain radius of what. Also, the positioning of certain elements is off in Firefox browser. For step 4, content wording change “dozen” for something else especially if you're planning on adding more amenity data. The step 5 should point to the map, investigate the bug.
+    \item \textbf{Dashboard: }you should implement a button to clear the market and all the points from the map, right now the user has to reload. Perhaps think of leaving the count of toggled off amenities, it would depend on the use case. Maybe implement a quick reset button for  selected amenities. Compress list of amenities to avoid scrolling (window size issue in Firefox browser)
+    \item \textbf{Map: } you need to add plus and minus buttons to zoom in and out of the map. Can I have more information from the amenity icons by clicking on them? Perhaps a marked up image that detects this space (google street view), information on the spot (private, free, carpark). Also, make the selected icons more visually striking, a little hover maybe
+    \item \textbf{Technical: }when clicking on map, there is a slight offset between where the marker appears and where the user clicked; implement something to avoid mis-clicking and loosing original marker position; Icons move when you toggle on and off certain amenities
+    \item \textbf{Misc: }why are we requesting location? For the marker data (maybe we should let the user know this is where they are on the map?); need a landing page to present magpie; is the version prototype logo useful? Maybe for dev; show more information and the ml images we worked on (personal preference); reiterates we should put the ml forward (maybe on the about us)
+\end{itemize}
+Overall: the interface is nice, but you might want to focus on producing a much more data-driven approach for the interface if you want to attract those kinds of users. Brendan was very tempted to click on the amenity icons of the map to find out more information.
+\textbf{Score from survey: }
+%brendan survey score
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/survey-brendan.png}
+    \caption{User Evaluation - UI Score Brendan}
+\end{figure}
+
+\newpage
+\subsubsection{User 2 - Anonymous}
+New approach for this session - controlled ish.
+
+\newpage
+\subsubsection{User 3 - Paul}
+Our second controlled session was with Paul, a student in technological undergraduate degree. They are classified as a general user, not one we have identified as our target. They left their contact email in the market research survey.\\
 We initially wanted this to be a controlled test session by giving him specific tasks, but found that challenging as he intuitively went on to explore the application on his own.
 %table of Paul's general tasks
 \begin{table}[h!]
@@ -90,8 +116,8 @@ Another point to improve on is to make the profile and tutorial icons more visib
 \end{figure}
 
 \newpage
-\subsubsection{User 2 - Livia}
-Our second test session was with Livia, another student in a technological undergraduate degree. They are also identified as a casual user who also left their contact in the market research survey.\\\\
+\subsubsection{User 4 - Livia}
+Our third controlled session was with Livia, another student in a technological undergraduate degree. They are also identified as a casual user who also left their contact in the market research survey.\\\\
 This session also started out as a controlled test with a defined set of tasks, but just like Paul, Livia went on to explore the application skipping the tasks.\\\\
 %table of Livias's general tasks
 \begin{table}[h!]
@@ -136,8 +162,8 @@ They also suggested adding more amenities such as public transports stops, scoot
 \end{figure}
 
 \newpage
-\subsubsection{User 3 - Ben}
-Our third test session was with Ben, another student in a technological post-graduate degree. They are also identified as a casual user who also left their contact in the market research survey.\\\\
+\subsubsection{User 5 - Ben}
+Our next test session was with Ben, another student in a technological post-graduate degree. They are also identified as a casual user who also left their contact in the market research survey.\\\\
 Starting this session, we took a more uncontrolled approach and let the users free roam the application without giving them specific tasks to complete. We guided them in the beginning and initiated certain discussions but overall let the users take the reign and think aloud during their exploration process.\\\\
 %table of Ben's general tasks
 \begin{table}[h!]
@@ -186,16 +212,61 @@ Points to improve are the loading times for the amenity points, perhaps  directl
 \end{figure}
 
 \newpage
-\subsubsection{User 4 - Jakub}
-Casual user Jakub
-
-\newpage
-\subsubsection{User 5 - Brendan}
-Casual user Brendan
-
-\newpage
-\subsubsection{User 6 - Anonymous}
-Casual user Maira
+\subsubsection{User 6 - Jakub}
+Jakub is a professional with a construction and technological background. They were recruited as towards the end of product development to test Magpie. They are considered a casual user.\\\\
+This was an uncontrolled test session where Jakub discovered the application on their own, discussing each feature, testing each feature, and were then given a small scenario "Put yourself in the shoes of an urban planner..." to obtain a different kind of feedback from previous sessions.\\\\
+%table of Jakub's general tasks
+\begin{table}[h!]
+    \centering
+    \caption{Usability testing Tasks - Jakub}
+    \begin{tabular}{|p{0.4\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|}
+        \hline
+        \textbf{Task}                 & \textbf{Status} & \textbf{Difficulty} & \textbf{Errors}    \\
+        \hline
+        Load Magpie application       & Complete        & 1                   & N/A                \\
+        \hline
+        Sign up                       & Complete        & 1                   & N/A                \\
+        \hline
+        Log in                        & Complete        & 1                   & N/A                \\
+        \hline
+        Complete tutorial             & Complete        & 1                   & N/A                \\
+        \hline
+        Place cursor on map           & Complete        & 1                   & N/A                \\
+        \hline
+        Zoom in and out               & Complete        & 1                   & N/A                \\
+        \hline
+        Hold map and navigate         & Complete        & 1                   & N/A                \\
+        \hline
+        Adjust radius big/small       & Complete        & 1                   & N/A                \\
+        \hline
+        Clear marker \& radius        & Pass            & 3                   & Did not see button \\
+        \hline
+        Deselect all amenities        & Complete        & 1                   & N/A                \\
+        \hline
+        Select one or more amenities  & Complete        & 1                   & N/A                \\
+        \hline
+        Find tutorial and exit midway & Skipped         & Skipped             & Skipped            \\
+        \hline
+        Log out                       & Complete        & 1                   & N/A                \\
+        \hline
+    \end{tabular}
+\end{table}
+\textbf{Main takeaways from Jakub's session: }this tool simplifies the search for amenities however there are certain items that need to be considered to improve the application:
+\begin{itemize}
+    \item \textbf{Log in/Sign up: }Email verification should be included, so that the user can confirm they have successfully signed up and also for security purposes.
+    \item \textbf{Map: }some of the amenity data doesn't have accurate locations, for example public toilets seem to be off by longitude, and multi-storey parking data seems incomplete. Also, water fountains are very hard to find on the map, we should consider changing its colour. Same with the profile and tutorial icon, they are hard to spot on the map. They would also like to double click on the map to clear it, more intuitive for them. And last thing, amenities with small count are hard to find in the radius, maybe make them more visible somehow.
+    \item \textbf{History feature: }doesn't see the use for a casual user, and again same for this tool, doesn't see the use for them as a casual user but could be useful for a target user.
+    \item \textbf{Extra features: }Search functionality would be very useful for those that are lookin for a spot but don't know where it is located visually. Also, an export feature would be useful for the scenario of urban planning, if I'm to put a report together, a visual from this tool would be helpful for illustration.
+\end{itemize}
+A notable behaviour indicator from them was that they tried to interact with the elements during onboarding, as have previous users. Due to technical limitations, we have been unable to make that happen. Future work.\\\\
+Overall, the tooltips for the icons is very interesting, a suggestion would be to add the type of parking to car parking and the zoning information as well as tariff.
+\textbf{Score from survey: }
+%jakub survey score
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/survey-jakub.png}
+    \caption{User Evaluation - UI Score Jakub}
+\end{figure}
 
 \newpage
 \subsubsection{User 7 - Bryan Boyle}
