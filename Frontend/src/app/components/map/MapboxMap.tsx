@@ -51,6 +51,7 @@ import {
   ImageConfig,
   GeoJsonCollection,
   MapHoverEvent,
+  ViewState,
 } from "@/lib/interfaces/types";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -161,7 +162,7 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
     () => [coordinates?.longitude, coordinates?.latitude],
     [coordinates]
   );
-  const [viewState, setViewState] = useState(INITIAL_VIEW_STATE);
+  const [viewState, setViewState] = useState<ViewState>(INITIAL_VIEW_STATE);
 
   const searchParams = useSearchParams();
 
@@ -743,6 +744,9 @@ const LocationAggregatorMap = ({ className, ...props }: SliderProps) => {
               onClick={handleMapClick}
               onHover={handleHover}
               style={{ width: "100%", height: "100%" }}
+              onViewStateChange={({ viewState: nextViewState }) => {
+                setViewState(nextViewState as ViewState);
+              }}
             >
               <Map
                 id="magpieMap"
