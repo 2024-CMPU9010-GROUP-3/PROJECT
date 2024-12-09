@@ -44,32 +44,34 @@ For the gaps smaller than the maximum gap threshold of 12 meters and larger than
 Based on the number of empty spots found, the coordinates for those empty spots are claculated to be aligned with the 2 consecutive cars and then added to a list of empty spots detected.
 Afterwards, duplicate spots defined as spots that overlap too much and where the distance between 2 spots is smaller than a threshold of 1 meter are removed.
 As well, spots coinciding with cars identified by the Yolo model, where the distance between them is smaller than 1.25 meters are removed from the empty spots found.
-Subsequently, empty spots that overlap with the road are filter out similarly to how the road mask classification was done.
+Subsequently, empty spots that overlap with the road are filter out in a similar manner to the classification done by the road mask.
 Following the detection of all the empty spots, the bounding boxes coresponding to each spot are drawn onto the sateillte image in green.
 
 \subsubsection{Classification of all spots detected}
-The parking spots detected are then classified into public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
-Parking spots are considered public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise they are considered private. This optimal threshold was found through extensive testing.
-Multiple different clustering approaches(HDBSCAN...) were tested to cluster spots together, overall DBSCAN performed the best with it's optimal parameters eps:55 and min_samples:5.
-Parking lots are classified as clusters with 18 spots or more.
-Clusters are drawn color coded as a circle at the center of the bounding box, and the classification label is written to the right of the bounding box. Private in red, public in green and parking lot in white.
+All the parking spots detected, including the parked cars identified by the model and the empty parking spots are then classified into 3 differnt classes: public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
+Multiple different clustering approaches were tested out to cluster spots together, such as DBSCAN, HDBSCAN and OPTICS.
+Overall DBSCAN performed the best and the quickest out of all the clustering algorithms, given that some images contained very few parking spots, meaning clustering was only significant in cases with a minimum number of parking spots. 
+Through testing, the optimal hyperparmeters found for DBSCAN are eps:55 and min_samples:5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds weren't set correctly.
+Eps refers to the maximum distance between two points for them to be considered as neighbors and min_samples refers to the minimum number of points required to form a cluster.
+HDBSCAN and OPTICS require a minimum number of samples larger or equal to 2, howver given that not all images might contained at least 2 detections, clustering using those algorithms is not possible in all cases, so -1 is assigned to the spots without clusters which is the default behaviour of DBSCAN.
+HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only found smaller clusters which weren't as significant.
+Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
+Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioratized as ... and the threshold of 18 spots, avoids misclassifications ... (Dire mieux)
+Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private in written in red, public in green and parking lot in white.
 
-The longitude, latitude and classification of all parking spots detected are then saved in a csv file.
-Potential duplicates are dropped, as some cars many be in multiple images as there is overlap between the images(expliquer miex)
-The parking zones and costs are added for each file based on a geojson file.
+\subsubsection{La suite, name section better}
+The longitude, latitude and classification of all the parking spots detected are then saved to a csv file.
+Potential spot duplicates are dropped, as the same car may be in multiple images as there is potentially an overlap between the images as the images are retrieved for specific coordinates which may overlap. (Expliquer mieux)
+Subsequently, the parking zones and costs associated to each parking spot found are added to the csv file.
+Dublin defines different parking zones, based on their high to moderate demand which changes the price per zone as seen below in Figure ...
+The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploded to the PostgreSQL database, in the backend.
 
-The csv file is the uploded to the PostgreSQL database, in the backend.
+Extensisve testing was done at all the different stages of developpement of the script to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues. (Add quelque part it makes more sense)
 
-Extensisve testing was done at all stages of the writing of the script (and adding the additonal parts) to find the optimal thresholds/params on test images from Mapbox, in a variety of edge cases like for example residential, urban...
-
-
-
-Expliquer clustering technique and params better
+Relire tout and add more, and fix section I wrote last night
 Expliquer parking zones and costs mieux en ajoutant la figure du pdf
-Expliquer drawing of all bb and classification, code couleur
-Expliquer TOUTES les fonctions
+Verifier que j'ai explique toutes les fonctions
 Sauter une ligne ajoute un nouveau paragraphe
-Explain how i did testing
-Add newlines
+Add newlines, fix formatting
 Refer to each figures, like say as seen in figure x ...
 Finish all sections then add all the images, build in latex
