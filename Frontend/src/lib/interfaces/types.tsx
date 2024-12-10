@@ -99,6 +99,15 @@ interface Location {
   coordinates: [number, number];
   type: string;
 }
+
+export interface ViewState {
+  longitude: number;
+  latitude: number;
+  zoom: number;
+  pitch: number;
+  bearing: number;
+  transitionDuration?: number;
+}
 export interface ImageConfig {
   id: string;
   path: string;
@@ -129,8 +138,8 @@ export interface LocationData {
   id: number;
   datecreated: string;
   amenitytypes: {
-    type: string,
-    count: number
+    type: string;
+    count: number;
   }[];
   longlat: {
     type: string;
