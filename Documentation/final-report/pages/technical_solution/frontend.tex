@@ -53,17 +53,29 @@ In the development of this project, we adopted a modern web development stack th
 The integration of these technologies into the frontend of the project provided a solid foundation for building a high-performance, scalable, and user-friendly web application. From the server-side rendering capabilities of Next.js to the highly customizable components offered by ShadCN, each technology played a critical role in the overall success of the project. The use of React and Next.js allowed for a modular and efficient development process, while TailwindCSS and its associated tools streamlined the styling process and enabled rapid UI development. The incorporation of Mapbox GL and Deck.gl brought advanced mapping and data visualization capabilities to the application, making it more interactive and engaging for users. Together, these technologies enabled us to deliver an application that met high standards of code quality, user experience, and performance, ensuring its success in achieving the project’s objectives.
 
 \subsubsection{Client State Management}
-    \paragraph{Introduction}
+    \paragraph{Introduction}\mbox{}\\
+    \newline
     Effective client state management is a crucial aspect of the \textbf{Magpie} frontend, as it ensures a seamless and consistent user experience. Given the dynamic nature of the application, with interactive elements such as maps, search filters, and property details, it is essential to maintain synchronization between different UI components while preventing errors and inconsistencies. Managing state efficiently is particularly important when handling large datasets that need to be presented in a user-friendly manner across various parts of the application.
+    \paragraph{React Context}\mbox{}\\
     \newline
-    \paragraph{React Context}
     To achieve this, the application employs state management techniques that allow for centralized control of the application’s state. One of the core tools used for this purpose is \textbf{React Context}, which provides a simple way to share state across multiple components without having to pass data manually through props. React Context enables the application to manage the user’s preferences, search filters, and saved properties in a global state, ensuring that these settings are accessible across various parts of the application. This method of state management is particularly useful for dynamic features, such as filtering search results based on user input or retaining user selections when navigating between different pages or sections of the platform.
+    \paragraph{Redux}\mbox{}\\
     \newline
-    \paragraph{Redux}
     In addition to React Context, the use of more advanced state management libraries such as Redux can be considered for larger-scale applications that require more complex state handling. Redux facilitates a unidirectional data flow and provides a centralized store that allows the state to be updated in a predictable manner. With Redux, the application can ensure that all components are working with the most up-to-date information, whether that involves real-time data from maps or user-selected property preferences. Redux also allows for more complex actions, such as asynchronous data fetching, and can be used in conjunction with middleware like Redux Thunk for handling side effects, further enhancing the application’s performance and stability.
+    \paragraph{Consistent User Experience}\mbox{}\\
     \newline
-    \paragraph{Consistent User Experience}
     Client state management also ensures that the data displayed to the user remains consistent. For instance, when a user interacts with a map, the system must track the map's current state and the filter options that the user has selected. By maintaining this state across different components, users can switch between different views (such as property details and map views) without losing their previous selections. Additionally, state management ensures that updates to the user interface, such as property filtering or adding a property to the favorites list, are reflected across the entire application in real-time, maintaining data integrity and providing users with a smooth browsing experience.
+    \paragraph{Conclusion}\mbox{}\\
     \newline
-    \paragraph{Conclusion}
     Overall, client state management plays a vital role in improving the usability and responsiveness of the frontend, reducing redundancy and complexity by centralizing control over the application’s data. This centralized management allows for easier maintenance and scalability as the application evolves and new features are added.
+
+\subsubsection{UI Walkthrough}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/sitemap.png}
+    \caption{Site map of magpie}
+\end{figure}
+\paragraph{Homepage}\mbox{}\\
+
+
+
