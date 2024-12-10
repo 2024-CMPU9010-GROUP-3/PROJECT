@@ -57,7 +57,7 @@ Eps refers to the maximum distance between two points for them to be considered 
 HDBSCAN and OPTICS require a minimum number of samples larger or equal to 2, howver given that not all images might contained at least 2 detections, clustering using those algorithms is not possible in all cases, so -1 is assigned to the spots without clusters which is the default behaviour of DBSCAN.
 HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only found smaller clusters which weren't as significant.
 Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
-Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioratized as parking lots containing less spots are not as important and given that the threshold of 18 spots, avoids misclassifications. (Expliquer mieux)
+Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioratized as parking lots containing less spots are not as relevant to the target user and given that the threshold of 18 spots minimizes the risk of misclassifying residential areas as parking lots.
 Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private in written in red, public in green and parking lot in white.
 
 \subsubsection{Uploading points to the backend server}
@@ -66,6 +66,16 @@ Potential spot duplicates are dropped, as the same car may be in multiple images
 Subsequently, the parking zones and costs associated to each parking spot found are added to the csv file.
 Dublin defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure ...
 The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploded to the PostgreSQL database, in the backend server using the send_points.py script.
+
+\subsubsection{Evaluation of each submodule of the parking detection model}
+
+\subsubsection{Evaluation of the Yolo model}
+
+\subsubsection{Evaluation of the classifiction of cars into on the road or parked by the road mask}
+
+\subsubsection{Evaluation of the empty parking detection}
+
+\subsubsection{Evaluation of the classification of the spots detected into private, public and parking lot}
 
 
 Relire tout and add more
