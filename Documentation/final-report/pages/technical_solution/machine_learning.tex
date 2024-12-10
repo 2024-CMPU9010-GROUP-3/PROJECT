@@ -6,6 +6,7 @@ Our project has two main Python scripts, parking_detection.py and parking_detect
 In parking_detection.py, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
 From the coordinates of the specific bounding box, the center coordinates of all the images necessary to make up that area are calculated, and the images are then retrieved.
 While in parking_detection_local.py, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the coresponding Mapbox Streets images, covering the entirety of Dublin city.
+Extensisve testing was done at all the different stages of developpement of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.
 
 \subsubsection{Yolo model used for car detection}
 
@@ -56,19 +57,18 @@ Eps refers to the maximum distance between two points for them to be considered 
 HDBSCAN and OPTICS require a minimum number of samples larger or equal to 2, howver given that not all images might contained at least 2 detections, clustering using those algorithms is not possible in all cases, so -1 is assigned to the spots without clusters which is the default behaviour of DBSCAN.
 HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only found smaller clusters which weren't as significant.
 Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
-Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioratized as ... and the threshold of 18 spots, avoids misclassifications ... (Dire mieux)
+Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioratized as parking lots containing less spots are not as important and given that the threshold of 18 spots, avoids misclassifications. (Expliquer mieux)
 Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private in written in red, public in green and parking lot in white.
 
-\subsubsection{La suite, name section better}
+\subsubsection{Uploading points to the backend server}
 The longitude, latitude and classification of all the parking spots detected are then saved to a csv file.
-Potential spot duplicates are dropped, as the same car may be in multiple images as there is potentially an overlap between the images as the images are retrieved for specific coordinates which may overlap. (Expliquer mieux)
+Potential spot duplicates are dropped, as the same car may be in multiple images given that the images are defined by their center coordinates, which causes adjacent images to overlap and share common areas. (The rightmost part of one image often overlaps with the leftmost part of another image.)
 Subsequently, the parking zones and costs associated to each parking spot found are added to the csv file.
-Dublin defines different parking zones, based on their high to moderate demand which changes the price per zone as seen below in Figure ...
-The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploded to the PostgreSQL database, in the backend.
+Dublin defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure ...
+The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploded to the PostgreSQL database, in the backend server using the send_points.py script.
 
-Extensisve testing was done at all the different stages of developpement of the script to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues. (Add quelque part it makes more sense)
 
-Relire tout and add more, and fix section I wrote last night
+Relire tout and add more
 Expliquer parking zones and costs mieux en ajoutant la figure du pdf
 Verifier que j'ai explique toutes les fonctions
 Sauter une ligne ajoute un nouveau paragraphe
