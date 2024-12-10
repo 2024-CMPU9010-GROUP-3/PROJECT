@@ -43,9 +43,42 @@ the pitfalls that Rust suffers from: it has a simple and approachable syntax and
 a very low-friction, high-speed development experience. This was also the
 deciding factor, since it was made clear to the team that getting an MVP up and
 running as quickly as possible was imperative for the project.
-\paragraph{sqlc and pgx}
-\paragraph{bcrypt}
+
+\paragraph{PostgreSQL}
+The plan for the MVP of Magpie set the simple goal of delivering useful data to
+users. To achieve this, the data needs to be stored in a way in which it can be
+efficiently accessed during operation. Since the goal of the project was to
+provide a tool to professionals, data integrity at every level was an important
+consideration. Additional requirements for the data storage solution were good
+support for geospatial data, quick retrieval of a large number of points and
+ease-of-use.
+
+There is a plethora of database solutions available today. The team considered
+the most common types: document databases like MongoDB and multi-model databases
+like PostgreSQL (sometimes called RDBMS).
+
+While document databases like MongoDB have their place in the current
+development landscape, it soon became clear that SQL-based, multi-model RDBMSs
+would be best suited for the job. They offer tried-and-tested performance and
+reliability and they are well equipped to guarantee data integrity. But the
+deciding reason was the pre-existing experience the lead developer for the
+backend had with these types of databases.
+
+After some deliberation, PostgreSQL was chosen as the database solution for this
+project. It was combined with the PostGIS extension to add support for
+geospatial data and queries. The decision was not cut and dried as most
+established multi-model databases (like Oracle DB or MySQL) offer the
+functionality that the requirements were asking for. However, the Kubernetes
+cluster this project was going to be deployed on already had a fully configured
+PostgreSQL server running on it. Making use of pre-existing infrastructure is
+the obvious choice in an agile project that had the prime goal of hitting the
+ground running.
+
+\paragraph{sqlc}
 \paragraph{golang-migrate}
+
+
+\paragraph{bcrypt}
 
 \subsubsection{Backend Development}
 As discussed in \ref{systemarchitecture} \nameref{systemarchitecture}, the
@@ -75,3 +108,10 @@ compilation based on if they were needed for private or public functionality.
 While the development of such a program split by build-tags is more challenging
 than developing a single binary, it is much more streamlined than keeping
 functionality identical between two separate projects.
+
+\subsubsection{Middlewares}
+\paragraph{Authentication}
+\paragraph{Authorisation}
+\subsubsection{Data Validation}
+\subsubsection{Error Handling}
+\subsubsection{Testing}
