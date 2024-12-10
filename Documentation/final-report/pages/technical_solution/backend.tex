@@ -75,10 +75,194 @@ the obvious choice in an agile project that had the prime goal of hitting the
 ground running.
 
 \paragraph{sqlc}
+In modern software development, there are two common ways for an application to
+interact with a database via SQL. There is the old school way of writing raw SQL
+queries, put them into prepared statements and execute them against the
+database. This gives the developer very granular control over the way their
+queries are structured and how they run them. But this method requires a
+significant amount of work in designing and implementing a translation layer
+between the database and the application. Data that the application wants to
+send to the database needs to be prepared into a format the database queries
+expect. Data that the application wants to retrieve from the database needs to
+be parsed back into the data model that's used by the application.
+
+To make interfacing with databases easier, so called ORMs (Object Relational
+Models) were developed. These are libraries that the application developer can
+include. Database queries are not done in SQL, but in the same programming
+language the application is written in. The ORM provides database interface
+functions that take in the data in the format the application uses. To actually
+perform any queries or make any changes to the database, the ORM runs its own
+SQL queries against the database via a compatible driver internally. ORMs
+abstract away the direct communication with the database and provide a simpler
+wrapper in the programming language that is used anyway. This can make it easier
+and quicker to develop an application that makes use of a database, but it takes
+away some of the agency that the developer has.
+
+
+The team wasn't really happy with either of these solutions, so an alternative
+called sqlc was chosen. This tool combines the freedom that using SQL gives
+developers with the productivity increase that ORMs offer. sqlc flips the
+typical ORM workflow on its head. This means, the developer writes standard SQL
+queries and schemas which are then passed to the CLI of sqlc. In accordance with
+a configuration file provided by the developer, sqlc then automatically
+generates type-safe bindings for the queries that were defined in the SQL files
+(\cite{sqlc_introduction}).
+
+This approach gives the developer more control about the queries that are
+executed. At the same time, it eliminates the need to write boilerplate wrapper
+code for accessing the database, just like an ORM would eliminate the need to
+write SQL queries. The tool treats SQL, which is a structured and typed
+language, as a source of truth. It also enables developers to reuse their
+queries across systems as sqlc offers code generation for multiple programming
+languages like Go, Python or Typescript and databases like PostgreSQL, MySQL or
+SQLite (\cite{sqlc_documentation_language_support}).
+
+The tool respects best practices to prevent SQL injection attacks. It generates
+code that only utilises constant strings and parametrised queries
+(\cite{sqlc_injection}). Using a tool like this, the team was quickly able to
+connect the backend server to the database. Eliminating the need to update the
+Go code manually each time the database schema or queries changed was vital for
+the backend keeping pace with the other developers.
+
+\begin{listing}[h]
+  \centering{}
+  \begin{minipage}{0.75\textwidth}
+  \begin{minted}{yaml}
+      version: "2"
+      sql:
+      - schema: "sql/migrations"
+        queries: "sql/queries_private.sql"
+        engine: "postgresql"
+        gen:
+          go:
+            package: "db"
+            sql_package: "pgx/v5"
+            out: "internal/db/private"
+            build_tags: "private"
+            emit_json_tags: true
+            overrides:
+              - db_type: "geometry"
+                go_type:
+                  import: "github.com/twpayne/go-geom"
+                  pointer: true
+                  type: "Point"
+      - schema: "sql/migrations"
+        queries: "sql/queries_public.sql"
+        engine: "postgresql"
+        gen:
+          go:
+            package: "db"
+            sql_package: "pgx/v5"
+            out: "internal/db/public"
+            build_tags: "public"
+            emit_json_tags: true
+            overrides:
+              - db_type: "geometry"
+                go_type:
+                  import: "github.com/twpayne/go-geom"
+                  pointer: true
+                  type: "Point"
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a sqlc configuration file with two targets with separate query inputs}
+  \label{listing:sqlc_config_file}
+\end{listing}
+
+\begin{listing}[h]
+  \centering{}
+  \begin{minipage}{\textwidth}
+  \begin{minted}{sql}
+    -- name: GetPointsInRadius :many
+    SELECT Id, LongLat::geometry, Type from points
+    WHERE ST_DWithin(
+      LongLat::geography,
+      ST_SetSRID(ST_MakePoint(@longitude::float, @latitude::float), 4326)::geography,
+      @radius::float
+    ) AND (
+      @types::point_type[] IS NULL OR Type = ANY(@types::point_type[])
+    );
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a SQL query with annotations used by sqlc}
+  \label{listing:sqlc_query_input}
+\end{listing}
+
+\begin{listing}[h]
+  \centering{}
+  \begin{minipage}{0.85\textwidth}
+  \begin{minted}{go}
+    const getPointsInRadius = `-- name: GetPointsInRadius :many
+    SELECT Id, LongLat::geometry, Type from points
+    WHERE ST_DWithin(
+      LongLat::geography,
+      ST_SetSRID(ST_MakePoint($1::float, $2::float), 4326)::geography,
+      $3::float
+    ) AND (
+      $4::point_type[] IS NULL OR Type = ANY($4::point_type[])
+    )
+    `
+
+    type GetPointsInRadiusParams struct {
+      Longitude float64     `json:"longitude"`
+      Latitude  float64     `json:"latitude"`
+      Radius    float64     `json:"radius"`
+      Types     []PointType `json:"types"`
+    }
+
+    type GetPointsInRadiusRow struct {
+      ID      int64          `json:"id"`
+      Longlat *go_geom.Point `json:"longlat"`
+      Type    PointType      `json:"type"`
+    }
+
+    func (q *Queries) GetPointsInRadius(
+        ctx context.Context, arg GetPointsInRadiusParams
+      ) ([]GetPointsInRadiusRow, error) {
+      rows, err := q.db.Query(ctx, getPointsInRadius,
+        arg.Longitude,
+        arg.Latitude,
+        arg.Radius,
+        arg.Types,
+      )
+      if err != nil {
+        return nil, err
+      }
+      defer rows.Close()
+      var items []GetPointsInRadiusRow
+      for rows.Next() {
+        var i GetPointsInRadiusRow
+        if err := rows.Scan(&i.ID, &i.Longlat, &i.Type); err != nil {
+          return nil, err
+        }
+        items = append(items, i)
+      }
+      if err := rows.Err(); err != nil {
+        return nil, err
+      }
+      return items, nil
+    }
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a Go binding generated by sqlc from the SQL query in
+  Listing \ref{listing:sqlc_query_input}}
+  \label{listing:sqlc_generated_bindings}
+\end{listing}
+
+
 \paragraph{golang-migrate}
 
+The complete database development workflow for the backend server is visualised
+in Figure \ref{fig:database_workflow_diagram}.
+
+\begin{figure}[p]
+  \centering{}
+  \includegraphics[width=0.8\textwidth]{../d2-diagrams/database_workflow.png}
+  \caption{Database Workflow Diagram}
+  \label{fig:database_workflow_diagram}
+\end{figure}
 
 \paragraph{bcrypt}
+
 
 \subsubsection{Backend Development}
 As discussed in \ref{systemarchitecture} \nameref{systemarchitecture}, the
