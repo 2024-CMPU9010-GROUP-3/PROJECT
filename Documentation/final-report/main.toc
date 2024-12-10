@@ -22,8 +22,10 @@
 \contentsline {paragraph}{Medium-fidelity prototypes offer more detail, serving as a transitional phase between initial ideas and advanced user testing.}{2}{}%
 \contentsline {paragraph}{As we move from medium to high fidelity, the prototypes become more refined and detailed, incorporating more realistic interactions and visual elements. This transition allows us to test more specific aspects of the user experience and gather more precise feedback.}{2}{}%
 \contentsline {paragraph}{High-fidelity prototypes closely resemble the final product in both form and function.}{2}{}%
-\contentsline {paragraph}{The first version of the prototype design is very similar to the sketch and wireframe designs, but it did not take into account the needs and experiences of the users, so it needs to be iterated. The card-based design makes the entire home screen very cluttered and scattered, and the login/signup page adopts the original shadcn style, which needs to be customized and improved.}{2}{}%
 \contentsline {subsection}{\numberline {0.5.4}User Interface Iteration}{2}{}%
+\contentsline {paragraph}{Iteration 1:}{2}{}%
+\contentsline {paragraph}{The first version of the prototype design is very similar to the sketch and wireframe designs, but it did not take into account the needs and experiences of the users, so it needs to be iterated. The card-based design makes the entire home screen very cluttered and scattered, and the login/signup page adopts the original shadcn style, which needs to be customized and improved.}{2}{}%
+\contentsline {paragraph}{The second version of the design adopts the current version's sidebar layout, making the right side the user operation area, providing a dashboard with search radius and filter options, and adding the early search functionality.}{3}{}%
 \contentsline {subsection}{\numberline {0.5.5}Backend}{3}{}%
 \contentsline {subsection}{\numberline {0.5.6}Deployment}{3}{}%
 \contentsline {section}{\numberline {0.6}Software Management}{3}{}%
