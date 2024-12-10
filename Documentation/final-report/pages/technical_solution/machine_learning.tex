@@ -6,7 +6,7 @@ Initially, a training set of 250 satellite images was collected to train the Yol
 Our project has two main Python scripts, \texttt{parking\_detection.py} and \texttt{parking\_detection\_local.py} to localize parking spots.
 In \texttt{parking\_detection.py}, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
 From the coordinates of the specific bounding box, the center coordinates of all the images necessary to make up that area are calculated, and the images are then retrieved.
-While in \texttt{parking\_detection\_local.py}, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the coresponding Mapbox Streets images, covering the entirety of Dublin city.
+While in \texttt{parking\_detection\_local.py}, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the corresponding Mapbox Streets images, covering the entirety of Dublin city.
 
 Extensive testing was done at all the different stages of development of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.
 
@@ -23,13 +23,12 @@ The original mask was a very simple binary mask which identified the road pixels
 
 Through testing and thoroughly analysing the Mapbox Streets images, motorways and national roads were discovered to be depicted in yellow or orange. Therefore, two additional color masks (for orange and yellow) were concatenated to the original binary mask through bitwise operations.
 
-To refine the mask, and reduce misclassifications, additional annotations contained on the Mapbox Streets images such as street names and white dotted lines which denote a multitude of things (foot paths, planter boxes, pedestrian crosswalks, football fields delimitations, etc. ) were removed through morphological operations, leaving only a plain white line for each road.
-A number of different kernel sizes, different contor thresholds and other parameters were tested to achieve the optimal removal of the street names and additonal annotations.
+To refine the mask, and reduce misclassification errors, additional annotations contained on the Mapbox Streets images such as street names and white dotted lines which denote a multitude of things (foot paths, planter boxes, pedestrian crosswalks, football fields delimitations, etc. ) were removed through morphological operations, leaving only a plain white line for each road.
+A number of different kernel sizes, different contour thresholds and other parameters were tested to achieve the optimal removal of the street names and additional annotations.
 
-A different approach using Canny Edge Detection was tested, however due to the nature of the Mapbox Streets images, the edges picked up were not significant and the overall perfermances was much worse than the current mask at the time.
+A different approach using Canny Edge Detection was tested, however due to the nature of the Mapbox Streets images, the edges picked up were not significant and the overall performances was much worse than the current mask at the time.
 
-A final improvement to the mask was made to avoid certain misclassification due to the Mapbox Streets road width not correctly reflecting all the lanes of the road and therfore classifying on the road cars as parked. This issue was most prominent for motorways and national roads and was resolved by enlarging those roads using a dilation technique. Multiple different kernel sizes, different number of iterations and kernels of different sizes applied consecutively were tested to find the optimal solution.
-
+A final improvement to the mask was made to avoid certain misclassification due to the Mapbox Streets road width not correctly reflecting all the lanes of the road and therefore classifying on the road cars as parked. This issue was most prominent for motorways and national roads and was resolved by enlarging those roads using a dilation technique. Multiple different kernel sizes, different number of iterations and kernels of different sizes applied consecutively were tested to find the optimal solution.
 
 \subsubsection{Classifiction of cars into on the road or parked}
 The cars detected by the Yolo model are then sorted into on the road or parked based on the road mask previously generated, which is explained in more detail below.
@@ -40,7 +39,7 @@ A bounding box for each of the model's predictions is computed from the center p
 The overlap between the bounding box and the road pixels is calculated, and if the overlap is higher than the threshold of 0.5, the prediction is discarded, keeping only the parked cars.
 Different thresholds were tested as well, however overall a harsher threshold works better given that these detections are used later on for the empty parking detection.
 
-For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, roation and orientation based on the angle are saved.
+For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, rotation and orientation based on the angle are saved.
 
 For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen in Figure ...
 
@@ -52,29 +51,29 @@ A number of different variations and calculation techniques were tested out, how
 Average parking spot width and length in pixels are calculated for each image, to draw the empty spots more uniformly. Average parking spot width and length in meters are set to 3.05 as found to be the optimal value through testing accounting for the variations in size.
 Setting this value avoids misclassifications as previously the average width and length in meters were calculated dynamically, however in cases where the averages were lesser than 3, spots tended to overlap.
 
-The parked cars detected are then sorted by latitude for horizontally aligned cars and by longitude for vertically algned cars, to identify gaps between consecutive cars.
+The parked cars detected are then sorted by latitude for horizontally aligned cars and by longitude for vertically aligned cars, to identify gaps between consecutive cars.
 For each pair of consecutive spots, the distance in meters in between them is calculated. The gap is adjusted to account for the half cars on both sides, as the coordinates of the parked car represent the center of the car.
-For the gaps smaller than the maximum gap threshold of 12 meters and larger than the average size of a car, where there is enough space to fit 1 or more car, and where the angle deviation is smaller than a threshold of 35 degrees, to ensure the spots are sufficiently aligned, the number of cars that fit into the gap is claculated.
-Based on the number of empty spots found, the coordinates for those empty spots are claculated to be aligned with the 2 consecutive cars and then added to a list of empty spots detected.
+For the gaps smaller than the maximum gap threshold of 12 meters and larger than the average size of a car, where there is enough space to fit 1 or more car, and where the angle deviation is smaller than a threshold of 35 degrees, to ensure the spots are sufficiently aligned, the number of cars that fit into the gap is calculated.
+Based on the number of empty spots found, the coordinates for those empty spots are calculated to be aligned with the 2 consecutive cars and then added to a list of empty spots detected.
 
 Afterwards, duplicate spots defined as spots that overlap too much and where the distance between 2 spots is smaller than a threshold of 1 meter are removed.
 As well, spots coinciding with cars identified by the Yolo model, where the distance between them is smaller than 1.25 meters are removed from the empty spots found.
 Subsequently, empty spots that overlap with the road are filter out in a similar manner to the classification done by the road mask.
 
-Following the detection of all the empty spots, the bounding boxes coresponding to each spot are drawn onto the sateillte image in green.
+Following the detection of all the empty spots, the bounding boxes corresponding to each spot are drawn onto the satellite image in green.
 
 \subsubsection{Classification of all spots detected}
-All the parking spots detected, including the parked cars identified by the model and the empty parking spots are then classified into 3 differnt classes: public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
+All the parking spots detected, including the parked cars identified by the model and the empty parking spots are then classified into 3 different classes: public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
 
 Multiple different clustering approaches were tested out to cluster spots together, such as DBSCAN, HDBSCAN and OPTICS.
 Overall DBSCAN performed the best and the quickest out of all the clustering algorithms, given that some images contained very few parking spots, meaning clustering was only significant in cases with a minimum number of parking spots.
 Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds weren't set correctly.
 \texttt{eps} refers to the maximum distance between two points for them to be considered as neighbors and \texttt{min\_samples} refers to the minimum number of points required to form a cluster.
-HDBSCAN and OPTICS require a minimum number of samples larger or equal to 2, howver given that not all images might contained at least 2 detections, clustering using those algorithms is not possible in all cases, so -1 is assigned to the spots without clusters which is the default behaviour of DBSCAN.
+HDBSCAN and OPTICS require a minimum number of samples larger or equal to 2, however given that not all images might contained at least 2 detections, clustering using those algorithms is not possible in all cases, so -1 is assigned to the spots without clusters which is the default behaviour of DBSCAN.
 HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only found smaller clusters which weren't as significant.
 
 Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
-Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioratized as parking lots containing less spots are not as relevant to the target user and given that the threshold of 18 spots minimizes the risk of misclassifying residential areas as parking lots.
+Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioritized as parking lots containing less spots are not as relevant to the target user and given that the threshold of 18 spots minimizes the risk of misclassifying residential areas as parking lots.
 
 Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private in written in red, public in green and parking lot in white.
 
@@ -85,7 +84,7 @@ Potential spot duplicates are dropped, as the same car may be in multiple images
 Subsequently, the parking zones and costs associated to each parking spot found are added to the csv file.
 Dublin defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure ...
 
-The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
+The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploaded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
 
 \subsubsection{Evaluation of each submodule of the parking detection model}
 
@@ -101,7 +100,4 @@ The csv file containing the longitude, latitude, classification label, parking z
 Relire tout and add more
 Expliquer parking zones and costs mieux en ajoutant la figure du pdf
 Verifier que j'ai explique toutes les fonctions
-Sauter une ligne ajoute un nouveau paragraphe
-Add newlines, fix formatting
 Refer to each figures, like say as seen in figure x ...
-Finish all sections then add all the images, build in latex
