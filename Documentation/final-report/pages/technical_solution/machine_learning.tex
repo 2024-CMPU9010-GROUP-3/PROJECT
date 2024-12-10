@@ -67,10 +67,10 @@ All the parking spots detected, including the parked cars identified by the mode
 
 Multiple different clustering approaches were tested out to cluster spots together, such as DBSCAN, HDBSCAN and OPTICS.
 Overall DBSCAN performed the best and the quickest out of all the clustering algorithms, given that some images contained very few parking spots, meaning clustering was only significant in cases with a minimum number of parking spots.
-Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds weren't set correctly.
+Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds were not set correctly.
 \texttt{eps} refers to the maximum distance between two points for them to be considered as neighbors and \texttt{min\_samples} refers to the minimum number of points required to form a cluster.
 HDBSCAN and OPTICS require a minimum number of samples larger or equal to 2, however given that not all images might contained at least 2 detections, clustering using those algorithms is not possible in all cases, so -1 is assigned to the spots without clusters which is the default behaviour of DBSCAN.
-HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only found smaller clusters which weren't as significant.
+HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only found smaller clusters which were not as significant.
 
 Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
 Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioritized as parking lots containing less spots are not as relevant to the target user and given that the threshold of 18 spots minimizes the risk of misclassifying residential areas as parking lots.
@@ -87,14 +87,56 @@ Dublin defines different parking zones by color, based on their high to moderate
 The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploaded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
 
 \subsubsection{Evaluation of each submodule of the parking detection model}
+Each major section of the parking detection model was evaluated individually in order to access the overall performance. The results will be presented and analysed for each section below.
 
 \subsubsection{Evaluation of the Yolo model}
 
-\subsubsection{Evaluation of the classifiction of cars into on the road or parked by the road mask}
+\subsubsection{Evaluation of the classifiction of cars into on the road or parked}
+The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
+The classification is evaluated on the following metrics: Average Intersection over Union (IoU), Balanced and Accuracy, Precision, Recall, F1 Score, Accuracy, Specificity per class. These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
+
+A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in the labelling software Label Studio. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to txt format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
+
+The overall results on test set are presented below in Table~\ref{tab:metrics}
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{|l|c|c|}
+    \hline
+    \textbf{Metric}               & \textbf{Parked} & \textbf{Road} \\ \hline
+    Average IoU                  & 0.66         & 0.66              \\ \hline
+    Average Balanced Accuracy    & 0.58         & 0.58              \\ \hline
+    Average Precision            & 0.70         & 0.90              \\ \hline
+    Average Recall               & 0.75         & 0.67              \\ \hline
+    Average F1 Score             & 0.59         & 0.54              \\ \hline
+    Average Accuracy             & 0.69         & 0.64              \\ \hline
+    Average Specificity          & 0.74         & 0.79              \\ \hline
+    \end{tabular}
+    \caption{Performance Metrics for Road Mask Classification}
+    \label{tab:metrics}
+\end{table}
+
+Analyse metrics + Mention common problems.
+
+Some images from the test set can be seen below, in Table~\ref{tab:images}
+The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
+
+\begin{table}[h!]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.4\textwidth]{images/image1_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_road_mask_classification_test_set.png} \\
+        \includegraphics[width=0.4\textwidth]{images/image3_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_road_mask_classification_test_set.png} \\
+        \multicolumn{2}{c}{\includegraphics[width=0.4\textwidth]{images/image5_road_mask_classification_test_set.png}} \\
+    \end{tabular}
+    \caption{Images from the Road Mask Classification Test Set}
+    \label{tab:images}
+\end{table}
 
 \subsubsection{Evaluation of the empty parking detection}
+The empty parking detection logic is evaluated in the \texttt{evaluate\_empty\_parking\_detection.py} Python script.
 
 \subsubsection{Evaluation of the classification of the spots detected into private, public and parking lot}
+The classification of the spots detected into private, public and parking lot is evaluated in the \texttt{evaluate\_classification\_of\_spots.py} Python script.
 
 
 Relire tout and add more
