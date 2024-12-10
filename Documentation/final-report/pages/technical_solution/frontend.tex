@@ -55,5 +55,7 @@ The integration of these technologies into the frontend of the project provided 
 \subsubsection{Client State Management}
     \paragraph{Introduction}
     Effective client state management is a crucial aspect of the \textbf{Magpie} frontend, as it ensures a seamless and consistent user experience. Given the dynamic nature of the application, with interactive elements such as maps, search filters, and property details, it is essential to maintain synchronization between different UI components while preventing errors and inconsistencies. Managing state efficiently is particularly important when handling large datasets that need to be presented in a user-friendly manner across various parts of the application.
+    \newline
+    \paragraph{React Context}
+    To achieve this, the application employs state management techniques that allow for centralized control of the application’s state. One of the core tools used for this purpose is \textbf{React Context}, which provides a simple way to share state across multiple components without having to pass data manually through props. React Context enables the application to manage the user’s preferences, search filters, and saved properties in a global state, ensuring that these settings are accessible across various parts of the application. This method of state management is particularly useful for dynamic features, such as filtering search results based on user input or retaining user selections when navigating between different pages or sections of the platform.
     
-
