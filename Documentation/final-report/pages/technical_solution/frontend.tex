@@ -39,7 +39,7 @@ In the development of this project, we adopted a modern web development stack th
     The combination of ShadCN’s flexible components and TailwindCSS allowed us to build a visually appealing and highly functional user interface with minimal configuration. Furthermore, ShadCN's tight integration with accessibility guidelines ensured that the application met the required standards for usability, providing an inclusive experience for all users.
 
     \item{} \textbf{Radix Primitives} \\
-    Radix Primitives played a crucial role in the design and development of our user interface components. Radix Primitives provides a set of foundational, high{-}quality UI components that serve as the core building blocks for any application. These components are unstyled and highly customizable, giving developers full control over the look and behavior of the elements while ensuring accessibility and functionality out of the box.
+    Radix Primitives played a crucial role in the design and development of our user interface components. Radix Primitives provides a set of foundational, high{-}quality UI components that serve as the core building blocks for any application. These components are unstyled and highly customizable, giving developers full control over the look and behaviour of the elements while ensuring accessibility and functionality out of the box.
 
     The core of Radix Primitives includes essential UI elements such as buttons, modals, popovers, sliders, tabs, and other interactive components. These primitives are designed to be flexible and composable, allowing developers to combine them in various ways to create complex UI patterns. The components are built to be accessible, ensuring that the user interface remains usable for all users, including those with disabilities, without requiring additional development effort to meet accessibility standards.
 
@@ -68,7 +68,7 @@ The integration of these technologies into the frontend of the project provided 
     In addition to React Context, the use of more advanced state management libraries such as Redux can be considered for larger{-}scale applications that require more complex state handling. Redux facilitates a unidirectional data flow and provides a centralized store that allows the state to be updated in a predictable manner. With Redux, the application can ensure that all components are working with the most up{-}to{-}date information, whether that involves real{-}time data from maps or user{-}selected property preferences. Redux also allows for more complex actions, such as asynchronous data fetching, and can be used in conjunction with middleware like Redux Thunk for handling side effects, further enhancing the application’s performance and stability.
     \paragraph{Consistent User Experience}\mbox{}
 
-    Client state management also ensures that the data displayed to the user remains consistent. For instance, when a user interacts with a map, the system must track the map's current state and the filter options that the user has selected. By maintaining this state across different components, users can switch between different views (such as property details and map views) without losing their previous selections. Additionally, state management ensures that updates to the user interface, such as property filtering or adding a property to the favorites list, are reflected across the entire application in real{-}time, maintaining data integrity and providing users with a smooth browsing experience.
+    Client state management also ensures that the data displayed to the user remains consistent. For instance, when a user interacts with a map, the system must track the map's current state and the filter options that the user has selected. By maintaining this state across different components, users can switch between different views (such as property details and map views) without losing their previous selections. Additionally, state management ensures that updates to the user interface, such as property filtering or adding a property to the favourites list, are reflected across the entire application in real{-}time, maintaining data integrity and providing users with a smooth browsing experience.
     \paragraph{Conclusion}\mbox{}
 
     Overall, client state management plays a vital role in improving the usability and responsiveness of the frontend, reducing redundancy and complexity by centralizing control over the application’s data. This centralized management allows for easier maintenance and scalability as the application evolves and new features are added.
@@ -93,43 +93,60 @@ Upon accessing the landing page, users are greeted with a clean and modern layou
 \end{figure}
 \begin{itemize}
     \item{} \textbf{Navigation Bar:} At the top of the page, the navigation bar features the \textbf{Magpie logo} on the left side, offering a simple and recognizable brand identity. To the right, navigation links for \textbf{About}, \textbf{Features}, \textbf{Use Cases}, and \textbf{Get Started} provide quick access to key sections. Additionally, a \textbf{Sign Up} button stands out in black with white text for clear calls to action.
+    \item{} \textbf{Mobile Menu:} For mobile views, a hamburger menu (three horizontal lines) appears, ensuring that the navigation remains compact and accessible on smaller screens.
 \end{itemize}
 
-\paragraph{Homepage}\mbox{}\\
+
+\paragraph{Homepage}\mbox{}
+
 \begin{figure}[h]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/home/homepage_1.png}
     \caption{Homepage}
 \end{figure}
 
-\textbf{Introduction}\\
-Upon landing on the page, users are greeted with a map interface centered on Dublin and its surroundings, displaying various public services available in the area. The page provides an interactive map to explore amenities and services in the region, such as parking meters, bike stands, public Wi{-}Fi, libraries, and more.\\
+
+
+\textbf{Introduction}
+
+Upon landing on the page, users are greeted with a map interface centred on Dublin and its surroundings, displaying various public services available in the area. The page provides an interactive map to explore amenities and services in the region, such as parking meters, bike stands, public Wi{-}Fi, libraries, and more.
+
 \textbf{Top section}
+
 \begin{itemize}
-    \item{} \textbf{Logo and Title:} At the top{-}right corner, you’ll see the Magpie logo and the dashboard sual identity to the platform.
+    \item{} \textbf{Logo and Title:} At the top{-}right corner, you’ll see the Magpie logo and the dashboard title.
     \item{} \textbf{Search Bar and Radius Control:} Beneath the header, there is a search bar to find specific locations, accompanied by a `Search Radius' slider. This allows users to set the distance range for viewing available services. The slider can adjust the search radius between 1m and 10km.
 \end{itemize}
-\textbf{Map interface}\\
+
+\textbf{Map interface}
+
 The main focus of the page is the map, which occupies a large portion of the screen
+
 \begin{itemize}
     \item{} \textbf{Interactive Map:} The map is interactive, powered by Mapbox, where users can zoom in and out using a mouse or touchpad gestures (pinch to zoom). Location markers represent different public services, such as parking meters or bike stands. These markers provide both a visual and interactive experience for users.
     \item{} \textbf{Service Markers:} Clicking on any marker will display detailed information about the selected service, such as its name, type, and available count.
 \end{itemize}
+
 \textbf{Sidebar}
 
 \begin{itemize}
     \item{} \textbf{Interactive Map:} The map is interactive, powered by Mapbox, where users can zoom in and out using a mouse or touchpad gestures (pinch to zoom). Location markers represent different public services, such as parking meters or bike stands. These markers provide both a visual and interactive experience for users.
     \item{} \textbf{Service Markers:} Clicking on any marker will display detailed information about the selected service, such as its name, type, and available count.
 \end{itemize}
+
 \textbf{Onboarding Tour:}
+
 A guided onboarding process walks the user through the various features of the platform, highlighting key elements such as:
+
 \begin{enumerate}
     \item{} \textbf{Search Radius:} Adjusting the search range.
     \item{} \textbf{Marker Data:} Information displayed upon selecting a service marker.
     \item{} \textbf{Selecting Amenities:} The ability to toggle amenity visibility.
     \item{} \textbf{Map Interaction:} How  to click and zoom on the map to select locations.
 \end{enumerate}
-\textbf{Footer and Cookie Consent:}\\
+
+\textbf{Footer and Cookie Consent:}
+
 \textbf{Footer:} At the bottom of the page, the user is shown a cookie consent banner, offering the option to accept or decline cookies for the site’s functionality.
 
 This page is designed to provide users with an easy{-}to{-}use and interactive interface to view and search for public services across Dublin. The combination of a detailed map with customizable filters and an intuitive onboarding process ensures that users can quickly understand and \textbf{make} use of the platform’s features. The inclusion of interactive elements like the service markers and radius control further enhances the user experience.
