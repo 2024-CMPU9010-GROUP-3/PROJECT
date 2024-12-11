@@ -1,1 +1,1 @@
-DROP TABLE click_history IF EXISTS;
+DROP TABLE location_history;

@@ -33,8 +33,13 @@ def create_mask(image_path, save_path, threshold=240):
 
     orange_mask = cv2.inRange(img_hsv, lower_orange, upper_orange)
     yellow_mask = cv2.inRange(img_hsv, lower_yellow, upper_yellow)
-    combined_mask = cv2.bitwise_or(road_mask, orange_mask)
-    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask)
+
+    dilation_kernel = np.ones((15, 15), np.uint8)#we thicken the road width for highways as the road doesn't take into account the multiple lanes (to reduce misclassifications)
+    orange_mask_dilated = cv2.dilate(orange_mask, dilation_kernel, iterations=2)
+    yellow_mask_dilated = cv2.dilate(yellow_mask, dilation_kernel, iterations=2)
+
+    combined_mask = cv2.bitwise_or(road_mask, orange_mask_dilated)
+    combined_mask = cv2.bitwise_or(combined_mask, yellow_mask_dilated)
 
     kernel = np.ones((2, 2), np.uint8)#use smaller kernel as it works better
     combined_mask = cv2.morphologyEx(combined_mask, cv2.MORPH_CLOSE, kernel)#cv2.MORPH_CLOSE actually works better
@@ -233,10 +238,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
     """
     empty_spots = []
     
-    horizontal_cars_sorted_by_long = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[0]) 
     horizontal_cars_sorted_by_lat = sorted([car for car in cars if car[5] == 'horizontal'], key=lambda point: point[1])
     vertical_cars_sorted_by_long = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[0])  
-    vertical_cars_sorted_by_lat = sorted([car for car in cars if car[5] == 'vertical'], key=lambda point: point[1]) 
 
     def find_empty_spots(sorted_cars, alignment, gap_dimension, gap_threshold_meters):
         """ Detects empty spots in the sorted list of cars for a specific alignment (horizontal or vertical) 
@@ -248,8 +251,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
         gap_threshold_meters (float): Maximum allowed gap to consider there is an empty parking spot or multiple parking spots
         """
         for i in range(len(sorted_cars) - 1):
-            x_current, y_current, _, _, _, _ = sorted_cars[i]
-            x_next, y_next, _, _, _, _ = sorted_cars[i + 1]
+            x_current, y_current, _, _, angle_current, _ = sorted_cars[i]
+            x_next, y_next, _, _, angle_next, _ = sorted_cars[i + 1]
 
             gap_distance = geodesic((y_current, x_current), (y_next, x_next)).meters
             avg_half_dim = gap_dimension / 2
@@ -257,6 +260,12 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
 
             angle_radians = math.atan2(y_next - y_current, x_next - x_current)
             angle_degrees = math.degrees(angle_radians)
+
+            angle_deviation = abs(angle_current - angle_next)
+            angle_deviation = min(angle_deviation, 360 - angle_deviation)
+
+            if angle_deviation > 35:
+                continue
             
             if adjusted_gap <= gap_threshold_meters and adjusted_gap > gap_dimension:
                 num_spots = int(adjusted_gap // gap_dimension)
@@ -267,10 +276,8 @@ def detect_empty_spots(cars, avg_spot_width, avg_spot_length, avg_width_pixels, 
                     empty_spots.append((empty_x_center, empty_y_center, avg_width_pixels, avg_length_pixels, angle_degrees, alignment))
                     print(f"Empty parking spot at {empty_x_center}, {empty_y_center}")
 
-    find_empty_spots(horizontal_cars_sorted_by_long, 'horizontal', avg_spot_length, gap_threshold_meters) #Horizontal spots in a row
-    find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters=9 ) #Horizontal spots stacked in a column
-    find_empty_spots(vertical_cars_sorted_by_lat, 'vertical', avg_spot_length, gap_threshold_meters) #Vertical spots in columns
-    find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters=9)  # Vertical spots side by side in a row
+    find_empty_spots(horizontal_cars_sorted_by_lat, 'horizontal', avg_spot_width, gap_threshold_meters) #Horizontal spots in a row
+    find_empty_spots(vertical_cars_sorted_by_long, 'vertical', avg_spot_width, gap_threshold_meters)  #Vertical spots in columns
 
     empty_spots = sorted(empty_spots, key=lambda spot: (spot[0], spot[1]))
     unique_empty_spots = []
@@ -687,7 +694,7 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
     return avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr
 
 
-def main(directory, output_file="metrics.csv"):
+def main(directory, output_file="metrics_empty_parking_detection.csv"):
     """
     Main function to evaluate the empty parking detction on the test images and calculate the corresponding performance metrics
     Saves Averages of IoU, Precision, Recall, F1 score, Orientation Accuracy, 
@@ -735,6 +742,9 @@ def main(directory, output_file="metrics.csv"):
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
+        #true_labels = get_true_labels_automatic_orientation_labelling(long, lat, directory)
+        if not predictions and not true_labels:# when there are no detections and no true labels we want to skip the calculation of the metrics
+            continue
         draw_true_labels(true_labels, directory, long, lat)
         #print(predictions)
         #print(true_labels)
