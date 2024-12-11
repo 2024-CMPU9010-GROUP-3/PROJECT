@@ -3,6 +3,7 @@
         "dialogs",
         "popovers",
         "Redux",
+        "Signup",
         "tagline"
     ]
 }
