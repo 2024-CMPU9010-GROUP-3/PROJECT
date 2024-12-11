@@ -12,16 +12,10 @@ On the other hand, \textbf{UX design} aims to create a meaningful user experienc
 
 \noindent We requested a review of our system from UI/UX professional Andrea Curley.\\
 A professor at a top technological university, specialised in web development, web design and user experience, she has consulted on many notable project such as \fcolorbox{yellow}{yellow}{EXAMPLE}.\\
-\noindent Two session were conducted: one on November 13 after the publication of our first minimum viable product, and the other on December 9 at the end of the development timeline. Both sessions were conducted online through a videoconference meeting on Teams and took the following form:
-\begin{enumerate}
-    \item Presentation of Magpie
-    \item Free\-roaming of the application
-    \item Discussion
-    \item Questionnaire \& end of review
-\end{enumerate}
-The questionnaire is divided into 3 sections pertaining to visual design, information architecture, and compliance as shown in the table below.\\
-Different types of questions were included, such as `Closed' `Scale' and `Open' to allow for both the quantitative and qualitative measure of Magpie.\\
-Open\-ended questions tend to require more cognitive efforts, thus answers can vary in quality and quantity depending on the individual. Close\-ended questions on the other hand offer standardized responses which can be more easily quantified and require less cognitive effort (\cite{mixsurveyquestions2020});
+\noindent Two session were conducted: one on November 13 after the publication of our first minimum viable product, and the other on December 9 at the end of the development timeline. Both sessions were conducted online through a videoconference meeting on Teams where we presented Magpie, explored the features, discussed them, and administered a questionnaire at the end.\\
+The questionnaire is divided into 3 sections pertaining to \emph{visual design}, \emph{information architecture}, and \emph{compliance}.\\
+Different types of questions were included, such as `Closed' `Scale' and `Open' to allow for both the quantitative and qualitative measure of Magpie UI.\\
+Open-ended questions tend to require more cognitive efforts, thus answers can vary in quality and quantity depending on the individual. Close-ended questions on the other hand offer standardized responses which can be more easily quantified and require less cognitive effort (\cite{mixsurveyquestions2020});
 %table show survey questions and type
 \begin{table}[h!]
     \centering
@@ -57,6 +51,7 @@ Open\-ended questions tend to require more cognitive efforts, thus answers can v
     \end{tabular}
 \end{table}
 
+\newpage
 \subsubsection{Session 1}
 The first session provided very valuable insights on Magpie's workflow, user interface and technical components, as well as helped us uncover critical bugs. These were the main takeaways:\\ \\
 \textbf{Landing Page: }
@@ -69,20 +64,20 @@ Currently, the hierarchy of items on the dashboard does not make sense to the av
 The icons on the map are not visible enough, and zooming in \& out on the map may not be intuitive to the range of users and devices. Adding zoom buttons could help bridge that gap. \\
 Currently, Andrea Curley noted that there is a disconnect between the map and the dashboard whereas they should be looked as one. She suggested adding amenity icons to the dashboard to help bridge that gap.
 %figure for the old confusing dashboard
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \fbox{\includegraphics[width=0.8\textwidth]{images/old-dashboard_opt.png}}
+    \fbox{\includegraphics[width=0.7\textwidth]{images/old-dashboard_opt.png}}
     \caption{V.0.1 Magpie Dashboard \& Map when 2 amenities are selected}
 \end{figure}
 
+\newpage
 \noindent\textbf{Filters: }
 If there are no amenities found in the radius of search, a message should pop up to tell the user so. Currently, it is not very clear if there are amenities present in the chosen area especially due to the small size \& faded color of the icons. \\ \\
-\newpage
 \textbf{Log in/sign up: }
 When trying to log in with credentials that don't exist, the system should return a proper error such as "username doesn't exist". Log out and account sign up went smoothly. Professor Curley questioned the benefits of logging for Magpie, to which we stated:
 Magpie was conceived with the idea of providing a service to working professionals; therefore logging in will allow the implementation of further features such as safeguarding their previous searches, storing exported reports, connecting with other members of your organization and much more.
 %figure for the log in error
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.3\textwidth]{images/old-login-error.png}}
     \caption{Error message when using inexistant username and password}
