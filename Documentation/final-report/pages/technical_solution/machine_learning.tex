@@ -7,6 +7,24 @@ Our project has two main Python scripts, \texttt{parking\_detection.py} and \tex
 In \texttt{parking\_detection.py}, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
 From the coordinates of the specific bounding box, the center coordinates of all the images necessary to make up that area are calculated, and the images are then retrieved.
 While in \texttt{parking\_detection\_local.py}, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the corresponding Mapbox Streets images, covering the entirety of Dublin city.
+A Mapbox Satellite and Mapbox Streets image can be seen below in Figure~\ref{fig:Mapbox_images}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.40\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/satellite_img.png}
+        \caption*{Mapbox Satellite Image}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.40\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/streets_img.png}
+        \caption*{Mapbox Streets Image}
+    \end{minipage}
+    \caption{Images retrieved from the Mapbox Static Images API}
+    \label{fig:Mapbox_images}
+\end{figure}
 
 Extensive testing was done at all the different stages of development of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.
 
@@ -82,7 +100,22 @@ The longitude, latitude and classification of all the parking spots detected are
 Potential spot duplicates are dropped, as the same car may be in multiple images given that the images are defined by their center coordinates, which causes adjacent images to overlap and share common areas. (The rightmost part of one image often overlaps with the leftmost part of another image.)
 
 Subsequently, the parking zones and costs associated to each parking spot found are added to the csv file.
-Dublin defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure ...
+Dublin City Council defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure~\ref{fig:Parking_zones}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/Parking_zones_map.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/Parking_zones_cost.png}
+    \end{minipage}
+    \caption{Parking zones and cost defined by Dublin City Council}
+    \label{fig:Parking_zones}
+\end{figure}
 
 The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploaded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
 
@@ -90,11 +123,13 @@ The csv file containing the longitude, latitude, classification label, parking z
 Each major section of the parking detection model was evaluated individually in order to access the overall performance. The results will be presented and analysed for each section below.
 
 \subsubsection{Evaluation of the Yolo model}
-Define precision, recall, f1 score metrics ...
+Define precision, recall, f1 score, common metrics and write formulas and cite papers where they are defined...
 
 \subsubsection{Evaluation of the classifiction of cars into on the road or parked}
 The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
-The classification is evaluated on the following metrics: Average Intersection over Union (IoU), Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class. These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
+The classification is evaluated on the following metrics: Average Intersection over Union (IoU), Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class.
+Define IoU and other metrics and write formulas and cite papers where they are defined...
+These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in the labelling software Label Studio. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
 
@@ -137,15 +172,15 @@ The predicted parked cars are drawn in red while the true labels are drawn in li
 
 \subsubsection{Evaluation of the empty parking detection}
 The empty parking detection logic is evaluated in the \texttt{evaluate\_empty\_parking\_detection.py} Python script.
-Expliquer script, comment l'orientation est calcule de facon automatique.
 The classification is evaluated on the following metrics: Average IoU, Average Precision, Average Recall, Average F1 Score, Average Orientation Accuracy, Average Spot Detection Ratio (SDR), Average Spot Detection Error (SDE), Average False Positive Rate (FPR), and Average False Negative Rate (FNR).
-Explain metrics and how the additional ones are calculated/ what they represent.
+Explain additional metrics how they are calculated/ what they represent.
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
-Likewise a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap.
-Achieving a high IoU was a significant challenge, specifically in this section, as the positioning of the spots can be difficult to label, sometimes sufficient space is not available ...
+Likewise a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap. The pixel coordinates, width and height of the annotated bounding boxes are exported. The orientation of each bounding box, is calculated automatically in the evaluation script when loading in the true labels.
+Achieving a high IoU was a significant challenge, specifically in this section of the model, as the positioning of the spots can be difficult to label accurately. Indeed, it was difficult to identify if there was sufficient space available to fit a car.
 To remedy this issue, the IoU threshold was lowered to 0.35, as there was still significant overlap visible when analysing the test images.
-The problems linked to overlap, is equally due to the differences in orientation as the true labels and the predictions are not calculated in a similar manner. (Expliquer mieux et dire les differences)
+The problems linked to the overlap, is equally due to the differences in orientation as the true labels and the predictions are calculated differently.
+For the true labels, the orientation is based on whether the width or length of the spot is larger (the spots with larger width are labelled as horizontal and the spots with larger length are labelled as vertical), while for the model's predictions the orientation is based on the angle measurement.
 
 The overall results on test set are presented below in Table~\ref{tab:metrics2}
 
@@ -188,7 +223,6 @@ The predicted empty parking spots are drawn in green while the true labels are i
 
 \subsubsection{Evaluation of the classification of the spots detected into private, public and parking lot}
 The classification of the spots detected into private, public and parking lot is evaluated in the \texttt{evaluate\_classification\_of\_spots.py} Python script.
-Dire changement, like all the spots include everything...
 The classification is evaluated on the following metrics: Average IoU, Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class. These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 Similarly, a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap.
@@ -231,5 +265,5 @@ The predicted public spots are drawn in green while the true labels are in dark 
 
 \newpage{}
 
-Relire tout and add more, ajouter totues les figures. Expliquer parking zones and costs mieux en ajoutant la figure du pdf.
-Verifier que j'ai explique toutes les fonctions. Refer to each figures, like say as seen in figure x ...
+Relire tout and add more, ajouter toutes les figures.
+Refer to each figures, like say as seen in figure x ...
