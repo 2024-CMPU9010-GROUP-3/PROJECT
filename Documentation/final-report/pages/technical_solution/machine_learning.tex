@@ -135,8 +135,9 @@ The predicted parked cars are drawn in red while the true labels are drawn in li
 \subsubsection{Evaluation of the empty parking detection}
 The empty parking detection logic is evaluated in the \texttt{evaluate\_empty\_parking\_detection.py} Python script.
 Expliquer script, comment l'orientation est calcule de facon automatique.
-The classification is evaluated on the following metrics: Average IoU, Average Precision, Average Recall, Average F1 Score, Average Orientation Accuracy, Average Spot Detection Ratio (SDR), Average Spot Detection Error (SDE), Average False Positive Rate (FPR), and Average False Negative Rate (FNR). These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
+The classification is evaluated on the following metrics: Average IoU, Average Precision, Average Recall, Average F1 Score, Average Orientation Accuracy, Average Spot Detection Ratio (SDR), Average Spot Detection Error (SDE), Average False Positive Rate (FPR), and Average False Negative Rate (FNR).
 Explain metrics and how the additional ones are calculated/ what they represent.
+These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 Likewise a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap.
 Achieving a high IoU was a significant challenge, specifically in this section, as the positioning of the spots can be difficult to label.
@@ -223,7 +224,5 @@ The predicted public spots are drawn in green while the true labels are in dark 
 \end{table}
 
 
-Relire tout and add more, ajouter totues les figures
-Expliquer parking zones and costs mieux en ajoutant la figure du pdf
-Verifier que j'ai explique toutes les fonctions
-Refer to each figures, like say as seen in figure x ...
+Relire tout and add more, ajouter totues les figures. Expliquer parking zones and costs mieux en ajoutant la figure du pdf.
+Verifier que j'ai explique toutes les fonctions. Refer to each figures, like say as seen in figure x ...
