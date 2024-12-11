@@ -3,19 +3,20 @@ Brendan is a professor with technological background. They are considered a casu
 An uncontrolled test session was conducted where tyhe tested each feature of Magpie to find faults, system failures and bugs.\\ \\
 \textbf{Main takeaways from Brendan's session: }Magpie has potential for use by certain types of users but needs a lot more functionality. Here is a breakdown of the feedback:
 \begin{itemize}
-    \item \textbf{Log in/Sign up: }why is a username required? Username should be the email. And email verification is a must!
-    \item \textbf{Tutorial: }content of step 2 needs to be reworked, explain radius of what. Also, the positioning of certain elements is off in Firefox browser. For step 4, content wording change “dozen” for something else especially if you're planning on adding more amenity data. The step 5 should point to the map, investigate the bug.
-    \item \textbf{Dashboard: }you should implement a button to clear the market and all the points from the map, right now the user has to reload. Perhaps think of leaving the count of toggled off amenities, it would depend on the use case. Maybe implement a quick reset button for  selected amenities. Compress list of amenities to avoid scrolling (window size issue in Firefox browser)
-    \item \textbf{Map: } you need to add plus and minus buttons to zoom in and out of the map. Can I have more information from the amenity icons by clicking on them? Perhaps a marked up image that detects this space (google street view), information on the spot (private, free, carpark). Also, make the selected icons more visually striking, a little hover maybe
-    \item \textbf{Technical: }when clicking on map, there is a slight offset between where the marker appears and where the user clicked; implement something to avoid mis-clicking and loosing original marker position; Icons move when you toggle on and off certain amenities
-    \item \textbf{Misc: }why are we requesting location? For the marker data (maybe we should let the user know this is where they are on the map?); need a landing page to present magpie; is the version prototype logo useful? Maybe for dev; show more information and the ml images we worked on (personal preference); reiterates we should put the ml forward (maybe on the about us)
+    \item \textbf{Log in/Sign up: } email verification is important, especially for a service advertised towards professionals. Also, Brendan did not understand the need for username to be created, the username should automatically be the email address. As a group, we decided to keep the username field as a preference and for future work as the user will be greeted by the username chosen when the log in,, or it will display in the profile menu.\\
+    \item \textbf{Tutorial: }the content of step 2 needs to be reworked and use more descriptive language. Also, the positioning of certain elements is off in Firefox browser. For step 4, the word `dozen' should be changed to `several' or similar especially if we are planning on adding more amenity data. Lastly, step 5 should point to the map, so that is a bug we need to investigate bug.\\
+    \item \textbf{Dashboard: }we should implement a button to clear the marker and all the points from the map, right now the user is forced to reload the page to do that. In addition, it could be beneficial to certain users to leave the count of toggled off amenities. Also, compress the list of amenities to avoid scrolling.\\ We found Firefox to cause a window size issue that we have been unable to address.\\
+    \item \textbf{Map: } plus and minus buttons should be added to zoom in and out of the map, especially for users who are not familiar with mouse technology. Also, clicking on amenity icons should provide more information. Right now, it feels a bit empty. Lastly, some of the selected icons are not visually striking, perhaps find a way to emphasize them.\\
+    \item \textbf{Technical: }when clicking on map, there is a slight offset between where the marker appears and where the user clicked. There is cause for investigation there. Also, maybe think of implementing something to avoid mis-clicking and loosing the original marker position.\\
+    \item \textbf{Miscellaneous: }Brendan asked why we were requesting location and what we were doing with this data. Accepting Magpie to use the user's location only puts down their own location marker on the map indicating where they are located. The location information is not processed by the Magpie server, it is processed on the user's device.\\ Additionally, we need a landing page to present Magpie and put forward the machine learning aspect of the project.
 \end{itemize}
-\textbf{Overall: }the interface is nice, but you might want to focus on producing a much more data-driven approach for the interface if you want to attract those kinds of users. Brendan was very tempted to click on the amenity icons of the map to find out more information.\\\\
+\textbf{Overall: }the interface is nice, but you might want to focus on producing a much more data-driven approach for the interface if you want to attract those kinds of users.\\ \\
+\newpage
 \textbf{Score from survey: }
 %brendan survey score
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{images/survey-brendan.png}
+    \includegraphics[width=0.7\textwidth]{images/survey-brendan.png}
     \caption{User Evaluation - UI Score Brendan}
 \end{figure}
 
@@ -89,7 +90,7 @@ Another point to improve on is to make the profile and tutorial icons more visib
 
 \newpage
 \subsubsection{User 4 - Livia}
-Our next session was with Livia, another student in a technological undergraduate degree. They are also identified as a casual user who also left their contact in the market research survey.\\ \\
+Our next session was with Livia, another student in a technological undergraduate degree. They are also identified as a casual user who also left their contact in the market research survey.\\
 This session also started out as a controlled test with a defined set of tasks, but just like Paul, Livia went on to explore the application skipping the tasks.\\
 %table of Livias's general tasks
 \begin{table}[h!]
@@ -129,7 +130,7 @@ They also suggested adding more amenities such as public transports stops, scoot
 %livia survey score
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.5\textwidth]{images/survey-livia.png}
+    \includegraphics[width=0.6\textwidth]{images/survey-livia.png}
     \caption{User Evaluation - UI Score Livia}
 \end{figure}
 
@@ -225,9 +226,9 @@ This was an uncontrolled test session where Jakub discovered the application on 
 \end{table}\\
 \noindent\textbf{Main takeaways from Jakub's session: }this tool simplifies the search for amenities however there are certain items that need to be considered to improve the application:
 \begin{itemize}
-    \item \textbf{Log in/Sign up: }Email verification should be included, so that the user can confirm they have successfully signed up and also for security purposes.
-    \item \textbf{Map: }some of the amenity data doesn't have accurate locations, for example public toilets seem to be off by longitude, and multi-storey parking data seems incomplete. Also, water fountains are very hard to find on the map, we should consider changing its colour. Same with the profile and tutorial icon, they are hard to spot on the map. They would also like to double click on the map to clear it, more intuitive for them. And last thing, amenities with small count are hard to find in the radius, maybe make them more visible somehow.
-    \item \textbf{History feature: }doesn't see the use for a casual user, and again same for this tool, doesn't see the use for them as a casual user but could be useful for a target user.
+    \item \textbf{Log in/Sign up: }Email verification should be included, so that the user can confirm they have successfully signed up and also for security purposes.\\
+    \item \textbf{Map: }some of the amenity data doesn't have accurate locations, for example public toilets seem to be off by longitude, and multi-storey parking data seems incomplete. Also, water fountains are very hard to find on the map, we should consider changing its colour. Same with the profile and tutorial icon, they are hard to spot on the map. They would also like to double click on the map to clear it, more intuitive for them. And last thing, amenities with small count are hard to find in the radius, maybe make them more visible somehow.\\
+    \item \textbf{History feature: }doesn't see the use for a casual user, and again same for this tool, doesn't see the use for them as a casual user but could be useful for a target user.\\
     \item \textbf{Extra features: }Search functionality would be very useful for those that are lookin for a spot but don't know where it is located visually. Also, an export feature would be useful for the scenario of urban planning, if I'm to put a report together, a visual from this tool would be helpful for illustration.
 \end{itemize}
 A notable behaviour indicator from them was that they tried to interact with the elements during onboarding, as have previous users. Due to technical limitations, we have been unable to make that happen. Future work.\\ \\
@@ -235,20 +236,21 @@ Overall, the tooltips for the icons is very interesting, a suggestion would be t
 \newpage
 \textbf{Score from survey: }
 %jakub survey score
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/survey-jakub.png}
+    \includegraphics[width=0.6\textwidth]{images/survey-jakub.png}
     \caption{User Evaluation - UI Score Jakub}
-\end{figure}
+\end{figure}\\
 
 \subsubsection{General user overview}
-Overall, general users provided very valuable feedback throughout the usability testing phase of the project. New features have been implemented, reviewed and removed thanks to these sessions.\\ \\
+General users provided very valuable feedback throughout the usability testing phase of the project. New features have been implemented, reviewed and removed thanks to these sessions.\\
+For example, zoom buttons were added, tooltips were implemented and icons were changed.
 Most notable points raised during these sessions have been the want for more high level information on the amenities, more amenity data, the visual feedback from the system when it is loading the points and the onboarding.\\
 %general survey score summary
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/survey-casual-summary.png}
+    \includegraphics[width=0.7\textwidth]{images/survey-casual-summary.png}
     \caption{User Evaluation - UI Score Average}
 \end{figure}\\
-Overall, general users gave Magpie a score of \underline{4.5 out of 5}.\\
-There was no notable increase in score as the user evaluation progressed, except in the beginning from the session with Brendan where we scored \underline{3.6 out of 5} and then \underline{4.6 out 5} with Anonymous 1 session. Both users experienced the same version of Magpie, so the difference in score could come down to one personal preference.
+To conclude, general users gave Magpie a score of \underline{4.5 out of 5}.\\
+There was no notable increase in score as the user evaluation progressed between the users, except in the beginning from the session with Brendan where we scored \underline{3.6 out of 5} to the session with Anonymous 1 where we scored \underline{4.6 out 5}. Both users experienced the same version of Magpie, so the difference in score could come down to one personal preference.
