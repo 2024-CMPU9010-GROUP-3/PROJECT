@@ -10,6 +10,8 @@ yolov8m.pt
 yolov8x.pt
 yolo11n.pt
 
+best - obb.pt
+
 # Remove dataset elements
 *.bmp
 *.tif
@@ -27,6 +29,7 @@ yolo11n.pt
 *.cfg
 !setup.cfg
 !cfg/yolov3*.cfg
+images-dublin
 
 # Remove compiled files
 storage.googleapis.com
@@ -40,6 +43,8 @@ data/images/*
 !data/images/zidane.jpg
 !data/images/bus.jpg
 !data/*.sh
+temp_Images
+output
 
 # Removing database .csv files
 *.csv
