@@ -47,7 +47,7 @@ In \textit{Magpie}, the CI workflow is focused around \textbf{GitHub} and it's
 suite of tools. We decided on using this approach, because it enables a powerful
 flow:
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=\textwidth]{../d2-diagrams/issues-prs/diagram.png}
     \caption{The flow of work in \textit{Magpie}}
@@ -74,7 +74,7 @@ interactions. This allows for communication to stay in context with the issue
 being discussed, and requirements- or additional information- to be added as
 needed.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=\textwidth]{images/github_issue.png}
     \caption{An example of a GitHub Issue}
@@ -98,7 +98,7 @@ friction of creating issues by minimising the amount of effort related to
 drafting an issue (using the template) and creating clear delineations between
 different categories of issues.
 
-\begin{listing}[!ht]
+\begin{listing}[htbp]
     \centering{}
     \begin{minted}{html}
         ---
@@ -153,7 +153,7 @@ projects with more clearly defined goals, such as major releases.
 Note, that the pull requests we used also included automated CI jobs. These will
 be discussed in a later section.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=\textwidth]{images/github_pr.png}
     \caption{An example of a GitHub Pull Request}
@@ -173,7 +173,7 @@ PRs need a high level description of the changes made, and having a consistent
 format for this description was important to ease the burden on code reviewers,
 particularly working in a team environment.
 
-\begin{listing}[!ht]
+\begin{listing}[htbp]
     \centering{}
     \begin{minted}{html}
         ### Description
@@ -211,7 +211,7 @@ experience, this is a great way to visualise the progress of work in a project.
 In the below example, the board is divided into columns, each representing a
 different stage of work.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=\textwidth]{images/github_kanban.png}
     \caption{An example of a GitHub Kanban Board}
@@ -266,7 +266,7 @@ with was very useful.
 We decided against using branch rules to trigger actions because, by default,
 they do not function as expected. For example:
 
-\begin{listing}[!ht]
+\begin{listing}[htbp]
     \centering{}
     \begin{minted}{yaml}
         on:
@@ -285,7 +285,7 @@ and as such, we decided against using this particular method.
 To solve this problem, we instead triggered actions based on what \textit{directory} was
 being changed. This was done by using the \textbf{paths} key in the workflow.
 
-\begin{listing}[!ht]
+\begin{listing}[htbp]
     \centering{}
     \begin{minted}{yaml}
         on:
@@ -306,7 +306,7 @@ did not match the scheme, would fail the action.
 Note that, in a \textbf{Pull Request}, certain actions will come up as checks. 
 Checks will prevent a PR from being merged if they fail.
 
-\begin{listing}[!ht]
+\begin{listing}[htbp]
     \begin{minted}{yaml}
         name: Branch Checks
 
