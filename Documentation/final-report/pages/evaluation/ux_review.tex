@@ -60,21 +60,21 @@ Upon loading Magpie, Andrea Curley was directly taken to the map\-view, which wa
 Due to the bug explained above, the onboarding did not automatically start as it should have upon login. Nevertheless, Andrea Curley said that the user may want to intuitively press on the elements being highlighted during the tutorial, as she tried to do. This adds to the feedback received during casual testing for the implementation of this feature. Unfortunately, due to a technical limitations we are not able to solve it, only provide make certain changes to dissuade the user of doing so.\\
 In addition, she suggested there should be an option to exit the tutorial at any time for users who don't want to sit through it. Lastly, the tutorial should be more visually striking and engaging in order to leave a lasting impression on the user.\\ \\
 \textbf{Dashboard \& Map: }
-Currently, the hierarchy of items on the dashboard does not make sense to the average, and is not intuitive to use. All the amenities are displayed when only one is selected (as shown in figure 3.3) and their count displays zero, which the user might interpret as there are zero other amenities in the area in addition to the one I selected.\\
+Currently, the hierarchy of items on the dashboard does not make sense to the average, and is not intuitive to use. All the amenities are displayed when only one is selected (as shown in the figure below) and their count displays zero, which the user might interpret as there are zero other amenities in the area in addition to the one I selected.\\
 The icons on the map are not visible enough, and zooming in \& out on the map may not be intuitive to the range of users and devices. Adding zoom buttons could help bridge that gap. \\
-Currently, Andrea Curley noted that there is a disconnect between the map and the dashboard whereas they should be looked as one. She suggested adding amenity icons to the dashboard to help bridge that gap.
+At the moment, Andrea Curley noted that there is a disconnect between the map and the dashboard whereas they should be looked as one. She suggested adding amenity icons to the dashboard to help bridge that gap.
 %figure for the old confusing dashboard
 \begin{figure}[h!]
     \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/old-dashboard_opt.png}}
+    \fbox{\includegraphics[width=0.8\textwidth]{images/old-dashboard_opt.png}}
     \caption{V.0.1 Magpie Dashboard \& Map when 2 amenities are selected}
 \end{figure}
 
 \newpage
 \noindent\textbf{Filters: }
-If there are no amenities found in the radius of search, a message should pop up to tell the user so. Currently, it is not very clear if there are amenities present in the chosen area especially due to the small size \& faded color of the icons. \\ \\
+If there are no amenities found in the radius of search, a message should pop up to tell the user so. Currently, it is not very clear if there are amenities present in the chosen area especially due to the small size \& faded color of certain icons. \\ \\
 \textbf{Log in/sign up: }
-When trying to log in with credentials that don't exist, the system should return a proper error such as "username doesn't exist". Log out and account sign up went smoothly. Professor Curley questioned the benefits of logging for Magpie, to which we stated:
+When trying to log in with credentials that don't exist, the system should return a proper error such as `username doesn't exist'. Log out and account sign up went smoothly. Andrea Curley questioned the benefits of logging in for Magpie, to which we stated:
 Magpie was conceived with the idea of providing a service to working professionals; therefore logging in will allow the implementation of further features such as safeguarding their previous searches, storing exported reports, connecting with other members of your organization and much more.
 %figure for the log in error
 \begin{figure}[h!]
@@ -83,50 +83,52 @@ Magpie was conceived with the idea of providing a service to working professiona
     \caption{Error message when using inexistant username and password}
 \end{figure}
 
-\newpage
 \noindent\textbf{Survey response: }
-Below are the answers to the expert review survey. The response to the survey help complement the oral feedback received during the expert review and provide some quantitative data as a baseline for the next evaluation. The two open-ended questions, to which she asked us to elaborate further, will help us review future open-ended questions and ensure they give enough information for the user to answer.A score has been attributed to each section of the survey based on the responses from Andrea.\\\\
-The first section covers usability of the main items of Magpie's user interface which scored 3.5 out of 5. The items which brought the score down are the onboarding and the clarity of the map visualization, further supported by the vocal feedback Andrea provided on the un-intuitive flow and disconnect between the map and the dashboard.\\
+Below are the answers to the expert review survey. The response helps complement the oral feedback received during the session and provide some quantitative data as a baseline for the next evaluation. A score has been attributed to each section of the survey based on the responses from Andrea.\\ \\
+The first section covers usability of the main items of Magpie's user interface which scored \underline{3.5 out of 5}. The items which brought the score down are the onboarding and the clarity of the map visualization, further supported by the vocal feedback Andrea provided on the un-intuitive flow and disconnect between the map and the dashboard.\\
 %figure of 1st survey responses = UI
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-ui.png}}
+    \includegraphics[width=0.6\textwidth]{images/ux-survey1-ui.png}
     \caption{UX review - UI score}
-\end{figure}
-\newpage
-The second section covers the information architecture and data quality of the amenities. It looks at the features displaying the information and the score reflects the problems aforementioned with the dashboard as well as the incomplete profile menu. Furthermore, Q8 asks Andrea to assume the value of Magpie as a tool for different use cases where our target users (Urban planners and Event planners) were rated as "Valuable". This rating is useful but it remains an assumption.\\
-%figure of 1st survey responses = Data
-\begin{figure}
-    \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-data.png}}
-    \caption{UX review - Information Architecture score}
-\end{figure}
-\newpage
-Lastly, the third section covers the technical aspects of Magpie, and the low score of 2.88/5 reflects a major authentication bug encountered during the testing session, as well as lagging of the points on the map due to technical difficulties.\\
-Overall, Magpie scored \underline{3.13 out of 5} for this first UX review session. This is the baseline, and the objective for the next session is to score above \underline{3.5 out of 5} overall, and significantly improve the scores for the onboarding, the dashboard flow and the system responsiveness.\\\\
-%figure of 1st survey responses = Technical
-\begin{figure}
-    \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-technical.png}}
-    \caption{UX review - Technical Performance score}
-\end{figure}
-\textbf{Summary: }
-To conclude the first session, Professor Curley found our interface sleek and minimalistic. However, she suggested that if we want to remain with this style, we need to ensure there is as little room as possible for ambiguity and confusion. The user needs to find it easy to move from one feature to another and understand the triggers. Currently, Magpie looks so sleek that the user may not be able to see what they want.
-%figure of 1st survey responses = Summary
-\begin{figure}
-    \centering
-    \fbox{\includegraphics[width=0.7\textwidth]{images/ux-survey1-summary.png}}
-    \caption{UX review - Overall score}
 \end{figure}
 
 \newpage
+\noindent The second section covers the information architecture and data quality of the amenities. It looks at the features displaying the information and the score reflects the problems aforementioned with the dashboard as well as the incomplete profile menu. Furthermore, Q8 asks Andrea to assume the value of Magpie as a tool for different use cases where our target users (Urban planners and Event planners) were rated as `Valuable'. This rating is useful but it remains an assumption.\\
+%figure of 1st survey responses = Data
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/ux-survey1-data.png}
+    \caption{UX review - Information Architecture score}
+\end{figure}
+
+\newpage
+\noindent Lastly, the third section covers the technical aspects of Magpie. The low score of \underline{2.88/5} reflects a major authentication bug encountered during the testing session, as well as severe lagging of the points on the map due to technical difficulties.
+%figure of 1st survey responses = Technical
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.6\textwidth]{images/ux-survey1-technical.png}}
+    \caption{UX review - Technical Performance score}
+\end{figure}\\
+\noindent Overall, Magpie scored \underline{3.13 out of 5} for this first UX review session. This is the baseline, and the objective for the next session is to score above \underline{3.5 out of 5} overall, and significantly improve the scores for the onboarding, the dashboard flow and the system responsiveness.
+%figure of 1st survey responses = Summary
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.6\textwidth]{images/ux-survey1-summary.png}}
+    \caption{UX review - Overall score}
+\end{figure}\\
+\textbf{Summary: }
+To conclude the first session, Andrea Curley found our interface sleek and minimalistic. However, she suggested that if we want to remain with this style, we need to ensure there is as little room as possible for ambiguity and confusion. The user needs to find it easy to move from one feature to another and understand the triggers. Currently, Magpie looks so sleek that the user may not be able to see what they want.
+
+\newpage
 \subsubsection{Session 2}
-The second session informed us of the points we were able to improve on from the first session as well as features to be looked at in the future. These were the main takeaways:\\\\
+The second session informed us of the points we were able to improve on from the first session as well as features to be looked at in the future. These were the main takeaways:\\ \\
+
 \textbf{Landing page: }
 The new landing page provides a proper introduction of Magpie, however some adjustments can be made to the navigation bar, some visual feedback to let the user know the button they have clicked works; such as a bold overlay on the navigation item or different colour highlight. In addition, if you really want to push Magpie as a GIS application for professional urban planner users, it needs to be put at the forefront.\\
-Lastly, a log in button should also be present on the main page alongside the "sign up" button.\\\\
+Lastly, a log in button should also be present on the main page alongside the "sign up" button.\\
 %log in button next to sign up
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.7\textwidth]{images/landing-page-current.png}}
     \caption{Magpie Landing page - Sign up button}
