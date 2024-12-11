@@ -90,6 +90,7 @@ The csv file containing the longitude, latitude, classification label, parking z
 Each major section of the parking detection model was evaluated individually in order to access the overall performance. The results will be presented and analysed for each section below.
 
 \subsubsection{Evaluation of the Yolo model}
+Define precision, recall, f1 score metrics ...
 
 \subsubsection{Evaluation of the classifiction of cars into on the road or parked}
 The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
@@ -99,7 +100,7 @@ A test set of 50 images was carefully selected to include edge cases and difficu
 
 The overall results on test set are presented below in Table~\ref{tab:metrics1}
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \begin{tabular}{|l|c|c|}
     \hline
@@ -121,7 +122,7 @@ Analyse metrics + Mention common problems. Reference similar results in object d
 Some images from the test set can be seen below, in Table~\ref{tab:test_images1}
 The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \begin{tabular}{cc}
         \includegraphics[width=0.4\textwidth]{images/image1_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_road_mask_classification_test_set.png} \\
@@ -132,6 +133,8 @@ The predicted parked cars are drawn in red while the true labels are drawn in li
     \label{tab:test_images1}
 \end{table}
 
+\newpage{}
+
 \subsubsection{Evaluation of the empty parking detection}
 The empty parking detection logic is evaluated in the \texttt{evaluate\_empty\_parking\_detection.py} Python script.
 Expliquer script, comment l'orientation est calcule de facon automatique.
@@ -140,13 +143,13 @@ Explain metrics and how the additional ones are calculated/ what they represent.
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 Likewise a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap.
-Achieving a high IoU was a significant challenge, specifically in this section, as the positioning of the spots can be difficult to label.
+Achieving a high IoU was a significant challenge, specifically in this section, as the positioning of the spots can be difficult to label, sometimes sufficient space is not available ...
 To remedy this issue, the IoU threshold was lowered to 0.35, as there was still significant overlap visible when analysing the test images.
 The problems linked to overlap, is equally due to the differences in orientation as the true labels and the predictions are not calculated in a similar manner. (Expliquer mieux et dire les differences)
 
 The overall results on test set are presented below in Table~\ref{tab:metrics2}
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \begin{tabular}{|l|c|}
     \hline
@@ -170,7 +173,7 @@ Analyse metrics + Mention common problems. Reference similar results in object d
 A few images from the test set are displayed below, in Table~\ref{tab:test_images2}
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \begin{tabular}{cc}
         \includegraphics[width=0.4\textwidth]{images/image1_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_empty_parking_detection_test_set.png} \\
@@ -181,6 +184,8 @@ The predicted empty parking spots are drawn in green while the true labels are i
     \label{tab:test_images2}
 \end{table}
 
+\newpage{}
+
 \subsubsection{Evaluation of the classification of the spots detected into private, public and parking lot}
 The classification of the spots detected into private, public and parking lot is evaluated in the \texttt{evaluate\_classification\_of\_spots.py} Python script.
 Dire changement, like all the spots include everything...
@@ -190,7 +195,7 @@ Similarly, a test set of 50 images was carefully selected and consistently label
 
 The overall results on test set are presented below in Table~\ref{tab:metrics3}
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \begin{tabular}{|l|c|c|c|}
     \hline
@@ -212,7 +217,8 @@ Analyse metrics + Mention common problems. Reference similar results in object d
 A few images from the test set are shown below, in Table~\ref{tab:test_images3}
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
 
-\begin{table}[h]
+
+\begin{table}[htbp]
     \centering
     \begin{tabular}{cc}
         \includegraphics[width=0.4\textwidth]{images/image1_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_classification_test_set.png} \\
@@ -223,6 +229,7 @@ The predicted public spots are drawn in green while the true labels are in dark 
     \label{tab:test_images3}
 \end{table}
 
+\newpage{}
 
 Relire tout and add more, ajouter totues les figures. Expliquer parking zones and costs mieux en ajoutant la figure du pdf.
 Verifier que j'ai explique toutes les fonctions. Refer to each figures, like say as seen in figure x ...
