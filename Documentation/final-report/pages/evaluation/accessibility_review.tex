@@ -1,16 +1,16 @@
 In the context of this project, accessibility refers to considerations for users with visual, auditory, cognitive and/or physical impairments; inclusiveness refers to considerations for users for whom English isn't their first language, older users and users with gender or affective issues; and universal design refers to compatibility of Magpie with different devices, browsers and networks.\\
 
-\noindent The accessibility general guidelines we'll be evaluating Magpie on are from the EU Web Accessibility Directive which directly affect public bodies in Ireland although map systems are exempt. This directive came into effect at the end of 2016 and aims to \emph{make public sector websites and mobile applications more accessible, and to harmonise varying standards within the European Union (\ldots)}(\cite{webaccessibilitydirective2016}).
+\noindent The accessibility general guidelines we'll be evaluating Magpie on are from the EU Web Accessibility Directive which directly affect public bodies in Ireland although map systems are exempt. This directive came into effect at the end of 2016 and aims to \emph{make public sector websites and mobile applications more accessible, and to harmonise varying standards within the European Union (\ldots)} (\cite{webaccessibilitydirective2016}).\\
 %figure for accessibility guidelines
-\begin{figure}
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=0.8\textwidth]{images/wcag-guidelines.png}
+    \includegraphics[width=0.85\textwidth]{images/wcag-guidelines.png}
     \caption{WCAG 2.1 Scope, Guidelines \& Exemptions}
 \end{figure}
 
-\noindent There is an inherent limitation of accessibility for map-based systems, especially for visually impaired users.\\Visual impairment is categorized as having a type of eye disorder and/or a degree of vision loss; an estimate of 2.2 billion people globally have vision impairment (\cite{whoworldreportvision2019}) and 297,000 (5.6\%) of the population in Ireland(\cite{visionirelandcensus}).\\
+\noindent There is an inherent limitation of accessibility for map\-based systems, especially for visually impaired users.\\Visual impairment is categorized as having a type of eye disorder and/or a degree of vision loss; an estimate of 2.2 billion people globally have vision impairment (\cite{whoworldreportvision2019}) and 297,000 (5.6\%) of the population in Ireland(\cite{visionirelandcensus}).\\
 
-\noindent The paper by \cite{accessibilitywebmapsrecommendations2017} which relied on data from two projects aimed at developing web\-map applications for visually impaired individuals has presented several recommendations, the following which we will guide Magpie's accessibility evaluation:
+\noindent The paper by \cite{accessibilitywebmapsrecommendations2017} which relied on data from two projects aimed at developing web\-map applications for visually impaired individuals has presented several recommendations, the following which we will guide Magpie's accessibility evaluation and subsequent iterative development:
 \begin{itemize}
     \item\textbf{UI components:} Creating a UI that is simple, understandable and follows a clear predictable layout. Implement only necessary control elements, group them by similar focus and place them in areas that are familiar (similar in other programs). The UI should be flat while avoiding dropdowns, scrolling and nested/overlapping elements. Control elements overlapping the map makes it difficult for visually impaired users to read the map and use the controls, so this practice should be avoided.
     \item\textbf{UI design:} Size and colour of UI components should be chosen to provide high contrast between different elements; if symbols are used they should be easily recognizable and complex backgrounds should be avoided.
@@ -18,13 +18,14 @@ In the context of this project, accessibility refers to considerations for users
     \item\textbf{UI interaction:} A user should be able to interact with the interface using both a mouse and keyboard on desktop; keyboard accessibility is key for improving accessibility for visually impaired users.
 \end{itemize}
 
-\noindent We requested a review of our system from Accessibility expert Damian Gordon.\\
-He served on the board of the National Disability Authority, who advise the Irish Government on all matters related to disability, and he has worked with a wide range of disability organisations, include the Centre Remedial Clinic, the National Council for the Blind, Arthritis Ireland, and the Aging Well Network. He has contributed to the development of hardware, software, legislation and training related to disability awareness and accessibility. \\\\
+\newpage
+\noindent We requested a review from Accessibility expert Damian Gordon.\\
+He served on the board of the National Disability Authority, who advise the Irish Government on all matters related to disability, and he has worked with a wide range of disability organisations, include the Centre Remedial Clinic, the National Council for the Blind, Arthritis Ireland, and the Aging Well Network. He has contributed to the development of hardware, software, legislation and training related to disability awareness and accessibility. \\
 
-\noindent The goal of this review is to evaluate the accessibility, inclusivity and universal design of the Magpie and evaluate it with regards to the accessibility guidelines and recommendations detailed above.\\
+\noindent The goal of this review is to evaluate the accessibility, inclusivity \& universal design of the Magpie, and evaluate it with regards to the accessibility guidelines and recommendations detailed above.\\
 
-\noindent The review was conducted on November 21st during the usability testing phase of Magpie. The session was conducted online through videoconference meeting on Teams where we presentend Magpie, gave Damian Gordon a scenario to follow to explore the application, discuss the scenario and the accessibility guidelines and then a survey.\\
-The scenario given can be seen in the table below. A scenario was given so as to simulate the use of Magpie by one of our target users through the lense of an accessibility expert.
+\noindent The review was conducted on November 21st during the usability testing phase of Magpie. The session was conducted online through videoconference meeting on Teams where we presented Magpie, gave Damian Gordon a scenario to follow to explore the application, discuss the scenario and the accessibility guidelines and then a survey.\\\\
+The scenario given can be seen in the table below. A scenario was given so as to simulate the use of Magpie by one of our target users through the lens of an accessibility expert.\\
 %table for scenario
 \begin{table}[h!]
     \centering
@@ -47,11 +48,12 @@ The scenario given can be seen in the table below. A scenario was given so as to
         \hline
     \end{tabular}
 \end{table}
-\\
-The questionnaire is the same as the one given to the users who participated in the usability testing. In hindsight, a tailored questionnaire should've been created for Damian Gordon, to specifically evaluate key accessibility items in Magpie.
 
-\noindent Throughout the session, we were also observing Damian Gordon's behaviour and if he was able to complete general tasks related to the main features of Magpie. The results can be seen in the table below, it recorded if they were able to complete the task, how difficult it was for them based on behavioural cues and any errors bugs encountered during the task. We were not able to record the time taken for each task due to the informal administration of them, the user was not aware we were "grading" them in a sense.\\
-The difficulty of the task is related to if they were able to complete it and how much they struggled during it. The status of a task can either be "complete", "pass", or "fail" where "complete" is attributed when the user does the task on their own, "pass" is attributed when the user was able to complete the task but with our help, and "fail" when the user were not able to do the task even with our help. \\
+\noindent The questionnaire covers UI design, interaction and language and aims to complement the vocal feedback of the session. It is made up of 3 sections with a mixture of closed questions rating different parts of the system, and open questions to provide more qualitative feedback.\\
+
+\noindent Throughout the session, we were also observing Damian Gordon's behaviour and if he was able to complete general tasks related to the main features of Magpie. The results can be seen in the table below, it recorded if they were able to complete the task, how difficult it was for them based on behavioural cues and any errors bugs encountered during the task. We were not able to record the time taken for each task due to the informal administration of them, the user was not aware we were 'grading' them in a sense.\\\\
+
+\noindent The difficulty of the task is related to if they were able to complete it and how much they struggled during it. The status of a task can either be 'complete', 'pass', or 'fail' where 'complete' is attributed when the user does the task on their own, 'pass' is attributed when the user was able to complete the task but with our help, and 'fail' when the user were not able to do the task even with our help. \\
 %table for general tasks completion & difficulty
 \begin{table}[h!]
     \centering
@@ -94,18 +96,19 @@ The difficulty of the task is related to if they were able to complete it and ho
 \textbf{Dashboard: }
 Damian Gordon had some trouble locating the recreation centre during the scenario, and advise that have a search bar would remove the difficulty and give options for those who may be visually impaired to find a location on the map, and also for those who may not know where the area they're looking for is located.\\\\
 \textbf{Onboarding: }
-Damian Gordon found the steps in the onboarding very wordy and too long, which may cause some users to skip through or not retain the information present there. In addition, some of the wording could be improved related to navigating the map as shown in the figure below. This issue was further illustrated by the difficulty Damian Gordon encountered trying to zoom in and out on the map using his mousepad, having not understood how to do it from the onboarding step 5 that explain how to do it with a "mouse" and a "touchpad". Addressing the choice of words, the content and flow of the onboarding is important to ensure it is understood by all kinds of users.\\\\
+Damian Gordon found the steps in the onboarding very wordy and too long, which may cause some users to skip through or not retain the information present there. In addition, some of the wording could be improved related to navigating the map as shown in the figure below. This issue was further illustrated by the difficulty Damian Gordon encountered trying to zoom in and out on the map using his mousepad, having not understood how to do it from the onboarding step 5 that explain how to do it with a 'mouse' and a 'touchpad'. Addressing the choice of words, the content and flow of the onboarding is important to ensure it is understood by all kinds of users.\\\\
 %figure for the old confusing onboarding
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.9\textwidth]{images/onboarding-text-v1.png}}
     \caption{V.0.1 Magpie Onboarding Steps}
 \end{figure}
+
 \newpage
 \noindent\textbf{Map: }
 Going back to the zooming feature Damian Gordon struggled with, adding zoom in and zoom out buttons directly on the map would offer an alternative to those not able to use the mouse for the action, further improving Magpie's accessibility.\\In addition, the profile and onboarding icons blended into the map which made it difficult for Damian Gordon to go back to the onboarding or log out as shown in the figure below.
 %figure for the old icons for profile and onboarding
-\begin{figure}
+\begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.8\textwidth]{images/old-icons-map.png}}
     \caption{V.0.1 Magpie Profile \& Onboarding icons}
