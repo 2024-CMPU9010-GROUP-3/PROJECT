@@ -1,0 +1,17 @@
+direction: right
+
+Developer: Developer
+Developer.shape: person
+
+Issue: Issue
+
+PullRequest: Pull Request
+
+Reviewer: Reviewer
+Reviewer.shape: person
+
+Developer -> Issue: Feature is Identified
+Issue -> PullRequest: PR to Solve
+Reviewer -> PullRequest: Review PR
+PullRequest -> Issue: Issue is Closed
+Issue -> Developer: Developer is Happy
