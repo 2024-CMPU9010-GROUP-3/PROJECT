@@ -1,0 +1,37 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{+w}{        }\PYG{n+nt}{name}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{Branch}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{Checks}
+
+\PYG{+w}{        }\PYG{n+nt}{on}\PYG{p}{:}
+\PYG{+w}{        }\PYG{n+nt}{pull\PYGZus{}request}\PYG{p}{:}
+
+\PYG{+w}{        }\PYG{n+nt}{jobs}\PYG{p}{:}
+\PYG{+w}{        }\PYG{n+nt}{validate\PYGZhy{}name}\PYG{p}{:}
+\PYG{+w}{            }\PYG{n+nt}{runs\PYGZhy{}on}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{ubuntu\PYGZhy{}latest}
+
+\PYG{+w}{            }\PYG{n+nt}{steps}\PYG{p}{:}
+\PYG{+w}{            }\PYG{p+pIndicator}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nt}{name}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{Check}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{out}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{repository}
+\PYG{+w}{                }\PYG{l+lScalar+lScalarPlain}{uses}\PYG{p+pIndicator}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{actions/checkout@v4}
+
+\PYG{+w}{            }\PYG{p+pIndicator}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nt}{name}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{Get}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{branch}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{name}
+\PYG{+w}{                }\PYG{l+lScalar+lScalarPlain}{id}\PYG{p+pIndicator}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{get\PYGZus{}branch\PYGZus{}name}
+\PYG{+w}{                }\PYG{l+lScalar+lScalarPlain}{run}\PYG{p+pIndicator}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{echo}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{\PYGZdq{}branch=\PYGZdl{}\PYGZob{}GITHUB\PYGZus{}HEAD\PYGZus{}REF\PYGZcb{}\PYGZdq{}}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{\PYGZgt{}\PYGZgt{}}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{\PYGZdl{}GITHUB\PYGZus{}OUTPUT}
+
+\PYG{+w}{            }\PYG{p+pIndicator}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nt}{name}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{Validate}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{branch}\PYG{l+lScalar+lScalarPlain}{ }\PYG{l+lScalar+lScalarPlain}{name}
+\PYG{+w}{                }\PYG{l+lScalar+lScalarPlain}{run}\PYG{p+pIndicator}{:}\PYG{+w}{ }\PYG{p+pIndicator}{|}
+\PYG{+w}{                }\PYG{n+no}{BRANCH\PYGZus{}NAME=\PYGZdq{}\PYGZdl{}\PYGZob{}\PYGZob{} steps.get\PYGZus{}branch\PYGZus{}name.outputs.branch \PYGZcb{}\PYGZcb{}\PYGZdq{}}
+\PYG{+w}{                }\PYG{n+no}{if [[ ! \PYGZdq{}\PYGZdl{}BRANCH\PYGZus{}NAME\PYGZdq{} =\PYGZti{} \PYGZca{}(}
+\PYG{+w}{                    }\PYG{n+no}{backend/ frontend/|}
+\PYG{+w}{                    }\PYG{n+no}{documentation/ python/|}
+\PYG{+w}{                    }\PYG{n+no}{distribution/ misc/|}
+\PYG{+w}{                    }\PYG{n+no}{update/}
+\PYG{+w}{                    }\PYG{n+no}{).* ]]; then}
+\PYG{+w}{                    }\PYG{n+no}{echo \PYGZdq{}Branch name \PYGZsq{}\PYGZdl{}BRANCH\PYGZus{}NAME\PYGZsq{} is not valid.\PYGZdq{}}
+\PYG{+w}{                    }\PYG{n+no}{echo \PYGZdq{}Rename the branch to match one of the following patterns:\PYGZdq{}}
+\PYG{+w}{                    }\PYG{n+no}{echo \PYGZdq{}\PYGZsq{}backend/\PYGZsq{}, \PYGZsq{}frontend/\PYGZsq{},\PYGZdq{}}
+\PYG{+w}{                    }\PYG{n+no}{echo \PYGZdq{}\PYGZsq{}documentation/\PYGZsq{}, \PYGZsq{}distribution/\PYGZsq{},\PYGZdq{}}
+\PYG{+w}{                    }\PYG{n+no}{echo \PYGZdq{}\PYGZsq{}update/\PYGZsq{}, \PYGZsq{}python/\PYGZsq{},\PYGZdq{}}
+\PYG{+w}{                    }\PYG{n+no}{echo \PYGZdq{}or \PYGZsq{}misc/\PYGZsq{}.\PYGZdq{}}
+\PYG{+w}{                    }\PYG{n+no}{exit 1}
+\PYG{+w}{                }\PYG{n+no}{fi}
+\PYG{+w}{            }\PYG{n+nt}{shell}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{bash}
+\end{MintedVerbatim}

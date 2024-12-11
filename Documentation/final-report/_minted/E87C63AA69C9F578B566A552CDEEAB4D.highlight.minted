@@ -1,0 +1,21 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+        \PYGZsh{}\PYGZsh{}\PYGZsh{} Description
+
+        Replace this with a summary of the change. Please also include relevant
+        motivation and context.
+
+        Fixes \PYGZsh{} (issue)
+
+        \PYGZsh{}\PYGZsh{}\PYGZsh{} Type of change
+
+        Please select the option that best describes the changes made:
+
+        \PYGZhy{} [ ] Bug fix (non\PYGZhy{}breaking change which fixes an issue)
+        \PYGZhy{} [ ] New feature (non\PYGZhy{}breaking change which adds functionality)
+        \PYGZhy{} [ ] Breaking change (fix or feature that would break existing functionality)
+        \PYGZhy{} [ ] Documentation update
+
+        \PYGZsh{}\PYGZsh{}\PYGZsh{} Changes
+
+        Replace this with a list of changes made in the pull request.
+\end{MintedVerbatim}

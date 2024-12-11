@@ -1,0 +1,36 @@
+\begin{MintedVerbatim}[commandchars=\\\{\}]
+\PYG{+w}{      }\PYG{n+nt}{version}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{2}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{      }\PYG{n+nt}{sql}\PYG{p}{:}
+\PYG{+w}{      }\PYG{p+pIndicator}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nt}{schema}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{sql/migrations}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{        }\PYG{n+nt}{queries}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{sql/queries\PYGZus{}private.sql}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{        }\PYG{n+nt}{engine}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{postgresql}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{        }\PYG{n+nt}{gen}\PYG{p}{:}
+\PYG{+w}{          }\PYG{n+nt}{go}\PYG{p}{:}
+\PYG{+w}{            }\PYG{n+nt}{package}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{db}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{            }\PYG{n+nt}{sql\PYGZus{}package}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{pgx/v5}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{            }\PYG{n+nt}{out}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{internal/db/private}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{            }\PYG{n+nt}{build\PYGZus{}tags}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{private}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{            }\PYG{n+nt}{emit\PYGZus{}json\PYGZus{}tags}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{true}
+\PYG{+w}{            }\PYG{n+nt}{overrides}\PYG{p}{:}
+\PYG{+w}{              }\PYG{p+pIndicator}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nt}{db\PYGZus{}type}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{geometry}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{                }\PYG{n+nt}{go\PYGZus{}type}\PYG{p}{:}
+\PYG{+w}{                  }\PYG{n+nt}{import}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{github.com/twpayne/go\PYGZhy{}geom}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{                  }\PYG{n+nt}{pointer}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{true}
+\PYG{+w}{                  }\PYG{n+nt}{type}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Point}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{      }\PYG{p+pIndicator}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nt}{schema}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{sql/migrations}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{        }\PYG{n+nt}{queries}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{sql/queries\PYGZus{}public.sql}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{        }\PYG{n+nt}{engine}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{postgresql}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{        }\PYG{n+nt}{gen}\PYG{p}{:}
+\PYG{+w}{          }\PYG{n+nt}{go}\PYG{p}{:}
+\PYG{+w}{            }\PYG{n+nt}{package}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{db}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{            }\PYG{n+nt}{sql\PYGZus{}package}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{pgx/v5}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{            }\PYG{n+nt}{out}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{internal/db/public}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{            }\PYG{n+nt}{build\PYGZus{}tags}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{public}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{            }\PYG{n+nt}{emit\PYGZus{}json\PYGZus{}tags}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{true}
+\PYG{+w}{            }\PYG{n+nt}{overrides}\PYG{p}{:}
+\PYG{+w}{              }\PYG{p+pIndicator}{\PYGZhy{}}\PYG{+w}{ }\PYG{n+nt}{db\PYGZus{}type}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{geometry}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{                }\PYG{n+nt}{go\PYGZus{}type}\PYG{p}{:}
+\PYG{+w}{                  }\PYG{n+nt}{import}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{github.com/twpayne/go\PYGZhy{}geom}\PYG{l+s}{\PYGZdq{}}
+\PYG{+w}{                  }\PYG{n+nt}{pointer}\PYG{p}{:}\PYG{+w}{ }\PYG{l+lScalar+lScalarPlain}{true}
+\PYG{+w}{                  }\PYG{n+nt}{type}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{Point}\PYG{l+s}{\PYGZdq{}}
+\end{MintedVerbatim}
