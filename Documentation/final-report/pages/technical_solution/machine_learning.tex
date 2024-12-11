@@ -11,13 +11,13 @@ A Mapbox Satellite and Mapbox Streets image can be seen below in Figure~\ref{fig
 
 \begin{figure}[htbp]
     \centering
-    \begin{minipage}{0.40\textwidth}
+    \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/satellite_img.png}
         \caption*{Mapbox Satellite Image}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.40\textwidth}
+    \begin{minipage}{0.45\textwidth}
         \centering
         \includegraphics[width=\textwidth]{images/streets_img.png}
         \caption*{Mapbox Streets Image}
@@ -35,7 +35,7 @@ Extensive testing was done at all the different stages of development of the scr
 Subsequently, to identify the parking spots in each satellite image, the cars detected by the Yolo model are classified into on the road or parked, based on a road mask.
 
 \subsubsection{Road mask generation}
-Many different iterations of the road mask were used, the main iterations and their differences are explained and showed below.
+Many different iterations of the road mask were used, the main iterations and their differences are explained and showed below in Figure~\ref{fig:Mask_Iterations}.
 
 The original mask was a very simple binary mask which identified the road pixels by their color, as the majority of roads were depicted in white and darkened the rest of the pixels in the image.
 
@@ -48,7 +48,44 @@ A different approach using Canny Edge Detection was tested, however due to the n
 
 A final improvement to the mask was made to avoid certain misclassification due to the Mapbox Streets road width not correctly reflecting all the lanes of the road and therefore classifying on the road cars as parked. This issue was most prominent for motorways and national roads and was resolved by enlarging those roads using a dilation technique. Multiple different kernel sizes, different number of iterations and kernels of different sizes applied consecutively were tested to find the optimal solution.
 
-\subsubsection{Classifiction of cars into on the road or parked}
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/streets.png}
+        \caption*{Mapbox Streets Image}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/old_mask.png}
+        \caption*{Initial Mask}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/new_mask.png}
+        \caption*{Mask with additional color masks}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/canny_edge_mask.png}
+        \caption*{Canny Edge Detection Mask}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/current_mask.png}
+        \caption*{Current Mask}
+    \end{minipage}
+    \caption{Different Iterations of the Road Mask}
+    \label{fig:Mask_Iterations}
+\end{figure}
+
+\newpage
+
+\subsubsection{Classification of cars into on the road or parked}
 The cars detected by the Yolo model are then sorted into on the road or parked based on the road mask previously generated, which is explained in more detail below.
 
 The model's predictions which are lower than the confidence threshold of 0.4 are discarded as they are more likely to be misclassifications, such as chimneys which were often misclassified as cars.
@@ -59,7 +96,29 @@ Different thresholds were tested as well, however overall a harsher threshold wo
 
 For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, rotation and orientation based on the angle are saved.
 
-For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen in Figure ...
+For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen in Figure~\ref{fig:Road_mask_classification}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/road_mask_classification1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/road_mask_classification2.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/road_mask_classification3.png}
+    \end{minipage}
+    \caption{Classification of cars into on the road or parked}
+    \label{fig:Road_mask_classification}
+\end{figure}
+
+\newpage
 
 \subsubsection{Empty parking spot detection}
 Subsequently, empty parking spots are detected between parked cars in each image, based on the parked cars detected by the Yolo model and classified using the road mask.
@@ -78,7 +137,34 @@ Afterwards, duplicate spots defined as spots that overlap too much and where the
 As well, spots coinciding with cars identified by the Yolo model, where the distance between them is smaller than 1.25 meters are removed from the empty spots found.
 Subsequently, empty spots that overlap with the road are filter out in a similar manner to the classification done by the road mask.
 
-Following the detection of all the empty spots, the bounding boxes corresponding to each spot are drawn onto the satellite image in green.
+Following the detection of all the empty spots, the bounding boxes corresponding to each spot are drawn onto the satellite image in green as shown in Figure~\ref{fig:Empty_parking_detection}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/empty_parking1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/empty_parking2.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/empty_parking3.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/empty_parking4.png}
+    \end{minipage}
+    \caption{Empty Parking Spot Detection}
+    \label{fig:Empty_parking_detection}
+\end{figure}
+
+\newpage
 
 \subsubsection{Classification of all spots detected}
 All the parking spots detected, including the parked cars identified by the model and the empty parking spots are then classified into 3 different classes: public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
@@ -93,7 +179,34 @@ HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only fo
 Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
 Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioritized as parking lots containing less spots are not as relevant to the target user and given that the threshold of 18 spots minimizes the risk of misclassifying residential areas as parking lots.
 
-Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private in written in red, public in green and parking lot in white.
+Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private class in written in red, public in green and parking lot in white as seen below in Figure~\ref{fig:classification_all_spots}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/classification1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/classification2.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/classification3.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/classification4.png}
+    \end{minipage}
+    \caption{Classification of all spots into private, public and parking lot}
+    \label{fig:classification_all_spots}
+\end{figure}
+
+\newpage
 
 \subsubsection{Uploading points to the backend server}
 The longitude, latitude and classification of all the parking spots detected are then saved to a csv file.
@@ -264,6 +377,3 @@ The predicted public spots are drawn in green while the true labels are in dark 
 \end{table}
 
 \newpage{}
-
-Relire tout and add more, ajouter toutes les figures.
-Refer to each figures, like say as seen in figure x ...
