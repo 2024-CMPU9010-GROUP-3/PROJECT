@@ -1,20 +1,17 @@
-We requested a review of our system from UI/UX professional Andrea Curley.\\
-A professor at a top technological university, specialised in web development, web design and user experience, she has consulted on many notable project such as \fcolorbox{yellow}{yellow}{EXAMPLE}.\\
+The goal of this review is to evaluate the user interface of Magpie at different stages of development with regards to key UI/UX general guidelines.\\
+UI design guidelines differ from UX ones because of their fundamental differences: one is user based and the other isn't. \textbf{UI design} aims to create a visually appealing, intuitive and user\-friendly interface that allows for easy navigation and interaction with the application.\\
+On the other hand, \textbf{UX design} aims to create a meaningful user experience through designing an entire user journey. Together, they work to shape the path to a successful and enjoyable digital product (\cite{uiuxguidelines2023}).\\
 
-The goal of this review is to evaluate the user interface of Magpie at different stages of development and rate its user\-friendliness in regards to key UI/UX general guidelines.\\
-UI design guidelines differ from UX ones because of their fundamental differences: one is user based and the other isn't.\\
-
-\textbf{UI design} aims to create a visually appealing, intuitive and user\-friendly interface that allows for easy navigation and interaction with the application.\\
-On the other hand, \textbf{UX design} aims to create a meaningful user experience through designing an entire user journey. Together, they work to shape the path to a successful and enjoyable digital product (\cite{uiuxguidelines2023}).\\\\
-
-The 10 guidelines was devised in the 1990's by Jakob Nielsen, and today are still the basis for all UI and UX design processes (\cite{uiuxguidelinesnielsen2016}). Below are the ones most relevant to Magpie's development:
+\noindent 10 major guidelines were devised in the 1990's by Jakob Nielsen, the `father' of web design. These guidelines have shaped several UI and UX design creations in the last decade (\cite{uiuxguidelinesnielsen2016}). Below are the ones outlined as most relevant to Magpie's core:
 \begin{itemize}
-    \item User control and freedom
-    \item Recognition over recall
-    \item Aesthetic and minimalist design
-    \item Help and documentation
+    \item \textbf{User control \& freedom:} the users should be able to retrace their steps such as undoing and redoing previous actions, exiting processes midway etc\ldots
+    \item \textbf{Recognition over recall:} ensure the system is not heavy on user's cognitive load and prioritizes easily recognizable design items over one's that rely on memory
+    \item \textbf{Aesthetic \& minimalist design:} keep the visual information to a minimum, display only necessary components and clearly visible unambiguous means of navigating through the application
+    \item \textbf{Help \& documentation:} provide documentation that is easily accessible, relevant and worded in a way that will guide users to the desired outcome
 \end{itemize}
 
+\noindent We requested a review of our system from UI/UX professional Andrea Curley.\\
+A professor at a top technological university, specialised in web development, web design and user experience, she has consulted on many notable project such as \fcolorbox{yellow}{yellow}{EXAMPLE}.\\
 \noindent Two session were conducted: one on November 13 after the publication of our first minimum viable product, and the other on December 9 at the end of the development timeline. Both sessions were conducted online through a videoconference meeting on Teams and took the following form:
 \begin{enumerate}
     \item Presentation of Magpie
@@ -23,7 +20,8 @@ The 10 guidelines was devised in the 1990's by Jakob Nielsen, and today are stil
     \item Questionnaire \& end of review
 \end{enumerate}
 The questionnaire is divided into 3 sections pertaining to visual design, information architecture, and compliance as shown in the table below.\\
-Different types of questions were included, such as "Closed" "Scale" and "Open" to allow for both the quantitative and qualitative measure of Magpie. \fcolorbox{yellow}{yellow}{SUPPORTING EVIDENCE ON MIXED SURVEY QUESTIONS}\\ \\
+Different types of questions were included, such as `Closed' `Scale' and `Open' to allow for both the quantitative and qualitative measure of Magpie.\\
+Open\-ended questions tend to require more cognitive efforts, thus answers can vary in quality and quantity depending on the individual. Close\-ended questions on the other hand offer standardized responses which can be more easily quantified and require less cognitive effort (\cite{mixsurveyquestions2020});
 %table show survey questions and type
 \begin{table}[h!]
     \centering
@@ -62,14 +60,14 @@ Different types of questions were included, such as "Closed" "Scale" and "Open" 
 \subsubsection{Session 1}
 The first session provided very valuable insights on Magpie's workflow, user interface and technical components, as well as helped us uncover critical bugs. These were the main takeaways:\\ \\
 \textbf{Landing Page: }
-Upon loading Magpie, Professor Curley was directly taken to the mapview, which was not supposed to happen. After the review, we investigated the cause of this event and uncovered a bug in the authentication which we have been working on. Following this event, she suggested creating a landing page or some sort of introduction to ease the user into discovering Magpie.\\ \\
+Upon loading Magpie, Andrea Curley was directly taken to the map\-view, which was not supposed to happen. After the review, we investigated the cause of this event and uncovered a bug in the authentication which we have been working on. Following this event, she suggested creating a landing page or some sort of introduction to ease the user into discovering Magpie.\\ \\
 \textbf{Onboarding: }
-Due to the bug explained above, the onboarding did not automatically start as it should have upon login. Nevertheless, Professor Curley said that the user may want to intuitively press on the elements being highlighted during the tutorial, as she tried to do. This adds to the feedback received during casual testing for the implementation of this feature. Unfortunately, due to a technical limitations we are not able to solve it, only provide make certain changes to dissuade the user of doing so.\\
-In addition, Professor Curley suggested there should be an option to exit the tutorial at any time for users who don't want to sit through it. Lastly, the tutorial shoud be more visually striking and engaging in order to leave a lasting impression on the user.\\ \\
+Due to the bug explained above, the onboarding did not automatically start as it should have upon login. Nevertheless, Andrea Curley said that the user may want to intuitively press on the elements being highlighted during the tutorial, as she tried to do. This adds to the feedback received during casual testing for the implementation of this feature. Unfortunately, due to a technical limitations we are not able to solve it, only provide make certain changes to dissuade the user of doing so.\\
+In addition, she suggested there should be an option to exit the tutorial at any time for users who don't want to sit through it. Lastly, the tutorial should be more visually striking and engaging in order to leave a lasting impression on the user.\\ \\
 \textbf{Dashboard \& Map: }
 Currently, the hierarchy of items on the dashboard does not make sense to the average, and is not intuitive to use. All the amenities are displayed when only one is selected (as shown in figure 3.3) and their count displays zero, which the user might interpret as there are zero other amenities in the area in addition to the one I selected.\\
 The icons on the map are not visible enough, and zooming in \& out on the map may not be intuitive to the range of users and devices. Adding zoom buttons could help bridge that gap. \\
-Currently, Professor Curley noted that there is a disconnect between the map and the dashboard whereas they should be looked as one. She suggested adding amenity icons to the dashboard to help bridge that gap.
+Currently, Andrea Curley noted that there is a disconnect between the map and the dashboard whereas they should be looked as one. She suggested adding amenity icons to the dashboard to help bridge that gap.
 %figure for the old confusing dashboard
 \begin{figure}
     \centering
