@@ -70,18 +70,28 @@ The integration of these technologies into the frontend of the project provided 
     Overall, client state management plays a vital role in improving the usability and responsiveness of the frontend, reducing redundancy and complexity by centralizing control over the application’s data. This centralized management allows for easier maintenance and scalability as the application evolves and new features are added.
 
 \subsubsection{UI Walkthrough}
-\begin{figure}
+\begin{figure}[h]
     \centering
-    \includegraphics[width=0.4\textwidth]{images/sitemap.png}
+    \includegraphics[width=0.6\textwidth]{images/site/sitemap.png}
     \caption{Site map of magpie}
 \end{figure}
 \paragraph{Homepage}\mbox{}\\
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{images/site/home/homepage_1.png}
+    \caption{Homepage}
+\end{figure}
 \newline
 \textbf{Introduction}\\
-Upon landing on the page, users are greeted with a map interface centered on Dublin and its surroundings, displaying various public services available in the area. The page provides an interactive map to explore amenities and services in the region, such as parking meters, bike stands, public Wi-Fi, libraries, and more.
+Upon landing on the page, users are greeted with a map interface centered on Dublin and its surroundings, displaying various public services available in the area. The page provides an interactive map to explore amenities and services in the region, such as parking meters, bike stands, public Wi-Fi, libraries, and more.\\
 \textbf{Top section}
 \begin{itemize}
-    \item \textbf{Logo and Title:} At the top-right corner, you’ll see the Magpie logo and the dashboard title, "Magpie Dashboard: v0.12.0," followed by the tagline "Services at a glance." This establishes the page's purpose and provides visual identity to the platform.
+    \item \textbf{Logo and Title:} At the top-right corner, you’ll see the Magpie logo and the dashboard sual identity to the platform.
+    \item \textbf{Search Bar and Radius Control:} Beneath the header, there is a search bar to find specific locations, accompanied by a "Search Radius" slider. This allows users to set the distance range for viewing available services. The slider can adjust the search radius between 1m and 10km.
 \end{itemize}
-
-
+\textbf{Map interface}\\
+The main focus of the page is the map, which occupies a large portion of the screen
+\begin{itemize}
+    \item \textbf{Interactive Map:} The map is interactive, powered by Mapbox, where users can zoom in and out using a mouse or touchpad gestures (pinch to zoom). Location markers represent different public services, such as parking meters or bike stands. These markers provide both a visual and interactive experience for users.
+    \item \textbf{Service Markers:} Clicking on any marker will display detailed information about the selected service, such as its name, type, and available count.
+\end{itemize}
