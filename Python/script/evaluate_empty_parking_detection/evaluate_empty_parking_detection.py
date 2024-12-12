@@ -694,7 +694,7 @@ def evaluate_predictions(predictions, true_labels, iou_threshold=0.35):
     return avg_iou, precision, recall, f1_score, orientation_accuracy, spot_detection_ratio, spot_detection_error, fpr, fnr
 
 
-def main(directory, output_file="metrics.csv"):
+def main(directory, output_file="metrics_empty_parking_detection.csv"):
     """
     Main function to evaluate the empty parking detction on the test images and calculate the corresponding performance metrics
     Saves Averages of IoU, Precision, Recall, F1 score, Orientation Accuracy, 
@@ -742,6 +742,9 @@ def main(directory, output_file="metrics.csv"):
     for long, lat in set(coordinates):
         predictions = get_predictions_in_image(model, long, lat, directory)
         true_labels = get_true_labels(long, lat, directory)
+        #true_labels = get_true_labels_automatic_orientation_labelling(long, lat, directory)
+        if not predictions and not true_labels:# when there are no detections and no true labels we want to skip the calculation of the metrics
+            continue
         draw_true_labels(true_labels, directory, long, lat)
         #print(predictions)
         #print(true_labels)
