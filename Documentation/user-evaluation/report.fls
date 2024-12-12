@@ -1,0 +1,216 @@
+PWD e:/GitHub/PROJECT/Documentation/user-evaluation
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf.cnf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/web2c/texmf.cnf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT e:/GitHub/PROJECT/Documentation/user-evaluation/report.tex
+OUTPUT report.log
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/report.cls
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/report.cls
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/size10.clo
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/size10.clo
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/size10.clo
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/titling/titling.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/titling/titling.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/tocloft/tocloft.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/tocloft/tocloft.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/soul/soul.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/soul/soul.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/soul/soul-ori.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/soul/soul-ori.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/jknappen/ec/ectt1000.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/iftex/iftex.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/iftex/iftex.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/trig.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/trig.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/tools/tabularx.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/tools/tabularx.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/tools/array.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/tools/array.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/helvet.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/helvet.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/ot1phv.fd
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/ot1phv.fd
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/ot1phv.fd
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+INPUT ./report.aux
+INPUT ./report.aux
+INPUT report.aux
+OUTPUT report.aux
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+INPUT ./Figures/tud_logo.png
+INPUT ./Figures/tud_logo.png
+INPUT ./Figures/tud_logo.png
+INPUT ./Figures/tud_logo.png
+OUTPUT report.pdf
+INPUT ./Figures/tud_logo.png
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi8.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi6.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvr7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvr7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+INPUT ./report.toc
+INPUT ./report.toc
+INPUT report.toc
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+OUTPUT report.toc
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvr7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr7t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+INPUT ./Figures/fig1.png
+INPUT ./Figures/fig1.png
+INPUT ./Figures/fig1.png
+INPUT ./Figures/fig1.png
+INPUT ./Figures/fig1.png
+INPUT ./Figures/fig2.png
+INPUT ./Figures/fig2.png
+INPUT ./Figures/fig2.png
+INPUT ./Figures/fig2.png
+INPUT ./Figures/fig2.png
+INPUT ./Figures/fig3.png
+INPUT ./Figures/fig3.png
+INPUT ./Figures/fig3.png
+INPUT ./Figures/fig3.png
+INPUT ./Figures/fig3.png
+INPUT ./Figures/fig4.png
+INPUT ./Figures/fig4.png
+INPUT ./Figures/fig4.png
+INPUT ./Figures/fig4.png
+INPUT ./Figures/fig4.png
+INPUT ./Figures/fig5.png
+INPUT ./Figures/fig5.png
+INPUT ./Figures/fig5.png
+INPUT ./Figures/fig5.png
+INPUT ./Figures/fig5.png
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
+INPUT ./Figures/fig6.png
+INPUT ./Figures/fig6.png
+INPUT ./Figures/fig6.png
+INPUT ./Figures/fig6.png
+INPUT ./Figures/fig6.png
+INPUT ./Figures/fig7.png
+INPUT ./Figures/fig7.png
+INPUT ./Figures/fig7.png
+INPUT ./Figures/fig7.png
+INPUT ./Figures/fig7.png
+INPUT ./Figures/fig8.png
+INPUT ./Figures/fig8.png
+INPUT ./Figures/fig8.png
+INPUT ./Figures/fig8.png
+INPUT ./Figures/fig8.png
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvb7t.vf
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb8r.tfm
+INPUT ./Figures/fig9.png
+INPUT ./Figures/fig9.png
+INPUT ./Figures/fig9.png
+INPUT ./Figures/fig9.png
+INPUT ./Figures/fig9.png
+INPUT ./Figures/fig10.png
+INPUT ./Figures/fig10.png
+INPUT ./Figures/fig10.png
+INPUT ./Figures/fig10.png
+INPUT ./Figures/fig10.png
+INPUT ./Figures/fig11.png
+INPUT ./Figures/fig11.png
+INPUT ./Figures/fig11.png
+INPUT ./Figures/fig11.png
+INPUT ./Figures/fig11.png
+INPUT ./Figures/fig14.png
+INPUT ./Figures/fig14.png
+INPUT ./Figures/fig14.png
+INPUT ./Figures/fig14.png
+INPUT ./Figures/fig14.png
+INPUT ./Figures/fig15.png
+INPUT ./Figures/fig15.png
+INPUT ./Figures/fig15.png
+INPUT ./Figures/fig15.png
+INPUT ./Figures/fig15.png
+INPUT ./Figures/fig12.png
+INPUT ./Figures/fig12.png
+INPUT ./Figures/fig12.png
+INPUT ./Figures/fig12.png
+INPUT ./Figures/fig12.png
+INPUT ./Figures/fig16.png
+INPUT ./Figures/fig16.png
+INPUT ./Figures/fig16.png
+INPUT ./Figures/fig16.png
+INPUT ./Figures/fig16.png
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/ts1phv.fd
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/ts1phv.fd
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/ts1phv.fd
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvr8c.tfm
+INPUT ./Figures/fig13.png
+INPUT ./Figures/fig13.png
+INPUT ./Figures/fig13.png
+INPUT ./Figures/fig13.png
+INPUT ./Figures/fig13.png
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/vf/adobe/helvetic/phvr8c.vf
+INPUT ./report.lof
+INPUT ./report.lof
+INPUT report.lof
+OUTPUT report.lof
+INPUT ./report.lot
+INPUT ./report.lot
+INPUT report.lot
+OUTPUT report.lot
+INPUT report.aux
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb
+INPUT d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb

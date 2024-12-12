@@ -51,33 +51,89 @@ High-fidelity prototypes closely resemble the final product in both form and fun
 
 
 \subsection{User Interface Iteration}
+Our iterative UI process focuses on the overall process involved in the User Interface (UI) and User Experience (UX). For example, the visual and interactive components that users use, including buttons, icons, and layouts, while UX covers the overall journey and emotional response of the user during an interaction. The importance of good UI and UX design lies in the improvement of user satisfaction, which then links to better customer retention and enterprise success. It is believed, through studies, that well-thought-out user experiences can increase retention manyfold.\cite{psycray2023} We did extensive reviews of each and every aspect in our iterations-from color scheme and typography to layout and how the navigation structures work-to ensure usability and interactivity. In terms of visual elements, we used a single colour scheme of predominantly black to create a cohesive and less intrusive design. In addition to cultural considerations, the colour black is also inclusive and has a wide audience. The contrast between the accessible text and the background is also stronger, with enough contrast to improve readability for the user.
+
 \paragraph{Iteration 1:}
 
-The first version of the prototype design is very similar to the sketch and wireframe designs, but it did not take into account the needs and experiences of the users, so it needs to be iterated. The card-based design makes the entire home screen very cluttered and scattered, and the login/signup page adopts the original shadcn style, which needs to be customized and improved.
+Our first iteration used the same design as sketch, but it was more cluttered aesthetically and consistently. The fragmented card-based design made the ribbon look complicated and overwhelming for users. And the first version didn't have a better dashboard. The login/signup page adopts the original shadcn style, which needs to be customized and improved.
+
 \begin{figure}[h]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/wireframe-home.jpg}
-        \caption{Wireframe-home}
-        \label{fig:wireframe-home}
+        \includegraphics[width=\textwidth]{images/v1_Home Page.png}
+        \caption{v1_Home Page}
+        \label{fig:v1_Home Page}
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{images/wireframe-signup.jpg}
-        \caption{Wireframe-login/signup}
-        \label{fig:wireframe-signup}
+        \includegraphics[width=\textwidth]{images/v1_Login.png}
+        \caption{login/signup}
+        \label{fig:v1_Login}
     \end{minipage}
 \end{figure}
 
 
 \paragraph{Iteration 2:}
-The second version of the design adopts the current version's sidebar layout, making the right side the user operation area, providing a dashboard with search radius and filter options, and adding the early search functionality.
+In the second version, we introduced the search bar in the initial stage and integrated each card into the dashboard bar on the right. In the later iterations, we also integrated the search bar to the right, making our structure clearer. In terms of interactivity, we ensured that buttons and sliders were easy to use and responded to user operations intuitively. The amenity filter in the second version used checkboxes, but it was not user-friendly.
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v2_Home Page.png}
+        \caption{v2_Home Page}
+        \label{fig:v2_Home Page}
+    \end{minipage}
+\end{figure}
+
 
 \paragraph{Iteration 3:}
-The third iteration of the design introduces a more detailed dashboard on the right side. It now includes a comprehensive list of amenities with the number of available spots for each, such as parking, bike stands, and public WiFi. This provides users with more specific information at a glance.
-Additionally, a new dropdown menu has been added at the bottom of the dashboard, allowing users to select specific amenities they are interested in. This enhances the user experience by offering more customization and easier access to desired information.
+For version 3 we have added a onboarding tutorial step to the design, which allows new users to quickly familiarise themselves with the app and creates a clear and intuitive interface that guides the user through the interactions. In addition we added updates to the history page, term and privacy page.Home pageWe tried to use the drop down menu option to select amenity to display filters, but through user surveys, we found that the interaction between filters and results was not good, and the drop down menu also added complexity. Also some professional users have suggested that the icon is not visible on the map, so the icon will be updated in the fourth iteration.
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v3_Home Page.png}
+        \caption{v3_Home Page}
+        \label{fig:v3_Home Page}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v3_History.png}
+        \caption{v3_History}
+        \label{fig:v3_History}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v3_onboarding.png}
+        \caption{v3_onboarding}
+        \label{fig:v3_onboarding}
+    \end{minipage}
+
+\end{figure}
+
+
 
 \paragraph{Iteration 4:}
-The fourth iteration introduces several significant enhancements to improve user functionality and data visualization. The interface now includes quick radius selection buttons (100m, 200m, 500m, 1000m) for more precise area control, and new features like "Save to history" and "Export image" have been added to help users preserve their searches. The dashboard has been refined with eye icons for each amenity type, allowing users to toggle visibility of specific amenities on the map. Additionally, a comprehensive landing page has been implemented, explaining Magpie's core features including machine learning capabilities, interactive visualization tools, and target user groups.
+For version 4 we have made some major changes to the front end. First of all, the icon has become more understandable and the colours are more differentiated, each amenity is in a different spectrum of colours and can be seen more clearly. The dropdown menu of the third version was cancelled in the fourth version, the burger menu would make the user can not find the corresponding function buttons, so we expanded them so that you can directly click the history entrance and onboarding button. In addition, according to the feedback from professionals, we also added zoom function and designed scale ruler and export image function. Due to time constraints, the latter two were not fully implemented, and the Search function was gathered together on the right side above the dashboard, with more clickable range options such as ‘100m’, ‘200m’, and so on. Filter is a very important component, now you can click on the small eyes to enable the corresponding amenity, which is more intuitive and interactive. In addition, we have created a landing page to showcase our project.
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v4_Home.png}
+        \caption{v4_Home Page}
+        \label{fig:v4_Home Page}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v4_Landing Page.png}
+        \caption{v4_Landing Page}
+        \label{fig:v4_Landing Page}
+    \end{minipage}
+\end{figure}
