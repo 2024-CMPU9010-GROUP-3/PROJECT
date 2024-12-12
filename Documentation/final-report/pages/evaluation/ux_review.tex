@@ -11,7 +11,7 @@ On the other hand, \textbf{UX design} aims to create a meaningful user experienc
 \end{itemize}
 
 \noindent We requested a review of our system from UI/UX professional Andrea Curley.\\
-A professor at a top technological university, specialised in web development, web design and user experience, she has consulted on many notable project such as \fcolorbox{yellow}{yellow}{EXAMPLE}.\\
+A professor at a top technological university, specialised in web development, web design and user experience. \\
 \noindent Two session were conducted: one on November 13 after the publication of our first minimum viable product, and the other on December 9 at the end of the development timeline. Both sessions were conducted online through a videoconference meeting on Teams where we presented Magpie, explored the features, discussed them, and administered a questionnaire at the end.\\
 The questionnaire is divided into 3 sections pertaining to \emph{visual design}, \emph{information architecture}, and \emph{compliance}.\\
 Different types of questions were included, such as `Closed' `Scale' and `Open' to allow for both the quantitative and qualitative measure of Magpie UI.\\
@@ -90,7 +90,7 @@ The first section covers usability of the main items of Magpie's user interface 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.6\textwidth]{images/ux-survey1-ui.png}
-    \caption{UX review - UI score}
+    \caption{UX review 1 - UI score}
 \end{figure}
 
 \newpage
@@ -99,7 +99,7 @@ The first section covers usability of the main items of Magpie's user interface 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.8\textwidth]{images/ux-survey1-data.png}
-    \caption{UX review - Information Architecture score}
+    \caption{UX review 1 - Information Architecture score}
 \end{figure}
 
 \newpage
@@ -107,15 +107,15 @@ The first section covers usability of the main items of Magpie's user interface 
 %figure of 1st survey responses = Technical
 \begin{figure}[h!]
     \centering
-    \fbox{\includegraphics[width=0.6\textwidth]{images/ux-survey1-technical.png}}
-    \caption{UX review - Technical Performance score}
+    \includegraphics[width=0.6\textwidth]{images/ux-survey1-technical.png}
+    \caption{UX review 1 - Technical Performance score}
 \end{figure}\\
 \noindent Overall, Magpie scored \underline{3.13 out of 5} for this first UX review session. This is the baseline, and the objective for the next session is to score above \underline{3.5 out of 5} overall, and significantly improve the scores for the onboarding, the dashboard flow and the system responsiveness.
 %figure of 1st survey responses = Summary
 \begin{figure}[h!]
     \centering
     \fbox{\includegraphics[width=0.6\textwidth]{images/ux-survey1-summary.png}}
-    \caption{UX review - Overall score}
+    \caption{UX review 1 - Overall score}
 \end{figure}\\
 \textbf{Summary: }
 To conclude the first session, Andrea Curley found our interface sleek and minimalistic. However, she suggested that if we want to remain with this style, we need to ensure there is as little room as possible for ambiguity and confusion. The user needs to find it easy to move from one feature to another and understand the triggers. Currently, Magpie looks so sleek that the user may not be able to see what they want.
@@ -157,10 +157,29 @@ This is due to the way we have rendered the points on the map, which initially d
 
 \noindent \textbf{Search \& Save functionality: }
 Good addition however it gives inconsistent results. This is due the the API we are using which does a keyword search through our database to retrieve results instead of a semantic search. Therefore street names with special characters or with many words may not always return accurate or any results unfortunately, or why if the search is saved it may not carry the search term.\\
-Last suggestion on this point is to be able to press enter to start the search, instead of being confined to the search button. The search feature will be further addressed in the future work section of the report on how to switch it to a semantic.\\
+Last suggestion on this point is to be able to press enter to start the search, instead of being confined to the search button. The search feature will be further addressed in the future work section of the report on how to switch it to a semantic.\\ \\
+\fcolorbox{yellow}{yellow}{ADD IMAGES}
 
 
 \newpage
-\textbf{Survey responses:}\\ \\
+\noindent \textbf{Survey responses:}
+Andrea Curley scored the UI of Magpie a \underline{4 out of 5}, which is a net increase of 0.5 points from the first session. The items which gained half a star are the onboarding and the map.\\
+Changes made which contributing to this increase are the fixing of the overlapping elements during onboarding and the updated icons with tooltips on the map.\\
+%figure of 2nd survey responses = UI
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{images/ux-survey2-ui.png}
+    \caption{UX review 2 - UI score}
+\end{figure}
+
+\noindent The second section scored a \underline{3.63 out of 5}, a net increase of 0.63 points from the first session. Points which improved are the intuitiveness of amenity categories complemented by adding the icons beside the amenity name, the profile menu with brand new visible icons, and improved onboarding mentioned previously.\\
+In addition, Andrea Curley increased the value rating for resource allocation and planning permissions, due to the discussion we had during the second session regarding the sessions I had with urban planners. \\
+%figure of 2nd survey responses = Data
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.6\textwidth]{images/ux-survey2-data.png}
+    \caption{UX review 2 - Information Architecture score}
+\end{figure}
+
 \textbf{Overall: }
 The feedback from the previous review has been onboarded very well, the application looks clean and is easy to use. However, more visual feedback is needed for features like the search functionality and the selection/deselection of amenities, as well as the accuracy of the points displayed.
