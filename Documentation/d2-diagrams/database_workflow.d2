@@ -1,0 +1,31 @@
+direction: down
+
+PostgreSQL: {
+  shape: image
+  icon: https://icons.terrastruct.com/dev%2Fpostgresql.svg
+}
+
+Application (Magpie): {
+  shape: image
+  icon: magpie_logo.png
+}
+
+sqlc: {
+  shape: image
+  icon: https://sqlc.dev/logo.png
+  label: ""
+}
+
+SQL Migrations -> sqlc
+SQL Queries (Private) -> sqlc
+SQL Queries (Public) -> sqlc
+
+sqlc -> Go Bindings
+
+Go Bindings -> Application (Magpie)
+
+Application (Magpie) -> pgx
+Application (Magpie) -> golang-migrate
+
+golang-migrate -> pgx
+pgx -> PostgreSQL
