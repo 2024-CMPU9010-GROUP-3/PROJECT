@@ -119,7 +119,7 @@ SQLite (\cite{sqlc_documentation_language_support}).
 
 The tool respects best practices to prevent SQL injection attacks. It generates
 code that only utilises constant strings and parametrised queries
-(\cite{sqlc_injection}). Using a tool like this, the team was quickly able to
+(\cite{sqlc_injection}). Using this tool, the team was quickly able to
 connect the backend server to the database. Eliminating the need to update the
 Go code manually each time the database schema or queries changed was vital for
 the backend keeping pace with the other developers.
@@ -251,8 +251,43 @@ the backend keeping pace with the other developers.
 
 \paragraph{golang-migrate}
 
-The complete database development workflow for the backend server is visualised
-in Figure \ref{fig:database_workflow_diagram}.
+During the first weeks of the project, the database was defined by a simple
+initialisation SQL script. This worked fine for the time and allowed all
+developers to set up their local database instance easily. But once the vertical
+slice was completed, the team wanted to add additional features that would
+necessitate changes to the database schema. After adding the first feature, some
+developers ran into issues where the version of the backend they were running
+was not compatible with the schema currently deployed on their local database.
+
+Fixing these issues was time consuming and they were likely going to reappear
+after future database changes. Realising this, the team made the decision to
+integrate a database migration solution to automate this tedious process and
+prevent future time losses during development.
+
+The tool used for generating Go bindings from the raw SQL, sqlc, does not offer
+any migration functionality, so another solution needed to be found. The team
+evaluated all options that were listed as compatible with sqlc. These were
+atlas, dbmate, golang-migrate, goose, sql-migrate and tern
+(\cite{sqlc_updating_database_schema}). The team was looking for a solution that
+allowed the migrations to be specified in plain SQL. The solution needed to work
+both as a command-line interface application as well as a Go library, as it was
+deemed necessary to apply the migrations to the database automatically. A tool
+that did not rely on additional configuration files would also be preferred.
+Multiple options satisfied these requirements. The backend team decided to use
+golang-migrate, due to its straightforward usage and easy integration as a
+library.
+
+At the time this decision was taken, golang-migrate also seemed like
+the most actively developed of the options. This has since changed and at the
+time of writing, golang-migrate is the solution with the least recent update of
+the options.
+
+Nonetheless, using golang-migrate the team was able to integrate automated
+database migrations into the app, eliminating the need to spend valuable time
+performing manual database updates each time the schema is changed.
+
+\textbf{The complete database development workflow for the backend server is visualised
+in Figure \ref{fig:database_workflow_diagram}.}
 
 \begin{figure}[htbp]
   \centering{}
