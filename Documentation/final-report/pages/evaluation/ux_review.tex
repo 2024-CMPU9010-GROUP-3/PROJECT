@@ -4,15 +4,15 @@ On the other hand, \textbf{UX design} aims to create a meaningful user experienc
 
 \noindent 10 major guidelines were devised in the 1990's by Jakob Nielsen, the `father' of web design. These guidelines have shaped several UI and UX design creations in the last decade (\cite{uiuxguidelinesnielsen2016}). Below are the ones outlined as most relevant to Magpie's core:
 \begin{itemize}
-    \item \textbf{User control \& freedom:} the users should be able to retrace their steps such as undoing and redoing previous actions, exiting processes midway etc\ldots
-    \item \textbf{Recognition over recall:} ensure the system is not heavy on user's cognitive load and prioritizes easily recognizable design items over one's that rely on memory
-    \item \textbf{Aesthetic \& minimalist design:} keep the visual information to a minimum, display only necessary components and clearly visible unambiguous means of navigating through the application
+    \item \textbf{User control \& freedom:} the users should be able to retrace their steps such as undoing and redoing previous actions, exiting processes midway etc\ldots\\
+    \item \textbf{Recognition over recall:} ensure the system is not heavy on user's cognitive load and prioritizes easily recognizable design items over one's that rely on memory\\
+    \item \textbf{Aesthetic \& minimalist design:} keep the visual information to a minimum, display only necessary components and clearly visible unambiguous means of navigating through the application\\
     \item \textbf{Help \& documentation:} provide documentation that is easily accessible, relevant and worded in a way that will guide users to the desired outcome
 \end{itemize}
 
 \noindent We requested a review of our system from UI/UX professional Andrea Curley.\\
 A professor at a top technological university, specialised in web development, web design and user experience. \\
-\noindent Two session were conducted: one on November 13 after the publication of our first minimum viable product, and the other on December 9 at the end of the development timeline. Both sessions were conducted online through a videoconference meeting on Teams where we presented Magpie, explored the features, discussed them, and administered a questionnaire at the end.\\
+\noindent Two session were conducted: one on November 13 after the publication of our first minimum viable product, and the other on December 9 at the end of the development timeline. Both sessions were conducted online through a videoconference meeting on Teams where we presented Magpie, explored the features, discussed them, and administered a questionnaire at the end.\\ \\
 The questionnaire is divided into 3 sections pertaining to \emph{visual design}, \emph{information architecture}, and \emph{compliance}.\\
 Different types of questions were included, such as `Closed' `Scale' and `Open' to allow for both the quantitative and qualitative measure of Magpie UI.\\
 Open-ended questions tend to require more cognitive efforts, thus answers can vary in quality and quantity depending on the individual. Close-ended questions on the other hand offer standardized responses which can be more easily quantified and require less cognitive effort (\cite{mixsurveyquestions2020});
@@ -157,8 +157,19 @@ This is due to the way we have rendered the points on the map, which initially d
 
 \noindent \textbf{Search \& Save functionality: }
 Good addition however it gives inconsistent results. This is due the the API we are using which does a keyword search through our database to retrieve results instead of a semantic search. Therefore street names with special characters or with many words may not always return accurate or any results unfortunately, or why if the search is saved it may not carry the search term.\\
-Last suggestion on this point is to be able to press enter to start the search, instead of being confined to the search button. The search feature will be further addressed in the future work section of the report on how to switch it to a semantic.\\ \\
-\fcolorbox{yellow}{yellow}{ADD IMAGES}
+Last suggestion on this point is to be able to press enter to start the search, instead of being confined to the search button. The search feature will be further addressed in the future work section of the report on how to switch it to a semantic.\\
+%figure for failed search
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{images/search-results-fail.png}}
+    \caption{V.0.12 Magpie Search Failing}
+\end{figure}
+%figure for complete search
+\begin{figure}[h!]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{images/search-results-parnell.png}}
+    \caption{V.0.12 Magpie Search Working}
+\end{figure}
 
 
 \newpage
