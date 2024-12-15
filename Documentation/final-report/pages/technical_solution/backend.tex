@@ -64,7 +64,7 @@ reliability and they are well equipped to guarantee data integrity. But the
 deciding reason was the pre-existing experience the lead developer for the
 backend had with these types of databases.
 
-After some deliberation, PostgreSQL was chosen as the database solution for this
+After some deliberation, \textbf{PostgreSQL} was chosen as the database solution for this
 project. It was combined with the PostGIS extension to add support for
 geospatial data and queries. The decision was not cut and dried as most
 established multi-model databases (like Oracle DB or MySQL) offer the
@@ -73,6 +73,25 @@ cluster this project was going to be deployed on already had a fully configured
 PostgreSQL server running on it. Making use of pre-existing infrastructure is
 the obvious choice in an agile project that had the prime goal of hitting the
 ground running.
+
+\begin{listing}[htbp]
+  \centering{}
+  \begin{minipage}{\textwidth}
+  \begin{minted}{sql}
+    -- name: GetPointsInRadius :many
+    SELECT Id, LongLat::geometry, Type from points
+    WHERE ST_DWithin(
+      LongLat::geography,
+      ST_SetSRID(ST_MakePoint(@longitude::float, @latitude::float), 4326)::geography,
+      @radius::float
+    ) AND (
+      @types::point_type[] IS NULL OR Type = ANY(@types::point_type[])
+    );
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a SQL query with annotations used by sqlc}
+  \label{listing:sqlc_query_input}
+\end{listing}
 
 \paragraph{sqlc}
 In modern software development, there are two common ways for an application to
@@ -98,15 +117,16 @@ wrapper in the programming language that is used anyway. This can make it easier
 and quicker to develop an application that makes use of a database, but it takes
 away some of the agency that the developer has.
 
-
 The team wasn't really happy with either of these solutions, so an alternative
-called sqlc was chosen. This tool combines the freedom that using SQL gives
+called \textbf{sqlc} was chosen. This tool combines the freedom that using SQL gives
 developers with the productivity increase that ORMs offer. sqlc flips the
 typical ORM workflow on its head. This means, the developer writes standard SQL
-queries and schemas which are then passed to the CLI of sqlc. In accordance with
-a configuration file provided by the developer, sqlc then automatically
-generates type-safe bindings for the queries that were defined in the SQL files
-(\cite{sqlc_introduction}).
+queries and schemas, but includes sqlc directives such as the name of the query
+and the multiplicity of expected results in the comments above the query (see
+Listing \ref{listing:sqlc_query_input}). These files are then passed to the CLI
+of sqlc. In accordance with a configuration file provided by the developer, sqlc
+then automatically generates type-safe bindings for the queries that were
+defined in the SQL files (\cite{sqlc_introduction}).
 
 This approach gives the developer more control about the queries that are
 executed. At the same time, it eliminates the need to write boilerplate wrapper
@@ -123,25 +143,6 @@ code that only utilises constant strings and parametrised queries
 connect the backend server to the database. Eliminating the need to update the
 Go code manually each time the database schema or queries changed was vital for
 the backend keeping pace with the other developers.
-
-\begin{listing}[htbp]
-  \centering{}
-  \begin{minipage}{\textwidth}
-  \begin{minted}{sql}
-    -- name: GetPointsInRadius :many
-    SELECT Id, LongLat::geometry, Type from points
-    WHERE ST_DWithin(
-      LongLat::geography,
-      ST_SetSRID(ST_MakePoint(@longitude::float, @latitude::float), 4326)::geography,
-      @radius::float
-    ) AND (
-      @types::point_type[] IS NULL OR Type = ANY(@types::point_type[])
-    );
-  \end{minted}
-  \end{minipage}
-  \caption{An example of a SQL query with annotations used by sqlc}
-  \label{listing:sqlc_query_input}
-\end{listing}
 
 \begin{listing}[htbp]
   \centering{}
@@ -274,7 +275,7 @@ both as a command-line interface application as well as a Go library, as it was
 deemed necessary to apply the migrations to the database automatically. A tool
 that did not rely on additional configuration files would also be preferred.
 Multiple options satisfied these requirements. The backend team decided to use
-golang-migrate, due to its straightforward usage and easy integration as a
+\textbf{golang-migrate}, due to its straightforward usage and easy integration as a
 library.
 
 At the time this decision was taken, golang-migrate also seemed like
@@ -297,7 +298,63 @@ in Figure \ref{fig:database_workflow_diagram}.}
 \end{figure}
 
 \paragraph{bcrypt}
-\textcite{owasp_password_storage_cheatsheet}
+To store the users credentials securely, \textbf{bcrypt} was chosen to hash them
+before they are inserted into the database. The resulting hashes (see Figure
+\ref{fig:bcrypt_hash}) can then be used to validate if the given password is
+correct. In accordance with best practices, a work factor of 12 was used when
+hashing passwords and a password limit of 72 bytes was implemented
+(\cite{owasp_password_storage_cheatsheet}).
+
+While the \textcite{owasp_password_storage_cheatsheet} recommends other, more
+recent technologies over bcrypt, they also don't discourage its use in any way.
+In the case of Magpie, bcrypt was chosen because the team had past experience
+working with it. This was desirable as the registration and login functionality
+was deemed to be one of the core features of the MVP. Choosing a technology that
+the team did not have any experience could have resulted in slower development,
+bugs or even security vulnerabilities as a result of improper implementation.
+
+Since the application was not intended to store highly valuable personal data
+such as banking information, personal addresses or health care records it was
+deemed acceptable to use a less recent technology in exchange for more rapid
+development. Should this project ever evolve into a publicly available and
+frequently used application, the use of bcrypt would of course need to be
+reevaluated with a much bigger focus on real-world application security rather
+than just development speed.
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=0.8\textwidth]{./images/bcrypt_hash.png}
+  \caption{Visualisation of a bcrypt hash}
+  \label{fig:bcrypt_hash}
+\end{figure}
+
+\paragraph{JSON Web Token} \label{jwt}
+\textbf{JSON Web Tokens} were chosen for the authentication of user requests to
+the APIs. JWTs are JSON objects that are encrypted using a private key on the
+server and passed to the frontend when a login requests succeeds. The client is
+then expected to pass the token to the backend as a form of authentication in
+subsequent requests.
+
+JSON Web Tokens are more than just a simple API token. They can store data about
+the authenticated user in them, which can be very useful if the handling of the
+requests needs a reference to the user id for example (see example JWT content
+in Figure \ref{}). Since the tokens are generated on the backend server using a
+private secret, JWTs can be checked for integrity during decoding. Should the
+content not match up with the private secret of the backend server, it can be
+assumed that the token has been tempered with. In this case, the request would
+be discarded and a "Unauthorized" error message would be returned instead.
+
+This structure allows for the authentication system to be decoupled between
+backend and frontend. Using JWTs eliminates the need for the backend to keep
+track of active sessions, significantly reducing complexity. This and the
+familiarity the team had with working with JWTs were ultimately chosen as the
+authentication solution for Magpie.
+
+JSON Web Tokens do however come with their own caveats. For example, if any
+malicious actor stole such a token from a user, they could pretend to be that
+user without the system noticing. JWTs do not have a built-in way to revoke
+potentially stolen tokens, neither from the client nor from the server
+(\cite{owasp_jwt_cheatsheet}).
 
 \subsubsection{Backend Development}
 As discussed in \ref{systemarchitecture} \nameref{systemarchitecture}, the
@@ -361,8 +418,33 @@ and included twice.
   \label{fig:database_final_schema}
 \end{figure}
 
+\subsubsection{Routing \& APIs}
 \subsubsection{Middlewares}
 \paragraph{Authentication}
+
+As mentioned in section \ref{jwt} (\nameref{jwt}), the use of JWTs comes with
+its own set of caveats.
+
+One solution for this issue would be implementing a list of revoked tokens on
+the server and offering the user a way to add a stolen token to that list. If an
+attacker then uses one of these revoked tokens, their requests can be easily
+denied. However, this added complexity and development time that the team didn't
+have in the MVP phase of the project. So to mitigate the issue, the JWTs were
+given a very short expiration time, making them useless after only a few hours.
+This led to annoyance and friction during development and testing, so the
+expiration time was increased to a week. This made the application less secure,
+but much easier to use in both development and regular usage. The backend team
+took a unanimous decision to keep the token handling in this state for the time
+being, as the application was still considered very much secure enough. The time
+and effort needed to implement those additional security features were weighed
+up and it became obvious that they would not result in any easily perceptible
+improvement to the application.
+
+The issue of improving application security was kept in mind during the whole
+development process, but other issues always took precedence. Given more time,
+improving the application security would be one of the top priorities in terms
+of further backend development.
+
 \paragraph{Authorisation}
 \subsubsection{Data Validation}
 \subsubsection{Error Handling}
