@@ -1,0 +1,39 @@
+logins : {
+  shape: sql_table
+
+  id: uuid {constraint: primary_key}
+
+  username: varchar(64) {constraint: unique}
+
+  email: varchar(64) {constraint: unique}
+
+  passwordhash: varchar(72)
+
+  last_updated: timestamp with time zone
+}
+
+user_details {
+  shape: sql_table
+  id: uuid {constraint: [primary_key; foreign_key]}
+  registerdate: timestamp
+  firstname: varchar(64)
+  lastname: varchar(64)
+  profilepicture: varchar(512)
+  lastloggedin: timestamp
+}
+
+points {
+  shape: sql_table
+  id: bigserial {constraint: primary_key}
+  longlat: geometry
+  type: point_type
+  details: jsonb
+}
+
+schema_migrations {
+  shape: sql_table
+  version: bigint {constraint: primary_key}
+  dirty: boolean
+}
+
+user_details.id -> logins.id

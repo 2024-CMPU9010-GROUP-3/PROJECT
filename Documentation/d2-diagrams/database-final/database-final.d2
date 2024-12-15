@@ -1,0 +1,52 @@
+history_amenity_counts {
+  shape: sql_table
+  historyentryid: bigserial {constraint: [primary_key, foreign_key]}
+  type: point_type {constraint: primary_key}
+  count: integer
+}
+
+location_history {
+  shape: sql_table
+  id: bigserial {constraint: primary_key}
+  userid: uuid {constraint: foreign_key}
+  datecreated: timestamp
+  longlat: geometry
+  radius: integer
+  displayname: varchar
+}
+
+logins {
+  shape: sql_table
+  id: uuid {constraint: primary_key}
+  username: varchar(64) {constraint: unique}
+  email: varchar(64) {constraint: unique}
+  passwordhash: varchar(72)
+}
+
+user_details {
+  shape: sql_table
+  id: uuid {constraint: [primary_key; foreign_key]}
+  registerdate: timestamp
+  firstname: varchar(64)
+  lastname: varchar(64)
+  profilepicture: varchar(512)
+  lastloggedin: timestamp
+}
+
+points {
+  shape: sql_table
+  id: bigserial {constraint: primary_key}
+  longlat: geometry
+  type: point_type
+  details: jsonb
+}
+
+schema_migrations {
+  shape: sql_table
+  version: bigint {constraint: primary_key}
+  dirty: boolean
+}
+
+history_amenity_counts.historyentryid -> location_history.id
+location_history.userid -> logins.id
+user_details.id -> logins.id

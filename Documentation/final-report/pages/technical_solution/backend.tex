@@ -13,7 +13,7 @@ members. Therefore, the usage of computing and memory resources was very
 important to them, as they did not want to strain their Kubernetes cluster more
 than necessary. Since NodeJS runs on the JavaScript runtime V8, which also
 powers Google Chrome, our experience indicated that it would be quite resource
-intensive to run.
+intensive to run. Findings by \textcite{Tanadechopon2023} confirm this.
 
 Due to this, the team shifted towards using compiled rather than interpreted
 languages, as these are generally more resource efficient. Since small
@@ -126,6 +126,25 @@ the backend keeping pace with the other developers.
 
 \begin{listing}[htbp]
   \centering{}
+  \begin{minipage}{\textwidth}
+  \begin{minted}{sql}
+    -- name: GetPointsInRadius :many
+    SELECT Id, LongLat::geometry, Type from points
+    WHERE ST_DWithin(
+      LongLat::geography,
+      ST_SetSRID(ST_MakePoint(@longitude::float, @latitude::float), 4326)::geography,
+      @radius::float
+    ) AND (
+      @types::point_type[] IS NULL OR Type = ANY(@types::point_type[])
+    );
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a SQL query with annotations used by sqlc}
+  \label{listing:sqlc_query_input}
+\end{listing}
+
+\begin{listing}[htbp]
+  \centering{}
   \begin{minipage}{0.75\textwidth}
   \begin{minted}{yaml}
       version: "2"
@@ -164,27 +183,8 @@ the backend keeping pace with the other developers.
                   type: "Point"
   \end{minted}
   \end{minipage}
-  \caption{An example of a sqlc configuration file with two targets with separate query inputs}
+  \caption{An example of a sqlc configuration file with two targets with separate query inputs and type replacement}
   \label{listing:sqlc_config_file}
-\end{listing}
-
-\begin{listing}[htbp]
-  \centering{}
-  \begin{minipage}{\textwidth}
-  \begin{minted}{sql}
-    -- name: GetPointsInRadius :many
-    SELECT Id, LongLat::geometry, Type from points
-    WHERE ST_DWithin(
-      LongLat::geography,
-      ST_SetSRID(ST_MakePoint(@longitude::float, @latitude::float), 4326)::geography,
-      @radius::float
-    ) AND (
-      @types::point_type[] IS NULL OR Type = ANY(@types::point_type[])
-    );
-  \end{minted}
-  \end{minipage}
-  \caption{An example of a SQL query with annotations used by sqlc}
-  \label{listing:sqlc_query_input}
 \end{listing}
 
 \begin{listing}[htbp]
@@ -291,13 +291,13 @@ in Figure \ref{fig:database_workflow_diagram}.}
 
 \begin{figure}[htbp]
   \centering{}
-  \includegraphics[width=0.8\textwidth]{../d2-diagrams/database_workflow.png}
+  \includegraphics[width=0.8\textwidth]{../d2-diagrams/database-workflow/database_workflow.png}
   \caption{Database Workflow Diagram}
   \label{fig:database_workflow_diagram}
 \end{figure}
 
 \paragraph{bcrypt}
-
+\textcite{owasp_password_storage_cheatsheet}
 
 \subsubsection{Backend Development}
 As discussed in \ref{systemarchitecture} \nameref{systemarchitecture}, the
@@ -324,9 +324,42 @@ creating multiple binaries that have different feature sets, for instance
 multiple different payment tiers for a single software. This was a great
 solution for this problem. It allowed for certain files to be excluded during
 compilation based on if they were needed for private or public functionality.
-While the development of such a program split by build-tags is more challenging
+While the development of a program split by build-tags is more challenging
 than developing a single binary, it is much more streamlined than keeping
 functionality identical between two separate projects.
+
+The build-tag system did not fix the problem of code duplication completely
+however. Some tools in the Go ecosystem did not handle the exclusive split as
+expected. Most notably, the Go language server that provides code completion and
+other useful IDE features. It was possible to configure it to recognise files
+with their accompanying build-tags, but there was no way to specify exclusivity.
+This meant that two files in the same package could not have identical function
+definitions even though they would never be included in the binary build process
+simultaneously. It was possible to work around this restriction, which it lead
+to some code duplication. But this was still a lot better than duplicating the
+whole backend.
+
+And while sqlc offers integration for the build-tag system (see the config file
+in Listing \ref{listing:sqlc_config_file}), it did not offer to just split the
+query part of the generated bindings. As a consequence, the generated code
+handling the model bindings and the access to the database had to be generated
+and included twice.
+
+\subsection{Database}
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=0.8\textwidth]{../d2-diagrams/database-init/database-init.png}
+  \caption{Database Schema for the minimum viable Product}
+  \label{fig:database_init_schema}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=0.8\textwidth]{../d2-diagrams/database-final/database-final.png}
+  \caption{Final Database Schema}
+  \label{fig:database_final_schema}
+\end{figure}
 
 \subsubsection{Middlewares}
 \paragraph{Authentication}
