@@ -427,42 +427,185 @@ and included twice.
 \fcolorbox{orange}{orange}{Add description of net/http library routing}
 
 \subsubsection{APIs}
+All API routes that the backends expose are listed below. This information was
+available to the frontend and data stack developers throughout the project in
+the form of a collection of markdown files in the repository. This clearly
+communicated the capabilities of the API routes, making it easier to develop the
+application parts that interfaced with them. Providing strong documentation also
+eliminated a lot of ambiguity, resulting in more concise and effient
+communication between the different areas of responsibility.
+
+For a detailed explanation of the route access restriction modes, see Section
+\ref{route_authorisation} (\nameref{route_authorisation}).
+
 \paragraph{Public API}
-The public API is used by the frontend to retrieve points and authenticate the
-user.
+The public API is used to retrieve relevant data for display in the frontend and
+for authentication of the user.
 
 \begin{itemize}
-  \item{Point Routes
+  \item{
+    \textbf{Point Routes}
     \begin{itemize}
-      \item {\texttt{GET /v1/public/points/\{id\}}}
-      \item {\texttt{GET /v1/public/points/inRadius?long=\{\}\&lat=\{\}\&radius=\{\}\&types=\{\}}}
+      \item { \textbf{Name:} Point Details\\
+          \textbf{Method + Route:} \texttt{GET /v1/public/points/\{id\}}\\
+          \textbf{Description:} Provides additional details about a point. The
+          structure and content of the details is different for every point
+          type. The details are derived from the input dataset and added to each
+          point on ingress.\\
+          \textbf{Access:} Authenticated\\
+          \textbf{Parameters:} Point UUID (path parameter)\\
+          \textbf{Returns:} JSON Object containing details about the point\\
+        }
+      \item { \textbf{Name:} Points in Radius\\
+          \textbf{Method + Route:} \texttt{GET
+          /v1/public/points/inRadius?long=\{\}\&lat=\{\}\&radius=\{\}\&types=\{\}}\\
+          \textbf{Description:} Retrieves all points in a circle. The circle is
+          defined by its center coordinates and a radius in meters. The
+          \texttt{types} parameter is optional. If a comma separated list of
+          point types is provided, the returned data will be filtered to only
+          contain points with the given types.\\
+          \textbf{Access:} Authenticated\\
+          \textbf{Parameters:} Longitude, Latitude, radius, types (all query
+          parameters)\\
+          \textbf{Returns:} JSON object containing a list of points inside the
+          given radius, filtered by the given point types\\
+        }
     \end{itemize}
   }
-  \item{Saved Location Routes
+  \item{
+    \textbf{Saved Location Routes}
     \begin{itemize}
-      \item {\texttt{GET /v1/public/history/\{id\}}}
-      \item {\texttt{DELETE /v1/public/history/\{id\}}}
-      \item {\texttt{POST /v1/public/history/\{id\}}}
+      \item {
+        \textbf{Name:} Retrieve saved locations\\
+        \textbf{Method + Route:} \texttt{GET /v1/public/history/\{id\}}\\
+        \textbf{Description:} Retrieves all saved locations for the account
+        specified by the user id. In previous versions, this route included
+        pagination functionality, but due to the requirements of a frontend
+        library, the backend now returns all saved locations.\\
+        \textbf{Access:} Restricted\\
+        \textbf{Parameters:} User UUID (path parameter)\\
+        \textbf{Returns:} JSON object containing a list of all saved locations
+        (including location, radius, number of amenities) for the specified
+        user.\\
+      }
+      \item {
+        \textbf{Name:} Delete saved locations\\
+        \textbf{Method + Route:} \texttt{DELETE /v1/public/history/\{id\}}\\
+        \textbf{Description:} This route allows the user to delete one or more
+        of their saved locations. The route only deletes saved locations that
+        are associated with the currently active account. Should this route
+        receive ids of saved locations that are associated with another account
+        or that don't exist, it simply ignores them.\\
+        \textbf{Access:} Restricted\\
+        \textbf{Parameters:} User UUID (path parameter), List of saved location
+        ids (request body)\\
+        \textbf{Returns:} Status 202 if no errors occurred during deletion.\\
+      }
+      \item {
+        \textbf{Name:} Save location\\
+        \textbf{Method + Route:} \texttt{POST /v1/public/history/\{id\}}\\
+        \textbf{Description:} Creates a new saved location for the currently
+        active user.\\
+        \textbf{Access:} Restricted\\
+        \textbf{Parameters:} User UUID (path parameter), JSON Object describing
+        the saved location (request body)\\
+        \textbf{Returns:} Status 201 if the location was saved successfully.\\
+      }
     \end{itemize}
   }
-  \item{Authentication Routes
+  \item{
+    \textbf{Authentication Routes}
     \begin{itemize}
-      \item {\texttt{POST /v1/public/auth/User/}}
-      \item {\texttt{POST /v1/public/auth/User/login}}
-      \item {\texttt{GET /v1/public/auth/User/\{id\}}}
-      \item {\texttt{PUT /v1/public/auth/User/\{id\}}}
-      \item {\texttt{DELETE /v1/public/auth/User/\{id\}}}
+      \item {
+        \textbf{Name:} Create new account\\
+        \textbf{Method + Route:} \texttt{POST /v1/public/auth/User/}\\
+        \textbf{Description:} Allows users to create a new account. Both the
+        backend and database will perform uniqueness checks on the given email
+        and username. First name and last name are optional. The given password
+        will be hashed before being stored in the database.\\
+        \textbf{Access:} Public\\
+        \textbf{Parameters:} JSON object containing all information for the new
+        account (request body)\\
+        \textbf{Returns:} The UUID of the new account and status 201 if the
+        creation was successful.\\
+      }
+      \item {
+        \textbf{Name:} Login\\
+        \textbf{Method + Route:} \texttt{POST /v1/public/auth/User/login}\\
+        \textbf{Description:} Allows users to retrieve an access token, given
+        valid credentials.\\
+        \textbf{Access:} Public\\
+        \textbf{Parameters:} JSON object containing a password and a username or
+        email.\\
+        \textbf{Returns:} A JWT bearer token and the user UUID if the login was
+        successful.\\
+      }
+      \item {
+        \textbf{Name:} Get user details\\
+        \textbf{Method + Route:} \texttt{GET /v1/public/auth/User/\{id\}}\\
+        \textbf{Description:} Retrieves the user details for the current user.
+        This includes the users first name, last name, date of registration,
+        date of last login as well as a link to a profile picture. Requests for
+        the details of other users are denied.\\
+        \textbf{Access:} Restricted\\
+        \textbf{Parameters:} User UUID (path parameter)\\
+        \textbf{Returns:} JSON object containing additional details about the
+        user.\\
+      }
+      \item {
+        \textbf{Name:} Update user details\\
+        \textbf{Method + Route:} \texttt{PUT /v1/public/auth/User/\{id\}}\\
+        \textbf{Description:} Allows the user to update their own user details.
+        With the exception of a new password, all parameters must be passed to
+        this route, even if they aren't changed. New usernames and emails are
+        checked for uniqueness by the backend and database. Keeping the same
+        username or email does not violate the uniqueness constraint.\\
+        \textbf{Access:} Restricted\\
+        \textbf{Parameters:} JSON object specifying username, email, [password],
+        first name, last name and profile picture link.\\
+        \textbf{Returns:} Status 202 if the data was successfully updated.\\
+      }
+      \item {
+        \textbf{Name:} Delete account\\
+        \textbf{Method + Route:} \texttt{DELETE /v1/public/auth/User/\{id\}}\\
+        \textbf{Description:} Allows the user to delete their account. This also
+        deletes all associated data like user details and saved locations. There
+        is currently no way to undo this action.\\
+        \textbf{Access:} Restricted\\
+        \textbf{Parameters:} User UUID (path parameter)\\
+        \textbf{Returns:} Status 202 if the request was accepted.\\
+      }
+    \end{itemize}
+  }
+  \item{
+    \textbf{Status Routes}
+    \begin{itemize}
+      \item {
+        \textbf{Name:} Heartbeat\\
+        \textbf{Method + Route:} \texttt{GET /heartbeat}\\
+        \textbf{Description:} This route is used by the automated deployment to
+        check if the public backend is up and ready to receive connections. This
+        helps alleviate issues with the starting order of services on a
+        Kubernetes cluster.\\
+        \textbf{Access:} Public\\
+        \textbf{Parameters:} None\\
+        \textbf{Returns:} \texttt{true} if the service is ready to receive
+        connections.\\
+    }
     \end{itemize}
   }
 
-  \item {\texttt{GET /heartbeat}}
 \end{itemize}
 
 \fcolorbox{orange}{orange}{Add list of public API routes}
 
 \paragraph{Private API}
 The private API is used by the machine learning and data stack to insert new
-datasets into the database.
+datasets into the database. Currently, all private API routes have public access
+rights, as the private backend as a whole is guaranteed restricted access by the
+CoreDNS routing of the Kubernetes cluster. This allows the data stack to skip
+the authentication step, decreasing development overhead while maintaining high
+application security.
 
 \begin{figure}[htbp]
   \centering{}
@@ -472,10 +615,65 @@ datasets into the database.
 \end{figure}
 
 \begin{itemize}
-  \item {\texttt{POST /v1/private/points}}
-  \item {\texttt{PUT /v1/private/points/\{id\}}}
-  \item {\texttt{DELETE /v1/private/points/\{id\}}}
-  \item {\texttt{GET /heartbeat}}
+  \item {
+    \textbf{Point Routes}
+    \begin{itemize}
+      \item {
+        \textbf{Name:} Create new point\\
+        \textbf{Method + Route:} \texttt{POST /v1/private/points}\\
+        \textbf{Description:} Allows the data stack to create a new point in the
+        database. Since the point details vary from point type to point type,
+        they are stored in the database in the form of a JSON object. This also
+        allows for less restrictions to the type of data that can be added here,
+        making Magpie more flexible in development.\\
+        \textbf{Access:} Public\\
+        \textbf{Parameters:} JSON object containing the location of the point,
+        the point type and a nested JSON object containing all the point
+        details.\\
+        \textbf{Returns:} The integer id of the newly created point.\\
+      }
+      \item {
+        \textbf{Name:} Update point\\
+        \textbf{Method + Route:} \texttt{PUT /v1/private/points/\{id\}}\\
+        \textbf{Description:} This route allows the data stack to update a point
+        that is already stored in the database. This is not currently used in
+        Magpie, but it will be useful in the future as datasets will become
+        outdated over time.\\
+        \textbf{Access:} Public\\
+        \textbf{Parameters:} Point id (path parameter), JSON object containing
+        the points new data\\
+        \textbf{Returns:} The point id and Status 202 if the update was
+        successful.\\
+      }
+      \item {
+        \textbf{Name:} Delete point\\
+        \textbf{Method + Route:} \texttt{DELETE /v1/private/points/\{id\}}\\
+        \textbf{Description:} Using this route, the data stack can delete a
+        specific point from the database. This is currently not used in Magpie,
+        but removing stale and outdated data will become necessary as time goes
+        by.\\
+        \textbf{Access:} Public\\
+        \textbf{Parameters:} Point id (path parameter)\\
+        \textbf{Returns:} Status 202 if the request was accepted.\\
+      }
+    \end{itemize}
+  }
+  \item{
+    \textbf{Status Routes}
+    \begin{itemize}
+      \item {
+        \textbf{Name:} Heartbeat\\
+        \textbf{Method + Route:} \texttt{GET /heartbeat}\\
+        \textbf{Description:} This route is used by the automated deployment to
+        check if the public backend is up and ready to receive connections. This
+        helps alleviate issues with the starting order of services on a
+        Kubernetes cluster.\\
+        \textbf{Access:} Public\\
+        \textbf{Parameters:} None\\
+        \textbf{Returns:} \texttt{true} if the service is ready to receive connections.\\
+      }
+    \end{itemize}
+  }
 \end{itemize}
 
 \fcolorbox{orange}{orange}{Add list of private API routes}
@@ -508,12 +706,12 @@ development process, but other issues always took precedence. Given more time,
 improving the application security would be one of the top priorities in terms
 of further backend development.
 
-\paragraph{Authorisation}
+\paragraph{Authorisation}\label{route_authorisation}
 
 \fcolorbox{orange}{orange}{Add route based authorisation}
 
 \subsubsection{Data Validation}
-\fcolorbox{orange}{orange}{Add section on data validation}
+\fcolorbox{orange}{orange}{Add section on data validation + DTOs}
 
 \subsubsection{Error Handling}
 \fcolorbox{orange}{orange}{Add section on error handling}
