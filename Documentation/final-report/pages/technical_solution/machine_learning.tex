@@ -342,6 +342,44 @@ The predicted parked cars are drawn in red while the true labels are drawn in li
 \subsubsection{Evaluation of the empty parking detection}
 The empty parking detection logic is evaluated in the \texttt{evaluate\_empty\_parking\_detection.py} Python script.
 The classification is evaluated on the following metrics: Average IoU, Average Precision, Average Recall, Average F1 Score, Average Orientation Accuracy, Average Spot Detection Ratio (SDR), Average Spot Detection Error (SDE), Average False Positive Rate (FPR), and Average False Negative Rate (FNR).
+
+The additional metrics are defined as follows.
+
+The Average Orientation Accuracy is defined as the ratio of the number of predictions that correctly identify the orientation (either horizontal or vertical) of the spots on the total number of true spots:
+
+\[
+\text{Average Orientation Accuracy} = \frac{\text{Correct Orientation Predictions}}{\text{Total True Labels}}
+                                    = \frac{N_{\text{correct\_orientation}}}{N_{\text{true\_labels}}}
+\]
+
+where \( N_{\text{correct\_orientation}} \) represents the number of predictions with correct orientation, and \( N_{\text{true\_labels}} \) represents the total number of true labels.
+
+The Spot Detection Ratio is defined as the ratio of the number of predictions and the total number of true labels:
+
+\[
+\text{SDR} = \frac{N_{\text{predictions}}}{N_{\text{total\_true\_labels}}}
+\]
+
+where \( N_{\text{predictions}} \) is the total number of detected spots, and \( N_{\text{total\_true\_labels}} \) is the total number of true labels.
+
+The Spot Detection Error is defined as the absolute difference between the number of predictions and the total number of true labels:
+
+\[
+\text{SDE} = |N_{\text{predictions}} - N_{\text{total\_true\_labels}}|
+\]
+
+The False Positive Rate is defined as the proportion of incorrectly predicted positives (FP) out of all the actual negatives:
+
+\[
+\text{Average FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
+\]
+
+The False Negative Rate is defined as the proportion of incorrectly predicted negatives (FN) out of all the actual positives:
+
+\[
+\text{Average FNR} = \frac{\text{FN}}{\text{TP} + \text{FN}}
+\]
+
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 Likewise a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap. The pixel coordinates, width and height of the annotated bounding boxes are exported. The orientation of each bounding box, is calculated automatically in the evaluation script when loading in the true labels.
@@ -395,7 +433,7 @@ The predicted empty parking spots are drawn in green while the true labels are i
 
 \subsubsection{Evaluation of the classification of the spots detected into private, public and parking lot}
 The classification of the spots detected into private, public and parking lot is evaluated in the \texttt{evaluate\_classification\_of\_spots.py} Python script.
-The classification is evaluated on the following metrics: Average IoU, Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class. These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
+The classification is evaluated on the following metrics as defined previously: Average IoU, Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class. These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 Similarly, a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap.
 
