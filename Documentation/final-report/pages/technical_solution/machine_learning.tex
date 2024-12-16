@@ -43,7 +43,32 @@ Below you can see the difference in bounding boxes between the labelled image us
   \includegraphics[width=0.85\textwidth]{images/obb-vs-nonobb-img.png}
   \caption{Non-OBB labels (left) versus OBB labels (right)}
 \end{figure}
+Thus, the YOLOv8-OBB model was trained on the settings below:
+\begin{listing}[h!]
+  \centering
+  \begin{minted}{python3}
+    train_results_obb = yolo8s_obb_model.train(data=data_config,
+                  epochs=35,
+                  patience=15,
+                  optimizer="AdamW",    # Adam + weight decay for less overfitting
+                  val=True, # validate during training
+                  seed=1,
+                  imgsz=416,
+                  batch=16,
+                  cache="disk",
+                  )
+  \end{minted}
+\end{listing}
+And the following results were obtained:
+%yolov8 obb results
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.85\textwidth]{images/yolo-obb-results.png}
+  \caption{YOLOv8-OBB results}
+\end{figure}
 
+The weights were then obtained and used to identify cars in satellite images of the entire Dublin city using the script below.\\
+\fcolorbox{yellow}{yellow}{Jess or Saul's script}
 
 \subsubsection{Parking spot detection}
 Subsequently, to identify the parking spots in each satellite image, the cars detected by the YOLO model are classified into on the road or parked, based on a road mask.
