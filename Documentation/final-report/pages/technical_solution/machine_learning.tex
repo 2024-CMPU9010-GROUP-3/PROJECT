@@ -10,8 +10,8 @@ While in \texttt{parking\_detection\_local.py}, the original parking detection s
 
 Extensive testing was done at all the different stages of development of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.
 
-\subsubsection{Yolo model used for car detection}
-
+\subsubsection{YOLO model used for car detection}
+YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy compared to models of the time like 
 
 \subsubsection{Parking spot detection}
 Subsequently, to identify the parking spots in each satellite image, the cars detected by the Yolo model are classified into on the road or parked, based on a road mask.
@@ -100,20 +100,20 @@ A test set of 50 images was carefully selected to include edge cases and difficu
 The overall results on test set are presented below in Table~\ref{tab:metrics1}
 
 \begin{table}[h]
-    \centering
-    \begin{tabular}{|l|c|c|}
+  \centering
+  \begin{tabular}{|l|c|c|}
     \hline
-    \textbf{Metric}               & \textbf{Parked} & \textbf{Road} \\ \hline
-    Average IoU                  & 0.66         & 0.66              \\ \hline
-    Average Balanced Accuracy    & 0.58         & 0.58              \\ \hline
-    Average Precision            & 0.70         & 0.90              \\ \hline
-    Average Recall               & 0.75         & 0.67              \\ \hline
-    Average F1 Score             & 0.59         & 0.54              \\ \hline
-    Average Accuracy             & 0.69         & 0.64              \\ \hline
-    Average Specificity          & 0.74         & 0.79              \\ \hline
-    \end{tabular}
-    \caption{Performance Metrics for Road Mask Classification}
-    \label{tab:metrics1}
+    \textbf{Metric}           & \textbf{Parked} & \textbf{Road} \\ \hline
+    Average IoU               & 0.66            & 0.66          \\ \hline
+    Average Balanced Accuracy & 0.58            & 0.58          \\ \hline
+    Average Precision         & 0.70            & 0.90          \\ \hline
+    Average Recall            & 0.75            & 0.67          \\ \hline
+    Average F1 Score          & 0.59            & 0.54          \\ \hline
+    Average Accuracy          & 0.69            & 0.64          \\ \hline
+    Average Specificity       & 0.74            & 0.79          \\ \hline
+  \end{tabular}
+  \caption{Performance Metrics for Road Mask Classification}
+  \label{tab:metrics1}
 \end{table}
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
@@ -122,14 +122,14 @@ Some images from the test set can be seen below, in Table~\ref{tab:test_images1}
 The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
 
 \begin{table}[h]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{images/image1_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_road_mask_classification_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image3_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_road_mask_classification_test_set.png} \\
-        \multicolumn{2}{c}{\includegraphics[width=0.4\textwidth]{images/image5_road_mask_classification_test_set.png}} \\
-    \end{tabular}
-    \caption{Images from the Road Mask Classification Test Set}
-    \label{tab:test_images1}
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.4\textwidth]{images/image1_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_road_mask_classification_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image3_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_road_mask_classification_test_set.png} \\
+    \multicolumn{2}{c}{\includegraphics[width=0.4\textwidth]{images/image5_road_mask_classification_test_set.png}}                                                                          \\
+  \end{tabular}
+  \caption{Images from the Road Mask Classification Test Set}
+  \label{tab:test_images1}
 \end{table}
 
 \subsubsection{Evaluation of the empty parking detection}
@@ -147,22 +147,22 @@ The problems linked to overlap, is equally due to the differences in orientation
 The overall results on test set are presented below in Table~\ref{tab:metrics2}
 
 \begin{table}[h]
-    \centering
-    \begin{tabular}{|l|c|}
+  \centering
+  \begin{tabular}{|l|c|}
     \hline
-    \textbf{Metric}                            & \textbf{Value} \\ \hline
-    Average IoU                                & 0.59           \\ \hline
-    Average Precision                          & 0.77           \\ \hline
-    Average Recall                             & 0.70           \\ \hline
-    Average F1 Score                           & 0.69           \\ \hline
-    Average Orientation Accuracy               & 0.64           \\ \hline
-    Average Spot Detection Ratio (SDR)         & 1.05           \\ \hline
-    Average Spot Detection Error (SDE)         & 1.44           \\ \hline
-    Average False Positive Rate (FPR)          & 0.23           \\ \hline
-    Average False Negative Rate (FNR)          & 0.22           \\ \hline
-    \end{tabular}
-    \caption{Performance Metrics for Empty Parking Detection}
-    \label{tab:metrics2}
+    \textbf{Metric}                    & \textbf{Value} \\ \hline
+    Average IoU                        & 0.59           \\ \hline
+    Average Precision                  & 0.77           \\ \hline
+    Average Recall                     & 0.70           \\ \hline
+    Average F1 Score                   & 0.69           \\ \hline
+    Average Orientation Accuracy       & 0.64           \\ \hline
+    Average Spot Detection Ratio (SDR) & 1.05           \\ \hline
+    Average Spot Detection Error (SDE) & 1.44           \\ \hline
+    Average False Positive Rate (FPR)  & 0.23           \\ \hline
+    Average False Negative Rate (FNR)  & 0.22           \\ \hline
+  \end{tabular}
+  \caption{Performance Metrics for Empty Parking Detection}
+  \label{tab:metrics2}
 \end{table}
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
@@ -171,14 +171,14 @@ A few images from the test set are displayed below, in Table~\ref{tab:test_image
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
 
 \begin{table}[h]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{images/image1_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_empty_parking_detection_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image3_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_empty_parking_detection_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image5_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_empty_parking_detection_test_set.png} \\
-    \end{tabular}
-    \caption{Images from the Empty Parking Detection Test Set}
-    \label{tab:test_images2}
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.4\textwidth]{images/image1_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_empty_parking_detection_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image3_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_empty_parking_detection_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image5_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_empty_parking_detection_test_set.png} \\
+  \end{tabular}
+  \caption{Images from the Empty Parking Detection Test Set}
+  \label{tab:test_images2}
 \end{table}
 
 \subsubsection{Evaluation of the classification of the spots detected into private, public and parking lot}
@@ -191,20 +191,20 @@ Similarly, a test set of 50 images was carefully selected and consistently label
 The overall results on test set are presented below in Table~\ref{tab:metrics3}
 
 \begin{table}[h]
-    \centering
-    \begin{tabular}{|l|c|c|c|}
+  \centering
+  \begin{tabular}{|l|c|c|c|}
     \hline
-    \textbf{Metric}               & \textbf{Public} & \textbf{Private} & \textbf{Parking Lot} \\ \hline
-    Average IoU                  & 0.60             & 0.60             & 0.60              \\ \hline
-    Average Balanced Accuracy    & 0.57             & 0.57             & 0.57              \\ \hline
-    Average Precision            & 0.73             & 0.65             & 0.59              \\ \hline
-    Average Recall               & 0.72             & 0.75             & 0.74              \\ \hline
-    Average F1 Score             & 0.68             & 0.62             & 0.61              \\ \hline
-    Average Accuracy             & 0.67             & 0.54             & 0.63              \\ \hline
-    Average Specificity          & 0.59             & 0.54             & 0.41              \\ \hline
-    \end{tabular}
-    \caption{Performance Metrics for Parking Spot Classification}
-    \label{tab:metrics3}
+    \textbf{Metric}           & \textbf{Public} & \textbf{Private} & \textbf{Parking Lot} \\ \hline
+    Average IoU               & 0.60            & 0.60             & 0.60                 \\ \hline
+    Average Balanced Accuracy & 0.57            & 0.57             & 0.57                 \\ \hline
+    Average Precision         & 0.73            & 0.65             & 0.59                 \\ \hline
+    Average Recall            & 0.72            & 0.75             & 0.74                 \\ \hline
+    Average F1 Score          & 0.68            & 0.62             & 0.61                 \\ \hline
+    Average Accuracy          & 0.67            & 0.54             & 0.63                 \\ \hline
+    Average Specificity       & 0.59            & 0.54             & 0.41                 \\ \hline
+  \end{tabular}
+  \caption{Performance Metrics for Parking Spot Classification}
+  \label{tab:metrics3}
 \end{table}
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
@@ -213,14 +213,14 @@ A few images from the test set are shown below, in Table~\ref{tab:test_images3}
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
 
 \begin{table}[h]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{images/image1_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_classification_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image3_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_classification_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image5_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_classification_test_set.png} \\
-    \end{tabular}
-    \caption{Images from the Parking Spot Classification Test Set}
-    \label{tab:test_images3}
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.4\textwidth]{images/image1_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_classification_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image3_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_classification_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image5_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_classification_test_set.png} \\
+  \end{tabular}
+  \caption{Images from the Parking Spot Classification Test Set}
+  \label{tab:test_images3}
 \end{table}
 
 
