@@ -236,13 +236,65 @@ The csv file containing the longitude, latitude, classification label, parking z
 Each major section of the parking detection model was evaluated individually in order to access the overall performance. The results will be presented and analysed for each section below.
 
 \subsubsection{Evaluation of the Yolo model}
-Define precision, recall, f1 score, common metrics and write formulas and cite papers where they are defined...
+
 
 \subsubsection{Evaluation of the classifiction of cars into on the road or parked}
 The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
-The classification is evaluated on the following metrics: Average Intersection over Union (IoU), Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class.
-Define IoU and other metrics and write formulas and cite papers where they are defined...
-These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
+The classification is evaluated on the following metrics commonly used for object detection tasks: Average Intersection over Union (IoU), Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class.
+
+These metrics are defined in detail as follows.
+
+The IoU is calculated as the overlap between the predicted bounding box \( B_p \) and the ground truth bounding box \( B_g \), divided by their union:
+
+\[
+\text{IoU} = \frac{|B_p \cap B_g|}{|B_p \cup B_g|}
+\]
+
+The Average IoU is defined as the mean IoU across all detections:
+
+\[
+\text{Average IoU} = \frac{1}{N} \sum_{i=1}^{N} \text{IoU}_i
+\]
+
+where \( N \) is the total number of detections.
+
+Precision is defined as the ratio of true positives (TP) and the sum of true positives and false positives (FP):
+
+\[
+\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
+\]
+
+Recall is defined as the ratio of true positives (TP) and the sum of true positives and false negatives (FN):
+
+\[
+\text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+\]
+
+The F1 Score is defined as the harmonic mean of precision and recall:
+
+\[
+\text{F1 Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\]
+
+Accuracy is defined as the proportion of correct predictions (TP and TN) out of all the predictions:
+
+\[
+\text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+\]
+
+Balanced Accuracy is defined as the average of Sensitivity (Recall) and Specificity:
+
+\[
+\text{Balanced Accuracy} = \frac{\text{Sensitivity} + \text{Specificity}}{2}
+\]
+
+where:
+\[
+\text{Sensitivity/Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \quad
+\text{Specificity} = \frac{\text{TN}}{\text{TN} + \text{FP}}
+\]
+
+These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in the labelling software Label Studio. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
 
@@ -267,6 +319,10 @@ The overall results on test set are presented below in Table~\ref{tab:metrics1}.
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
 
+As for the mask the issues we still have is that not all the parts of the street names are removed mainly due to the watermarks at the bottom of the image or if a street name is on the very edge of an image. (The problem is if we remove everything completely it distorts the shape of the roads making them wider). Also for some streets that are very thin and where the name takes up all the width, the part with the name is erased. And also for areas where there are triangular intersections of roads it sometimes fills up the whole area. 
+Other problems due to the mapbox images is the Dublin tunnel which appears even though it's underground. And some roads (mainly highways) are shown to be a lot thinner than they actually are so cars on the furthest out lanes are taken as parking spots which isn't good. There are also sometimes overlapping things on the road which get removed (like the dotted white lines for the sidewalk) which then leaves a black gap in the road.
+
+
 Some images from the test set can be seen below, in Table~\ref{tab:test_images1}.
 The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
 
@@ -286,7 +342,6 @@ The predicted parked cars are drawn in red while the true labels are drawn in li
 \subsubsection{Evaluation of the empty parking detection}
 The empty parking detection logic is evaluated in the \texttt{evaluate\_empty\_parking\_detection.py} Python script.
 The classification is evaluated on the following metrics: Average IoU, Average Precision, Average Recall, Average F1 Score, Average Orientation Accuracy, Average Spot Detection Ratio (SDR), Average Spot Detection Error (SDE), Average False Positive Rate (FPR), and Average False Negative Rate (FNR).
-Explain additional metrics how they are calculated/ what they represent.
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 Likewise a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap. The pixel coordinates, width and height of the annotated bounding boxes are exported. The orientation of each bounding box, is calculated automatically in the evaluation script when loading in the true labels.
@@ -317,6 +372,10 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}.
 \end{table}
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
+
+The main issue is that the cars are classed on the road by the road mask and the current threshold, so as the empty parking detection only fills in gaps between parked cars it can’t find the true labels as we can see in all 3 images. 
+Also some of the spots in the true labels are too small to be found by the model with the current thresholds that are set.
+
 
 A few images from the test set are displayed below, in Table~\ref{tab:test_images2}.
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
@@ -360,6 +419,8 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}.
 \end{table}
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
+
+Common pbs, small parking lots not found but by design as we want only large parking lots. and then residential areas could potentially be misclassified as parking lot thouhg happens very rarely with the given thresholds.
 
 A few images from the test set are shown below, in Table~\ref{tab:test_images3}.
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
