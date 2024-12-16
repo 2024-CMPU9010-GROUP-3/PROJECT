@@ -321,7 +321,7 @@ frequently used application, the use of bcrypt would of course need to be
 reevaluated with a much bigger focus on real-world application security rather
 than just development speed.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
   \centering{}
   \includegraphics[width=0.8\textwidth]{./images/bcrypt_hash.png}
   \caption{Visualisation of a bcrypt hash}
@@ -355,6 +355,10 @@ malicious actor stole such a token from a user, they could pretend to be that
 user without the system noticing. JWTs do not have a built-in way to revoke
 potentially stolen tokens, neither from the client nor from the server
 (\cite{owasp_jwt_cheatsheet}).
+
+Despite these caveats and some slowdowns during development, the team still
+feels JWT-based authentication was the right choice for a project of Magpie's
+scale.
 
 \subsubsection{Backend Development}
 As discussed in \ref{systemarchitecture} \nameref{systemarchitecture}, the
@@ -402,7 +406,8 @@ query part of the generated bindings. As a consequence, the generated code
 handling the model bindings and the access to the database had to be generated
 and included twice.
 
-\subsection{Database}
+\subsubsection{Database}
+\fcolorbox{orange}{orange}{Add database development}
 
 \begin{figure}[htbp]
   \centering{}
@@ -418,9 +423,67 @@ and included twice.
   \label{fig:database_final_schema}
 \end{figure}
 
-\subsubsection{Routing \& APIs}
+\subsubsection{Routing}
+\fcolorbox{orange}{orange}{Add description of net/http library routing}
+
+\subsubsection{APIs}
+\paragraph{Public API}
+The public API is used by the frontend to retrieve points and authenticate the
+user.
+
+\begin{itemize}
+  \item{Point Routes
+    \begin{itemize}
+      \item {\texttt{GET /v1/public/points/\{id\}}}
+      \item {\texttt{GET /v1/public/points/inRadius?long=\{\}\&lat=\{\}\&radius=\{\}\&types=\{\}}}
+    \end{itemize}
+  }
+  \item{Saved Location Routes
+    \begin{itemize}
+      \item {\texttt{GET /v1/public/history/\{id\}}}
+      \item {\texttt{DELETE /v1/public/history/\{id\}}}
+      \item {\texttt{POST /v1/public/history/\{id\}}}
+    \end{itemize}
+  }
+  \item{Authentication Routes
+    \begin{itemize}
+      \item {\texttt{POST /v1/public/auth/User/}}
+      \item {\texttt{POST /v1/public/auth/User/login}}
+      \item {\texttt{GET /v1/public/auth/User/\{id\}}}
+      \item {\texttt{PUT /v1/public/auth/User/\{id\}}}
+      \item {\texttt{DELETE /v1/public/auth/User/\{id\}}}
+    \end{itemize}
+  }
+
+  \item {\texttt{GET /heartbeat}}
+\end{itemize}
+
+\fcolorbox{orange}{orange}{Add list of public API routes}
+
+\paragraph{Private API}
+The private API is used by the machine learning and data stack to insert new
+datasets into the database.
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=0.8\textwidth]{images/dataflow_5.png}
+  \caption{Dataflow Diagram from raw Data to Frontend}
+  \label{fig:dataflow}
+\end{figure}
+
+\begin{itemize}
+  \item {\texttt{POST /v1/private/points}}
+  \item {\texttt{PUT /v1/private/points/\{id\}}}
+  \item {\texttt{DELETE /v1/private/points/\{id\}}}
+  \item {\texttt{GET /heartbeat}}
+\end{itemize}
+
+\fcolorbox{orange}{orange}{Add list of private API routes}
+
 \subsubsection{Middlewares}
 \paragraph{Authentication}
+
+\fcolorbox{orange}{orange}{Add authentication middleware features}
 
 As mentioned in section \ref{jwt} (\nameref{jwt}), the use of JWTs comes with
 its own set of caveats.
@@ -446,6 +509,14 @@ improving the application security would be one of the top priorities in terms
 of further backend development.
 
 \paragraph{Authorisation}
+
+\fcolorbox{orange}{orange}{Add route based authorisation}
+
 \subsubsection{Data Validation}
+\fcolorbox{orange}{orange}{Add section on data validation}
+
 \subsubsection{Error Handling}
+\fcolorbox{orange}{orange}{Add section on error handling}
+
 \subsubsection{Testing}
+\fcolorbox{orange}{orange}{Add section on testing}
