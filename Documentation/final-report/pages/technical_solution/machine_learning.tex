@@ -317,11 +317,12 @@ The overall results on test set are presented below in Table~\ref{tab:metrics1}.
     \label{tab:metrics1}
 \end{table}
 
-Analyse metrics + Mention common problems. Reference similar results in object detection
+Analyse metrics. Reference similar results in object detection
 
-As for the mask the issues we still have is that not all the parts of the street names are removed mainly due to the watermarks at the bottom of the image or if a street name is on the very edge of an image. (The problem is if we remove everything completely it distorts the shape of the roads making them wider). Also for some streets that are very thin and where the name takes up all the width, the part with the name is erased. And also for areas where there are triangular intersections of roads it sometimes fills up the whole area. 
-Other problems due to the mapbox images is the Dublin tunnel which appears even though it's underground. And some roads (mainly highways) are shown to be a lot thinner than they actually are so cars on the furthest out lanes are taken as parking spots which isn't good. There are also sometimes overlapping things on the road which get removed (like the dotted white lines for the sidewalk) which then leaves a black gap in the road.
-
+Few outstanding problems:
+Not all the parts of the street names are removed mainly due to the watermarks at the bottom of the image or if a street name is on the very edge of an image. Also for some streets that are very thin and where the name takes up all the width, the part with the name is erased. And also for areas where there are triangular intersections of roads it sometimes fills up the whole area.
+Other problems due to the mapbox images is the Dublin tunnel which appears even though it's underground.
+There are also sometimes overlapping things on the road which get removed (like the dotted white lines for the sidewalk) which then leaves a black gap in the road.
 
 Some images from the test set can be seen below, in Table~\ref{tab:test_images1}.
 The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
@@ -409,11 +410,10 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}.
     \label{tab:metrics2}
 \end{table}
 
-Analyse metrics + Mention common problems. Reference similar results in object detection
+Analyse metrics. Reference similar results in object detection.
 
-The main issue is that the cars are classed on the road by the road mask and the current threshold, so as the empty parking detection only fills in gaps between parked cars it can’t find the true labels as we can see in all 3 images. 
+The main issue is that the cars are classed on the road by the road mask and the current threshold, so as the empty parking detection only fills in gaps between parked cars it cannot find the true labels.
 Also some of the spots in the true labels are too small to be found by the model with the current thresholds that are set.
-
 
 A few images from the test set are displayed below, in Table~\ref{tab:test_images2}.
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
@@ -456,9 +456,9 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}.
     \label{tab:metrics3}
 \end{table}
 
-Analyse metrics + Mention common problems. Reference similar results in object detection
+Analyse metrics. Reference similar results in object detection.
 
-Common pbs, small parking lots not found but by design as we want only large parking lots. and then residential areas could potentially be misclassified as parking lot thouhg happens very rarely with the given thresholds.
+Common pbs, small parking lots not found but by design as we want only large parking lots. and then residential areas could potentially be misclassified as parking lot though happens very rarely with the given thresholds.
 
 A few images from the test set are shown below, in Table~\ref{tab:test_images3}.
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
