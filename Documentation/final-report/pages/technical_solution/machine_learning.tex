@@ -122,7 +122,7 @@ For testing and debugging purposes, all the bounding boxes of the cars found by 
 
 \subsubsection{Empty parking spot detection}
 Subsequently, empty parking spots are detected between parked cars in each image, based on the parked cars detected by the Yolo model and classified using the road mask.
-Originally 4 cases were considered, cars parked horizontally in a row or in a column, cars parked vertically in a column and parked vertically side by side. However horizontally parked in a column and vertically parked side by side were removed as they lead to too many misclassifications, namely the vertically parked side by side lead to adding many additional cars in driveways in residential areas.
+Originally 4 cases were considered, cars parked horizontally in a row or in a column, cars parked vertically in a column and cars parked vertically side by side. However horizontally parked in a column and vertically parked side by side were removed as they lead to too many misclassifications, namely the vertically parked side by side lead to adding many additional cars in driveways in residential areas.
 A number of different variations and calculation techniques were tested out, however only the final version will be explained below.
 
 Average parking spot width and length in pixels are calculated for each image, to draw the empty spots more uniformly. Average parking spot width and length in meters are set to 3.05 as found to be the optimal value through testing accounting for the variations in size.
@@ -173,8 +173,8 @@ Multiple different clustering approaches were tested out to cluster spots togeth
 Overall DBSCAN performed the best and the quickest out of all the clustering algorithms, given that some images contained very few parking spots, meaning clustering was only significant in cases with a minimum number of parking spots.
 Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds were not set correctly.
 \texttt{eps} refers to the maximum distance between two points for them to be considered as neighbors and \texttt{min\_samples} refers to the minimum number of points required to form a cluster.
-HDBSCAN and OPTICS require a minimum number of samples larger or equal to 2, however given that not all images might contained at least 2 detections, clustering using those algorithms is not possible in all cases, so -1 is assigned to the spots without clusters which is the default behaviour of DBSCAN.
-HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only found smaller clusters which were not as significant.
+Using HDBSCAN and OPTICS required a minimum number of samples larger or equal to 2, however given that not all images necessarily contained at least 2 parked cars (some images may contain only on the road cars for example), clustering using those algorithms was not possible in all cases, therefore -1 was assigned to the spots belonging to no clusters similarly to the default behaviour of DBSCAN.
+Clustering using HDBSCAN gave similar results to DBSCAN, however not as good, while OPTICS only found smaller clusters which were not as significant and not particularly helpful to subsequently classify the spots into the parking lot category.
 
 Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
 Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioritized as parking lots containing less spots are not as relevant to the target user and given that the threshold of 18 spots minimizes the risk of misclassifying residential areas as parking lots.
@@ -210,7 +210,7 @@ Afterwards, clusters and classification labels are drawn onto the satellite imag
 
 \subsubsection{Uploading points to the backend server}
 The longitude, latitude and classification of all the parking spots detected are then saved to a csv file.
-Potential spot duplicates are dropped, as the same car may be in multiple images given that the images are defined by their center coordinates, which causes adjacent images to overlap and share common areas. (The rightmost part of one image often overlaps with the leftmost part of another image.)
+Potential spot duplicates are dropped, as the same car may be in multiple images given that the images are defined by their center coordinates, which causes adjacent images to overlap and share common areas. The rightmost part of one image can overlap with the leftmost part of another image.
 
 Subsequently, the parking zones and costs associated to each parking spot found are added to the csv file.
 Dublin City Council defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure~\ref{fig:Parking_zones}
@@ -246,7 +246,7 @@ These metrics are saved in a csv file for each test image as well as the overall
 
 A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in the labelling software Label Studio. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
 
-The overall results on test set are presented below in Table~\ref{tab:metrics1}
+The overall results on test set are presented below in Table~\ref{tab:metrics1}.
 
 \begin{table}[htbp]
     \centering
@@ -267,7 +267,7 @@ The overall results on test set are presented below in Table~\ref{tab:metrics1}
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
 
-Some images from the test set can be seen below, in Table~\ref{tab:test_images1}
+Some images from the test set can be seen below, in Table~\ref{tab:test_images1}.
 The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
 
 \begin{table}[htbp]
@@ -295,7 +295,7 @@ To remedy this issue, the IoU threshold was lowered to 0.35, as there was still 
 The problems linked to the overlap, is equally due to the differences in orientation as the true labels and the predictions are calculated differently.
 For the true labels, the orientation is based on whether the width or length of the spot is larger (the spots with larger width are labelled as horizontal and the spots with larger length are labelled as vertical), while for the model's predictions the orientation is based on the angle measurement.
 
-The overall results on test set are presented below in Table~\ref{tab:metrics2}
+The overall results on test set are presented below in Table~\ref{tab:metrics2}.
 
 \begin{table}[htbp]
     \centering
@@ -318,7 +318,7 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
 
-A few images from the test set are displayed below, in Table~\ref{tab:test_images2}
+A few images from the test set are displayed below, in Table~\ref{tab:test_images2}.
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
 
 \begin{table}[htbp]
@@ -340,7 +340,7 @@ The classification is evaluated on the following metrics: Average IoU, Balanced 
 
 Similarly, a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap.
 
-The overall results on test set are presented below in Table~\ref{tab:metrics3}
+The overall results on test set are presented below in Table~\ref{tab:metrics3}.
 
 \begin{table}[htbp]
     \centering
@@ -361,7 +361,7 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}
 
 Analyse metrics + Mention common problems. Reference similar results in object detection
 
-A few images from the test set are shown below, in Table~\ref{tab:test_images3}
+A few images from the test set are shown below, in Table~\ref{tab:test_images3}.
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
 
 
