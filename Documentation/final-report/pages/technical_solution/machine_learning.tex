@@ -34,7 +34,7 @@ We moved away from Label studio and studied the Ultralytics documentation and tr
   \includegraphics[width=0.85\textwidth]{images/yolo-results.png}
   \caption{YOLO Model training graph}
 \end{figure}
-We ended the object detection modelling training with the YOLOv8 - Oriented Bounding Boxes (OBB). The YOLOv8 model has been pre-trained on the COCO (Common Object in Context) dataset, a popular large scale dataset with 200,000 images across 80 object categories commonly used for benchmarking computer vision models (\cite{cocodataset}).\\
+We ended the object detection modelling training with the YOLOv8 - Oriented Bounding Boxes (OBB). The YOLOv8 model has been pre-trained on the COCO (Common Object in Context) dataset, a popular large scale dataset with 200,000 images across 80 object categories commonly used for benchmarking computer vision models (\cite{cocodataset}).\\ \\
 Oriented bounding boxes are a newer type of bounding box where the bounding box capture the orientation of the object providing a more accurate fit of the object. They are defined by 5 parameters (center xy, width, height and rotation angle) and capture the object's spatial orientation more precisely, reducing overlap and improving the robustness of the object detection model (\cite{obblit}).\\
 Below you can see the difference in bounding boxes between the labelled image used for the non-OBB YOLOv5 \& YOLOv8 iterations versus the OBB YOLOv8.
 %obb vs non obb bounding boxes
@@ -42,7 +42,7 @@ Below you can see the difference in bounding boxes between the labelled image us
   \centering
   \includegraphics[width=0.85\textwidth]{images/obb-vs-nonobb-img.png}
   \caption{Non-OBB labels (left) versus OBB labels (right)}
-\end{figure}
+\end{figure}\\
 Thus, the YOLOv8-OBB model was trained on the settings below:
 \begin{listing}[h!]
   \centering
@@ -58,7 +58,7 @@ Thus, the YOLOv8-OBB model was trained on the settings below:
                   cache="disk",
                   )
   \end{minted}
-\end{listing}
+\end{listing}\\
 And the following results were obtained:
 %yolov8 obb results
 \begin{figure}[h!]
