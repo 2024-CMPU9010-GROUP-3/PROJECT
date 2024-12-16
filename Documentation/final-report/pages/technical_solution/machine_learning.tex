@@ -11,10 +11,42 @@ While in \texttt{parking\_detection\_local.py}, the original parking detection s
 Extensive testing was done at all the different stages of development of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.
 
 \subsubsection{YOLO model used for car detection}
-YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy compared to models of the time like 
+YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy compared to models of the time like \fcolorbox{yellow}{yellow}{find reference.}\\
+We started playing with this model because on label studio there was an option to automate the labelling using an integration of the YOLOv5 model. However, this integration was not working which caused us to dig further into Ultralytics, the company behind the YOLO models.\\ \\
+Several papers focusing on object detection cited YOLO over other popular models such as \fcolorbox{yellow}{yellow}{find the reference}. A key challenge that influences the choice of model for the object detection task is effectively managing fluctuations in image resolutions and aspect ratios, as well as the computational resources required to run image detection models.\\
+
+There are two main types of models for object detection tasks: single stage and two-stage. The figure below from \cite{singlevstwodetectorimg} illustrates the process for both.
+%single vs two stage model process
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/single-vs-two-stage-obj-detector.png}
+  \caption{Single vs Two-Stage Object Detection Process}
+\end{figure}
+\textbf{Single stage} object detector models processes an image through a feature extractor using a CNN (Convolutional Neural Network) and then directly uses the extracted features for classification and regression of bounding boxes. These models are very fast which is why they are popular for real-time object detection tasks; however their accuracy performance can sometimes be poor. Examples of single stage models are SSD, YOLO and RefineDet (\cite{yoloversionsliterature}.)\\
+\textbf{Two stage} object detector models divides the process into two main steps. First, it extracts features from the image using a CNN, then selects regions of interests that will only be used for classification and regression of bounding boxes. These models are much more accurate than one stage detectors and are used for tasks where accuracy is prioritized over speed in the medical field for example RCNN, Fast-RCNN and Faster-RCNN(\cite{singlevstwostagedetectors}).\\
+
+For the scope of this project, we chose to continue with the YOLO models because of their speed, their scalability, their lack of computational resources and they are free!\\
+
+We moved away from Label studio and studied the Ultralytics documentation and tried out the YOLOv5 model to recognise the cars on the satellite images. We experimented with different versions of the YOLOv5 model, then slowly levelled up the versions up to version 8, monitoring metrics such as mAP (Mean Average Precision), F1-score and the false positive rate. The figure below shows the metrics of the model as we iteratively experimented up the version chain.
+%model metrics graph
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.85\textwidth]{images/yolo-results.png}
+  \caption{YOLO Model training graph}
+\end{figure}
+We ended the object detection modelling training with the YOLOv8 - Oriented Bounding Boxes (OBB). The YOLOv8 model has been pre-trained on the COCO (Common Object in Context) dataset, a popular large scale dataset with 200,000 images across 80 object categories commonly used for benchmarking computer vision models (\cite{cocodataset}).\\
+Oriented bounding boxes are a newer type of bounding box where the bounding box capture the orientation of the object providing a more accurate fit of the object. They are defined by 5 parameters (center xy, width, height and rotation angle) and capture the object's spatial orientation more precisely, reducing overlap and improving the robustness of the object detection model (\cite{obblit}).\\
+Below you can see the difference in bounding boxes between the labelled image used for the non-OBB YOLOv5 \& YOLOv8 iterations versus the OBB YOLOv8.
+%obb vs non obb bounding boxes
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.85\textwidth]{images/obb-vs-nonobb-img.png}
+  \caption{Non-OBB labels (left) versus OBB labels (right)}
+\end{figure}
+
 
 \subsubsection{Parking spot detection}
-Subsequently, to identify the parking spots in each satellite image, the cars detected by the Yolo model are classified into on the road or parked, based on a road mask.
+Subsequently, to identify the parking spots in each satellite image, the cars detected by the YOLO model are classified into on the road or parked, based on a road mask.
 
 \subsubsection{Road mask generation}
 Many different iterations of the road mask were used, the main iterations and their differences are explained and showed below.
