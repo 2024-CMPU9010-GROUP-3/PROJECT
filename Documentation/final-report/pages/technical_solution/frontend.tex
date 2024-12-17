@@ -331,6 +331,40 @@ Prototyping methods can be categorized by fidelity—ranging from low-fidelity s
 \subsubsection{Prototype methods}
 We use Evolutionary prototyping to continuously update our prototypes.Part of the prototyping process involves dealing with feedback and subsequent revisions. It helps designers test and retest their ideas over and over again. The faster designers are able to test their design concepts and make improvements, the faster they can get to a satisfactory final version. In addition, our team uses Agile development methodologies in prototyping. Agile increases flexibility, collaboration, and rapid feedback cycles to create product prototypes in rapid iterations with continuous ones after collecting feedback and guided ones.
 
+Under the guidance of agile development methodology and Evolutionary strategy, we established the following prototyping process:
+
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{|c|p{4cm}|p{10cm}|}
+    \hline
+    \textbf{Step} & \textbf{Stage}           & \textbf{Tasks}                                                                                 \\ \hline
+    1             & Requirement Collection and Analysis & \begin{itemize}
+                                                            \item Identify core functional requirements through user interviews and research
+                                                            \item Analyze the strengths and weaknesses of competitors and existing solutions
+                                                            \item Prioritize prototype design and create an iteration plan
+                                                        \end{itemize}                                                                                  \\ \hline
+    2             & Prototype Design and Development & \begin{itemize}
+                                                        \item Create prototypes using tools like FigJam and Figma
+                                                        \item Follow a consistent design system and guidelines
+                                                        \item Focus on intuitive and user-friendly interaction design
+                                                    \end{itemize}                                                                                  \\ \hline
+    3             & User Testing and Feedback & \begin{itemize}
+                                                \item Conduct user usability testing
+                                                \item Gather qualitative and quantitative user feedback
+                                                \item Analyze test data and develop improvement plans
+                                            \end{itemize}                                                                                  \\ \hline
+    4             & Iterative Optimization       & \begin{itemize}
+                                                    \item Adjust design solutions based on feedback
+                                                    \item Continuously improve the user experience
+                                                    \item Ensure the design meets project objectives
+                                                \end{itemize}                                                                                  \\ \hline
+    \end{tabular}
+    \caption{Process Flow Table: Design and Development Stages}
+    \label{tab:process_flow}
+    \end{table}
+
+
 
 \subsubsection{Low-fidelity prototypes}
 
@@ -348,10 +382,7 @@ We used FigJam for the sketch concept, which allowed us to do a full online brai
 \end{figure}
 This evolution in our design approach demonstrates the value of iterative prototyping in achieving a balance between functionality and visual clarity. The final layout creates a more focused user experience while maintaining all essential features in an intuitive, accessible format.
 
-\end{itemize}
-This evolution in our design approach demonstrates the value of iterative prototyping in achieving a balance between functionality and visual clarity. The final layout creates a more focused user experience while maintaining all essential features in an intuitive, accessible format.
 
-\begin{itemize}
 \item \textbf{Wireframe}
 
 Wireframe as a low-fidelity tool, unlike sketches, wireframes show the structure of an interface design, but often lack detail or colour. We also made wireframes of individual pages to build on, such as the home page and the login/signup page in Figure~\ref{fig:wireframe-home} and Figure~\ref{fig:wireframe-signup}, which lay out the structure of the prototype.
@@ -380,6 +411,7 @@ We moved through the prototyping process from low-fidelity sketches and wirefram
 
 Medium-fidelity prototypes enabled our team to test crucial design decisions such as navigation structures, button placements, and overall usability without being constrained by aesthetic concerns. We created these prototypes in Figma, where we built interactive flows for tasks such as logging in, signing up, and navigating the dashboard. To simulate user interactions, we used more realistic spacing, component alignment, and basic interactive elements like clickable buttons and form fields.
 The purpose of medium-fidelity prototyping was to collect input on the primary user path, providing a smooth experience from task start to finish. We saved money on later versions by fixing faults at this stage.
+
 
 \subsubsection{High Fidelity Prototyping}
 High-fidelity prototypes closely resemble the final product in terms of design and functionality. These prototypes include comprehensive visual aspects including the finalized color scheme, typography, iconography, and branding assets, as well as genuine data and interactive transitions. At this point, our team worked on matching the prototype with user expectations and responding to specific feedback from previous versions.
@@ -477,3 +509,66 @@ For version 4 we have made some major changes to the front end. First of all, th
         \label{fig:v4_Landing Page}
     \end{minipage}
 \end{figure}
+
+\subsubsection{User Feedback and Prototype Evolution}
+
+User feedback plays a key guiding role in all stages of prototype design. We have established a systematic feedback collection and analysis framework to ensure that the prototype can be continuously optimized according to actual user needs.
+
+\textbf{Feedback collection method}
+\begin{itemize}
+\item \textbf{User interview}
+\begin{itemize}
+\item Conduct one-on-one in-depth interviews with target users
+\item Collect qualitative feedback from users on their intuitive experience of the interface
+\item Understand the specific problems users encounter during use
+\end{itemize}
+
+\item \textbf{Usability testing}
+\begin{itemize}
+\item Design specific task scenarios for testing
+\item Observe the behavioral path of users completing tasks
+\item Record the confusion points and jams when users operate
+\end{itemize}
+
+\item \textbf{Questionnaire}
+\begin{itemize}
+\item Collect quantitative feedback using the Likert scale
+\item Set open-ended questions to obtain suggestions
+\item Statistically analyze user satisfaction data
+\end{itemize}
+\end{itemize}
+
+
+\subsubsection{User Feedback and Prototype Evolution}
+
+The evolution of our prototype was driven by comprehensive user feedback collected through multiple iterations. Each iteration phase brought valuable insights that shaped the development of our platform, leading to significant improvements in both functionality and user experience.
+
+\paragraph{First Iteration}
+
+Our initial prototype revealed several fundamental challenges through user testing. The interface layout, while functional, presented users with a fragmented experience due to its card-based design. Users reported difficulty in managing multiple interface elements scattered across the screen, particularly noting the disconnected placement of filters and radius controls. The login and signup pages, which utilized default shadcn styling, lacked customization and brand consistency. Additionally, the map interface, while central to the application's functionality, needed refinement in terms of icon visibility and interaction feedback.
+
+In response to these early findings, we consolidated the interface elements into a unified dashboard on the right side of the screen. This significant architectural change improved the user experience by creating a more cohesive and intuitive layout. The authentication flow was also carefully considered, with the team ultimately deciding to maintain separate login and signup steps to ensure security while improving the visual design and branding consistency of these crucial entry points.
+
+\paragraph{Second Iteration}
+
+The second iteration focused on enhancing the core functionality and user interaction patterns. A major addition was the introduction of the search bar, initially placed at the top of the screen. However, user testing revealed that this placement, while conventional, didn't align optimally with the workflow of our specific application. The filter system, implemented as checkboxes, proved to be less intuitive than anticipated, with users expressing a desire for more immediate visual feedback during their interactions.
+
+We responded by integrating the search functionality into the right-side dashboard, creating a more consolidated control center for all user interactions. The amenity filters were redesigned to provide clearer visual feedback, though this iteration still highlighted the need for further refinement in the filter interface design. These changes marked significant progress in creating a more streamlined user experience, but also illuminated areas requiring additional attention in subsequent iterations.
+
+\paragraph{Third Iteration}
+
+The third iteration brought substantial improvements to user onboarding and interface clarity. We introduced a comprehensive tutorial system to guide new users through the platform's features. This addition was complemented by updates to the history page and the implementation of clear terms and privacy policies. However, user testing revealed that our attempt to streamline the amenity selection through a dropdown menu actually increased interaction complexity. Professional users particularly noted difficulties with map icon visibility, highlighting the need for better visual distinction between different amenity types.
+
+The feedback from this phase proved especially valuable in identifying the delicate balance between functionality consolidation and accessibility. While the dropdown menu was intended to simplify the interface, it actually created an additional layer of complexity that hindered user efficiency. This insight directly influenced our approach to the fourth iteration's design decisions.
+
+\paragraph{Fourth Iteration}
+
+Our fourth and most refined iteration introduced comprehensive changes based on accumulated user feedback. The icon system was completely revamped, implementing a differentiated color spectrum for various amenities to enhance visibility and quick recognition. We abandoned the dropdown menu approach in favor of directly accessible function buttons, significantly improving the discoverability of key features such as history access and the onboarding tutorial.
+
+Professional user feedback led to the addition of advanced features such as zoom controls and scale rulers, though some of these features remained in development due to time constraints. The search functionality was enhanced with predefined range options (100m, 200m, etc.) and relocated to the dashboard's upper section for better accessibility. Perhaps most significantly, the filter system was redesigned with intuitive toggle controls, allowing users to enable or disable amenities through simple, visible interactions.
+
+\paragraph{Ongoing Development}
+
+Through these iterations, we identified several areas for future enhancement. These include improving cross-browser compatibility, particularly addressing layout issues in Edge browsers where dashboard elements overlap with the search interface. The accuracy of amenity locations requires verification through systematic testing, and the search functionality needs expansion to handle various address format conventions. Additionally, professional users have requested advanced features such as map extraction capabilities with scale indicators and amenity density visualization tools.
+
+This iterative development process has demonstrated the value of consistent user feedback in creating a more robust and user-friendly platform. Each iteration brought us closer to our goal of providing an intuitive, efficient tool for both casual users and professional urban planners, while also highlighting the importance of continuous refinement and adaptation to user needs.
