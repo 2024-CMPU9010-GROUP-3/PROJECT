@@ -6,7 +6,7 @@ Throughout project development, several datasets from various sources have been 
 \end{figure}\\
 
 \subsubsection{Data sourcing \& Collection}
-Two categories of data have been sourced for Magpie:
+Two main categories of data have been sourced for Magpie:
 \begin{enumerate}
     \item For the \emph{Machine learning models}
     \item For the \emph{Amenity data}
@@ -78,5 +78,13 @@ CSV files were collected from multiple sources mentioned above, notable Data.gov
     \item Public bins = Smart Dublin
     \item Coach parking = Data.gov.ie
 \end{itemize}
+To complement this data visually on the map, we used SVG icons from \textbf{Icons8}, a UX turned design agency that provide high quality, free-to-use icons for personal and commercial web projects.\\
 
 \subsubsection{Data storage}
+\textbf{Machine learning models - Training data}
+The 250 training images are stored locally.
+The 19,536 satellite and map-view images are also stored locally.
+
+\textbf{Amenity data}
+The CSV data obtained from sources named above are stored on the Postgres database server.
+The amenity icons were downloaded locally then stored on the Magpie frontend server.
