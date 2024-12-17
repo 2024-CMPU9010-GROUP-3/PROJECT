@@ -422,8 +422,7 @@ handling the model bindings and the access to the database had to be generated
 and included twice.
 
 \subsubsection{Database}
-\fcolorbox{orange}{orange}{Add database development}
-don't forget down migration point type enum
+\fcolorbox{orange}{orange}{TODO: Add database development, don't forget down migration point type enum}
 
 \begin{figure}[htbp]
   \centering{}
@@ -974,7 +973,40 @@ meetings, decoupling the development of frontend and backend further.
 \end{figure}
 
 \subsubsection{Configuration}
-\fcolorbox{orange}{orange}{Add section on configuration}
+The backend servers are configured through environment variables. These can be
+provided in a \texttt{.env} file, which the backend will automatically load on
+startup.
+
+The backend implements a system that allows for environment variables to be
+optional and for default values to be set. If the backend tries to access a
+variable that is only covered by a default value, a warning will be added to the
+logs to notify users of potentially unintended configurations (see Line 1 of
+Figure \ref{fig:backend_logging}).
+
+Making the backend fully configurable using environment variables makes
+deployment and configuration much easier -- especially when compared to
+hard-coded values. This is also advantageous during development. Development
+environments can vary wildly between developers and this system allows each
+developer to have a configuration that fits their needs.
+
+The environment variables were documented during development, no changes were
+made without updating the documentation. The readme file for the backend
+contained a list of all environment variables (see Figure
+\ref{fig:backend_env}).
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=\textwidth]{images/backend_env.png}
+  \caption{The environment variables available for configuring the backend}
+  \label{fig:backend_env}
+\end{figure}
+
+The variable \texttt{MAGPIE\_DB\_URL} can be omitted if the connection information
+is instead given as separate environment variables (\texttt{LOGIN},
+\texttt{PASSWORD}, \texttt{HOST} and \texttt{DATABASE\_NAME}). This is used for
+deployments using Kubernetes. If both \texttt{MAGPIE\_DB\_URL} and the separate
+environment variables are set, only \texttt{MAGPIE\_DB\_URL} will be used to
+establish a connection.
 
 \subsubsection{Testing}
 \fcolorbox{orange}{orange}{Add section on testing}
