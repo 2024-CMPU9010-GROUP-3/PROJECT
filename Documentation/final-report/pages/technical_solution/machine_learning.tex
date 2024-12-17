@@ -461,9 +461,9 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}.
 
 Analyse metrics. Cite similar results in object detection.
 
-The main outstanding problem for the classification is residential areas which are very rarely misclassified as parking lot with the current thresholds set.
-In cases where public spots are quite far from the road, they are classified as private, though that is not a major issue.
-Another thing to note is that smaller parking lots with less than 18 spots are not detected though that is intentionally set (by design) in order to focus on larger parking lots and avoid misclassification.
+The main outstanding problem for this section is residential areas which are very rarely misclassified as parking lots.
+Additionally, in cases where public spots are quite far from the nearest road, the spots are misclassified as private, which is not a major issue.
+Another point worth noting is that smaller parking lots with less than 18 spots are not detected though that is intentional and by design in order to focus on larger parking lots and avoid misclassifications.
 
 A few images from the test set are shown below, in Table~\ref{tab:test_images3}.
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
