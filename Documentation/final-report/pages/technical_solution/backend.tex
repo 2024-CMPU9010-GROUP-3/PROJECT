@@ -776,12 +776,28 @@ application security.
 \fcolorbox{orange}{orange}{Add route based authorisation}
 
 \phantomsection\label{middleware_logging}\textbf{Logging}\\
+The backend uses logs for monitoring purposes. The servers output informative
+messages, warnings and errors. The latter two are essential for figuring out any
+configuration issues with the server and are vital for debugging purposes. In
+addition, every request that is handled by the backend is logged including its
+status, route and precise execution time. This can be used to pinpoint requests
+that are failing with regularity or take significant time to complete. An
+example of the logs produced by the public backend server can be found in Figure
+\ref{fig:backend_logging}.
 
-\fcolorbox{orange}{orange}{Add logging}
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=\textwidth]{images/backend_logging.png}
+  \caption{Example of logs produced by the public backend server}
+  \label{fig:backend_logging}
+\end{figure}
 
 \phantomsection\label{middleware_cors}\textbf{Cross-origin Resource Sharing (CORS)}\\
-
-\fcolorbox{orange}{orange}{Add cors}
+Since the frontend and the backend are not hosted at the same origin, it is
+necessary for the backend to enable cross-origin resource sharing. If this is
+not done, the user's browser will block any requests made to the backend. There
+was no need for custom CORS headers, so in the interest of simplicity an
+existing library (\textbf{Go CORS handler}) was chosen for this purpose.
 
 \subsubsection{Data Validation}
 Data that enters Magpie is validated on ingress. At the most basic level, there
@@ -937,6 +953,9 @@ meetings, decoupling the development of frontend and backend further.
   \caption{Excerpt from the Error Code Documentation for the Backend}
   \label{fig:error_code_documentation}
 \end{figure}
+
+\subsubsection{Configuration}
+\fcolorbox{orange}{orange}{Add section on configuration}
 
 \subsubsection{Testing}
 \fcolorbox{orange}{orange}{Add section on testing}
