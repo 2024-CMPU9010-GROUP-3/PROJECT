@@ -1,18 +1,19 @@
 Throughout project development, several datasets from various sources have been used to fulfil Magpie's project goal. Below is an overview of Magpie's data stack:
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/magpie-data-stack.png}
+    \includegraphics[width=0.7\textwidth]{images/magpie-data-stack.png}
     \caption{Magpie Data Stack}
 \end{figure}\\
 
 \subsubsection{Data sourcing \& Collection}
-Two main categories of data have been sourced for Magpie:
+Three main categories of data have been sourced for Magpie:
 \begin{enumerate}
     \item For the \emph{Machine learning models}
     \item For the \emph{Amenity data}
+    \item For the \emph{Search functionality}
 \end{enumerate}
 
-\textbf{Machine learning models - Car detection}
+\textbf{1.1 Machine learning models - Car detection}\\
 Using the MapBox API, 250 images were downloaded using CSV data from the following sources:
 \begin{itemize}
     \item \textbf{Data.gov.ie}: Online portal containing thousands of publicly available datasets about Ireland
@@ -59,10 +60,10 @@ Following successful model training and tuning, a further 19,536 satellite image
     \caption{Dublin Area Delimitation for Parking data}
 \end{figure}\\
 
-\textbf{Machine learning models - Parking detection}
-An additional 19,536 map-view images corresponding to the satellite images used for car detection were downloaded using the MapBox API to create the custom mask used for detecting parked cars.\\ \\
+\textbf{1.2 Machine learning models - Parking detection}\\
+An additional 19,536 map-view images corresponding to the satellite images used for car detection were downloaded using the MapBox API to create the custom mask used for detecting parked cars.\\
 
-\textbf{Amenity data}
+\textbf{2. Amenity data}\\
 CSV files were collected from multiple sources mentioned above, notable Data.gov.ie and Smart Dublin. Below is a list relative to each amenity currently present on Magpie:
 \begin{itemize}
     \item Parking meter = Data.gov.ie
@@ -80,11 +81,22 @@ CSV files were collected from multiple sources mentioned above, notable Data.gov
 \end{itemize}
 To complement this data visually on the map, we used SVG icons from \textbf{Icons8}, a UX turned design agency that provide high quality, free-to-use icons for personal and commercial web projects.\\
 
+\textbf{3. Search functionality}\\
+Nominatim is a geocoding solution created by the OpenStreetMap Foundation. Magpie uses a self-hosted instance of Nominatim for geocoding and reverse-geocoding tasks. Using the Nominatim API, the frontend server can request the coordinates associated with a place name. This is used in the search functionality of the frontend.
+
+When the user saves a location, the frontend will also query Nominatim, but this
+time with a set of coordinates. Nominatim will then return the closest place
+name to the given coordinates, which is then sent to the database alongside the
+location data.
+
 \subsubsection{Data storage}
-\textbf{Machine learning models - Training data}
+\textbf{Machine learning models data}\\
 The 250 training images are stored locally.
 The 19,536 satellite and map-view images are also stored locally.
 
-\textbf{Amenity data}
+\textbf{Amenity points}\\
 The CSV data obtained from sources named above are stored on the Postgres database server.
 The amenity icons were downloaded locally then stored on the Magpie frontend server.
+
+\textbf{Search functionality}\\
+Any actions which involve data querying, requests and storage are handled by Nomatim, and therefore not stored on any of Magpie's servers.
