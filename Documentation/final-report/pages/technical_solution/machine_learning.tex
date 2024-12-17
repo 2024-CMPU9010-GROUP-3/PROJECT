@@ -317,12 +317,14 @@ The overall results on test set are presented below in Table~\ref{tab:metrics1}.
     \label{tab:metrics1}
 \end{table}
 
-Analyse metrics. Reference similar results in object detection
+Analyse metrics. Cite similar results in object detection
 
-Few outstanding problems:
-Not all the parts of the street names are removed mainly due to the watermarks at the bottom of the image or if a street name is on the very edge of an image. Also for some streets that are very thin and where the name takes up all the width, the part with the name is erased. And also for areas where there are triangular intersections of roads it sometimes fills up the whole area.
-Other problems due to the mapbox images is the Dublin tunnel which appears even though it's underground.
-There are also sometimes overlapping things on the road which get removed (like the dotted white lines for the sidewalk) which then leaves a black gap in the road.
+The current road mask has a few outstanding problems, that are discussed further below.
+Firstly, sometimes not all parts of the street names are completely removed due to the watermark at the bottom of the image or in the case of the street name being on the very edge of the image. However this seems to rarely be the cause of misclassifications.
+For streets where the street name takes up all the whole width of the street, the area where the street name is written is completely erased (turned to black), which can cause cars on the road to be misclassified as parked.
+A key issue, previously discussed is that the Mapbox Streets images do not correctly reflect the width of the road for roads with multiple lanes, which leads to cars on the road being misclassified as parked for the furthest out lanes.
+This issue was resolved for motorways as those roads are depicted in orange or yellow, therefore it was possible to distort the road on the mask to cover more surface. However doing this for the regular roads, would cause far more misclassifications, then fix the current ones.
+Another problem that is inherently due to the Mapbox Streets images is the Dublin Tunnel being marked on the images making it appear above ground even though it is underground, which leads to misclassiifcations in that specific area.
 
 Some images from the test set can be seen below, in Table~\ref{tab:test_images1}.
 The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
@@ -410,10 +412,11 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}.
     \label{tab:metrics2}
 \end{table}
 
-Analyse metrics. Reference similar results in object detection.
+Analyse metrics. Cite similar results in object detection.
 
-The main issue is that the cars are classed on the road by the road mask and the current threshold, so as the empty parking detection only fills in gaps between parked cars it cannot find the true labels.
-Also some of the spots in the true labels are too small to be found by the model with the current thresholds that are set.
+The main reason empty parking spots are not detected is due to the fact that cars are classed as on the road by the road mask, therefore given that the empty parking detection logic only fills in gaps between parked cars it cannot find the empty spots.
+Furthermore, some spots are too small to be found by the model given the threshold set for the average width and average height.
+Other minor issues that sometimes lead to empty parking spots not being detected are due to angle misalignment, when one car is oriented strangely??? leading to the angle between the 2 cars being larger that the threshold or when 2 cars are too far apart to fill in the gap.
 
 A few images from the test set are displayed below, in Table~\ref{tab:test_images2}.
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
@@ -456,9 +459,11 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}.
     \label{tab:metrics3}
 \end{table}
 
-Analyse metrics. Reference similar results in object detection.
+Analyse metrics. Cite similar results in object detection.
 
-Common pbs, small parking lots not found but by design as we want only large parking lots. and then residential areas could potentially be misclassified as parking lot though happens very rarely with the given thresholds.
+The main outstanding problem for the classification is residential areas which are very rarely misclassified as parking lot with the current thresholds set.
+In cases where public spots are quite far from the road, they are classified as private, though that is not a major issue.
+Another thing to note is that smaller parking lots with less than 18 spots are not detected though that is intentionally set (by design) in order to focus on larger parking lots and avoid misclassification.
 
 A few images from the test set are shown below, in Table~\ref{tab:test_images3}.
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
