@@ -334,11 +334,12 @@ subsequent requests.
 JSON Web Tokens are more than just a simple API token. They can store data about
 the authenticated user in them, which can be very useful if the handling of the
 requests needs a reference to the user id for example (see example JWT content
-in Figure \ref{}). Since the tokens are generated on the backend server using a
-private secret, JWTs can be checked for integrity during decoding. Should the
-content not match up with the private secret of the backend server, it can be
-assumed that the token has been tempered with. In this case, the request would
-be discarded and a "Unauthorized" error message would be returned instead.
+in Figure \ref{fig:jwt_example}). Since the tokens are generated on the backend
+server using a private secret, JWTs can be checked for integrity during
+decoding. Should the content not match up with the private secret of the backend
+server, it can be assumed that the token has been tempered with. In this case,
+the request would be discarded and a "Unauthorized" error message would be
+returned instead.
 
 This structure allows for the authentication system to be decoupled between
 backend and frontend. Using JWTs eliminates the need for the backend to keep
@@ -355,6 +356,13 @@ potentially stolen tokens, neither from the client nor from the server
 Despite these caveats and some slowdowns during development, the team still
 feels JWT-based authentication was the right choice for a project of Magpie's
 scale.
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=\textwidth]{images/jwt.png}
+  \caption{Example of a JWT used by Magpie for authenticaion}
+  \label{fig:jwt_example}
+\end{figure}
 
 \subsubsection{Split Backend}
 The backend was planned as a one server system, but the team wanted to harden
@@ -531,7 +539,7 @@ eliminated a lot of ambiguity, resulting in more concise and effient
 communication between the different areas of responsibility.
 
 For a detailed explanation of the route access restriction modes, see Section
-\textbf{\nameref{route_authorisation}} on page \pageref{route_authorisation}.
+\textbf{\nameref{middleware_route_authorisation}} on page \pageref{middleware_route_authorisation}.
 
 \textbf{Public API}
 The public API is used to retrieve relevant data for display in the frontend and
@@ -763,36 +771,17 @@ application security.
 \end{itemize}
 
 \subsubsection{Middlewares}\label{backend_middlewares}
-\textbf{Authentication}
-
-\fcolorbox{orange}{orange}{Add authentication middleware features}
-
-As mentioned in the discussion of JSON Web Tokens on page \pageref{jwt}, the use
-of JWTs comes with its own set of caveats.
-
-One solution for this issue would be implementing a list of revoked tokens on
-the server and offering the user a way to add a stolen token to that list. If an
-attacker then uses one of these revoked tokens, their requests can be easily
-denied. However, this added complexity and development time that the team didn't
-have in the MVP phase of the project. So to mitigate the issue, the JWTs were
-given a very short expiration time, making them useless after only a few hours.
-This led to annoyance and friction during development and testing, so the
-expiration time was increased to a week. This made the application less secure,
-but much easier to use in both development and regular usage. The backend team
-took a unanimous decision to keep the token handling in this state for the time
-being, as the application was still considered very much secure enough. The time
-and effort needed to implement those additional security features were weighed
-up and it became obvious that they would not result in any easily perceptible
-improvement to the application.
-
-The issue of improving application security was kept in mind during the whole
-development process, but other issues always took precedence. Given more time,
-improving the application security would be one of the top priorities in terms
-of further backend development.
-
-\phantomsection\label{route_authorisation}\textbf{Authorisation}
+\phantomsection\label{middleware_route_authorisation}\textbf{Authorisation}\\
 
 \fcolorbox{orange}{orange}{Add route based authorisation}
+
+\phantomsection\label{middleware_logging}\textbf{Logging}\\
+
+\fcolorbox{orange}{orange}{Add logging}
+
+\phantomsection\label{middleware_cors}\textbf{Cross-origin Resource Sharing (CORS)}\\
+
+\fcolorbox{orange}{orange}{Add cors}
 
 \subsubsection{Data Validation}
 Data that enters Magpie is validated on ingress. At the most basic level, there

@@ -1,5 +1,26 @@
 \subsubsection{Application Security}
+As mentioned in the discussion of JSON Web Tokens on page \pageref{jwt}, the use
+of JWTs comes with its own set of caveats.
 
+One solution for this issue would be implementing a list of revoked tokens on
+the server and offering the user a way to add a stolen token to that list. If an
+attacker then uses one of these revoked tokens, their requests can be easily
+denied. However, this added complexity and development time that the team didn't
+have in the MVP phase of the project. So to mitigate the issue, the JWTs were
+given a very short expiration time, making them useless after only a few hours.
+This led to annoyance and friction during development and testing, so the
+expiration time was increased to a week. This made the application less secure,
+but much easier to use in both development and regular usage. The backend team
+took a unanimous decision to keep the token handling in this state for the time
+being, as the application was still considered very much secure enough. The time
+and effort needed to implement those additional security features were weighed
+up and it became obvious that they would not result in any easily perceptible
+improvement to the application.
+
+The issue of improving application security was kept in mind during the whole
+development process, but other issues always took precedence. Given more time,
+improving the application security would be one of the top priorities in terms
+of further backend development.
 \fcolorbox{orange}{orange}{Add section on Application Security}
 
 \subsubsection{Performance}
