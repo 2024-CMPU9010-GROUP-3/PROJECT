@@ -1,7 +1,11 @@
 \subsubsection{Data collection process}
 The Mapbox Static Images API was used to retrieve all the satellite images used in this project.
+The satellite images retrieved were of dimensions 400 by 400 pixels and captured at zoom level 18.
 
 Initially, a training set of 250 satellite images was collected to train the Yolo model.
+Datasets containing coordinates (longitude and latitude) of areas in Dublin were collected from Data.gov.ie, and the corresponding satellite images were retrieved using the \texttt{DatasetGeneration.py} script.
+Afterwards, the images were manually labelled using Label Studio, a free open source data labelling tool.
+put figure of interface and explain.
 
 Our project has two main Python scripts, \texttt{parking\_detection.py} and \texttt{parking\_detection\_local.py} to localize parking spots.
 In \texttt{parking\_detection.py}, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
@@ -30,7 +34,7 @@ Extensive testing was done at all the different stages of development of the scr
 
 \subsubsection{YOLO model used for car detection}
 YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy compared to models of the time like \fcolorbox{yellow}{yellow}{find reference.}\\
-We started playing with this model because on label studio there was an option to automate the labelling using an integration of the YOLOv5 model. However, this integration was not working which caused us to dig further into Ultralytics, the company behind the YOLO models.\\ \\
+We started playing with this model because on label studio there was an extension (ML Backend) which could be used to automate the labelling using an integration of the YOLOv5 model. However, this extension was not working as intended which caused us to dig further into Ultralytics, the company behind the YOLO models.\\ \\
 Several papers focusing on object detection cited YOLO over other popular models such as \fcolorbox{yellow}{yellow}{find the reference}. A key challenge that influences the choice of model for the object detection task is effectively managing fluctuations in image resolutions and aspect ratios, as well as the computational resources required to run image detection models.\\
 
 There are two main types of models for object detection tasks: single stage and two-stage. The figure below from \cite{singlevstwodetectorimg} illustrates the process for both.
@@ -77,7 +81,7 @@ Thus, the YOLOv8-OBB model was trained on the settings below:
                   )
   \end{minted}
 \end{listing}\\
-And the following results were obtained:
+The following results were obtained:
 %yolov8 obb results
 \begin{table}[h!]
   \centering
@@ -90,9 +94,6 @@ And the following results were obtained:
   \end{tabular}
   \caption{YOLOv8-OBB model results}
 \end{table}\\
-
-The weights were then obtained and used to identify cars in satellite images of the entire Dublin city using the script below.\\
-\fcolorbox{yellow}{yellow}{Jess or Saul's script}
 
 \newpage
 \subsubsection{Parking spot detection}
@@ -299,9 +300,6 @@ The csv file containing the longitude, latitude, classification label, parking z
 \subsubsection{Evaluation of each submodule of the parking detection model}
 Each major section of the parking detection model was evaluated individually in order to access the overall performance. The results will be presented and analysed for each section below.
 
-\subsubsection{Evaluation of the Yolo model}
-
-
 \subsubsection{Evaluation of the classifiction of cars into on the road or parked}
 The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
 The classification is evaluated on the following metrics commonly used for object detection tasks: Average Intersection over Union (IoU), Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class.
@@ -360,7 +358,7 @@ where:
 
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
-A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in the labelling software Label Studio. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
+A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in Label Studio. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
 
 The overall results on test set are presented below in Table~\ref{tab:metrics1}.
 
@@ -483,7 +481,7 @@ Analyse metrics. Cite similar results in object detection.
 
 The main reason empty parking spots are not detected is due to the fact that cars are classed as on the road by the road mask, therefore given that the empty parking detection logic only fills in gaps between parked cars it cannot find the empty spots.
 Furthermore, some spots are too small to be found by the model given the threshold set for the average width and average height.
-Other minor issues that sometimes lead to empty parking spots not being detected are due to angle misalignment, when one car is oriented strangely??? leading to the angle between the 2 cars being larger that the threshold or when 2 cars are too far apart to fill in the gap.
+Other minor issues that sometimes lead to empty parking spots not being detected are due to angle misalignment, when one car is oriented "strangely" leading to the angle between the 2 cars being larger that the threshold or when 2 cars are too far apart to fill in the gap.
 
 A few images from the test set are displayed below, in Table~\ref{tab:test_images2}.
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
@@ -547,3 +545,11 @@ The predicted public spots are drawn in green while the true labels are in dark 
 \end{table}
 
 \newpage{}
+
+\subsubsection{Future Work : ML}
+add more data, transportation, bus/luas/dart routes, water and electricity grid
+and for more counties, like fingal, south dublin, meath
+retrain model on more annotated images to reduce false positives
+
+improve mask, maybe try to aggrandir road based on the width, like pour les rues qui sont d'une certaine largeur, find a heuristic that would work.
+improve the empty parking detection, not reaaly sure what we would do or add?
