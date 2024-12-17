@@ -61,15 +61,22 @@ Thus, the YOLOv8-OBB model was trained on the settings below:
 \end{listing}\\
 And the following results were obtained:
 %yolov8 obb results
-\begin{figure}[h!]
+\begin{table}[h!]
   \centering
-  \includegraphics[width=0.85\textwidth]{images/yolo-obb-results.png}
-  \caption{YOLOv8-OBB results}
-\end{figure}
+  \begin{tabular}{|p{0.2\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{mAP@50} & \textbf{Confidence threshold} \\
+    \hline
+    YOLOv8-OBB     & 94\%              & 100\%              & 99\%            & 91\%              & 94\%            & 35\%                          \\
+    \hline
+  \end{tabular}
+  \caption{YOLOv8-OBB model results}
+\end{table}\\
 
 The weights were then obtained and used to identify cars in satellite images of the entire Dublin city using the script below.\\
 \fcolorbox{yellow}{yellow}{Jess or Saul's script}
 
+\newpage
 \subsubsection{Parking spot detection}
 Subsequently, to identify the parking spots in each satellite image, the cars detected by the YOLO model are classified into on the road or parked, based on a road mask.
 
