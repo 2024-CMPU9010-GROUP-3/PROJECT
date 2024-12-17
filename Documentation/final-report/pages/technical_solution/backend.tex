@@ -380,7 +380,7 @@ to revert the change that split the backend. The desired result of two distinct
 backends would have to be achieved in a different way.
 
 To accomplish this, a feature of the Go programming language called
-\textit{build-tags} was utilised. Usage examples of this feature showcase it by
+\textbf{build-tags} was utilised. Usage examples of this feature showcase it by
 creating multiple binaries that have different feature sets, for instance
 multiple different payment tiers for a single software. This was a great
 solution for this problem. It allowed for certain files to be excluded during
@@ -408,23 +408,111 @@ and included twice.
 
 \subsubsection{Database}
 \fcolorbox{orange}{orange}{Add database development}
+don't forget down migration point type enum
 
 \begin{figure}[htbp]
   \centering{}
-  \includegraphics[width=0.8\textwidth]{../d2-diagrams/database-init/database-init.png}
+  \includegraphics[width=\textwidth]{../d2-diagrams/database-init/database-init.png}
   \caption{Database Schema for the minimum viable Product}
   \label{fig:database_init_schema}
 \end{figure}
 
 \begin{figure}[htbp]
   \centering{}
-  \includegraphics[width=0.8\textwidth]{../d2-diagrams/database-final/database-final.png}
+  \includegraphics[width=\textwidth]{../d2-diagrams/database-final/database-final.png}
   \caption{Final Database Schema}
   \label{fig:database_final_schema}
 \end{figure}
 
 \subsubsection{Routing}
-\fcolorbox{orange}{orange}{Add description of net/http library routing}
+Routing the frontend's requests to the appropriate handlers was done using the
+\textbf{net/http} package, which is included in the Go standard library. The Go
+ecosystem provides a number of alternative solutions such as Gin, Gorilla or
+Fibre, which are mature and well documented frameworks for creating APIs. They
+provide many useful features, which the team acknowledged during their
+evaluation, but -- in the team's opinion -- they can also easily add a lot of
+complexity. Since the team was lacking in recent Go knowledge and didn't want to
+unnecessarily overcomplicate the project, it was decided to go with the built-in
+solution instead.
+
+To realise the API functionality, the http server function provided by the
+net/http library is configured with a \texttt{http.ServeMux} object. This is
+where the server will send all incoming requests. These are then passed to
+nested routers based on prefix routing. For example, a request for the route
+\texttt{/v1/public/auth/User/login} would follow this path: HTTP Server
+$\rightarrow$ Public Router $\rightarrow$ Public Auth Router $\rightarrow$ Auth
+handler. A full overview of the routing in the backend can be found in Figure
+\ref{fig:backend_routing}.
+
+All requests are also routed through a stack of middlewares. Some middlewares
+are active on all requests (Logging, CORS) and some are configured based on
+route (Authorisation), see Section \ref{backend_middlewares}
+(\nameref{backend_middlewares}).
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=\textwidth]{../d2-diagrams/backend-routing/backend-routing.png}
+  \caption{Routing in the Backend: from Request to Handler}
+  \label{fig:backend_routing}
+\end{figure}
+
+\begin{listing}[htbp]
+  \begin{minted}{go}
+  func init() {
+    AddRoute(route{"/public/", public()})
+  }
+
+  func public() *http.ServeMux {
+    router := http.NewServeMux()
+    router.Handle("/points/", http.StripPrefix("/points", pointsPublic()))
+    router.Handle("/auth/", http.StripPrefix("/auth", auth()))
+    router.Handle("/history/", http.StripPrefix("/history", locationHistory()))
+    return router
+  }
+
+  func pointsPublic() *http.ServeMux {
+    router := http.NewServeMux()
+    handler := &handlers.PointsHandler{}
+
+    // Authenticated access
+    router.Handle("GET /inRadius", Authenticated(http.HandlerFunc(handler.HandleGetByRadius)))
+    router.Handle("GET /{id}", Authenticated(http.HandlerFunc(handler.HandleGetPointDetails)))
+
+    return router
+  }
+
+  func auth() *http.ServeMux {
+    router := http.NewServeMux()
+    handler := &handlers.AuthHandler{}
+
+    // Public access
+    router.Handle("POST /User/login", Public(http.HandlerFunc(handler.HandleLogin)))
+    router.Handle("POST /User/", Public(http.HandlerFunc(handler.HandlePost)))
+
+    // Protected access
+    router.Handle("GET /User/{id}", Protected(http.HandlerFunc(handler.HandleGet)))
+    router.Handle("PUT /User/{id}", Protected(http.HandlerFunc(handler.HandlePut)))
+    router.Handle("DELETE /User/{id}", Protected(http.HandlerFunc(handler.HandleDelete)))
+
+    return router
+  }
+
+  func locationHistory() *http.ServeMux {
+    router := http.NewServeMux()
+    handler := &handlers.LocationHistoryHandler{}
+
+    // Protected access
+    router.Handle("GET /{id}", Protected(http.HandlerFunc(handler.HandleGet)))
+    router.Handle("DELETE /{id}", Protected(http.HandlerFunc(handler.HandleDelete)))
+    router.Handle("POST /{id}", Protected(http.HandlerFunc(handler.HandlePost)))
+
+    return router
+  }
+
+  \end{minted}
+  \caption{An example of how routing is configured in the backend}
+  \label{listing:routing_example}
+\end{listing}
 
 \subsubsection{APIs}
 All API routes that the backends expose are listed below. This information was
@@ -597,8 +685,6 @@ for authentication of the user.
 
 \end{itemize}
 
-\fcolorbox{orange}{orange}{Add list of public API routes}
-
 \paragraph{Private API}
 The private API is used by the machine learning and data stack to insert new
 datasets into the database. Currently, all private API routes have public access
@@ -606,13 +692,6 @@ rights, as the private backend as a whole is guaranteed restricted access by the
 CoreDNS routing of the Kubernetes cluster. This allows the data stack to skip
 the authentication step, decreasing development overhead while maintaining high
 application security.
-
-\begin{figure}[htbp]
-  \centering{}
-  \includegraphics[width=0.8\textwidth]{images/dataflow_5.png}
-  \caption{Dataflow Diagram from raw Data to Frontend}
-  \label{fig:dataflow}
-\end{figure}
 
 \begin{itemize}
   \item {
@@ -676,9 +755,7 @@ application security.
   }
 \end{itemize}
 
-\fcolorbox{orange}{orange}{Add list of private API routes}
-
-\subsubsection{Middlewares}
+\subsubsection{Middlewares}\label{backend_middlewares}
 \paragraph{Authentication}
 
 \fcolorbox{orange}{orange}{Add authentication middleware features}

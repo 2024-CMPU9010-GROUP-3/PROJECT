@@ -1,4 +1,11 @@
-logins : {
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 300
+  }
+}
+
+logins: {
   shape: sql_table
 
   id: uuid {constraint: primary_key}
@@ -12,7 +19,7 @@ logins : {
   last_updated: timestamp with time zone
 }
 
-user_details {
+user_details: {
   shape: sql_table
   id: uuid {constraint: [primary_key; foreign_key]}
   registerdate: timestamp
@@ -22,7 +29,12 @@ user_details {
   lastloggedin: timestamp
 }
 
-points {
+point_type \[enum\]: {
+  shape: sql_table
+  parking
+}
+
+points: {
   shape: sql_table
   id: bigserial {constraint: primary_key}
   longlat: geometry
@@ -30,7 +42,7 @@ points {
   details: jsonb
 }
 
-schema_migrations {
+schema_migrations: {
   shape: sql_table
   version: bigint {constraint: primary_key}
   dirty: boolean

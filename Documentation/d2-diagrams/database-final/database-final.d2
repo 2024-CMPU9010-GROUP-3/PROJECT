@@ -1,21 +1,11 @@
-history_amenity_counts {
-  shape: sql_table
-  historyentryid: bigserial {constraint: [primary_key, foreign_key]}
-  type: point_type {constraint: primary_key}
-  count: integer
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 300
+  }
 }
 
-location_history {
-  shape: sql_table
-  id: bigserial {constraint: primary_key}
-  userid: uuid {constraint: foreign_key}
-  datecreated: timestamp
-  longlat: geometry
-  radius: integer
-  displayname: varchar
-}
-
-logins {
+logins: {
   shape: sql_table
   id: uuid {constraint: primary_key}
   username: varchar(64) {constraint: unique}
@@ -23,7 +13,7 @@ logins {
   passwordhash: varchar(72)
 }
 
-user_details {
+user_details: {
   shape: sql_table
   id: uuid {constraint: [primary_key; foreign_key]}
   registerdate: timestamp
@@ -33,7 +23,41 @@ user_details {
   lastloggedin: timestamp
 }
 
-points {
+history_amenity_counts: {
+  shape: sql_table
+  historyentryid: bigserial {constraint: [primary_key; foreign_key]}
+  type: point_type {constraint: primary_key}
+  count: integer
+}
+
+location_history: {
+  shape: sql_table
+  id: bigserial {constraint: primary_key}
+  userid: uuid {constraint: foreign_key}
+  datecreated: timestamp
+  longlat: geometry
+  radius: integer
+  displayname: varchar
+}
+
+point_type \[enum\]: {
+  shape: sql_table
+  parking
+  unknown
+  coach_parking
+  bike_sharing_station
+  bike_stand
+  drinking_water_fountain
+  public_toilet
+  accessible_parking
+  public_wifi_access_point
+  library
+  multistorey_car_parking
+  parking_meter
+  public_bins
+}
+
+points: {
   shape: sql_table
   id: bigserial {constraint: primary_key}
   longlat: geometry
@@ -41,7 +65,7 @@ points {
   details: jsonb
 }
 
-schema_migrations {
+schema_migrations: {
   shape: sql_table
   version: bigint {constraint: primary_key}
   dirty: boolean
