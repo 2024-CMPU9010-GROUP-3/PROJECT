@@ -1,17 +1,23 @@
-Throughout project development, several datasets from various sources have been used to fulfil Magpie's project goal. Below is an overview of Magpie's data sources:
+Throughout project development, several datasets from various sources have been used to fulfil Magpie's project goal. Below is an overview of Magpie's data stack:
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.85\textwidth]{images/magpie-data-stack.png}
     \caption{Magpie Data Stack}
 \end{figure}\\
 
-\subsubsection{for the Machine Learning models}
-\textbf{Car detection model}
+\subsubsection{Data sourcing \& Collection}
+Two categories of data have been sourced for Magpie:
+\begin{enumerate}
+    \item For the \emph{Machine learning models}
+    \item For the \emph{Amenity data}
+\end{enumerate}
+
+\textbf{Machine learning models - Car detection}
 Using the MapBox API, 250 images were downloaded using CSV data from the following sources:
 \begin{itemize}
-    \item Data.gov.ie : Online portal containing thousands of publicly available datasets about Ireland
-    \item Smart Dublin: Founded by Dublin local authorities, their goal is to look for innovative technological solutions for local environmental, social, mobility, government and living issues. They also have hundreds of publicly available datasets
-    \item Kaggle: a data science and machine learning platform part of Google Cloud where competitions are hosted, in addition to thousands of publicly available datasets
+    \item \textbf{Data.gov.ie}: Online portal containing thousands of publicly available datasets about Ireland
+    \item \textbf{Smart Dublin}: Founded by Dublin local authorities, their goal is to look for innovative technological solutions for local environmental, social, mobility, government and living issues. They also have hundreds of publicly available datasets
+    \item \textbf{Kaggle}: a data science and machine learning platform part of Google Cloud where competitions are hosted, in addition to thousands of publicly available datasets
 \end{itemize}
 These CSV files contained information on the location of certain facilities such as rentals, coach parking, public parks. This location was latitude and longitude which we needed to input into the script to download images, as well as the street name of that location which was used to name the downloaded image.
 \begin{listing}[h!]
@@ -46,20 +52,17 @@ These CSV files contained information on the location of certain facilities such
         get_images(name, latitude, longitude)
     \end{minted}
 \end{listing}\\
-Following successful model training and tuning, a further 19,536 satellite images were downloaded spanning Dublin City area illustrated in the figure below.
+Following successful model training and tuning, a further 19,536 satellite images were downloaded spanning Dublin City area illustrated in the figure below. The machine learning model was then applied to those images to detect the cars.
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.85\textwidth]{images/dublin-img-area.jpg}
+    \includegraphics[width=0.6\textwidth]{images/dublin-img-area.jpg}
     \caption{Dublin Area Delimitation for Parking data}
 \end{figure}\\
 
-The machine learning model was then applied to those images to detect the cars.\\
+\textbf{Machine learning models - Parking detection}
+An additional 19,536 map-view images corresponding to the satellite images used for car detection were downloaded using the MapBox API to create the custom mask used for detecting parked cars.\\ \\
 
-\textbf{Parking detection model}
-An additional 19,536 map-view images corresponding to the satellite images used for car detection were downloaded using the MapBox API to create the custom mask used for detecting parked cars.
-
-
-\subsubsection{for the Amenity data}
+\textbf{Amenity data}
 CSV files were collected from multiple sources mentioned above, notable Data.gov.ie and Smart Dublin. Below is a list relative to each amenity currently present on Magpie:
 \begin{itemize}
     \item Parking meter = Data.gov.ie
@@ -75,3 +78,5 @@ CSV files were collected from multiple sources mentioned above, notable Data.gov
     \item Public bins = Smart Dublin
     \item Coach parking = Data.gov.ie
 \end{itemize}
+
+\subsubsection{Data storage}
