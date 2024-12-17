@@ -405,12 +405,12 @@ The overall results on test set are presented below in Table~\ref{tab:metrics1}.
   \label{tab:metrics1}
 \end{table}
 
-Precision and Recall are reletively high for both classes. Precision for the on the road cars class is extremely high as the majority of the cars in the test set were perfectly horizontally or vertically aligned, and given that the rotation cannot be exported in label studio, the bounding box is drawn less accurately unless if it is perfectly horizontally or vertically aligned.
+Precision and Recall are relatively high for both classes. Precision for the on the road cars class is extremely high as the majority of the cars in the test set were perfectly horizontally or vertically aligned, and given that the rotation cannot be exported in label studio, the bounding box is drawn less accurately unless if it is perfectly horizontally or vertically aligned.
 
-the majority of papers don't do something very similar, our project is somewhat of a novel idea.
-most of the papers only do car object detection on satellite images, and use different metrics AP and mAP, which we don't calculate
+The majority of papers available, that explore object detection for cars on satellite images, evaluate their experiment on more general metrics such as Average Precision (AP) and Mean Average Precision (mAP). AP represents the area under the precision-recall curve and mAP represents the mean of the APs across all the different classes. These metrics provide a broader overview of the model's performance as it is measured across varying thresholds.
+Therefore the results are not comparable, as precision, recall and f1 score are calculated for a fixed IoU threshold in our evaluation, as we set a specific threshold to use only those detections (reformuler better et plus soutenu).
 
-\cite{similarresults}, achieves similar results and showcase precison recall for a lower iou threshold... explain mieux
+The results achieved (presented above in Table~\ref{tab:metrics1}) are in line and similar to \cite{similarresults}, who achieve a precision of 0.75, a recall of 0.66 and an f1 score of 0.7 at the IoU threshold of 0.3, for parked car detection task performed on stereo satellite images.
 
 The current road mask has a few outstanding problems, that are discussed further below.
 Firstly, sometimes not all parts of the street names are completely removed due to the watermark at the bottom of the image or in the case of the street name being on the very edge of the image. However this seems to rarely be the cause of misclassifications.
@@ -508,10 +508,11 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}.
 \end{table}
 
 
-The average Orientation Accuracy is of 0.66, which is fine given that the orientation labels for the test set are calculated automatically based on the width and length while the orientation associated with the model’s prediction is based on the rotation, so that’s why there might sometimes be a mismatch.
+The Average Orientation Accuracy being somewhat low of only 0.64, is expected as the orientation labels for the test set are calculated automatically based on the width and length of the bounding box, while the orientation associated with the model’s prediction is based on the rotation. This is visible in images 1 and 3 of Table~\ref{tab:test_images2}.
 
+Very few articles replicating a similar concept were found.
 
-cite similar article ...
+The results achieved (presented above in Table~\ref{tab:metrics2}) are in line and similar to other articles performing car detection on satellite imagery such as \cite{similarresults}.
 
 The main reason empty parking spots are not detected is due to the fact that cars are classed as on the road by the road mask, therefore given that the empty parking detection logic only fills in gaps between parked cars it cannot find the empty spots, as seen in the bottom left of the second image of Table~\ref{tab:test_images2}.
 Additionally, due to the misclassifications of chimneys as cars by the Yolo model, additional empty spots that should not be identified are detected, as seen on the left of the third image of Table~\ref{tab:test_images3}.
@@ -559,9 +560,10 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}.
   \label{tab:metrics3}
 \end{table}
 
-The performance is similar for all 3 classes, though for the parking lot class, there are more false positives in this class, as when there are many bounding boxes close together it fills in the gaps so there is more unpredictability, and more spots are added.
+The performance is similar for all 3 classes, however for the parking lot class more false positives are present, given that having many bounding boxes clustered together creates more unpredictability adding more additional spots.
 
-cite similar article ...
+The results achieved (presented above in Table~\ref{tab:metrics3}) are in line and similar to other articles performing car detection on satellite imagery such as \cite{similarresults}.
+(also doesn't make sense to cite this article as we are doing classification???)
 
 The main outstanding problem for this section is residential areas which are very rarely misclassified as parking lots.
 Additionally, in cases where public spots are quite far from the nearest road, the spots are misclassified as private, which is not a major issue.
