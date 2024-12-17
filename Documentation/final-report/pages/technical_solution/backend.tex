@@ -772,8 +772,27 @@ application security.
 
 \subsubsection{Middlewares}\label{backend_middlewares}
 \phantomsection\label{middleware_route_authorisation}\textbf{Authorisation}\\
+The backend implements three middlewares that allow for route-based
+authorisation. Using this, some routes can be publicly accessible while others
+are only available to authenticated users in general or specific users only.
+This is accomplished by wrapping the handler function in the appropriate
+middleware when configuring the routing, see Listing
+\ref{listing:routing_example}.
 
-\fcolorbox{orange}{orange}{Add route based authorisation}
+The \textit{public access middleware} simply forwards the request to the
+handler. This is used for routes that all users need access to, such as logging
+in or account creation. The \textit{authenticated access middleware} extracts
+the JWT from the request and checks it for validity. Only if the JWT is valid is
+the request passed to the handler, if not, an error is returned.
+
+The \textit{protected access middleware} only allows requests to user specific
+resources that are made by that exact user. All routes with protected access are
+also checked by the authenticated access middleware. The user id is then
+extracted from the proven valid JWT. Comparing the extracted id with the user id
+given in as a path parameter, it can be determined if the user making the
+request is actually the owner of the resource. In that case, the request is
+forwarded to the handler function. If the ids do not match, the request returns
+an error.
 
 \phantomsection\label{middleware_logging}\textbf{Logging}\\
 The backend uses logs for monitoring purposes. The servers output informative
