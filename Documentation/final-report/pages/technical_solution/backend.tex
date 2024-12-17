@@ -767,8 +767,8 @@ application security.
 
 \fcolorbox{orange}{orange}{Add authentication middleware features}
 
-As mentioned in the discussion of JSON Web Tokens on page \pageref{jwt}, the use of JWTs comes
-with its own set of caveats.
+As mentioned in the discussion of JSON Web Tokens on page \pageref{jwt}, the use
+of JWTs comes with its own set of caveats.
 
 One solution for this issue would be implementing a list of revoked tokens on
 the server and offering the user a way to add a stolen token to that list. If an
@@ -876,7 +876,78 @@ function that sends data to the API.
 \end{listing}
 
 \subsubsection{Error Handling}
-\fcolorbox{orange}{orange}{Add section on error handling}
+
+At the start of the project, errors in the backend were communicated in the form
+of HTTP status codes. This is the easiest solution for passing errors to the
+frontend, so it was chosen in the interest of high development speed. But as the
+backend grew in complexity, many errors were returned using the codes
+\texttt{400}, \texttt{401}, \texttt{404} or \texttt{500}. Since each of these
+could be caused by a multitude of different error conditions, it lead to a lot
+of manual searching for bugs involving both the frontend and backend team. It
+became obvious that errors in the backend needed to be communicated clearly and
+automatically.
+
+To achieve this goal, all responses from the backend were wrapped in a response
+object. This structure holds either an error or the response content. Listing
+\ref{listing:response_dto_success} shows a successful request, the
+\texttt{error} field is empty while the \texttt{response} field is populated.
+Listing \ref{listing:response_dto_error} shows the response to a malformed
+request, the \texttt{error} field is populated with a custom error code and a
+error message for additional detail. The \texttt{response} field is empty. This
+allows the frontend to react appropriately to specific errors.
+
+All custom error codes were thoroughly documented in a markdown file and
+available to the frontend developers throughout the project. An excerpt of this
+documentation can be seen in Figure \ref{fig:error_code_documentation}. This
+prevented miscommunication and eliminated the need for joint bug hunting
+meetings, decoupling the development of frontend and backend further.
+
+\begin{listing}[htbp]
+  \centering{}
+  \begin{minipage}{0.775\textwidth}
+  \begin{minted}{json}
+    {
+      "error": null,
+      "response": {
+        "content": {
+          "id": "c251238f-aca3-4898-bd01-9674f5a88948",
+          "registerdate": "2024-10-08T15:06:56.047718Z",
+          "firstname": "Testy",
+          "lastname": "McTesterson",
+          "profilepicture": "http://example.com/profilepicture.jpg",
+          "lastloggedin": "2024-10-16T09:54:01.79553Z"
+        }
+      }
+    }
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a response DTO used for the successful retrieval of user details}
+  \label{listing:response_dto_success}
+\end{listing}
+
+\begin{listing}[htbp]
+  \centering{}
+  \begin{minipage}{0.7\textwidth}
+  \begin{minted}{json}
+    {
+      "error": {
+        "errorCode": 1202,
+        "errorMsg": "Parameter invalid, expected type UUIDv4"
+      },
+      "response": null
+    }
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a response DTO transmitting a custom error condition}
+  \label{listing:response_dto_error}
+\end{listing}
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=\textwidth]{images/errors_documentation.jpg}
+  \caption{Excerpt from the Error Code Documentation for the Backend}
+  \label{fig:error_code_documentation}
+\end{figure}
 
 \subsubsection{Testing}
 \fcolorbox{orange}{orange}{Add section on testing}
