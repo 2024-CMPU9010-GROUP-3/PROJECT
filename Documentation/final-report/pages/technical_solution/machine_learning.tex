@@ -504,7 +504,8 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}.
 
 Analyse metrics. Cite similar results in object detection.
 
-The main reason empty parking spots are not detected is due to the fact that cars are classed as on the road by the road mask, therefore given that the empty parking detection logic only fills in gaps between parked cars it cannot find the empty spots.
+The main reason empty parking spots are not detected is due to the fact that cars are classed as on the road by the road mask, therefore given that the empty parking detection logic only fills in gaps between parked cars it cannot find the empty spots, as seen in the bottom left of the second image of Table~\ref{tab:test_images2}.
+Additionally, due to the misclassifications of chimneys as cars by the Yolo model, additional empty spots that should not be identified are detected, as seen on the left of the third image of Table~\ref{tab:test_images3}.
 Furthermore, some spots are too small to be found by the model given the threshold set for the average width and average height.
 Other minor issues that sometimes lead to empty parking spots not being detected are due to angle misalignment, when one car is oriented "strangely" leading to the angle between the 2 cars being larger that the threshold or when 2 cars are too far apart to fill in the gap.
 
@@ -577,9 +578,9 @@ For future work, the most pressing task would be to add additional data sources,
 Information on the water supply and the electrical infrastructure would equally be helpful to add, in particular information pertaining to the municipal water supply, the power grid, off the grid solar panels and backup generators.
 Furthermore, the current amenities should be extended to include more counties, close to Dublin such as Fingal, South Dublin and Meath, as well as extended to larger cities in Ireland like Cork, Galway, Limerick and Sligo.
 
-Retraining the Yolo model on a dataset containing more manually annotated satellite images should be tested out in order to improve the model's performance and reduce the number of false positives.
+Retraining the Yolo model on a dataset containing more manually annotated satellite images should be explored in order to improve the model's performance and reduce the number of false positives.
 
 Improving the road mask's accuracy in classifying cars as on the road and parked correctly is especially crucial, as the current misclassificatiosn lead to issues afterwards particularly in the empty parking detection section.
 It could be interesting to test out enlarging the roads by a certain ratio, depending on the road width to begin with in order to find a way of identifying only larger roads with multiple lanes.
 
-The empty parking detection could be further improved by adding additional heuristics to find the empty spots more efficiently. Furthermore the 2 cases that were removed as too many additional spots were being detected could be refined and implemented differently.
+The empty parking detection could be further improved by adding additional heuristics to find the empty spots more efficiently. Moreover, the 2 cases that were removed as too many additional spots were being detected could be refined and implemented differently.
