@@ -1,5 +1,5 @@
 \subsubsection{Backend Technologies}
-\paragraph{Go}
+\textbf{Go}\\
 At the start of the project, a portion of the team deliberated about which
 technologies to choose for the backend. Options using JavaScript such as NodeJS
 or Deno with accompanying frameworks like ExpressJS or NestJS were considered,
@@ -44,7 +44,7 @@ a very low-friction, high-speed development experience. This was also the
 deciding factor, since it was made clear to the team that getting an MVP up and
 running as quickly as possible was imperative for the project.
 
-\paragraph{PostgreSQL}
+\textbf{PostgreSQL}\\
 The plan for the MVP of Magpie set the simple goal of delivering useful data to
 users. To achieve this, the data needs to be stored in a way in which it can be
 efficiently accessed during operation. Since the goal of the project was to
@@ -93,7 +93,7 @@ ground running.
   \label{listing:sqlc_query_input}
 \end{listing}
 
-\paragraph{sqlc}
+\textbf{sqlc}\\
 In modern software development, there are two common ways for an application to
 interact with a database via SQL. There is the old school way of writing raw SQL
 queries, put them into prepared statements and execute them against the
@@ -249,9 +249,7 @@ the backend keeping pace with the other developers.
   \label{listing:sqlc_generated_bindings}
 \end{listing}
 
-
-\paragraph{golang-migrate}
-
+\textbf{golang-migrate}\\
 During the first weeks of the project, the database was defined by a simple
 initialisation SQL script. This worked fine for the time and allowed all
 developers to set up their local database instance easily. But once the vertical
@@ -281,14 +279,12 @@ library.
 At the time this decision was taken, golang-migrate also seemed like
 the most actively developed of the options. This has since changed and at the
 time of writing, golang-migrate is the solution with the least recent update of
-the options.
-
-Nonetheless, using golang-migrate the team was able to integrate automated
+the options. Nonetheless, using golang-migrate the team was able to integrate automated
 database migrations into the app, eliminating the need to spend valuable time
 performing manual database updates each time the schema is changed.
 
-\textbf{The complete database development workflow for the backend server is visualised
-in Figure \ref{fig:database_workflow_diagram}.}
+The complete database development workflow for the backend server is visualised
+in Figure \ref{fig:database_workflow_diagram}.
 
 \begin{figure}[htbp]
   \centering{}
@@ -297,7 +293,7 @@ in Figure \ref{fig:database_workflow_diagram}.}
   \label{fig:database_workflow_diagram}
 \end{figure}
 
-\paragraph{bcrypt}
+\textbf{bcrypt}\\
 To store the users credentials securely, \textbf{bcrypt} was chosen to hash them
 before they are inserted into the database. The resulting hashes (see Figure
 \ref{fig:bcrypt_hash}) can then be used to validate if the given password is
@@ -328,7 +324,7 @@ than just development speed.
   \label{fig:bcrypt_hash}
 \end{figure}
 
-\paragraph{JSON Web Token} \label{jwt}
+\phantomsection\label{jwt}\textbf{JSON Web Token}\\
 \textbf{JSON Web Tokens} were chosen for the authentication of user requests to
 the APIs. JWTs are JSON objects that are encrypted using a private key on the
 server and passed to the frontend when a login requests succeeds. The client is
@@ -360,12 +356,23 @@ Despite these caveats and some slowdowns during development, the team still
 feels JWT-based authentication was the right choice for a project of Magpie's
 scale.
 
-\subsubsection{Backend Development}
-As discussed in \ref{systemarchitecture} \nameref{systemarchitecture}, the
-backend is comprised of two standalone REST-API servers. Right after the
-decision to split the backend was taken, a first implementation using two
-separate codebases was created. This approach was functional, meaning it was
-able to produce two distinct backends with different feature sets.
+\subsubsection{Split Backend}
+The backend was planned as a one server system, but the team wanted to harden
+the system as a whole against potential attacks. This meant that some critical
+functionality could not be included in the server that handles public requests.
+As a result, the backend is comprised of two standalone REST-API servers. Both
+of these servers access a shared database, allowing them to cooperate without
+sharing functionality. The private backend is used to insert datasets into the
+database, the public backend is used to retrieve that data from the database and
+pass it to the frontend server.
+
+This means that even if a malicious actor gained access to the public backend
+server, they could not execute anything that would threaten the integrity of the
+datasets stored in the database.
+
+Right after the decision to split the backend was taken, a first implementation
+using two separate codebases was created. This approach was functional, meaning
+it was able to produce two distinct backends with different feature sets.
 
 But it soon became obvious that this approach was not sustainable. While simply
 splitting the backend into two codebases was a quick and easy solution, it would
@@ -524,9 +531,9 @@ eliminated a lot of ambiguity, resulting in more concise and effient
 communication between the different areas of responsibility.
 
 For a detailed explanation of the route access restriction modes, see Section
-\ref{route_authorisation} (\nameref{route_authorisation}).
+\textbf{\nameref{route_authorisation}} on page \pageref{route_authorisation}.
 
-\paragraph{Public API}
+\textbf{Public API}
 The public API is used to retrieve relevant data for display in the frontend and
 for authentication of the user.
 
@@ -685,7 +692,7 @@ for authentication of the user.
 
 \end{itemize}
 
-\paragraph{Private API}
+\textbf{Private API}
 The private API is used by the machine learning and data stack to insert new
 datasets into the database. Currently, all private API routes have public access
 rights, as the private backend as a whole is guaranteed restricted access by the
@@ -756,12 +763,12 @@ application security.
 \end{itemize}
 
 \subsubsection{Middlewares}\label{backend_middlewares}
-\paragraph{Authentication}
+\textbf{Authentication}
 
 \fcolorbox{orange}{orange}{Add authentication middleware features}
 
-As mentioned in section \ref{jwt} (\nameref{jwt}), the use of JWTs comes with
-its own set of caveats.
+As mentioned in the discussion of JSON Web Tokens on page \pageref{jwt}, the use of JWTs comes
+with its own set of caveats.
 
 One solution for this issue would be implementing a list of revoked tokens on
 the server and offering the user a way to add a stolen token to that list. If an
@@ -783,12 +790,90 @@ development process, but other issues always took precedence. Given more time,
 improving the application security would be one of the top priorities in terms
 of further backend development.
 
-\paragraph{Authorisation}\label{route_authorisation}
+\phantomsection\label{route_authorisation}\textbf{Authorisation}
 
 \fcolorbox{orange}{orange}{Add route based authorisation}
 
 \subsubsection{Data Validation}
-\fcolorbox{orange}{orange}{Add section on data validation + DTOs}
+Data that enters Magpie is validated on ingress. At the most basic level, there
+are checks for the presence of required parameters. But the data is also checked
+for logical errors, such as coordinates having a longitude greater than 180/less
+than \-180 degrees or a latitude greater than 90/less than \-90 degrees.
+
+These checks are implemented in the data types that the incoming data is decoded
+into called \textbf{Data Transfer Objects (DTOs)}. Since Magpie uses JSON
+objects to transmit data, the decoding is handled by the built-in
+\texttt{encoding/json} library. Should any parameter not match up with the
+expected struct, the decoding fails. This is the first line of defence. In
+addition, all DTOs implement a \texttt{Validate} function, that can be used to
+specify any additional requirements for the incoming data. It is called
+automatically once the decoding process has finished. An example of a DTO
+definition can be seen in Listing \ref{listing:dto_example}.
+
+While these checks cannot guarantee that the inserted data is actually correct,
+they do improve data integrity. During development, the sanity checks have
+proven to be instrumental in catching errors early when implementing a new
+function that sends data to the API.
+
+\begin{listing}[htbp]
+  \centering{}
+  \begin{minipage}{0.7\textwidth}
+  \begin{minted}{go}
+    type CreateUserDto struct {
+      Username       string      `json:"username"`
+      Email          string      `json:"email"`
+      Password       string      `json:"password"`
+      FirstName      string      `json:"firstname"`
+      LastName       string      `json:"lastname"`
+      ProfilePicture pgtype.Text `json:"profilepicture"`
+    }
+
+    func (self *CreateUserDto) Decode(r io.Reader) error {
+      err := json.NewDecoder(r).Decode(&self)
+      if err != nil {
+        return customErrors.Payload.InvalidPayloadUserError
+      }
+
+      return self.Validate()
+    }
+
+    func (self *CreateUserDto) Validate() error {
+      if len(self.Username) == 0 {
+        err := customErrors.
+                Parameter.
+                RequiredParameterMissingError.
+                WithCause(fmt.Errorf("Username is required"))
+        return err
+      }
+
+      if len(self.Email) == 0 {
+        err := customErrors.
+                Parameter.
+                RequiredParameterMissingError.
+                WithCause(fmt.Errorf("Email is required"))
+        return err
+      }
+
+      if len(self.Password) == 0 {
+        err := customErrors.
+                Parameter.
+                RequiredParameterMissingError.
+                WithCause(fmt.Errorf("Password is required"))
+        return err
+      }
+
+      if len(self.Password) > 72 {
+        err := customErrors.Payload.PasswordTooLongError
+        return err
+      }
+      return nil
+    }
+
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a DTO including data validation used by the backend}
+  \label{listing:dto_example}
+\end{listing}
 
 \subsubsection{Error Handling}
 \fcolorbox{orange}{orange}{Add section on error handling}
