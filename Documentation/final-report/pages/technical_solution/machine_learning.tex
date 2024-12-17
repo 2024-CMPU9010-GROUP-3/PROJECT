@@ -59,22 +59,8 @@ Thus, the YOLOv8-OBB model was trained on the settings below:
                   )
   \end{minted}
 \end{listing}\\
-And the following results were obtained:
-%yolov8 obb results
-\begin{table}[h!]
-  \centering
-  \begin{tabular}{|p{0.2\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|}
-    \hline
-    \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{mAP@50} & \textbf{Confidence threshold} \\
-    \hline
-    YOLOv8-OBB     & 94\%              & 100\%              & 99\%            & 91\%              & 94\%            & 35\%                          \\
-    \hline
-  \end{tabular}
-  \caption{YOLOv8-OBB model results}
-\end{table}\\
 
-The weights were then obtained and used to identify cars in satellite images of the entire Dublin city using the script below.\\
-\fcolorbox{yellow}{yellow}{Jess or Saul's script}
+The weights of the YOLOv8-OBB model were then saved and used to identify parked cars on over 18,000 satellite images spanning Dublin City.
 
 \newpage
 \subsubsection{Parking spot detection}
@@ -153,7 +139,22 @@ The csv file containing the longitude, latitude, classification label, parking z
 \subsubsection{Evaluation of each submodule of the parking detection model}
 Each major section of the parking detection model was evaluated individually in order to access the overall performance. The results will be presented and analysed for each section below.
 
-\subsubsection{Evaluation of the Yolo model}
+\subsubsection{Evaluation of the YOLOv8-OBB model}
+The YOLOv8-OBB model was evaluated on a validation set of 51 images, where precision, recall, accuracy, mean average precision (mAP@50) and F1-score were computed. These were the scores below:
+%yolov8 obb results
+\begin{table}[h!]
+  \centering
+  \begin{tabular}{|p{0.2\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{mAP@50} & \textbf{Confidence threshold} \\
+    \hline
+    YOLOv8-OBB     & 94\%              & 100\%              & 99\%            & 91\%              & 94\%            & 35\%                          \\
+    \hline
+  \end{tabular}
+  \caption{YOLOv8-OBB model results}
+\end{table}\\
+
+\fcolorbox{yellow}{yellow}{explain results}
 
 \subsubsection{Evaluation of the classifiction of cars into on the road or parked}
 The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
