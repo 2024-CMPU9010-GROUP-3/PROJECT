@@ -538,9 +538,10 @@ eliminated a lot of ambiguity, resulting in more concise and effient
 communication between the different areas of responsibility.
 
 For a detailed explanation of the route access restriction modes, see Section
-\textbf{\nameref{middleware_route_authorisation}} on page \pageref{middleware_route_authorisation}.
+\textbf{\nameref{middleware_route_authorisation}} on page
+\pageref{middleware_route_authorisation}.
 
-\textbf{Public API}
+\textbf{Public API}\\
 The public API is used to retrieve relevant data for display in the frontend and
 for authentication of the user.
 
@@ -699,7 +700,7 @@ for authentication of the user.
 
 \end{itemize}
 
-\textbf{Private API}
+\textbf{Private API}\\
 The private API is used by the machine learning and data stack to insert new
 datasets into the database. Currently, all private API routes have public access
 rights, as the private backend as a whole is guaranteed restricted access by the
@@ -1013,6 +1014,9 @@ During development, the both backends were outfitted with automated unit
 testing. This allowed for bugs to be caught early and consistently. The tests
 covered all vital functions of the backends, namely the routing and -- most
 importantly -- the request handlers.
+
+Implementing unit tests also allows for future regression testing, making it
+easier to spot issues like increased latency between versions of the backend.
 
 The test implementation was done using the \texttt{testing} package from the Go
 standard library. While there are more advanced alternatives like testify, they
