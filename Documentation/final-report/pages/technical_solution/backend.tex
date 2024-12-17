@@ -64,8 +64,8 @@ reliability and they are well equipped to guarantee data integrity. But the
 deciding reason was the pre-existing experience the lead developer for the
 backend had with these types of databases.
 
-After some deliberation, \textbf{PostgreSQL} was chosen as the database solution for this
-project. It was combined with the PostGIS extension to add support for
+After some deliberation, \textbf{PostgreSQL} was chosen as the database solution
+for this project. It was combined with the PostGIS extension to add support for
 geospatial data and queries. The decision was not cut and dried as most
 established multi-model databases (like Oracle DB or MySQL) offer the
 functionality that the requirements were asking for. However, the Kubernetes
@@ -422,7 +422,38 @@ handling the model bindings and the access to the database had to be generated
 and included twice.
 
 \subsubsection{Database}
-\fcolorbox{orange}{orange}{TODO: Add database development, don't forget down migration point type enum}
+The requirements for the database of the MVP were simple: store points, store
+users. To achieve this, three tables and one enum were added. The
+\texttt{Points} table is used to store the actual data for Magpie. In the first
+iteration (see Figure \ref{fig:database_init_schema}), this was only parking
+spots detected by the machine learning stack.
+
+The tables \texttt{Logins} and \texttt{User\_Details} are used to hold account
+information. This design is a one-to-one relationship, which is usually
+discouraged in database design. However, data from the \texttt{Login} table and
+data from the \texttt{User\_Details} table are never queried at the same time
+but only separately. While this design still violates database normalisation
+principles, it makes querying the data more straightforward and was therefore
+preferred in this time-constrained project.
+
+Encoding the point type in an enum has benefits and drawbacks. Using an enum
+enforces stricter data integrity, only point with a type that is present in the
+enum can be inserted into the database. By extension, this helps to standardise
+the names of point types accross all layers of the application. On the other
+hand, storing the point type in an enum makes the database a lot less flexible.
+Adding a new dataset will almost certainly require changing the point type in
+the database. This creates a barrier to quickly expanding the number of
+different datasets in Magpie. Creating what is essentially a custom data type in
+the database also led to issues with connecting the backend to the database. The
+driver used for this purpose (\texttt{pgx}) expects custom data types to be
+registered on the database connection instance. Figuring out how to do that
+acted as a blocker for further backend development. It was still possible to add
+new datasets, but the decision to store the point type in an enum should be
+re-evaluated for future projects.
+
+The \texttt{Schema\_Migrations} table seen in both the initial database schema
+as well as in the final database schema is automatically created by
+golang-migrate to track the current version of the database.
 
 \begin{figure}[htbp]
   \centering{}
@@ -430,6 +461,53 @@ and included twice.
   \caption{Database Schema for the minimum viable Product}
   \label{fig:database_init_schema}
 \end{figure}
+
+During the course of the project, two significant changes were made to the
+database. The first one was the addition of more point types to the
+\texttt{Point\_Type} enum. To make it possible to seamlessly move between
+database versions, migrations were designed to reversible and (where possible)
+without data loss.
+
+Unfortunately, PostgreSQL only allows the addition of enum values but not the
+deletion. Because of this, the down (reverse) migration for this change have to
+use a workaround. First, a transaction is started, then the existing enum is
+renamed and a new enum is created under the original name with the necessary
+values already removed. Afterwards, the \texttt{Points} table is modified to use
+the newly created enum. The old enum is then dropped and the transaction
+committed.
+
+To satisfy the goal to have as little data loss as possible when moving through
+migrations, any point whose type is removed by a migration will have it added to
+a special value in the \texttt{details} field. Should the migration ever be
+re-applied, this field is then taken from the \texttt{details} object and
+translated into the correct enum again. Since all points need to have a point
+type, points whose type was removed will be given the type \texttt{unknown}. If
+down migrations are executed past the point where the \texttt{unknown} type was
+added, data loss is inevitable.
+
+The second big change was the addition of the saved locations feature. This was
+originally called 'History', which is why the database tables are still called
+\texttt{Location\_History} and \texttt{History\_Amenity\_Counts}. At first, only
+the former table was created, but as the feature evolved it became necessary to
+store a place name (called \texttt{displayname} in the database) and counts of
+amenities along side the saved location. This was also realised using migrations.
+
+The \texttt{History\_Amenity\_Counts} table has a one-to-many relationship with
+the \texttt{Location\_History} table, making it possible to include zero or more
+amenities in the saved location. There can only be zero or one entries for each
+point type per saved location. This is enforced by including both the point type
+and the id of the saved location entry in the primary key constraint.
+
+The final database schema is shown in Figure \ref{fig:database_final_schema}.
+
+The team recognises that neither the database nor the queries can be considered
+fully optimised. This was a concious choice, trading some performance for
+quicker development time. Benchmarks of the point retrieval query performed by
+the team showed that the database took less than 100ms to retrieve 58,192 rows
+of points in a raius of 10 kilometers. The time it took to for the data to be
+transmitted to and be parsed by the frontend was in excess of 1.4 seconds. While
+there are performance bottlenecks in Magpie, the database's performance is
+currently not considered one of them.
 
 \begin{figure}[htbp]
   \centering{}
