@@ -805,7 +805,7 @@ example of the logs produced by the public backend server can be found in Figure
 
 \begin{figure}[htbp]
   \centering{}
-  \includegraphics[width=\textwidth]{images/backend_logging.png}
+  \includegraphics[width=0.7\textwidth]{images/backend_logging.png}
   \caption{Example of logs produced by the public backend server}
   \label{fig:backend_logging}
 \end{figure}
@@ -1009,4 +1009,89 @@ environment variables are set, only \texttt{MAGPIE\_DB\_URL} will be used to
 establish a connection.
 
 \subsubsection{Testing}
-\fcolorbox{orange}{orange}{Add section on testing}
+During development, the both backends were outfitted with automated unit
+testing. This allowed for bugs to be caught early and consistently. The tests
+covered all vital functions of the backends, namely the routing and -- most
+importantly -- the request handlers.
+
+The test implementation was done using the \texttt{testing} package from the Go
+standard library. While there are more advanced alternatives like testify, they
+were considered to be too complex for a project of this scope.
+
+In addition to the standard library, \texttt{pgxmock} was used to simulate a
+database connection during test execution. This made tests significantly simpler
+to set up and implement, as no actual database connection needed to be
+maintained for the tests to be effective. Additionally, \texttt{pgxmock}
+provides a way to expect certain queries to be executed, which is a valuable
+tool for unit tests.
+
+So called table-based tests were used to validate the backends functionality.
+For this, a list of inputs (i.e. a table) is defined, which will then be passed
+to the function to be tested one by one. Each definition also comes with success
+and failure conditions (see Listing \ref{listing:test_case_definition}). Using
+this, it is possible to efficiently create a multitude of testcases with
+different parameters which share the underlying test execution code.
+
+\begin{listing}[htbp]
+  \centering{}
+  \begin{minipage}{\textwidth}
+  \begin{minted}{go}
+    {
+      Name: "Valid input",
+      Method: "POST",
+      Route: "/points",
+      InputJSON: `{
+        "longlat": {
+          "type": "Point",
+          "coordinates": [11, 12]
+        },
+        "type": "parking",
+        "details": {
+          "test": 1234
+        }
+      }`,
+      MockSetup: func(mock pgxmock.PgxPoolIface) {
+        mock.ExpectQuery("INSERT INTO points").
+            WithArgs(
+              pgxmock.AnyArg(), db.PointType("parking"), []byte(`{"test":1234}`),).
+            WillReturnRows(pgxmock.NewRows([]string{"id"}).
+            AddRow(int64(1)))
+      },
+      ExpectedStatus: http.StatusCreated,
+    }
+  \end{minted}
+  \end{minipage}
+  \caption{An example of a test case for a table-based unit test of the private points handler}
+  \label{listing:test_case_definition}
+\end{listing}
+
+To discourage pushing or merging untested code, the decision was made to
+automatically run the defined test cases when changes to the backend are pushed
+to the repository. For this project, GitHub Actions was used as the CI/CD
+solution. Unfortunately, there at the time of writing this there is no built-in
+support for Go unit tests in GitHub Actions.
+
+For this reason, a custom GitHub Action workflow was set up. It automatically
+runs the test cases and extracts the test results and code coverage. To make it
+easy to check the success of the test cases, the workflow then reports these
+metrics as comments on the relevant pull request (see Figures
+\ref{fig:backend_github_action} and \ref{fig:backend_github_action_coverage}).
+The workflow is configured in a way where any failed tests or insufficient code
+coverage lead to the action failing. Since the repository expects all checks to
+pass before merging is permitted, this effectively prevents issues to enter the
+main code base and by extension the deployment.
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=\textwidth]{images/backend_github_action.png}
+  \caption{Comments created by custom GitHub action for executing backend unit tests}
+  \label{fig:backend_github_action}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=\textwidth]{images/backend_github_action_coverage.png}
+  \caption{Excerpt from the hidden section on a coverage comment (see Figure
+  \ref{fig:backend_github_action}), providing detailed, function level coverage}
+  \label{fig:backend_github_action_coverage}
+\end{figure}
