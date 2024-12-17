@@ -405,7 +405,12 @@ The overall results on test set are presented below in Table~\ref{tab:metrics1}.
   \label{tab:metrics1}
 \end{table}
 
-Analyse metrics. Cite similar results in object detection
+Precision and Recall are reletively high for both classes. Precision for the on the road cars class is extremely high as the majority of the cars in the test set were perfectly horizontally or vertically aligned, and given that the rotation cannot be exported in label studio, the bounding box is drawn less accurately unless if it is perfectly horizontally or vertically aligned.
+
+the majority of papers don't do something very similar, our project is somewhat of a novel idea.
+most of the papers only do car object detection on satellite images, and use different metrics AP and mAP, which we don't calculate
+
+\cite{similarresults}, achieves similar results and showcase precison recall for a lower iou threshold... explain mieux
 
 The current road mask has a few outstanding problems, that are discussed further below.
 Firstly, sometimes not all parts of the street names are completely removed due to the watermark at the bottom of the image or in the case of the street name being on the very edge of the image. However this seems to rarely be the cause of misclassifications.
@@ -502,7 +507,11 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}.
   \label{tab:metrics2}
 \end{table}
 
-Analyse metrics. Cite similar results in object detection.
+
+The average Orientation Accuracy is of 0.66, which is fine given that the orientation labels for the test set are calculated automatically based on the width and length while the orientation associated with the model’s prediction is based on the rotation, so that’s why there might sometimes be a mismatch.
+
+
+cite similar article ...
 
 The main reason empty parking spots are not detected is due to the fact that cars are classed as on the road by the road mask, therefore given that the empty parking detection logic only fills in gaps between parked cars it cannot find the empty spots, as seen in the bottom left of the second image of Table~\ref{tab:test_images2}.
 Additionally, due to the misclassifications of chimneys as cars by the Yolo model, additional empty spots that should not be identified are detected, as seen on the left of the third image of Table~\ref{tab:test_images3}.
@@ -550,7 +559,9 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}.
   \label{tab:metrics3}
 \end{table}
 
-Analyse metrics. Cite similar results in object detection.
+The performance is similar for all 3 classes, though for the parking lot class, there are more false positives in this class, as when there are many bounding boxes close together it fills in the gaps so there is more unpredictability, and more spots are added.
+
+cite similar article ...
 
 The main outstanding problem for this section is residential areas which are very rarely misclassified as parking lots.
 Additionally, in cases where public spots are quite far from the nearest road, the spots are misclassified as private, which is not a major issue.
