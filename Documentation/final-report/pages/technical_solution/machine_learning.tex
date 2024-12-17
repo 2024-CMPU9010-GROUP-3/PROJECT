@@ -4,8 +4,23 @@ The satellite images retrieved were of dimensions 400 by 400 pixels and captured
 
 Initially, a training set of 250 satellite images was collected to train the Yolo model.
 Datasets containing coordinates (longitude and latitude) of areas in Dublin were collected from Data.gov.ie, and the corresponding satellite images were retrieved using the \texttt{DatasetGeneration.py} script.
-Afterwards, the images were manually labelled using Label Studio, a free open source data labelling tool.
-put figure of interface and explain.
+Afterwards, the images were manually labelled using Label Studio, a free open source data labelling tool, as seen in Figure~\ref{fig:LabelStudio}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/label_studio1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/label_studio2.png}
+    \end{minipage}
+    \caption{Satellite images being annotated in Label Studio}
+    \label{fig:LabelStudio}
+\end{figure}
+
 
 Our project has two main Python scripts, \texttt{parking\_detection.py} and \texttt{parking\_detection\_local.py} to localize parking spots.
 In \texttt{parking\_detection.py}, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
@@ -358,7 +373,17 @@ where:
 
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
-A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in Label Studio. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
+A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in Label Studio as seen in Figure~\ref{fig:LabelStudio_test_set}. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/label_studio4.png}
+    \caption{Road mask classification test set images being annotated in Label Studio}
+    \label{fig:LabelStudio_test_set}
+\end{figure}
+
+\newpage{}
+
 
 The overall results on test set are presented below in Table~\ref{tab:metrics1}.
 
