@@ -7,13 +7,13 @@ digitised records in county administrations varies wildly
 information systems (GIS) while others rely on spreadsheets which are manually
 kept up to date. (\cite{mcguirk2001changing})
 
-\noindent{}A system that would allow users to quickly inspect a combined dataset
+A system that would allow users to quickly inspect a combined dataset
 grounded in automatically generated, real-world data could accelerate processes
 like planning permissions, urban development, or resource allocation. This
 applies especially to smaller counties that may not have personnel experienced
 in this area. (\cite{clark2002amenities})
 
-\noindent{}Improving how governments allocates resources could lead to
+Improving how governments allocates resources could lead to
 improvements in efficiency, making public services more attainable, even for
 smaller communities. For example, having accurate data on public transport and
 bike infrastructure encourages more people to choose sustainable modes of
@@ -22,7 +22,7 @@ could also make it easier for people in underserved communities to access
 important services, such as housing, thus helping to bridge social gaps.
 (\cite{allen2015understanding})
 
-\noindent{}Currently, solutions are fragmented, focusing on just one type of
+Currently, solutions are fragmented, focusing on just one type of
 amenity, like transport or housing, without giving a full picture. Even the more
 advanced GIS systems, while powerful, usually need a lot of manual input or
 additional programming, which smaller municipalities or organizations might not
@@ -43,13 +43,13 @@ counties with less data. This necessitates the creation of an interconnected
 series of modules that form a pipeline, for the automatic extraction and fusion
 of data.
 
-\noindent{}In order to present users with a map containing information about the
+In order to present users with a map containing information about the
 number of public amenities, we must first identify them. Our biggest technical
 challenge is the extraction of these data points. Different forms of public
 amenities exist in satellite imagery, we can combine this with other data
 sources, interweaving them, and producing a better result.
 
-\noindent{}Detecting public amenities from overhead views is a non-trivial process,
+Detecting public amenities from overhead views is a non-trivial process,
 as satellite imagery suffers from low resolution, occlusion, seasonal changes, or
 cloud cover. This means classifying specific objects can be complicated, and can
 take a lot of time and processing power. For instance, the task of quantifying
@@ -58,7 +58,7 @@ participating in traffic (in aerial images). Not only that, but the detected
 points in the images must be mapped back onto real-world coordinates to be of
 any utility.
 
-\noindent{}Ensuring consistency between the extracted data, and other data sets,
+Ensuring consistency between the extracted data, and other data sets,
 can have its own pitfalls. For example, compensating for:
 
 \vspace{-3mm}
@@ -69,7 +69,7 @@ can have its own pitfalls. For example, compensating for:
 \end{itemize}
 \vspace{-3mm}
 
-\noindent{}Not only can data be geographically misaligned, but since satellite
+Not only can data be geographically misaligned, but since satellite
 data is only a snapshot in time, it can lead to temporal misalignment as well.
 Even the appearance of amenities can change depending on their location. While
 cars look more or less the same anywhere on Earth, the same cannot be said for
@@ -80,7 +80,7 @@ efficiently is necessary.
 
 \subsection{A review of similar systems}
 
-\noindent{}\textbf{Parkopedia}
+\textbf{Parkopedia}
 
 \begin{figure}[h]
   \centering
@@ -89,15 +89,15 @@ efficiently is necessary.
   \label{fig:parkopedia}
 \end{figure}
 
-\noindent{}\textit{Parkopedia}\footnote{https://www.parkopedia.com/} is a web
+\textit{Parkopedia}\footnote{https://www.parkopedia.com/} is a web
 application that allows users to find parking in many cities around the world.
 They offer location and pricing data on parking garages, on-street parking and
 parking on private property.
 
-\noindent{}It is similar to \textit{Magpie} in the sense that it allows users to
+It is similar to \textit{Magpie} in the sense that it allows users to
 gain a quick overview of all parking options in their area.
 
-\noindent{}Our system differentiates itself from \textit{Parkopedia} in three
+Our system differentiates itself from \textit{Parkopedia} in three
 main ways:
 \vspace{-3mm}
 \begin{itemize}
@@ -123,7 +123,7 @@ main ways:
 
 \newpage{}
 
-\noindent{}\textbf{ArcGIS}
+\textbf{ArcGIS}
 
 \begin{figure}[h]
   \centering{}
@@ -132,7 +132,7 @@ main ways:
   \label{fig:arcgis}
 \end{figure}
 
-\noindent{}Systems like \textit{ArcGIS}\footnote{https://www.arcgis.com/} target
+Systems like \textit{ArcGIS}\footnote{https://www.arcgis.com/} target
 mainly expert users like cartographers and researchers. These systems are powerful
 and feature-rich tools for professionals. While \textit{ArcGIS} is able to produce
 the same overview offered by our system, it is different in these key aspects:
