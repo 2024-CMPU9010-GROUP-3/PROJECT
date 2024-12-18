@@ -357,5 +357,195 @@ not be able to be merged.
 we used checks to run automated testing in the fronted and backend. The frontend
 and backend checks are discussed in those sections.
 
+\subsection{Continuous Deployment}
+
+\subsubsection{Kubernetes}
+Kubernetes, often abbreviated as \textit{K8s}, is an open-source container
+orchestration platform designed to automate the deployment, scaling, and
+management of containerized applications.
+
+\begin{itemize}
+    \item \textbf{Container Orchestration:} Kubernetes manages the lifecycle of
+    containers, ensuring that applications are running as intended and
+    automatically handling failures or restarts.
+    \item \textbf{Scalability:} It supports horizontal scaling of applications
+    through commands, resource monitoring, or automated scaling policies.
+    \item \textbf{Load Balancing and Service Discovery:} Kubernetes provides
+    built-in load balancing for distributing traffic across containers and
+    automates service discovery for communication between microservices.
+    \item \textbf{Self-Healing:} Kubernetes continuously monitors the health of
+    containers, automatically replacing failed pods and rescheduling workloads
+    on healthy nodes.
+    \item \textbf{Declarative Configuration:} Kubernetes uses YAML files
+    to define the desired state of the system, ensuring infrastructure-as-code
+    principles.
+    \item \textbf{Resource Management:} It allocates CPU and memory resources to
+    containers based on defined requests and limits.
+\end{itemize}
+
+The architecture of Kubernetes consists of several components:
+\begin{itemize}
+    \item \textbf{Master Node:} The master node is responsible for managing the
+    overall cluster state. It comprises the following components:
+    \begin{itemize}
+        \item \textit{API Server:} Exposes the Kubernetes API, serving as the
+        entry point for managing the cluster.
+        \item \textit{Controller Manager:} Ensures that the cluster's desired
+        state matches the actual state.
+        \item \textit{Scheduler:} Assigns workloads (pods) to appropriate nodes
+        based on resource availability and constraints.
+        \item \textit{etcd:} A key-value store that maintains the cluster's
+        state and configuration data.
+    \end{itemize}
+    \item \textbf{Worker Nodes:} Worker nodes execute containerized
+    applications. They consist of:
+    \begin{itemize}
+        \item \textit{Kubelet:} An agent that ensures containers are running as
+        expected on the node.
+        \item \textit{Kube-proxy:} Handles networking and forwards traffic to
+        the appropriate pods.
+        \item \textit{Container Runtime:} The software responsible for running
+        containers (e.g., Docker or containerd).
+    \end{itemize}
+    \item \textbf{Pods:} The smallest deployable unit in Kubernetes, containing
+    one or more containers.
+\end{itemize}
+
+\newpage{}
+
+Kubernetes provides benefits for application development:
+\begin{itemize}
+    \item \textbf{Portability:} Kubernetes supports any container runtime and
+    runs across cloud providers, on-premises, or hybrid environments.
+    \item \textbf{Automation:} Automates deployment, scaling, and recovery
+    processes, reducing manual interventions.
+    \item \textbf{Resource Optimization:} Efficiently manages resources,
+    ensuring applications get the required CPU and memory.
+    \item \textbf{Resiliency:} Enhances application uptime with features like
+    auto-healing, rolling updates, and self-recovery.
+\end{itemize}
+
+We use Kubernetes in \textit{Magpie}, for the following reasons:
+\begin{itemize}
+    \item \textbf{Scalability:} Magpie's backend services can automatically
+    scale to meet the demands of varying workloads.
+    \item \textbf{High Availability:} Ensures the application's critical
+    services remain operational even during node failures.
+    \item \textbf{Efficient Resource Allocation:} Kubernetes optimizes resource
+    usage, enabling cost-effective deployment in cloud environments.
+    \item \textbf{Simplified Updates:} Enables rolling updates for new features
+    or patches without downtime.
+\end{itemize}
+
+\subsubsection{Flux}
+
+Flux is a declarative, continuous delivery tool designed for Kubernetes,
+enabling GitOps practices for automated software deployment and management. By
+treating Git repositories as the single source of truth for a system's desired
+state, Flux synchronizes infrastructure and application configurations with the
+actual state of a Kubernetes cluster. This approach enables version control
+for Kubernetes clusters and promotes consistency.
+
+At the heart of Flux is its ability to automate the reconciliation of Kubernetes
+manifests stored in Git. Flux monitors changes to the specified repository and
+ensures that the cluster reflects the desired state defined in these manifests.
+It eliminates the need for manual intervention during deployments, as any
+approved changes committed to the repository are automatically applied to the
+cluster.
+
+One of the most notable advantages of Flux is its alignment with the GitOps
+methodology. In traditional CI/CD pipelines, application configurations and
+environments can drift due to manual overrides or unchecked changes. Flux
+mitigates this risk by enforcing the Git repository as the sole authority for
+configurations.
+
+In a software project like \textit{Magpie}, where speed of work and reliability
+are paramount, Flux provides a excellent solution for managing deployments. By
+automating synchronization with Git repositories, Flux reduces manual effort and
+ensures that infrastructure changes are consistently applied. Its declarative
+nature allows for rapid recovery in case of failures, as clusters can be
+restored to a known good state defined in version-controlled repositories.
+
+\begin{listing}[htbp]
+    \begin{minted}{yaml}
+        ---
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+        name: public-backend-deployment
+        spec:
+        replicas: 1
+        strategy:
+            rollingUpdate:
+            maxSurge: 1
+            maxUnavailable: 1
+            type: RollingUpdate
+        selector:
+            matchLabels:
+            app: public-backend
+        template:
+            metadata:
+            labels:
+                app: public-backend
+            spec:
+            containers:
+                - name: public-backend
+                image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.12.0
+                resources: {}
+                ports:
+                    - containerPort: 8080
+                livenessProbe:
+                    exec:
+                    command:
+                        - curl
+                        - --fail
+                        - http://localhost:8080/heartbeat
+                    failureThreshold: 1
+                    periodSeconds: 30
+                startupProbe:
+                    exec:
+                    command:
+                        - curl
+                        - --fail
+                        - http://localhost:8080/heartbeat
+                    failureThreshold: 30
+                    periodSeconds: 10
+    \end{minted}
+    \caption{Example of a Kubernetes Deployment for the public backend}
+\end{listing}
+
+\subsection{Devcontainers}
+Devcontainers are container-based development environments that enables
+developers to work consistently across different machines and operating systems.
+By making use of containerization technologies, such as Docker, devcontainers
+contain all dependencies, tools, and configurations required for a project
+within a portable and reproducible environment. This approach significantly
+reduces the common "works on my machine" problem, as developers can ensure that
+their local development environment mirrors the deployment environment or the
+environments used by their teammates.
+
+For the \textit{Magpie} project, a LaTeX-based devcontainer was implemented to
+streamline the production and maintenance of the project's academic
+documentation. The LaTeX devcontainer provided a pre-configured environment with
+all the necessary tools, including the TeX distribution, LaTeX compiler, and
+essential packages required for document rendering. By containing the LaTeX
+environment in a container, team members could contribute to the report without
+manually installing or configuring LaTeX on their local machines. This
+eliminated compatibility issues arising from different LaTeX distributions or
+versions and ensured that all team members could compile the report(s)
+identically.
+
+Using the LaTeX devcontainer, the team was able to focus on writing and
+formatting the document rather than troubleshooting configuration problems. The
+devcontainer integrated directly with Visual Studio Code, providing an editing
+experience with features such as syntax highlighting, and real-time rendering
+previews.
+
+Additionally, the use of a LaTeX devcontainer aligned with the broader goals of
+reproducibility within the project. All configuration files, such as the
+\texttt{Dockerfile} and \texttt{devcontainer.json}, were stored in the project's
+Git repository. This ensured that the environment remained versioned alongside
+the project.
+
 
 \newpage{}
