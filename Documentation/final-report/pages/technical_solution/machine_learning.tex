@@ -312,6 +312,9 @@ Dublin City Council defines different parking zones by color, based on their hig
 
 The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploaded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
 
+\subsubsection{Main challenges}
+
+
 \subsubsection{Evaluation of each submodule of the parking detection model}
 Each major section of the parking detection model was evaluated individually in order to assess the overall performance. The results will be presented for each section below.
 
@@ -511,9 +514,7 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}.
 
 The Average Orientation Accuracy being somewhat low of only 0.64, is expected as the orientation labels for the test set are calculated automatically based on the width and length of the bounding box, while the orientation associated with the model’s prediction is based on the rotation. This is visible in images 1 and 3 of Table~\ref{tab:test_images2}.
 
-Very few articles replicating a similar concept were found.
-
-The results achieved (presented above in Table~\ref{tab:metrics2}) are in line and similar to other articles performing car detection on satellite imagery such as \cite{similarresults}.
+The results achieved, presented above in Table~\ref{tab:metrics2}, are similar to other articles performing car detection on satellite imagery such as \cite{similarresults}.
 
 The main reason empty parking spots are not detected is due to the fact that cars are classed as on the road by the road mask, therefore given that the empty parking detection logic only fills in gaps between parked cars it cannot find the empty spots, as seen in the bottom left of the second image of Table~\ref{tab:test_images2}.
 Additionally, due to the misclassifications of chimneys or roof pieces as cars by the Yolo model, additional empty spots that should not be identified are detected, as seen on the left of the third image of Table~\ref{tab:test_images3}.
@@ -563,8 +564,7 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}.
 
 The performance is similar for all 3 classes, however for the parking lot class more false positives are present, given that having many bounding boxes clustered together creates more unpredictability adding more additional spots.
 
-The results achieved (presented above in Table~\ref{tab:metrics3}) are in line and similar to other articles performing car detection on satellite imagery such as \cite{similarresults}.
-(also doesn't make sense to cite this article as we are doing classification???)
+The results achieved, presented above in Table~\ref{tab:metrics3}, are in line with other articles performing car detection on satellite imagery such as \cite{similarresults}.
 
 The main outstanding problem for this section is residential areas which are very rarely misclassified as parking lots.
 Additionally, in cases where public spots are quite far from the nearest road, the spots are misclassified as private, which is not a major issue.\\
