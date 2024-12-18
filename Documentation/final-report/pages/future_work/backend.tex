@@ -3,7 +3,8 @@
 As mentioned in the discussion of JSON Web Tokens on page \pageref{jwt}, the use
 of JWTs comes with its own set of caveats.
 
-One solution for this issue would be implementing a list of revoked tokens on
+The most pressing of these issues is the missing token revocation functionality.
+One solution for these issues would be implementing a list of revoked tokens on
 the server and offering the user a way to add a stolen token to that list. If an
 attacker then uses one of these revoked tokens, their requests can be easily
 denied.
@@ -18,8 +19,7 @@ approaching, the team decided to abandon this idea and focus on other issues.
 Nonetheless, these features are essential components for any public facing web
 application. This is why one of the next steps would be to implement email
 verification and password reset using a service like SendGrid. This way, the
-issue of emails being blocked automatically should be mitigated. email
-verification, forgot password
+issue of emails being blocked automatically should be mitigated.
 
 \textbf{Replacing bcrypt}\\
 Switching out bcrypt for Argon2id is not as pressing as other issues on this
@@ -39,9 +39,47 @@ improving the application security would be one of the top priorities in terms
 of further backend development.
 
 \subsubsection{Performance}
-\textbf{Database Optimisation}\\
-optimise database, implement data streaming
-
 \textbf{Improve Data Transmission Speed}\\
+Currently, when a user selects a large area of the map it can take a couple of
+seconds from when they place the circle until the points appear on the map. This
+is due the data being sent in one big chunk which then needs to be processed
+completely before the points can be shown. This is not ideal and better
+responsiveness could improve the user experience.
+
+To achieve this, the data would need to be transmitted in smaller chunks. This
+would allow the frontend to start processing and showing the points even while
+not all of them are loaded. While it would still take at least the same time to
+transmit all of the data, the user would be presented with some data earlier,
+making the application feel much more responsive.
+
+One technical solution to this problem would be streaming the data between
+backend and frontend. This could be implemented using Server{-}sent Events,
+which is a one{-}way data transfer solution that allow progressive delivery of
+large amounts of data. Alternatively, a WebSocket connection could be used to
+achieve a similar result.
+
+\textbf{Database Optimisation}\\
+As discussed in the section on database development on page
+\pageref{database_development}, the database is not considered to be Magpie's
+biggest bottleneck. As such and due to limited time, other issues took
+precedence, so there is still room for optimisations in the database.
+
+A straightforward optimisation would be to add a geospatial index to the points
+table. Using geospatial indexing would help the database eliminate many rows
+early in the querying process, leading to a much more efficient search. Some
+sources achieved a six times speed increase without any other optimisations
+\cite{postgis_indexing}. The team recognises that such an index should have been
+added early in development, as it would reduce retrieval time and could make the
+application as a whole more responsive.
+
+The query used to retrieve the points in a radius could also benefit from some
+optimisation. Currently, it uses the PostGIS \texttt{ST\_DWithin} function to
+find points in a radius. To reduce the number of rows that the query needs to
+compare, a bounding box filter could be used before calling
+\texttt{ST\_DWithin}. The query currently casts the \texttt{LongLat} column of
+type \texttt{geometry} to the \texttt{geography} type for every row on each
+request. Converting the point to \texttt{geography} is necessary for calculating
+the distance in meters, but it's possible to pre{-}calculate and store both
+types in the table to eliminate unnecessary computation.
 
 \subsubsection{Fully Automated Data Ingress}
