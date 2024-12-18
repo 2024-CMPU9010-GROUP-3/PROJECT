@@ -1,15 +1,3 @@
-\subsubsection{Data collection process}
-The Mapbox Static Images API was used to retrieve all the satellite images used in this project.
-
-Initially, a training set of 250 satellite images was collected to train the Yolo model.
-
-Our project has two main Python scripts, \texttt{parking\_detection.py} and \texttt{parking\_detection\_local.py} to localize parking spots.
-In \texttt{parking\_detection.py}, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
-From the coordinates of the specific bounding box, the center coordinates of all the images necessary to make up that area are calculated, and the images are then retrieved.
-While in \texttt{parking\_detection\_local.py}, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the corresponding Mapbox Streets images, covering the entirety of Dublin city.
-
-Extensive testing was done at all the different stages of development of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.
-
 \subsubsection{YOLO model used for car detection}
 YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy compared to models of the time like \fcolorbox{yellow}{yellow}{find reference.}\\
 We started playing with this model because on label studio there was an option to automate the labelling using an integration of the YOLOv5 model. However, this integration was not working which caused us to dig further into Ultralytics, the company behind the YOLO models.\\ \\
