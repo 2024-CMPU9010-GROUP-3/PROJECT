@@ -13,7 +13,7 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[10pt, a4paper]{report} % 10pt font size (11 and 12 also possible), A4 paper (letterpaper for US letter)
+\documentclass[12pt, a4paper]{report} % 10pt font size (11 and 12 also possible), A4 paper (letterpaper for US letter)
 
 \input{structure.tex} % Specifies the document structure and loads requires packages
 
@@ -47,7 +47,7 @@
   \begin{center}
     {\Large\usefont{OT1}{phv}{b}{n}\color{tudublinblue}
       \includegraphics[width=0.5\textwidth]{images/TUDublin_Colour_RGB.png}
-      
+
       \vspace{1cm}
       MSc in Computing \\
       Advanced Software Development \rule[-1mm]{1.5pt}{1.1em} Data Science \\
@@ -55,16 +55,16 @@
       Team Project \\
       \vspace{1cm}
       Final Report \\
-      
-      \vspace{2.5cm}
-      
+
+      \vspace{2.0cm}
+
       \Huge\textbf{Magpie} \\
       \vspace{0.25cm}
       \Large{Services at a Glance}
-      
-      \vspace{2.5cm}
-      
-      \Large
+
+      \vspace{2.0cm}
+
+      \Large{}
       Group 3 \\
       \vspace{0.25cm}
       \setlength\arrayrulewidth{1.5pt}
@@ -73,12 +73,12 @@
         Kaustubh Trivedi & D23124940 & Jessica Fornetti & D23124588  \\
         Anais Blenet     & D22127697 & Yuanshuo Du      & D22125495
       \end{tabular}
-      
-      \vspace{2.5cm}
-      
-      \today
+
+      \vspace{2.0cm}
+
+      \today{}
     }
-    
+
   \end{center}
 \end{titlepage}
 
@@ -88,7 +88,7 @@
 %	ARTICLE CONTENTS
 %----------------------------------------------------------------------------------------
 
-\onecolumn % Ensure single-column layout
+\onecolumn{} % Ensure single-column layout
 
 \section{Introduction}
 \input{pages/introduction.tex}
@@ -102,7 +102,6 @@
 \section{Technical Solution}
 \input{pages/technical_solution/_main.tex}
 
-\newpage
 \section{Software Management}
 \input{pages/software_management.tex}
 
@@ -115,10 +114,8 @@
 \section{Conclusion}
 \input{pages/conclusion.tex}
 
-\cleardoublepage{}
 \input{pages/appendix/_main.tex}
 
-\cleardoublepage{}
 \addcontentsline{toc}{section}{Bibliography}
 \printbibliography[]
 

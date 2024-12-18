@@ -319,7 +319,62 @@ A guided onboarding process walks the user through the various features of the p
 
 \textbf{Footer:} At the bottom of the page, the user is shown a cookie consent banner, offering the option to accept or decline cookies for the site’s functionality.
 
-This page is designed to provide users with an easy{-}to{-}use and interactive interface to view and search for public services across Dublin. The combination of a detailed map with customizable filters and an intuitive onboarding process ensures that users can quickly understand and \textbf{make} use of the platform’s features. The inclusion of interactive elements like the service markers and radius control further enhances the user experience.
+This page is designed to provide users with an easy{-}to{-}use and interactive interface to view and search for public services across Dublin. The combination of a detailed map with customizable filters and an intuitive onboarding process ensures that users can quickly understand and make use of the platform’s features. The inclusion of interactive elements like the service markers and radius control further enhances the user experience.
 
 
-\paragraph{}
+\paragraph{History Page}\mbox{}
+
+\begin{figure}[h]
+    \centering{}
+    \includegraphics[width=1\textwidth]{images/site/history/history_page.png}
+    \caption{History Page}
+\end{figure}
+
+The \textbf{History} page in Magpie provides users with a clear view of their saved location data, allowing them to easily manage and track their previously stored points of interest related to public services. This page is designed to help users interact with their historical data in a seamless and intuitive way.
+
+\subparagraph{Header Section}\mbox{}
+
+\begin{itemize}
+    \item{} \textbf{Navigation Back Button:} Located at the top left of the page, there is a prominent \textbf{Back Button}. This button allows users to quickly navigate back to the previous page. It’s styled with an icon of a leftward arrow, making it easily identifiable. Its positioning ensures that users can always return to the previous screen without confusion.
+    \item{} \textbf{Page Title and Description:} The main section of the header includes a title \textbf{`Saved Locations'} displayed in a large, bold font. This title makes it clear to the user that they are viewing a list of locations they have saved. Beneath the title, a brief description—\textbf{`Here's a list of your saved amenity locations!'}—adds context to the page, helping users understand the purpose of the section.
+\end{itemize}
+
+\textbf{Saved Locations list}
+
+The central feature of the page is a table that displays the user's saved locations along with key details about each entry.
+
+\begin{itemize}
+    \item{} \textbf{Delete Button:} Above the list of saved locations, there is a \textbf{Delete button}. This button allows users to remove one or more saved locations from their history. However, the button is disabled in this view, indicating that no deletions are currently available, possibly due to the absence of selected items.
+    \item{} \textbf{Location Table:} Below the \textbf{Delete} button, the saved locations are listed in a table format. The table is neatly divided into columns, each containing specific information about the saved location. The columns include:
+    \begin{itemize}
+        \item{} \textbf{Location:} The name or description of the saved location.
+        \item{} \textbf{Radius:} The radius within which services are displayed for the location.
+        \item{} \textbf{Amenity Types:} A list or description of the types of amenities (e.g., parking meters, bike stands) available at the saved location.
+        \item{} \textbf{Date Created:} The date when the location was saved to the system, helping users track when the data was added.
+        \item{} \textbf{Show on Map:} A column that likely provides users with the option to display the saved location on a map.
+    \end{itemize}
+
+    If there were saved locations, this table would dynamically populate with relevant data.
+
+\end{itemize}
+
+\subparagraph{No Results Found}\mbox{}
+
+\textbf{Empty State Message:} If there are no saved locations, the table displays a message in the form of a single row: \textbf{`No results found.'} This message is centred in the table, letting users know that there are currently no saved entries to view. This feature ensures that users don’t encounter an empty or broken page but rather receive a clear indication of the state of their saved data.
+
+\textbf{Pagination Controls}
+
+\begin{itemize}
+    \item{} \textbf{Previous and Next Buttons:} At the bottom of the saved locations table, there are pagination buttons for navigating through multiple pages of saved locations. These buttons are disabled in the current state, indicating that there is no additional data to paginate through at this moment.
+    \begin{itemize}
+        \item{} The \textbf{Previous} button allows users to go back to earlier pages of saved data.
+        \item{} The \textbf{Next} button lets users move forward in the list.
+    \end{itemize}
+    These controls are hidden when the data table is empty, as no navigation is necessary.
+\end{itemize}
+
+\subparagraph{Overall Functionality and User Experience}\mbox{}
+
+The \textbf{History Page} allows users to manage their saved locations effectively. The ability to track location{-}based services, adjust the radius, and view amenity types gives users a comprehensive understanding of the locations they have marked. Although the page currently features an empty state, its design allows for easy data manipulation once locations are added, with clear options to delete or view the locations on a map.
+
+This page’s clean layout, with intuitive table navigation and clear instructions, ensures that users can easily understand and manage their saved data. The disabled pagination and delete button indicate that users need to take action before those features become available, which helps guide them toward a more active interaction with the page.
