@@ -1,18 +1,55 @@
 \subsubsection{Data collection process}
 The Mapbox Static Images API was used to retrieve all the satellite images used in this project.
+The satellite images retrieved were of dimensions 400 by 400 pixels and captured at zoom level 18.
 
 Initially, a training set of 250 satellite images was collected to train the Yolo model.
+Datasets containing coordinates (longitude and latitude) of areas in Dublin were collected from Data.gov.ie, and the corresponding satellite images were retrieved using the \texttt{DatasetGeneration.py} script.
+Afterwards, the images were manually labelled using Label Studio, a free open source data labelling tool, as seen in Figure~\ref{fig:LabelStudio}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/label_studio1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/label_studio2.png}
+    \end{minipage}
+    \caption{Satellite images being annotated in Label Studio}
+    \label{fig:LabelStudio}
+\end{figure}
+
 
 Our project has two main Python scripts, \texttt{parking\_detection.py} and \texttt{parking\_detection\_local.py} to localize parking spots.
 In \texttt{parking\_detection.py}, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
 From the coordinates of the specific bounding box, the center coordinates of all the images necessary to make up that area are calculated, and the images are then retrieved.
 While in \texttt{parking\_detection\_local.py}, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the corresponding Mapbox Streets images, covering the entirety of Dublin city.
+A Mapbox Satellite and Mapbox Streets image can be seen below in Figure~\ref{fig:Mapbox_images}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/satellite_img.png}
+        \caption*{Mapbox Satellite Image}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/streets_img.png}
+        \caption*{Mapbox Streets Image}
+    \end{minipage}
+    \caption{Images retrieved from the Mapbox Static Images API}
+    \label{fig:Mapbox_images}
+\end{figure}
 
 Extensive testing was done at all the different stages of development of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.
 
 \subsubsection{YOLO model used for car detection}
 YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy compared to models of the time like \fcolorbox{yellow}{yellow}{find reference.}\\
-We started playing with this model because on label studio there was an option to automate the labelling using an integration of the YOLOv5 model. However, this integration was not working which caused us to dig further into Ultralytics, the company behind the YOLO models.\\ \\
+We started playing with this model because on label studio there was an extension (ML Backend) which could be used to automate the labelling using an integration of the YOLOv5 model. However, this extension was not working as intended which caused us to dig further into Ultralytics, the company behind the YOLO models.\\ \\
 Several papers focusing on object detection cited YOLO over other popular models such as \fcolorbox{yellow}{yellow}{find the reference}. A key challenge that influences the choice of model for the object detection task is effectively managing fluctuations in image resolutions and aspect ratios, as well as the computational resources required to run image detection models.\\
 
 There are two main types of models for object detection tasks: single stage and two-stage. The figure below from \cite{singlevstwodetectorimg} illustrates the process for both.
@@ -66,8 +103,8 @@ The weights of the YOLOv8-OBB model were then saved and used to identify parked 
 \subsubsection{Parking spot detection}
 Subsequently, to identify the parking spots in each satellite image, the cars detected by the YOLO model are classified into on the road or parked, based on a road mask.
 
-\subsubsection{Road mask generation}
-Many different iterations of the road mask were used, the main iterations and their differences are explained and showed below.
+\subsubsection{Road mask generation} \label{sec:road_mask_generation}
+Many different iterations of the road mask were used, the main iterations and their differences are explained and showed below in Figure~\ref{fig:Mask_Iterations}.
 
 The original mask was a very simple binary mask which identified the road pixels by their color, as the majority of roads were depicted in white and darkened the rest of the pixels in the image.
 
@@ -80,22 +117,81 @@ A different approach using Canny Edge Detection was tested, however due to the n
 
 A final improvement to the mask was made to avoid certain misclassification due to the Mapbox Streets road width not correctly reflecting all the lanes of the road and therefore classifying on the road cars as parked. This issue was most prominent for motorways and national roads and was resolved by enlarging those roads using a dilation technique. Multiple different kernel sizes, different number of iterations and kernels of different sizes applied consecutively were tested to find the optimal solution.
 
-\subsubsection{Classifiction of cars into on the road or parked}
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/streets.png}
+        \caption*{Mapbox Streets Image}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/old_mask.png}
+        \caption*{Initial Mask}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/new_mask.png}
+        \caption*{Mask with additional color masks}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/canny_edge_mask.png}
+        \caption*{Canny Edge Detection Mask}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/current_mask.png}
+        \caption*{Current Mask}
+    \end{minipage}
+    \caption{Different Iterations of the Road Mask}
+    \label{fig:Mask_Iterations}
+\end{figure}
+
+\newpage
+
+\subsubsection{Classification of cars into on the road or parked}
 The cars detected by the Yolo model are then sorted into on the road or parked based on the road mask previously generated, which is explained in more detail below.
 
-The model's predictions which are lower than the confidence threshold of 0.4 are discarded as they are more likely to be misclassifications, such as chimneys which were often misclassified as cars.
+The model's predictions which are lower than the confidence threshold of 0.4 are discarded as they are more likely to be misclassifications, such as chimneys or roof pieces which were often misclassified as cars, which can be seen below on the second image of Figure~\ref{fig:Road_mask_classification}.
 
 A bounding box for each of the model's predictions is computed from the center pixel coordinates, the width and the height returned from the model.
 The overlap between the bounding box and the road pixels is calculated, and if the overlap is higher than the threshold of 0.5, the prediction is discarded, keeping only the parked cars.
 Different thresholds were tested as well, however overall a harsher threshold works better given that these detections are used later on for the empty parking detection.
 
-For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, rotation and orientation based on the angle are saved.
+For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, rotation and orientation based on the angle are saved. The horizontal orientation is assigned for spots that have a rotational angle in degrees ranging between -45 and 45 or between 135 and 225, while the vertical orientation is assigned to the remaining spots that do not fit the criteria.
 
-For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen in Figure ...
+For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen below in Figure~\ref{fig:Road_mask_classification}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/road_mask_classification1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/road_mask_classification2.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/road_mask_classification3.png}
+    \end{minipage}
+    \caption{Classification of cars into on the road or parked}
+    \label{fig:Road_mask_classification}
+\end{figure}
+
+\newpage
 
 \subsubsection{Empty parking spot detection}
 Subsequently, empty parking spots are detected between parked cars in each image, based on the parked cars detected by the Yolo model and classified using the road mask.
-Originally 4 cases were considered, cars parked horizontally in a row or in a column, cars parked vertically in a column and parked vertically side by side. However horizontally parked in a column and vertically parked side by side were removed as they lead to too many misclassifications, namely the vertically parked side by side lead to adding many additional cars in driveways in residential areas.
+Originally 4 cases were considered, cars parked horizontally in a row or in a column, cars parked vertically in a column and cars parked vertically side by side. However horizontally parked in a column and vertically parked side by side were removed as they lead to too many misclassifications, namely the vertically parked side by side lead to adding many additional cars in driveways in residential areas.\\
 A number of different variations and calculation techniques were tested out, however only the final version will be explained below.
 
 Average parking spot width and length in pixels are calculated for each image, to draw the empty spots more uniformly. Average parking spot width and length in meters are set to 3.05 as found to be the optimal value through testing accounting for the variations in size.
@@ -110,34 +206,122 @@ Afterwards, duplicate spots defined as spots that overlap too much and where the
 As well, spots coinciding with cars identified by the Yolo model, where the distance between them is smaller than 1.25 meters are removed from the empty spots found.
 Subsequently, empty spots that overlap with the road are filter out in a similar manner to the classification done by the road mask.
 
-Following the detection of all the empty spots, the bounding boxes corresponding to each spot are drawn onto the satellite image in green.
+Following the detection of all the empty spots, the bounding boxes corresponding to each spot are drawn onto the satellite image in green as shown in Figure~\ref{fig:Empty_parking_detection}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/empty_parking1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/empty_parking2.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/empty_parking3.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/empty_parking4.png}
+    \end{minipage}
+    \caption{Empty Parking Spot Detection}
+    \label{fig:Empty_parking_detection}
+\end{figure}
+
+\newpage
 
 \subsubsection{Classification of all spots detected}
 All the parking spots detected, including the parked cars identified by the model and the empty parking spots are then classified into 3 different classes: public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
 
 Multiple different clustering approaches were tested out to cluster spots together, such as DBSCAN, HDBSCAN and OPTICS.
 Overall DBSCAN performed the best and the quickest out of all the clustering algorithms, given that some images contained very few parking spots, meaning clustering was only significant in cases with a minimum number of parking spots.
-Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds were not set correctly.
-\texttt{eps} refers to the maximum distance between two points for them to be considered as neighbors and \texttt{min\_samples} refers to the minimum number of points required to form a cluster.
-HDBSCAN and OPTICS require a minimum number of samples larger or equal to 2, however given that not all images might contained at least 2 detections, clustering using those algorithms is not possible in all cases, so -1 is assigned to the spots without clusters which is the default behaviour of DBSCAN.
-HDBSCAN gave similar results to DBSCAN, though not as good, while OPTICS only found smaller clusters which were not as significant.
+Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds were not set correctly.\\
+\texttt{eps} refers to the maximum distance between two points for them to be considered as neighbors and \texttt{min\_samples} refers to the minimum number of points required to form a cluster.\\
+Using HDBSCAN and OPTICS required a minimum number of samples larger or equal to 2, however given that not all images necessarily contained at least 2 parked cars (some images may contain only on the road cars for example), clustering using those algorithms was not possible in all cases, therefore -1 was assigned to the spots belonging to no clusters similarly to the default behaviour of DBSCAN.
+Clustering using HDBSCAN gave similar results to DBSCAN, however not as good, while OPTICS only found smaller clusters which were not as significant and not particularly helpful to subsequently classify the spots into the parking lot category.
 
 Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
 Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioritized as parking lots containing less spots are not as relevant to the target user and given that the threshold of 18 spots minimizes the risk of misclassifying residential areas as parking lots.
 
-Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private in written in red, public in green and parking lot in white.
+Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private class in written in red, public in green and parking lot in white as seen below in Figure~\ref{fig:classification_all_spots}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/classification1.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/classification2.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/classification3.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/classification4.png}
+    \end{minipage}
+    \caption{Classification of all spots into private, public and parking lot}
+    \label{fig:classification_all_spots}
+\end{figure}
+
+\newpage
 
 \subsubsection{Uploading points to the backend server}
 The longitude, latitude and classification of all the parking spots detected are then saved to a csv file.
-Potential spot duplicates are dropped, as the same car may be in multiple images given that the images are defined by their center coordinates, which causes adjacent images to overlap and share common areas. (The rightmost part of one image often overlaps with the leftmost part of another image.)
+Potential spot duplicates are dropped, as the same car may be in multiple images given that the images are defined by their center coordinates, which causes adjacent images to overlap and share common areas. The rightmost part of one image can overlap with the leftmost part of another image.
 
 Subsequently, the parking zones and costs associated to each parking spot found are added to the csv file.
-Dublin defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure ...
+Dublin City Council defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure~\ref{fig:Parking_zones}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/Parking_zones_map.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/Parking_zones_cost.png}
+    \end{minipage}
+    \caption{Parking zones and cost defined by Dublin City Council}
+    \label{fig:Parking_zones}
+\end{figure}
 
 The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploaded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
 
+\subsubsection{Main challenges}
+Throughout the course of this project, there have been many major challenges and changes which will be discussed in this section.
+
+The biggest initial hurdle was finding a labelling software to annotate our satellite images. Initially, we had settled on LabelImg, however it was no longer being supported on most of our operating systems and was crashing on launch.
+Instead, we turned towards Label Studio and the ML Backend extension, we had intended on using for its active learning functionality that would have enabled using Yolo v5 to automatically label our training images, after only annotating a few images.
+After much troubleshooting, we decided to switch approaches to manually label the images and subsequently train the Yolo model on those images.
+
+Another major challenge, was the empty parking detection section. The crucial decisions and changes are recounted below, following the timeline of our project: \\
+In Week 8, the \texttt{parking\_detection.py} script was updated to use the most up to date trained Yolo model, Yolo v8 obb, that returned oriented bounding boxes, causing many issues in the version of our script at the time, specifically the way of access the bounding boxes predicted by the model had changed.
+Furthermore, given the change to oriented bounding boxes, the size of the bounding boxes became more variable, which allowed the script to be adapted to use average parking spot dimensions.\\
+Week 9 was decisive in implementing a double passthrough to sort the cars by longitude and the latitude to identify both the horizontal and vertical spots.
+Moreover, the \texttt{parking\_detection.py} script was updated to use the xywhr(centre coordinates, width, height and rotation) bounding boxes instead of the xyxy (top left, bottom right)  bounding boxes we were using initially.
+This major change was crucial and allowed for more modularity and allowed the separation into horizontal and vertical cases in a more consistent manner. As well many additional improvement were made that week, such as the removal of overlapping spots and filtering out the empty spots detected on the road.\\
+In week 12, the empty parking detection was completely finalized, resolving the majority of the outstanding issues. The 2 cases causing too many false positives were removed and the condition on the angle alignment was refined and added.
+
+Another major issue was the selection and accurate labelling of the test sets to evaluate each subpart of our model.
+Week 11 marked the beginning of the empty parking detection evaluation. Labelling the test set accurately was a big challenge, many different phases of relabelling and improvements occurred, to ensure the maximum overlap between the true labels and the predictions and achieve a high enough IoU.
+During Week 12, the 2 other evaluation scripts were finalized. Similarly, multiple phases of labelling and relabelling happened. For the classification of spots evaluation, additional images needed to be added to the test set for the private class, as the lack of enough instances was making that class perform much more poorly in comparison to the other classes.
+
 \subsubsection{Evaluation of each submodule of the parking detection model}
-Each major section of the parking detection model was evaluated individually in order to access the overall performance. The results will be presented and analysed for each section below.
+Each major section of the parking detection model was evaluated individually in order to assess the overall performance. The results will be presented for each section below.
 
 \subsubsection{Evaluation of the YOLOv8-OBB model}
 The YOLOv8-OBB model was evaluated on a validation set of 51 images, where precision, recall, accuracy, mean average precision (mAP@50) and F1-score were computed. These were the scores below:
@@ -158,15 +342,80 @@ The YOLOv8-OBB model was evaluated on a validation set of 51 images, where preci
 
 \subsubsection{Evaluation of the classifiction of cars into on the road or parked}
 The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
-The classification is evaluated on the following metrics: Average Intersection over Union (IoU), Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class. These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
+The classification is evaluated on the following metrics commonly used for object detection tasks: Average Intersection over Union (IoU), Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class.
 
-A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in the labelling software Label Studio. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
+These metrics are defined in detail as follows.
 
-The overall results on test set are presented below in Table~\ref{tab:metrics1}
+The IoU is calculated as the overlap between the predicted bounding box \( B_p \) and the ground truth bounding box \( B_g \), divided by their union:
 
-\begin{table}[h]
-  \centering
-  \begin{tabular}{|l|c|c|}
+\[
+\text{IoU} = \frac{|B_p \cap B_g|}{|B_p \cup B_g|}
+\]
+
+The Average IoU is defined as the mean IoU across all detections:
+
+\[
+\text{Average IoU} = \frac{1}{N} \sum_{i=1}^{N} \text{IoU}_i
+\]
+
+where \( N \) is the total number of detections.
+
+Precision is defined as the ratio of true positives (TP) and the sum of true positives and false positives (FP):
+
+\[
+\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
+\]
+
+Recall is defined as the ratio of true positives (TP) and the sum of true positives and false negatives (FN):
+
+\[
+\text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+\]
+
+The F1 Score is defined as the harmonic mean of precision and recall:
+
+\[
+\text{F1 Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+\]
+
+Accuracy is defined as the proportion of correct predictions (TP and TN) out of all the predictions:
+
+\[
+\text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+\]
+
+Balanced Accuracy is defined as the average of Sensitivity (or Recall) and Specificity:
+
+\[
+\text{Balanced Accuracy} = \frac{\text{Sensitivity} + \text{Specificity}}{2}
+\]
+
+where:
+\[
+\text{Sensitivity/Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \quad
+\text{Specificity} = \frac{\text{TN}}{\text{TN} + \text{FP}}
+\]
+
+These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
+
+A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in Label Studio as seen in Figure~\ref{fig:LabelStudio_test_set}. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/label_studio4.png}
+    \caption{Road mask classification test set images being annotated in Label Studio}
+    \label{fig:LabelStudio_test_set}
+\end{figure}
+
+\newpage{}
+
+
+The overall results on test set are presented below in Table~\ref{tab:metrics1}.
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{|l|c|c|}
+
     \hline
     \textbf{Metric}           & \textbf{Parked} & \textbf{Road} \\ \hline
     Average IoU               & 0.66            & 0.66          \\ \hline
@@ -181,37 +430,91 @@ The overall results on test set are presented below in Table~\ref{tab:metrics1}
   \label{tab:metrics1}
 \end{table}
 
-Analyse metrics + Mention common problems. Reference similar results in object detection
+Precision and Recall are relatively high for both classes. Precision for the on the road cars class is extremely high as the majority of the cars in the test set were perfectly horizontally or vertically aligned, and given that the rotation cannot be exported in label studio, the bounding box is drawn less accurately unless if it is perfectly horizontally or vertically aligned.
 
-Some images from the test set can be seen below, in Table~\ref{tab:test_images1}
+The majority of papers available, that explore object detection for cars on satellite images, evaluate their experiment on more general metrics such as Average Precision (AP) and Mean Average Precision (mAP). AP represents the area under the precision-recall curve and mAP represents the mean of the APs across all the different classes. These metrics provide a broader overview of the model's performance as it is measured across varying thresholds.
+Therefore the results obtained are not as comparable, given that precision, recall and f1 score are calculated for a fixed IoU threshold in our evaluation.
+Finding the optimal fixed threshold was opted for to find the most accurate detections, as those detections are used later on for the classification of the spots into public, private and parking lot.
+
+The results achieved, presented above in Table~\ref{tab:metrics1}, are in line with \cite{similarresults}, who achieve a precision of 0.75, a recall of 0.66 and an f1 score of 0.7 at the IoU threshold of 0.3, for detecting parked car on stereo satellite images.
+
+The current road mask has a few outstanding problems, that are discussed further below.\\
+Firstly, sometimes not all parts of the street names are completely removed due to the watermark at the bottom of the image or in the case of the street name being on the very edge of the image. However this seems to rarely be the cause of misclassifications.\\
+For streets where the street name takes up all the whole width of the street, the area where the street name is written is completely erased, which can cause cars on the road to be misclassified as parked.\\
+A key issue, previously discussed in Section~\ref{sec:road_mask_generation}, is that the Mapbox Streets images do not correctly reflect the width of the road for roads with multiple lanes, which leads to cars on the road being misclassified as parked for the furthest out lanes.
+This issue was resolved for motorways as those roads are depicted in orange or yellow, therefore it was possible to distort the road on the mask to cover more surface. However doing this for the regular roads, would cause far more misclassifications, then fix the current ones.\\
+Another problem that is inherently due to the Mapbox Streets images is the Dublin Tunnel being marked on the images making it appear above ground even though it is underground, which leads to misclassiifcations in that specific area.
+
+Some images from the test set can be seen below, in Table~\ref{tab:test_images1}.
 The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
 
-\begin{table}[h]
-  \centering
-  \begin{tabular}{cc}
-    \includegraphics[width=0.4\textwidth]{images/image1_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_road_mask_classification_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image3_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_road_mask_classification_test_set.png} \\
-    \multicolumn{2}{c}{\includegraphics[width=0.4\textwidth]{images/image5_road_mask_classification_test_set.png}}                                                                          \\
-  \end{tabular}
-  \caption{Images from the Road Mask Classification Test Set}
-  \label{tab:test_images1}
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.4\textwidth]{images/image1_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_road_mask_classification_test_set.png} \\
+        \includegraphics[width=0.4\textwidth]{images/image3_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_road_mask_classification_test_set.png} \\
+        \multicolumn{2}{c}{\includegraphics[width=0.4\textwidth]{images/image5_road_mask_classification_test_set.png}} \\
+    \end{tabular}
+    \caption{Images from the Road Mask Classification Test Set}
+    \label{tab:test_images1}
+
 \end{table}
+
+\newpage{}
 
 \subsubsection{Evaluation of the empty parking detection}
 The empty parking detection logic is evaluated in the \texttt{evaluate\_empty\_parking\_detection.py} Python script.
-Expliquer script, comment l'orientation est calcule de facon automatique.
 The classification is evaluated on the following metrics: Average IoU, Average Precision, Average Recall, Average F1 Score, Average Orientation Accuracy, Average Spot Detection Ratio (SDR), Average Spot Detection Error (SDE), Average False Positive Rate (FPR), and Average False Negative Rate (FNR).
-Explain metrics and how the additional ones are calculated/ what they represent.
+
+The additional metrics are defined as follows.
+
+The Average Orientation Accuracy is defined as the ratio of the number of predictions that correctly identify the orientation (either horizontal or vertical) of the spots on the total number of true spots:
+
+\[
+\text{Average Orientation Accuracy} = \frac{\text{Correct Orientation Predictions}}{\text{Total True Labels}}
+                                    = \frac{N_{\text{correct\_orientation}}}{N_{\text{true\_labels}}}
+\]
+
+where \( N_{\text{correct\_orientation}} \) represents the number of predictions with correct orientation, and \( N_{\text{true\_labels}} \) represents the total number of true labels.
+
+The Spot Detection Ratio is defined as the ratio of the number of predictions and the total number of true labels:
+
+\[
+\text{SDR} = \frac{N_{\text{predictions}}}{N_{\text{total\_true\_labels}}}
+\]
+
+where \( N_{\text{predictions}} \) is the total number of detected spots, and \( N_{\text{total\_true\_labels}} \) is the total number of true labels.
+
+The Spot Detection Error is defined as the absolute difference between the number of predictions and the total number of true labels:
+
+\[
+\text{SDE} = |N_{\text{predictions}} - N_{\text{total\_true\_labels}}|
+\]
+
+The False Positive Rate is defined as the proportion of incorrectly predicted positives (FP) out of all the actual negatives:
+
+\[
+\text{Average FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
+\]
+
+The False Negative Rate is defined as the proportion of incorrectly predicted negatives (FN) out of all the actual positives:
+
+\[
+\text{Average FNR} = \frac{\text{FN}}{\text{TP} + \text{FN}}
+\]
+
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
-Likewise a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap.
-Achieving a high IoU was a significant challenge, specifically in this section, as the positioning of the spots can be difficult to label.
+Likewise a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap. The pixel coordinates, width and height of the annotated bounding boxes are exported. The orientation of each bounding box, is calculated automatically in the evaluation script when loading in the true labels.\\
+Achieving a high IoU was a significant challenge, specifically in this section of the model, as the positioning of the spots can be difficult to label accurately. Indeed, it was difficult to identify if there was sufficient space available to fit a car.
 To remedy this issue, the IoU threshold was lowered to 0.35, as there was still significant overlap visible when analysing the test images.
-The problems linked to overlap, is equally due to the differences in orientation as the true labels and the predictions are not calculated in a similar manner. (Expliquer mieux et dire les differences)
+The problems linked to the overlap, is equally due to the differences in orientation as the true labels and the predictions are calculated differently.
+For the true labels, the orientation is based on whether the width or length of the spot is larger (the spots with larger width are labelled as horizontal and the spots with larger length are labelled as vertical), while for the model's predictions the orientation is based on the angle measurement.
 
-The overall results on test set are presented below in Table~\ref{tab:metrics2}
+The overall results on test set are presented below in Table~\ref{tab:metrics2}.
 
-\begin{table}[h]
+
+\begin{table}[htbp]
   \centering
   \begin{tabular}{|l|c|}
     \hline
@@ -230,32 +533,41 @@ The overall results on test set are presented below in Table~\ref{tab:metrics2}
   \label{tab:metrics2}
 \end{table}
 
-Analyse metrics + Mention common problems. Reference similar results in object detection
 
-A few images from the test set are displayed below, in Table~\ref{tab:test_images2}
+The Average Orientation Accuracy being somewhat low of only 0.64, is expected as the orientation labels for the test set are calculated automatically based on the width and length of the bounding box, while the orientation associated with the model’s prediction is based on the rotation. This is visible in images 1 and 3 of Table~\ref{tab:test_images2}.
+
+The results achieved, presented above in Table~\ref{tab:metrics2}, are similar to other articles performing car detection on satellite imagery such as \cite{similarresults}.
+
+The main reason empty parking spots are not detected is due to the fact that cars are classed as on the road by the road mask, therefore given that the empty parking detection logic only fills in gaps between parked cars it cannot find the empty spots, as seen in the bottom left of the second image of Table~\ref{tab:test_images2}.
+Additionally, due to the misclassifications of chimneys or roof pieces as cars by the Yolo model, additional empty spots that should not be identified are detected, as seen on the left of the third image of Table~\ref{tab:test_images3}.
+Furthermore, some spots are too small to be found by the model given the threshold set for the average width and average height.\\
+Other minor issues that sometimes lead to empty parking spots not being detected are due to angle misalignment, when one car is oriented incorrectly and more slanted, leading to the angle between the 2 cars being larger that the threshold or when 2 cars are too far apart to fill in the gap.
+
+A few images from the test set are displayed below, in Table~\ref{tab:test_images2}.
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
 
-\begin{table}[h]
-  \centering
-  \begin{tabular}{cc}
-    \includegraphics[width=0.4\textwidth]{images/image1_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_empty_parking_detection_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image3_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_empty_parking_detection_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image5_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_empty_parking_detection_test_set.png} \\
-  \end{tabular}
-  \caption{Images from the Empty Parking Detection Test Set}
-  \label{tab:test_images2}
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.4\textwidth]{images/image1_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_empty_parking_detection_test_set.png} \\
+        \includegraphics[width=0.4\textwidth]{images/image3_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_empty_parking_detection_test_set.png} \\
+        \includegraphics[width=0.4\textwidth]{images/image5_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_empty_parking_detection_test_set.png} \\
+    \end{tabular}
+    \caption{Images from the Empty Parking Detection Test Set}
+    \label{tab:test_images2}
 \end{table}
+
+\newpage{}
 
 \subsubsection{Evaluation of the classification of the spots detected into private, public and parking lot}
 The classification of the spots detected into private, public and parking lot is evaluated in the \texttt{evaluate\_classification\_of\_spots.py} Python script.
-Dire changement, like all the spots include everything...
-The classification is evaluated on the following metrics: Average IoU, Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class. These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
+The classification is evaluated on the following metrics as defined previously: Average IoU, Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class. These metrics are saved in a csv file for each test image as well as the overall average metrics on the entire test set.
 
 Similarly, a test set of 50 images was carefully selected and consistently labelled in Label Studio, without rotation to ensure the maximum overlap.
 
-The overall results on test set are presented below in Table~\ref{tab:metrics3}
+The overall results on test set are presented below in Table~\ref{tab:metrics3}.
 
-\begin{table}[h]
+\begin{table}[htbp]
   \centering
   \begin{tabular}{|l|c|c|c|}
     \hline
@@ -272,22 +584,40 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}
   \label{tab:metrics3}
 \end{table}
 
-Analyse metrics + Mention common problems. Reference similar results in object detection
+The performance is similar for all 3 classes, however for the parking lot class more false positives are present, given that having many bounding boxes clustered together creates more unpredictability adding more additional spots.
 
-A few images from the test set are shown below, in Table~\ref{tab:test_images3}
+The results achieved, presented above in Table~\ref{tab:metrics3}, are in line with other articles performing car detection on satellite imagery such as \cite{similarresults}.
+
+The main outstanding problem for this section is residential areas which are very rarely misclassified as parking lots.
+Additionally, in cases where public spots are quite far from the nearest road, the spots are misclassified as private, which is not a major issue.\\
+Another point worth noting is that smaller parking lots with less than 18 spots are not detected though that is intentional and by design in order to focus on larger parking lots and avoid misclassifications.
+
+A few images from the test set are shown below, in Table~\ref{tab:test_images3}.
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
 
-\begin{table}[h]
-  \centering
-  \begin{tabular}{cc}
-    \includegraphics[width=0.4\textwidth]{images/image1_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_classification_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image3_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_classification_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image5_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_classification_test_set.png} \\
-  \end{tabular}
-  \caption{Images from the Parking Spot Classification Test Set}
-  \label{tab:test_images3}
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{cc}
+        \includegraphics[width=0.4\textwidth]{images/image1_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_classification_test_set.png} \\
+        \includegraphics[width=0.4\textwidth]{images/image3_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_classification_test_set.png} \\
+        \includegraphics[width=0.4\textwidth]{images/image5_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_classification_test_set.png} \\
+    \end{tabular}
+    \caption{Images from the Parking Spot Classification Test Set}
+    \label{tab:test_images3}
 \end{table}
 
+\newpage{}
 
-Relire tout and add more, ajouter totues les figures. Expliquer parking zones and costs mieux en ajoutant la figure du pdf.
-Verifier que j'ai explique toutes les fonctions. Refer to each figures, like say as seen in figure x ...
+\subsubsection{Future Work : ML}
+
+For future work, the most pressing task would be to add additional data sources, in particular transportation data such as bus and luas routes, bus stops and luas stations.
+Information on the water supply and the electrical infrastructure would equally be helpful to add, in particular information pertaining to the municipal water supply, the power grid, off the grid solar panels and backup generators.\\
+Furthermore, the current amenities should be extended to include more counties, close to Dublin such as Fingal, South Dublin and Meath, as well as extended to larger cities in Ireland like Cork, Galway, Limerick and Sligo.
+
+Retraining the Yolo model on a dataset containing more manually annotated satellite images should be explored in order to improve the model's performance and reduce the number of false positives.
+
+Improving the road mask's accuracy in classifying cars as on the road and parked correctly is especially crucial, as the current misclassificatiosn lead to issues afterwards particularly in the empty parking detection section.
+It could be interesting to test out enlarging the roads by a certain ratio, depending on the road width to begin with in order to find a way of identifying only larger roads with multiple lanes.
+
+The empty parking detection could be further improved by adding additional heuristics to find the empty spots more efficiently.\\
+Moreover, the 2 cases that were removed as too many additional spots were being detected could be refined and implemented differently.
