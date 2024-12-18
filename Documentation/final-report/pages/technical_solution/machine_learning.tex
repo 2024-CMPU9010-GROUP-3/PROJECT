@@ -298,7 +298,10 @@ The YOLOv8-OBB model was evaluated on a validation set of 51 images, where preci
   \caption{YOLOv8-OBB model results}
 \end{table}\\
 
-\fcolorbox{yellow}{yellow}{explain results}
+The model obtains near perfect precision and recall on the validation data set meaning it is very good at correctly identifying the majority of true positives and preventing false positives.
+However, the lower f1 score of 91\% highlights the slight imbalance between precision and recall. Additionally, the confidence threshold is based on the F1-score, suggesting that the model performs at a level where precision and recall are balanced best closer to 30\%. This indicates that our model is not strict.
+
+Although the overall metrics obtained are quite high, it is important to consider that, the validation and training data are not very large, therefore impacting overall model performance to identify cars in a larger detection set.
 
 \subsubsection{Evaluation of the classification of cars into on the road or parked}
 The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
