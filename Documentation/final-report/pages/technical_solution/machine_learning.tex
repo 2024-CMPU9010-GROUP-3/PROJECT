@@ -315,28 +315,21 @@ The csv file containing the longitude, latitude, classification label, parking z
 \subsubsection{Main challenges}
 Throughout the course of this project, there have been many major challenges and changes which will be discussed in this section.
 
-inital struggles on th elableleing software, first installed labelIMG ...
+The biggest initial hurdle was finding a labelling software to annotate our satellite images. Initially, we had settled on LabelImg, however it was no longer being supported on most of our operating systems and was crashing on launch.
+Instead, we turned towards Label Studio and the ML Backend extension, we had intended on using for its active learning functionality that would have enabled using Yolo v5 to automatically label our training images, after only annotating a few images.
+After much troubleshooting, even though the extension was installed properly and the Yolo model up and running, we decided to switch approaches to manually label the images and subsequently train the Yolo model on those images.
 
-The biggest initial hurdle was Label Studio and the ML Backend extension, we had intended on using for its active learning functionality that would have enabled using Yolo v5 to automatically label our training images, after only annotating a few images.
-after much troubleshooting, even though the extension was installed properly, the Yolo model was up and running and connected to our project, we decided to switch the appraoch to manually labeling the images ourslef and then train yolo.
+Another major challenge, was the empty parking detection section. The crucial decisions and changes are recounted below, following the timeline of our project: \\
+In Week 8, the \texttt{parking\_detection.py} script was updated to use the most up to date trained Yolo model, Yolo v8 obb, that returned oriented bounding boxes, causing many issues in the version of our script at the time, specifically the way of access the bounding boxes predicted by the model had changed.
+Furthermore, given the change to oriented bounding boxes, the size of the bounding boxes became more variable, which allowed the script to be adapted to use average parking spot dimensions.\\
+Week 9 was decisive in implementing a double passthrough to sort the cars by longitude and the latitude to identify both the horizontal and vertical spots.
+Moreover, the \texttt{parking\_detection.py} script was updated to use  the xywhr(centre coordinates, width, height and rotation) bounding boxes instead of the xyxy (top left, bottom right)  bounding boxes we were using initially.
+This major change was crucial and allowed for more modularity and allowed the separation into horizontal and vertical cases in a more consistent manner. As well many additional improvement were made that week, such as the removal of overlapping spots and filtering out the empty spots detected on the road.\\
+In week 12, the empty parking detection was completely finalized, resolving the majority of the outstanding issues. The 2 cases causing too many false positives were removed and the condition on the angle alignment was refined and added.
 
-the empty parking detection caused many issues, there were many changes, the crucial decisoin and changes are recounted below, follwing the timeline of our project:
-
-- week 8 - initial abitious version to have a unerversal case of parking lot with multiple rows  logic, but quickly pivoted to focuss on only a row.
-updated our script to use the Yolo oriented bounding boxes model, which cause a few issues. Namely the way to access the bounding boxes predicted by the model changed, and most importantly the size of the bounding boxes became more variable, so adapted the script to calculate average parking spot dimensions based on the bounding boxes found in an image instead.
-updated the version of the model used to the most up to date one with oriented bbs, (gave better results, removed some misclassificatins??)
-
-- week 9 - implemented a double passthrough to sort the cars by longitude and the latitude to find both the horizontal and vertical spots, though orientation wasn't a param yet.
-changed to xywhr(centre coordinates, width, height and rotation) bounding boxes instead of the xyxy (top left, bottom right)  bounding boxes we were using initally. So that way we have access to the rotation and each individual width and length. This major change broke a lot of things namely the was to draw the bounding boxes.
-oreintation was the used to seperate between hor/vert cases...
-chnging the way of accessing bb was crucial, adds more modualrtiy... add more/explain better, so many new changes were made that week, duplication solved...
-
-- week 10- finished up empty parking detection, but with 4 cases
-
-- week 12 - finalized empty parking detection and all the issues, removed 2 cases and then readded the angle alignmenet things
-
-another major issue was the laeblling of the test sets. week 11 first started with the empty parking detction evaluation, labelling test set accrauetly was a big challenge, relabeelling many times..., iou challenge, to get good results ...
-week 12, finalized both eval scripts, laeblling issues and relabelling + needed more private in the test set.
+Another major issue was the selection and accurate labelling of the test sets to evaluate each subpart of our model.
+Week 11 marked the beginning of the empty parking detection evaluation. Labelling the test set accurately was a big challenge, many different phases of relabelling and improvements occurred, to ensure the maximum overlap between the true labels and the predictions and achieve a high enough IoU.
+During Week 12, the 2 other evaluation scripts were finalized. Similarly, multiple phases of labelling and relabelling happened. For the classification of spots evaluation, additional images needed to be added to the test set for the private class, as the lack of enough instances was making that class perform much more poorly in comparaison to the other classes.
 
 \subsubsection{Evaluation of each submodule of the parking detection model}
 Each major section of the parking detection model was evaluated individually in order to assess the overall performance. The results will be presented for each section below.
