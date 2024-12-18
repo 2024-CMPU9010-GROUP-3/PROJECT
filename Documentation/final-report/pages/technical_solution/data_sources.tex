@@ -22,7 +22,11 @@ First, 250 images were downloaded using CSV data from the following sources:
     \item \textbf{Smart Dublin}: Founded by Dublin local authorities, their goal is to look for innovative technological solutions for local environmental, social, mobility, government and living issues. They also have hundreds of publicly available datasets
     \item \textbf{Kaggle}: a data science and machine learning platform part of Google Cloud where competitions are hosted, in addition to thousands of publicly available datasets
 \end{itemize}
-These CSV files contained information on the location of certain facilities such as rentals, coach parking, public parks. This location was latitude and longitude which we needed to input into the script to download images, as well as the street name of that location which was used to name the downloaded image.\\
+These CSV files contained information on the location of certain facilities such as rentals, coach parking, public parks. This location was latitude and longitude which we needed to input into the script to download images, as well as the street name of that location which was used to name the downloaded image.
+
+Some data cleaning and processing had to be done to obtain a new csv file with longitudes and latitudes in the right format to send to the backend using our send points script.
+
+For example in 2 datasets the coordinates were in a local coordinates system (easting/northing) and not the universal longitude/latitude so we had to write a script to convert them properly. And certain datasets were only in geojson format so we had to write a script to handle the conversion to csv. (For one file the geometry field which contains the point data, the coordinates was not being read into a pandas dataframe correctly so we had to parse it using json and extract the fields instead)
 
 \begin{listing}[h!]
     \centering
