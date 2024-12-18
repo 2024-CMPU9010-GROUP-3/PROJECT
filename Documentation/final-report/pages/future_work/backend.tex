@@ -1,0 +1,115 @@
+\subsubsection{Application Security}
+\textbf{Fix Issues with JWTs}\\
+As mentioned in the discussion of JSON Web Tokens on page \pageref{jwt}, the use
+of JWTs comes with its own set of caveats.
+
+The most pressing of these issues is the missing token revocation functionality.
+One solution for these issues would be implementing a list of revoked tokens on
+the server and offering the user a way to add a stolen token to that list. If an
+attacker then uses one of these revoked tokens, their requests can be easily
+denied.
+
+\textbf{Implement Email-based Features}\\
+Right at the end of the project, the team experimented with email-based features
+like email verification and password reset. Unfortunately, emails sent by our
+system were always classified either classified as spam or didn't get delivered
+at all as they were considered untrustworthy. Since the deadline was fast
+approaching, the team decided to abandon this idea and focus on other issues.
+
+Nonetheless, these features are essential components for any public facing web
+application. This is why one of the next steps would be to implement email
+verification and password reset using a service like SendGrid. This way, the
+issue of emails being blocked automatically should be mitigated.
+
+\textbf{Replacing bcrypt}\\
+Switching out bcrypt for Argon2id is not as pressing as other issues on this
+list as it is still functional and secure, but sometime in the future it would
+be a good idea to switch to a newer password encryption solution. This would
+bring Magpie in line with the current recommendations for secure password
+storage by the \textcite{owasp_password_storage_cheatsheet}.
+
+Replacing the bcrypt library would make it necessary to reset the passwords of
+all users, as it is not possible to convert a bcrypt hash to a Argon2id hash.
+This should therefore be done before the number of users grows to affect as few
+people as possible.
+
+The issue of improving application security was kept in mind during the whole
+development process, but other issues always took precedence. Given more time,
+improving the application security would be one of the top priorities in terms
+of further backend development.
+
+\subsubsection{Performance}
+\textbf{Improve Data Transmission Speed}\\
+Currently, when a user selects a large area of the map it can take a couple of
+seconds from when they place the circle until the points appear on the map. This
+is due the data being sent in one big chunk which then needs to be processed
+completely before the points can be shown. This is not ideal and better
+responsiveness could improve the user experience.
+
+To achieve this, the data would need to be transmitted in smaller chunks. This
+would allow the frontend to start processing and showing the points even while
+not all of them are loaded. While it would still take at least the same time to
+transmit all of the data, the user would be presented with some data earlier,
+making the application feel much more responsive.
+
+One technical solution to this problem would be streaming the data between
+backend and frontend. This could be implemented using Server{-}sent Events,
+which is a one{-}way data transfer solution that allow progressive delivery of
+large amounts of data. Alternatively, a WebSocket connection could be used to
+achieve a similar result.
+
+\textbf{Database Optimisation}\\
+As discussed in the section on database development on page
+\pageref{database_development}, the database is not considered to be Magpie's
+biggest bottleneck. As such and due to limited time, other issues took
+precedence, so there is still room for optimisations in the database.
+
+A straightforward optimisation would be to add a geospatial index to the points
+table. Using geospatial indexing would help the database eliminate many rows
+early in the querying process, leading to a much more efficient search. Some
+sources achieved a six times speed increase without any other optimisations
+\cite{postgis_indexing}. The team recognises that such an index should have been
+added early in development, as it would reduce retrieval time and could make the
+application as a whole more responsive.
+
+The query used to retrieve the points in a radius could also benefit from some
+optimisation. Currently, it uses the PostGIS \texttt{ST\_DWithin} function to
+find points in a radius. To reduce the number of rows that the query needs to
+compare, a bounding box filter could be used before calling
+\texttt{ST\_DWithin}. The query currently casts the \texttt{LongLat} column of
+type \texttt{geometry} to the \texttt{geography} type for every row on each
+request. Converting the point to \texttt{geography} is necessary for calculating
+the distance in meters, but it's possible to pre{-}calculate and store both
+types in the table to eliminate unnecessary computation.
+
+\subsubsection{Fully Automated Data Ingress}
+At the moment, new data is added to the system by manually running a Python
+script. This works for the current scope of the project, but should Magpie's
+service area be expanded in the future this would not be sustainable. Therefore,
+a fully automated solution should be put in place. This would take the form of a
+container that has facilities to add new data to the database, either when new
+datasets become available or upon user request.
+
+For example, if a user queries an area for parking spots that is not currently
+covered by Magpie, the backend could send a request to the data container which
+would then fetch, classify and insert the data. While this approach would be too
+slow to provide the data in a timely manner to the user who requested it, it
+could still be stored in the database for when the next user requests it. There
+could even be a function where users get a notification via email when an area
+they queried has data added to it.
+
+One challenge with this feature would be figuring out where new datasets overlap
+with old datasets. Since the points for parking are generated by a machine
+learning model, it is possible that point coordinates for the same parking spot
+might differ slightly between runs. It's possible to just discard points with
+the exact same coordinates, but there is no guarantee that no parking spot will
+be counted multiple times.
+
+A different problem arises with external datasets (such as from
+\texttt{gov.ie}). While the coordinates of amenities such as public bins will
+not change much, it is not safe to assume that the format of the dataset will
+not change between releases. Designing an automated data ingress solution to
+handle arbitrary data formats correctly would probably be a project in itself.
+
+Solving these problems would enable Magpie to serve a larger area with less
+reliance on manual input.
