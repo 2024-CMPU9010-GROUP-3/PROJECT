@@ -1,6 +1,8 @@
 \onecolumn{}
 \pagenumbering{Roman}
-\newgeometry{left=5cm,top=2cm,right=5cm,bottom=2.5cm}
+\pagestyle{plain}
+
+\newgeometry{left=2.5cm,top=2cm,right=2.5cm,bottom=2.5cm}
 
 \makeatletter{}
 \renewcommand{\tableofcontents}{
@@ -14,28 +16,21 @@
 \makeatother{}
 
 \cleardoublepage{}
-\thispagestyle{plain}
-\onecolumn{}
 \addcontentsline{toc}{section}{Table of Contents}
 \tableofcontents{}
 
 \cleardoublepage{}
-\thispagestyle{plain}
 \addcontentsline{toc}{section}{List of Figures}
 \listoffigures{}
 
 \cleardoublepage{}
-\thispagestyle{plain}
 \addcontentsline{toc}{section}{List of Tables}
 \listoftables{}
 
 \cleardoublepage{}
-\thispagestyle{plain}
 \addcontentsline{toc}{section}{List of Listings}
 \listoflistings{}
 
-\cleardoublepage{}
-
+\pagestyle{fancy}
 \restoregeometry{}
 \pagenumbering{arabic}
-\twocolumn{}

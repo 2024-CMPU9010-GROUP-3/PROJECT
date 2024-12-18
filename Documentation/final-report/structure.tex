@@ -29,6 +29,8 @@
 
 \usepackage{svg} % Required for including svg images
 
+\usepackage[titles]{tocloft}
+
 \usepackage[outputdir=docs]{minted} % Required for including snippets of code
 
 \usepackage[hang, small, labelfont=bf, up, textfont=it]{caption} % Custom captions under/above tables and figures
@@ -155,25 +157,18 @@
 %	TABLE OF CONTENTS
 %----------------------------------------------------------------------------------------
 
-\usepackage{tocloft}
-
 % dots connecting to page numbers
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 
 % fonts for TOC
 \renewcommand{\cfttoctitlefont}{\fontfamily{phv}\selectfont\Large\bfseries}
-\renewcommand{\cftsecfont}{\fontfamily{phv}\selectfont\bfseries}
-\renewcommand{\cftsecpagefont}{\fontfamily{phv}\selectfont}
-\renewcommand{\cftsubsecfont}{\fontfamily{phv}\selectfont}
-\renewcommand{\cftsubsecpagefont}{\fontfamily{phv}\selectfont}
-\renewcommand{\cftsubsubsecfont}{\fontfamily{phv}\selectfont\itshape}
-\renewcommand{\cftsubsubsecpagefont}{\fontfamily{phv}\selectfont}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftsubsubsecfont}{\itshape}
 
 \renewcommand{\cftloftitlefont}{\fontfamily{phv}\selectfont\Large\bfseries} % List of Figures title
 \renewcommand{\cftlottitlefont}{\fontfamily{phv}\selectfont\Large\bfseries} % List of Tables title
 
-\setcounter{tocdepth}{3}
-
+\setcounter{tocdepth}{2}
 
 %----------------------------------------------------------------------------------------
 %	ABSTRACT
