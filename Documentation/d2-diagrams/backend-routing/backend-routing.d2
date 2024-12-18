@@ -1,0 +1,29 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 300
+  }
+}
+
+direction: down
+
+Frontend -> HTTP Server
+
+HTTP Server -> Middlewares
+
+Middlewares -> /v1
+Middlewares -> /heartbeat
+
+/v1 -> /public
+/v1 -> /private
+
+/public -> /points (public)
+/public -> /auth
+/public -> /history
+
+/private -> /points (private)
+
+/points (public) -> Points Handler (public)
+/auth -> Auth Handler
+/history -> Location History Handler
+/points (private) -> Points Handler (private)
