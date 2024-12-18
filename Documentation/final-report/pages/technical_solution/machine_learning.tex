@@ -313,6 +313,33 @@ Dublin City Council defines different parking zones by color, based on their hig
 The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploaded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
 
 \subsubsection{Main challenges}
+Throughout the course of this project, there have been many major challenges which will be discussed in this section.
+
+label studio biggest challenge, ml backend bs : We tried a first approach to use label studio the labelling software we had installed, which has an active learning functionality. By installing the ml backend extension, you can use a pretrained model, in our case the YOLOv8 to identify the cars and make the predictions of the bounding boxes in the image. First you need to annotate a few images and the model will then learn from those annotations to make the predictions.
+Unfortunately, we weren’t able to get label studio to work properly. The extension was installed successfully, and the Yolo model was up and running and connected to our project, but it wasn’t making any predictions even though all the options for active learning were enabled. We tried troubleshooting but weren’t able to find a solution.
+so we switched the appraoch to manually labeled and then train yolo...
+
+intial transfer learning approach and using other models, not sure if we should mention that??
+
+all the empty parking detection issues:
+- week 8 -This week in terms of machine learning, we worked on fixing the empty parking spot detection.
+Initially, I wanted to deal with all the cases including a parking lot with multiple rows but given the results weren’t very promising we changed our approach to focus on a single row of parked cars at first.
+Wednesday, during our daily meeting we realized we were still using an older version of the model, so I updated our script to use the Yolo oriented bounding boxes model, which cause a few issues. Namely the way to access the bounding boxes predicted by the model changed, and most importantly the size of the bounding boxes became more variable, so I changed the script to calculate average parking spot dimensions based on the bounding boxes found in an image instead.
+updated the model, gave better results, removed some misclassificatins....
+
+- week 9 - This week I continued working on the empty parking detection. Monday I figured out why the vertical spots weren’t being handled correctly, as the script was only going in the horizontal case. So I implemented a double passthrough to sort the cars by longitude and the latitude to find both the horizontal and vertical spots.
+The main issue with that is we are only able to find horizontal spots in rows and vertical spots in columns except we also want to be able to identify horizontal spots stacked in columns and vertical spots side by side in rows. And because of the way we were separating into horizontal and vertical those cases were being ignored.
+So tuesday the best solution I found was to change the whole code to use the xywhr(centre coordinates, width, height and rotation) bounding boxes instead of the xyxy (top left, bottom right)  bounding boxes we were using initally. So that way we have access to the rotation and each individual width and length. This major change broke a lot of things namely the was to draw the bounding boxes so I had to fix that.
+So this morning I updated the script to sort the cars detected into horizontal and vertical based on the rotation, 
+so that now the script can handle both cases in horizontal and vertical separately. So I’ll update all the functions and hopefully that will fix most of the current problems.
+chnging the way of accessing bb was crucial, adds more modualrtiy... add more/explain better, so many new changes were made that week, duplication solved...
+
+- week 10- finished up empty parking detection, but with 4 cases
+
+- week 11 -labelling test set accrauetly was a big challenge, relabeelling many times..., iou challenge, to get good results ...
+
+- week 12 - finalized empty parking detection and all the issues, removed 2 cases and then readded the angle alignmenet things
+also finalized both eval scripts, laeblling issues and relabelling + needed more privat in the test set.
 
 
 \subsubsection{Evaluation of each submodule of the parking detection model}
