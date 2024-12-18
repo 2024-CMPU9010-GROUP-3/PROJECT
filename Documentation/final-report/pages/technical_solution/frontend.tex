@@ -377,4 +377,210 @@ The central feature of the page is a table that displays the user's saved locati
 
 The \textbf{History Page} allows users to manage their saved locations effectively. The ability to track location{-}based services, adjust the radius, and view amenity types gives users a comprehensive understanding of the locations they have marked. Although the page currently features an empty state, its design allows for easy data manipulation once locations are added, with clear options to delete or view the locations on a map.
 
-This page’s clean layout, with intuitive table navigation and clear instructions, ensures that users can easily understand and manage their saved data. The disabled pagination and delete button indicate that users need to take action before those features become available, which helps guide them toward a more active interaction with the page.
+This page’s clean layout, with intuitive table navigation and clear instructions, ensures that users can easily understand and manage their saved data. The disabled pagination and delete button indicate that users need to take action before those features become available, which helps guide them toward a more active interaction with the page.\subsubsection{Prototyping}
+
+A prototype is a useful design tool for testing concepts, clarifying requirements, and starting user interaction and feedback.
+Prototyping methods can be categorized by fidelity—ranging from low-fidelity sketches to high-fidelity digital mockup.
+
+
+\subsubsection{Prototype methods}
+We use Evolutionary prototyping to continuously update our prototypes.Part of the prototyping process involves dealing with feedback and subsequent revisions. It helps designers test and retest their ideas over and over again. The faster designers are able to test their design concepts and make improvements, the faster they can get to a satisfactory final version. In addition, our team uses Agile development methodologies in prototyping. Agile increases flexibility, collaboration, and rapid feedback cycles to create product prototypes in rapid iterations with continuous ones after collecting feedback and guided ones.
+
+Under the guidance of agile development methodology and Evolutionary strategy, we established the following prototyping process:
+
+At some stage in the prototype design process, user feedback served as a essential guiding precept. We applied a comprehensive framework for gathering and studying remarks to make certain non-stop optimization primarily based on real user desires and experiences.
+
+Our remarks series method encompassed 3 major procedures. First, we carried out in-intensity, one-on-one person interviews that allowed us to collect distinct qualitative remarks approximately customers' intuitive responses to the interface and become aware of specific demanding situations they encountered at some point of their interactions with the platform. these interviews supplied treasured insights into the consumer experience from a non-public angle.
+
+the second approach worried based usability trying out classes. at some point of these periods, we created unique mission scenarios for customers to finish while we cautiously located their behavioral patterns and navigation paths through the interface. This technique proved particularly effective in identifying factors of bewilderment and regions wherein customers experienced difficulties or hesitation of their interactions with the platform.
+
+To complement our qualitative studies, we applied a quantitative remarks device through cautiously designed questionnaires. those surveys utilized the Likert scale to degree person satisfaction throughout numerous aspects of the platform and included open-ended questions to capture additional suggestions and remarks. The quantitative statistics amassed thru those questionnaires enabled us to perform statistical analysis of consumer delight tiers and identify traits in person options and pain factors.
+\begin{table}[h!]
+    \centering
+    \renewcommand{\arraystretch}{1.5}
+    \begin{tabular}{|c|p{4cm}|p{10cm}|}
+    \hline
+    \textbf{Step} & \textbf{Stage}           & \textbf{Tasks}                                                                                 \\ \hline
+    1             & Requirement Collection and Analysis & \begin{itemize}
+                                                            \item Identify core functional requirements through user interviews and research
+                                                            \item Analyze the strengths and weaknesses of competitors and existing solutions
+                                                            \item Prioritize prototype design and create an iteration plan
+                                                        \end{itemize}                                                                                  \\ \hline
+    2             & Prototype Design and Development & \begin{itemize}
+                                                        \item Create prototypes using tools like FigJam and Figma
+                                                        \item Follow a consistent design system and guidelines
+                                                        \item Focus on intuitive and user-friendly interaction design
+                                                    \end{itemize}                                                                                  \\ \hline
+    3             & User Testing and Feedback & \begin{itemize}
+                                                \item Conduct user usability testing
+                                                \item Gather qualitative and quantitative user feedback
+                                                \item Analyze test data and develop improvement plans
+                                            \end{itemize}                                                                                  \\ \hline
+    4             & Iterative Optimization       & \begin{itemize}
+                                                    \item Adjust design solutions based on feedback
+                                                    \item Continuously improve the user experience
+                                                    \item Ensure the design meets project objectives
+                                                \end{itemize}                                                                                  \\ \hline
+    \end{tabular}
+    \caption{Process Flow Table: Design and Development Stages}
+    \label{tab:process_flow}
+    \end{table}
+
+
+
+\subsubsection{Low-fidelity prototypes}
+
+\begin{itemize}
+\item \textbf{Sketches}
+
+We used FigJam for the sketch concept, which allowed us to do a full online brainstorm. we started out with a card format, where the top right side displays the filter and the bottom side displays the rotation of the three icon styles, and the top left and bottom left side have the branding icon and the cookie component, which made the whole page more cluttered. This made the whole page more complicated, so we updated it so that the filter, radius range are on the right as a whole dashboard, and the branding icon is also moved to the dashboard, so that users can better remember our brand.
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.48\textwidth]{images/sketch.jpg}
+    \caption{Evolution of interface design from initial card-based layout to consolidated dashboard approach}
+    \label{fig:prototype-evolution}
+\end{figure}
+This evolution in our design approach demonstrates the value of iterative prototyping in achieving a balance between functionality and visual clarity. The final layout creates a more focused user experience while maintaining all essential features in an intuitive, accessible format.
+
+
+\item \textbf{Wireframe}
+
+Wireframe as a low-fidelity tool, unlike sketches, wireframes show the structure of an interface design, but often lack detail or colour. We also made wireframes of individual pages to build on, such as the home page and the login/signup page in Figure~\ref{fig:wireframe-home} and Figure~\ref{fig:wireframe-signup}, which lay out the structure of the prototype.
+\end{itemize}
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/wireframe-home.jpg}
+        \caption{Wireframe-home}
+        \label{fig:wireframe-home}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/wireframe-signup.jpg}
+        \caption{Wireframe-login/signup}
+        \label{fig:wireframe-signup}
+    \end{minipage}
+\end{figure}
+
+\subsubsection{Medium Fidelity Prototyping}
+
+We moved through the prototyping process from low-fidelity sketches and wireframes to medium-fidelity prototypes. This change allowed us to improve the layout, interactions, and structure while keeping the ability to iterate quickly. Medium-fidelity prototypes are often grayscale designs with simple lettering and placeholders, emphasizing functionality and user flow over visual features.
+
+Medium-fidelity prototypes enabled our team to test crucial design decisions such as navigation structures, button placements, and overall usability without being constrained by aesthetic concerns. We created these prototypes in Figma, where we built interactive flows for tasks such as logging in, signing up, and navigating the dashboard. To simulate user interactions, we used more realistic spacing, component alignment, and basic interactive elements like clickable buttons and form fields.
+The purpose of medium-fidelity prototyping was to collect input on the primary user path, providing a smooth experience from task start to finish. We saved money on later versions by fixing faults at this stage.
+
+
+\subsubsection{High Fidelity Prototyping}
+High-fidelity prototypes closely resemble the final product in terms of design and functionality. These prototypes include comprehensive visual aspects including the finalized color scheme, typography, iconography, and branding assets, as well as genuine data and interactive transitions. At this point, our team worked on matching the prototype with user expectations and responding to specific feedback from previous versions.
+
+The high-fidelity prototypes were utilized in advanced user testing to assess visual appeal, responsiveness, and accessibility. We focused on how users interacted with the final design features, such as hover effects, animations, and error states. This level of detail meant that the finished product was intuitive, visually consistent, and satisfied usability criteria.
+
+By the time we moved on to high-fidelity prototyping, the emphasis had switched to improving the user experience and preparing the design for deployment. The feedback gathered during this stage directly influenced the UI iteration process, which is documented in the next section and demonstrates how specific issues were handled and changes were made to obtain the final design.
+
+
+
+\subsubsection{User Interface Iteration}
+Our iterative UI process focuses on the overall process involved in the User Interface (UI) and User Experience (UX). For example, the visual and interactive components that users use, including buttons, icons, and layouts, while UX covers the overall journey and emotional response of the user during an interaction. The importance of good UI and UX design lies in the improvement of user satisfaction, which then links to better customer retention and enterprise success. It is believed, through studies, that well-thought-out user experiences can increase retention manyfold.\cite{psycray2023} We did extensive reviews of each and every aspect in our iterations-from color scheme and typography to layout and how the navigation structures work-to ensure usability and interactivity. In terms of visual elements, we used a single colour scheme of predominantly black to create a cohesive and less intrusive design. In addition to cultural considerations, the colour black is also inclusive and has a wide audience. The contrast between the accessible text and the background is also stronger, with enough contrast to improve readability for the user.
+
+\paragraph{Iteration 1:}
+
+Our preliminary prototype revealed several essential demanding situations thru person testing. The interface layout, whilst purposeful, presented customers with a fragmented experience because of its card-primarily based design. customers suggested problem in dealing with multiple interface factors scattered across the display screen, mainly noting the disconnected placement of filters and radius controls. The login and signup pages, which applied default shadcn styling, lacked customization and logo consistency. additionally, the map interface, whilst critical to the utility's functionality, wanted refinement in terms of icon visibility and interplay comments.
+
+In response to these early findings, we consolidated the interface elements into a unified dashboard on the right aspect of the display. This substantial architectural exchange progressed the consumer enjoy by using developing a extra cohesive and intuitive layout. The authentication glide changed into additionally cautiously considered, with the group in the end determining to keep separate login and signup steps to make sure safety while improving the visible layout and branding consistency of these important access factors.
+
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v1_Home Page.png}
+        \caption{v1\_Home Page}
+        \label{fig:v1_Home Page}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v1_Login.png}
+        \caption{login/signup}
+        \label{fig:v1 Login}
+    \end{minipage}
+\end{figure}
+
+
+\paragraph{Iteration 2:}
+The second iteration targeted on enhancing the core capability and person interaction patterns. A prime addition turned into the introduction of the search bar, initially positioned at the top of the display screen. but, person testing revealed that this placement, even as conventional, did not align optimally with the workflow of our unique utility. The clear out gadget, applied as checkboxes, proved to be much less intuitive than expected, with customers expressing a choice for greater immediate visible remarks all through their interactions.
+
+We replied by using integrating the search capability into the proper-aspect dashboard, creating a more consolidated control center for all person interactions. The amenity filters have been redesigned to provide clearer visual comments, even though this generation nonetheless highlighted the want for in addition refinement in the clear out interface design. those changes marked full-size development in developing a greater streamlined person revel in, however also illuminated areas requiring extra attention in subsequent iterations.
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v2_Home Page.png}
+        \caption{v2\_Home Page}
+        \label{fig:v2_Home Page}
+    \end{minipage}
+\end{figure}
+
+
+\paragraph{Iteration 3:}
+The third new release delivered massive upgrades to person onboarding and interface clarity. We added a complete tutorial system to guide new users through the platform's capabilities. This addition changed into complemented by means of updates to the records page and the implementation of clear phrases and privacy regulations. but, person testing revealed that our try to streamline the amenity choice through a dropdown menu truly extended interplay complexity. expert customers especially mentioned problems with map icon visibility, highlighting the need for higher visible distinction between exceptional amenity kinds.
+
+The feedback from this phase proved specifically valuable in figuring out the sensitive stability between functionality consolidation and accessibility. whilst the dropdown menu was meant to simplify the interface, it truely created a further layer of complexity that hindered consumer performance. This insight at once motivated our method to the fourth iteration's layout selections.\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v3_Home Page.png}
+        \caption{v3\_Home Page}
+        \label{fig:v3_Home Page}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v3_History.png}
+        \caption{v3\_History}
+        \label{fig:v3_History}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v3_onboarding.png}
+        \caption{v3\_onboarding}
+        \label{fig:v3_onboarding}
+    \end{minipage}
+
+\end{figure}
+
+
+
+\paragraph{Iteration 4:}
+Our fourth and maximum subtle new release delivered comprehensive modifications primarily based on gathered person feedback. The icon device become completely made over, implementing a differentiated color spectrum for various facilities to beautify visibility and brief recognition. We deserted the dropdown menu approach in favor of immediately available feature buttons, appreciably improving the discoverability of key capabilities inclusive of history get admission to and the onboarding educational.
+
+Professional user remarks brought about the addition of advanced capabilities such as zoom controls and scale rulers, although a number of those features remained in development because of time constraints. the quest capability became greater with predefined variety alternatives (100m, 200m, etc.) and relocated to the dashboard's upper segment for higher accessibility. perhaps most significantly, the filter out device was redesigned with intuitive toggle controls, allowing customers to enable or disable facilities through easy, seen interactions.
+\begin{figure}[h]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v4_Home.png}
+        \caption{v4\_Home Page}
+        \label{fig:v4_Home Page}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{images/v4_Landing Page.png}
+        \caption{v4\_Landing Page}
+        \label{fig:v4_Landing Page}
+    \end{minipage}
+\end{figure}
+
+\paragraph{Ongoing Development}
+
+Through those iterations, we recognized numerous regions for future enhancement. those encompass improving cross-browser compatibility, mainly addressing layout problems in area browsers in which dashboard factors overlap with the quest interface. The accuracy of amenity locations calls for verification thru systematic checking out, and the quest capability desires expansion to address various address layout conventions. additionally, expert users have requested advanced capabilities which includes map extraction capabilities with scale signs and amenity density visualization tools.
+
+This iterative improvement method has verified the price of consistent person comments in growing a higher and person-pleasant platform. each new release delivered us in the direction of our purpose of presenting an intuitive, green tool for each casual customers and expert city planners, whilst additionally highlighting the significance of continuous refinement and model to person desires.
+
+
