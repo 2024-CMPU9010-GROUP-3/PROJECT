@@ -1,56 +1,9 @@
-\subsubsection{Data collection process}
-The Mapbox Static Images API was used to retrieve all the satellite images used in this project.
-The satellite images retrieved were of dimensions 400 by 400 pixels and captured at zoom level 18.
-
-Initially, a training set of 250 satellite images was collected to train the Yolo model.
-Datasets containing coordinates (longitude and latitude) of areas in Dublin were collected from Data.gov.ie, and the corresponding satellite images were retrieved using the \texttt{DatasetGeneration.py} script.
-Afterwards, the images were manually labelled using Label Studio, a free open source data labelling tool, as seen in Figure~\ref{fig:LabelStudio}.
-
-\begin{figure}[htbp]
-    \centering
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/label_studio1.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.49\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/label_studio2.png}
-    \end{minipage}
-    \caption{Satellite images being annotated in Label Studio}
-    \label{fig:LabelStudio}
-\end{figure}
-
-
-Our project has two main Python scripts, \texttt{parking\_detection.py} and \texttt{parking\_detection\_local.py} to localize parking spots.
-In \texttt{parking\_detection.py}, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.
-From the coordinates of the specific bounding box, the center coordinates of all the images necessary to make up that area are calculated, and the images are then retrieved.
-While in \texttt{parking\_detection\_local.py}, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the corresponding Mapbox Streets images, covering the entirety of Dublin city.
-A Mapbox Satellite and Mapbox Streets image can be seen below in Figure~\ref{fig:Mapbox_images}.
-
-\begin{figure}[htbp]
-    \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/satellite_img.png}
-        \caption*{Mapbox Satellite Image}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/streets_img.png}
-        \caption*{Mapbox Streets Image}
-    \end{minipage}
-    \caption{Images retrieved from the Mapbox Static Images API}
-    \label{fig:Mapbox_images}
-\end{figure}
-
-Extensive testing was done at all the different stages of development of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.
-
 \subsubsection{YOLO model used for car detection}
-YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy compared to models of the time like \fcolorbox{yellow}{yellow}{find reference.}\\
-We started playing with this model because on label studio there was an extension (ML Backend) which could be used to automate the labelling using an integration of the YOLOv5 model. However, this extension was not working as intended which caused us to dig further into Ultralytics, the company behind the YOLO models.\\ \\
-Several papers focusing on object detection cited YOLO over other popular models such as \fcolorbox{yellow}{yellow}{find the reference}. A key challenge that influences the choice of model for the object detection task is effectively managing fluctuations in image resolutions and aspect ratios, as well as the computational resources required to run image detection models.\\
+YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy.
+
+We started playing with this model because on label studio there was an extension (ML Backend) which could be used to automate the labelling using an integration of the YOLOv5 model. However, this extension was not working as intended which caused us to dig further into Ultralytics, the company behind the YOLO models.
+
+Several papers focusing on object detection cited YOLO over other popular models such as (\cite{firedetectionyolo}) and (\cite{polypdetectionyolo}). A key challenge that influences the choice of model for the object detection task is effectively managing fluctuations in image resolutions and aspect ratios, as well as the computational resources required to run image detection models.\\
 
 There are two main types of models for object detection tasks: single stage and two-stage. The figure below from \cite{singlevstwodetectorimg} illustrates the process for both.
 %single vs two stage model process
@@ -97,7 +50,7 @@ Thus, the YOLOv8-OBB model was trained on the settings below:
   \end{minted}
 \end{listing}\\
 
-The weights of the YOLOv8-OBB model were then saved and used to identify parked cars on over 18,000 satellite images spanning Dublin City.
+The weights of the YOLOv8-OBB model were then saved and used to identify parked cars on over 18,000 satellite images spanning Dublin City. These images are then used to identify parking spots.
 
 \newpage
 \subsubsection{Parking spot detection}
@@ -118,38 +71,38 @@ A different approach using Canny Edge Detection was tested, however due to the n
 A final improvement to the mask was made to avoid certain misclassification due to the Mapbox Streets road width not correctly reflecting all the lanes of the road and therefore classifying on the road cars as parked. This issue was most prominent for motorways and national roads and was resolved by enlarging those roads using a dilation technique. Multiple different kernel sizes, different number of iterations and kernels of different sizes applied consecutively were tested to find the optimal solution.
 
 \begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.45\textwidth}
     \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/streets.png}
-        \caption*{Mapbox Streets Image}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/old_mask.png}
-        \caption*{Initial Mask}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/new_mask.png}
-        \caption*{Mask with additional color masks}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/canny_edge_mask.png}
-        \caption*{Canny Edge Detection Mask}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/current_mask.png}
-        \caption*{Current Mask}
-    \end{minipage}
-    \caption{Different Iterations of the Road Mask}
-    \label{fig:Mask_Iterations}
+    \includegraphics[width=\textwidth]{images/streets.png}
+    \caption*{Mapbox Streets Image}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/old_mask.png}
+    \caption*{Initial Mask}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/new_mask.png}
+    \caption*{Mask with additional color masks}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/canny_edge_mask.png}
+    \caption*{Canny Edge Detection Mask}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/current_mask.png}
+    \caption*{Current Mask}
+  \end{minipage}
+  \caption{Different Iterations of the Road Mask}
+  \label{fig:Mask_Iterations}
 \end{figure}
 
 \newpage
@@ -168,23 +121,23 @@ For each of the model's predictions for parked cars, the center pixels coordinat
 For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen below in Figure~\ref{fig:Road_mask_classification}.
 
 \begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.45\textwidth}
     \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/road_mask_classification1.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/road_mask_classification2.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/road_mask_classification3.png}
-    \end{minipage}
-    \caption{Classification of cars into on the road or parked}
-    \label{fig:Road_mask_classification}
+    \includegraphics[width=\textwidth]{images/road_mask_classification1.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/road_mask_classification2.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/road_mask_classification3.png}
+  \end{minipage}
+  \caption{Classification of cars into on the road or parked}
+  \label{fig:Road_mask_classification}
 \end{figure}
 
 \newpage
@@ -208,29 +161,29 @@ Subsequently, empty spots that overlap with the road are filter out in a similar
 
 Following the detection of all the empty spots, the bounding boxes corresponding to each spot are drawn onto the satellite image in green as shown in Figure~\ref{fig:Empty_parking_detection}.
 
-\begin{figure}[htbp]
+\begin{figure}[h!]
+  \centering
+  \begin{minipage}{0.45\textwidth}
     \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/empty_parking1.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/empty_parking2.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/empty_parking3.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/empty_parking4.png}
-    \end{minipage}
-    \caption{Empty Parking Spot Detection}
-    \label{fig:Empty_parking_detection}
+    \includegraphics[width=\textwidth]{images/empty_parking1.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/empty_parking2.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/empty_parking3.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/empty_parking4.png}
+  \end{minipage}
+  \caption{Empty Parking Spot Detection}
+  \label{fig:Empty_parking_detection}
 \end{figure}
 
 \newpage
@@ -251,28 +204,28 @@ Parking spots are classified as parking lots, when clusters of 18 or more spots 
 Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private class in written in red, public in green and parking lot in white as seen below in Figure~\ref{fig:classification_all_spots}.
 
 \begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.45\textwidth}
     \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/classification1.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/classification2.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/classification3.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/classification4.png}
-    \end{minipage}
-    \caption{Classification of all spots into private, public and parking lot}
-    \label{fig:classification_all_spots}
+    \includegraphics[width=\textwidth]{images/classification1.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/classification2.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/classification3.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/classification4.png}
+  \end{minipage}
+  \caption{Classification of all spots into private, public and parking lot}
+  \label{fig:classification_all_spots}
 \end{figure}
 
 \newpage
@@ -285,18 +238,18 @@ Subsequently, the parking zones and costs associated to each parking spot found 
 Dublin City Council defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure~\ref{fig:Parking_zones}
 
 \begin{figure}[htbp]
+  \centering
+  \begin{minipage}{0.45\textwidth}
     \centering
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/Parking_zones_map.png}
-    \end{minipage}
-    \hfill
-    \begin{minipage}{0.45\textwidth}
-        \centering
-        \includegraphics[width=\textwidth]{images/Parking_zones_cost.png}
-    \end{minipage}
-    \caption{Parking zones and cost defined by Dublin City Council}
-    \label{fig:Parking_zones}
+    \includegraphics[width=\textwidth]{images/Parking_zones_map.png}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{0.45\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{images/Parking_zones_cost.png}
+  \end{minipage}
+  \caption{Parking zones and cost defined by Dublin City Council}
+  \label{fig:Parking_zones}
 \end{figure}
 
 The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploaded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
@@ -307,6 +260,13 @@ Throughout the course of this project, there have been many major challenges and
 The biggest initial hurdle was finding a labelling software to annotate our satellite images. Initially, we had settled on LabelImg, however it was no longer being supported on most of our operating systems and was crashing on launch.
 Instead, we turned towards Label Studio and the ML Backend extension, we had intended on using for its active learning functionality that would have enabled using Yolo v5 to automatically label our training images, after only annotating a few images.
 After much troubleshooting, we decided to switch approaches to manually label the images and subsequently train the Yolo model on those images.
+
+The next challenge related to training the YOLO model to identify cars on the satellite images. An object detection model remains a deep neural network model, which is computationally intensive the more complex it becomes.
+
+We were limited in our training of the model due to limitations in available computational resources. Tuning for 35 iterations would last several hours, and training above a certain number of epochs would not yield better results. Training the model was both computationally expensive and very time consuming.
+Another challenge referred to the low resolution of the satellite images, heavily contributing the high misclassification rate in the early beginnings of model training. We managed to stabilised that through proper model choosing and tuning however, the biggest factor contributing to the remaining false positive rate is the low number of training data.
+
+Ideally we would've preferred to have at least 500 training images, however due to time constraints we settled on half of that, and compensated by putting a higher confidence threshold than the one dictated by the F1-curve.
 
 Another major challenge, was the empty parking detection section. The crucial decisions and changes are recounted below, following the timeline of our project: \\
 In Week 8, the \texttt{parking\_detection.py} script was updated to use the most up to date trained Yolo model, Yolo v8 obb, that returned oriented bounding boxes, causing many issues in the version of our script at the time, specifically the way of access the bounding boxes predicted by the model had changed.
@@ -328,7 +288,7 @@ The YOLOv8-OBB model was evaluated on a validation set of 51 images, where preci
 %yolov8 obb results
 \begin{table}[h!]
   \centering
-  \begin{tabular}{|p{0.2\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|}
+  \begin{tabular}{|p{0.18\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.12\textwidth}|}
     \hline
     \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-score} & \textbf{mAP@50} & \textbf{Confidence threshold} \\
     \hline
@@ -338,9 +298,12 @@ The YOLOv8-OBB model was evaluated on a validation set of 51 images, where preci
   \caption{YOLOv8-OBB model results}
 \end{table}\\
 
-\fcolorbox{yellow}{yellow}{explain results}
+The model obtains near perfect precision and recall on the validation data set meaning it is very good at correctly identifying the majority of true positives and preventing false positives.
+However, the lower f1 score of 91\% highlights the slight imbalance between precision and recall. Additionally, the confidence threshold is based on the F1-score, suggesting that the model performs at a level where precision and recall are balanced best closer to 30\%. This indicates that our model is not strict.
 
-\subsubsection{Evaluation of the classifiction of cars into on the road or parked}
+Although the overall metrics obtained are quite high, it is important to consider that, the validation and training data are not very large, therefore impacting overall model performance to identify cars in a larger detection set.
+
+\subsubsection{Evaluation of the classification of cars into on the road or parked}
 The classification of cars into on the road or parked by the road mask is evaluated in the \texttt{evaluate\_road\_mask.py} Python script.
 The classification is evaluated on the following metrics commonly used for object detection tasks: Average Intersection over Union (IoU), Balanced Accuracy and Precision, Recall, F1 Score, Accuracy, Specificity per class.
 
@@ -349,13 +312,13 @@ These metrics are defined in detail as follows.
 The IoU is calculated as the overlap between the predicted bounding box \( B_p \) and the ground truth bounding box \( B_g \), divided by their union:
 
 \[
-\text{IoU} = \frac{|B_p \cap B_g|}{|B_p \cup B_g|}
+  \text{IoU} = \frac{|B_p \cap B_g|}{|B_p \cup B_g|}
 \]
 
 The Average IoU is defined as the mean IoU across all detections:
 
 \[
-\text{Average IoU} = \frac{1}{N} \sum_{i=1}^{N} \text{IoU}_i
+  \text{Average IoU} = \frac{1}{N} \sum_{i=1}^{N} \text{IoU}_i
 \]
 
 where \( N \) is the total number of detections.
@@ -363,37 +326,37 @@ where \( N \) is the total number of detections.
 Precision is defined as the ratio of true positives (TP) and the sum of true positives and false positives (FP):
 
 \[
-\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
+  \text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
 \]
 
 Recall is defined as the ratio of true positives (TP) and the sum of true positives and false negatives (FN):
 
 \[
-\text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+  \text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
 \]
 
 The F1 Score is defined as the harmonic mean of precision and recall:
 
 \[
-\text{F1 Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+  \text{F1 Score} = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
 \]
 
 Accuracy is defined as the proportion of correct predictions (TP and TN) out of all the predictions:
 
 \[
-\text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+  \text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
 \]
 
 Balanced Accuracy is defined as the average of Sensitivity (or Recall) and Specificity:
 
 \[
-\text{Balanced Accuracy} = \frac{\text{Sensitivity} + \text{Specificity}}{2}
+  \text{Balanced Accuracy} = \frac{\text{Sensitivity} + \text{Specificity}}{2}
 \]
 
 where:
 \[
-\text{Sensitivity/Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \quad
-\text{Specificity} = \frac{\text{TN}}{\text{TN} + \text{FP}}
+  \text{Sensitivity/Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}, \quad
+  \text{Specificity} = \frac{\text{TN}}{\text{TN} + \text{FP}}
 \]
 
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
@@ -401,10 +364,10 @@ These metrics are then saved in a csv file for each test image as well as the ov
 A test set of 50 images was carefully selected to include edge cases and difficult cases and then consistently labelled in Label Studio as seen in Figure~\ref{fig:LabelStudio_test_set}. The labels are drawn without rotation to ensure the maximum overlap, as the labels are exported to \texttt{txt} format and include only the pixel coordinates, width and  height of the bounding boxes annotated.
 
 \begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.9\textwidth]{images/label_studio4.png}
-    \caption{Road mask classification test set images being annotated in Label Studio}
-    \label{fig:LabelStudio_test_set}
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/label_studio4.png}
+  \caption{Road mask classification test set images being annotated in Label Studio}
+  \label{fig:LabelStudio_test_set}
 \end{figure}
 
 \newpage{}
@@ -413,9 +376,9 @@ A test set of 50 images was carefully selected to include edge cases and difficu
 The overall results on test set are presented below in Table~\ref{tab:metrics1}.
 
 \begin{table}[htbp]
-    \centering
-    \begin{tabular}{|l|c|c|}
-
+  \centering
+  \begin{tabular}{|l|c|c|}
+    
     \hline
     \textbf{Metric}           & \textbf{Parked} & \textbf{Road} \\ \hline
     Average IoU               & 0.66            & 0.66          \\ \hline
@@ -449,15 +412,15 @@ Some images from the test set can be seen below, in Table~\ref{tab:test_images1}
 The predicted parked cars are drawn in red while the true labels are drawn in light pink. The predicted on the road cars are drawn in blue while the true labels are drawn in cyan.
 
 \begin{table}[htbp]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{images/image1_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_road_mask_classification_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image3_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_road_mask_classification_test_set.png} \\
-        \multicolumn{2}{c}{\includegraphics[width=0.4\textwidth]{images/image5_road_mask_classification_test_set.png}} \\
-    \end{tabular}
-    \caption{Images from the Road Mask Classification Test Set}
-    \label{tab:test_images1}
-
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.4\textwidth]{images/image1_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_road_mask_classification_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image3_road_mask_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_road_mask_classification_test_set.png} \\
+    \multicolumn{2}{c}{\includegraphics[width=0.4\textwidth]{images/image5_road_mask_classification_test_set.png}}                                                                          \\
+  \end{tabular}
+  \caption{Images from the Road Mask Classification Test Set}
+  \label{tab:test_images1}
+  
 \end{table}
 
 \newpage{}
@@ -471,8 +434,8 @@ The additional metrics are defined as follows.
 The Average Orientation Accuracy is defined as the ratio of the number of predictions that correctly identify the orientation (either horizontal or vertical) of the spots on the total number of true spots:
 
 \[
-\text{Average Orientation Accuracy} = \frac{\text{Correct Orientation Predictions}}{\text{Total True Labels}}
-                                    = \frac{N_{\text{correct\_orientation}}}{N_{\text{true\_labels}}}
+  \text{Average Orientation Accuracy} = \frac{\text{Correct Orientation Predictions}}{\text{Total True Labels}}
+  = \frac{N_{\text{correct\_orientation}}}{N_{\text{true\_labels}}}
 \]
 
 where \( N_{\text{correct\_orientation}} \) represents the number of predictions with correct orientation, and \( N_{\text{true\_labels}} \) represents the total number of true labels.
@@ -480,7 +443,7 @@ where \( N_{\text{correct\_orientation}} \) represents the number of predictions
 The Spot Detection Ratio is defined as the ratio of the number of predictions and the total number of true labels:
 
 \[
-\text{SDR} = \frac{N_{\text{predictions}}}{N_{\text{total\_true\_labels}}}
+  \text{SDR} = \frac{N_{\text{predictions}}}{N_{\text{total\_true\_labels}}}
 \]
 
 where \( N_{\text{predictions}} \) is the total number of detected spots, and \( N_{\text{total\_true\_labels}} \) is the total number of true labels.
@@ -488,19 +451,19 @@ where \( N_{\text{predictions}} \) is the total number of detected spots, and \(
 The Spot Detection Error is defined as the absolute difference between the number of predictions and the total number of true labels:
 
 \[
-\text{SDE} = |N_{\text{predictions}} - N_{\text{total\_true\_labels}}|
+  \text{SDE} = |N_{\text{predictions}} - N_{\text{total\_true\_labels}}|
 \]
 
 The False Positive Rate is defined as the proportion of incorrectly predicted positives (FP) out of all the actual negatives:
 
 \[
-\text{Average FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
+  \text{Average FPR} = \frac{\text{FP}}{\text{FP} + \text{TN}}
 \]
 
 The False Negative Rate is defined as the proportion of incorrectly predicted negatives (FN) out of all the actual positives:
 
 \[
-\text{Average FNR} = \frac{\text{FN}}{\text{TP} + \text{FN}}
+  \text{Average FNR} = \frac{\text{FN}}{\text{TP} + \text{FN}}
 \]
 
 These metrics are then saved in a csv file for each test image as well as the overall average metrics on the entire test set.
@@ -547,14 +510,14 @@ A few images from the test set are displayed below, in Table~\ref{tab:test_image
 The predicted empty parking spots are drawn in green while the true labels are in light pink.
 
 \begin{table}[htbp]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{images/image1_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_empty_parking_detection_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image3_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_empty_parking_detection_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image5_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_empty_parking_detection_test_set.png} \\
-    \end{tabular}
-    \caption{Images from the Empty Parking Detection Test Set}
-    \label{tab:test_images2}
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.4\textwidth]{images/image1_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_empty_parking_detection_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image3_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_empty_parking_detection_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image5_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_empty_parking_detection_test_set.png} \\
+  \end{tabular}
+  \caption{Images from the Empty Parking Detection Test Set}
+  \label{tab:test_images2}
 \end{table}
 
 \newpage{}
@@ -596,14 +559,14 @@ A few images from the test set are shown below, in Table~\ref{tab:test_images3}.
 The predicted public spots are drawn in green while the true labels are in dark green. The predicted private spots are highlighted in red while the true labels are in light pink. The predicted parking lot spots are shown in blue while the true labels are in cyan.
 
 \begin{table}[htbp]
-    \centering
-    \begin{tabular}{cc}
-        \includegraphics[width=0.4\textwidth]{images/image1_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_classification_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image3_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_classification_test_set.png} \\
-        \includegraphics[width=0.4\textwidth]{images/image5_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_classification_test_set.png} \\
-    \end{tabular}
-    \caption{Images from the Parking Spot Classification Test Set}
-    \label{tab:test_images3}
+  \centering
+  \begin{tabular}{cc}
+    \includegraphics[width=0.4\textwidth]{images/image1_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_classification_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image3_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_classification_test_set.png} \\
+    \includegraphics[width=0.4\textwidth]{images/image5_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_classification_test_set.png} \\
+  \end{tabular}
+  \caption{Images from the Parking Spot Classification Test Set}
+  \label{tab:test_images3}
 \end{table}
 
 \newpage{}

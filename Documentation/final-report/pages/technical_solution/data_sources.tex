@@ -14,15 +14,23 @@ Three main categories of data have been sourced for Magpie:
 \end{enumerate}
 
 \textbf{1.1 Machine learning models - Car detection}\\
-Using the MapBox API, 250 images were downloaded using CSV data from the following sources:
+The Mapbox Static Images API was used to retrieve all the images used for the machine learning models of this project.
+
+First, 250 images were downloaded using CSV data from the following sources:
 \begin{itemize}
     \item \textbf{Data.gov.ie}: Online portal containing thousands of publicly available datasets about Ireland
     \item \textbf{Smart Dublin}: Founded by Dublin local authorities, their goal is to look for innovative technological solutions for local environmental, social, mobility, government and living issues. They also have hundreds of publicly available datasets
     \item \textbf{Kaggle}: a data science and machine learning platform part of Google Cloud where competitions are hosted, in addition to thousands of publicly available datasets
 \end{itemize}
 These CSV files contained information on the location of certain facilities such as rentals, coach parking, public parks. This location was latitude and longitude which we needed to input into the script to download images, as well as the street name of that location which was used to name the downloaded image.
+
+Some data cleaning and processing had to be done to obtain a new csv file with longitudes and latitudes in the right format to send to the backend using our send points script.
+
+For example in 2 datasets the coordinates were in a local coordinates system (easting/northing) and not the universal longitude/latitude so we had to write a script to convert them properly. And certain datasets were only in geojson format so we had to write a script to handle the conversion to csv. (For one file the geometry field which contains the point data, the coordinates was not being read into a pandas dataframe correctly so we had to parse it using json and extract the fields instead)
+
 \begin{listing}[h!]
     \centering
+    \caption{Python script to obtain training images for ML model}
     \begin{minted}{python3}
         # CSV file containing location information
         df = pd.read_csv("2020-coach-parking-dcc-1.csv")
@@ -52,7 +60,7 @@ These CSV files contained information on the location of certain facilities such
         longitude = place["Longitude"]
         get_images(name, latitude, longitude)
     \end{minted}
-\end{listing}\\
+\end{listing}
 Following successful model training and tuning, a further 19,536 satellite images were downloaded spanning Dublin City area illustrated in the figure below. The machine learning model was then applied to those images to detect the cars.
 \begin{figure}[h!]
     \centering
@@ -62,24 +70,30 @@ Following successful model training and tuning, a further 19,536 satellite image
 
 \textbf{1.2 Machine learning models - Parking detection}\\
 An additional 19,536 map-view images corresponding to the satellite images used for car detection were downloaded using the MapBox API to create the custom mask used for detecting parked cars.\\
+Our project has two main Python scripts, \texttt{parking\_detection.py} and\\ \texttt{parking\_detection\_local.py} to localize parking spots.\\
+In \texttt{parking\_detection.py}, the satellite images (Mapbox Satellite) and corresponding road mask images (Mapbox Streets) are retrieved for a specific area contained within a bounding box, defined by its top-left and bottom-right coordinates, directly from the Mapbox API.\\ \\
+From the coordinates of the specific bounding box, the center coordinates of all the images necessary to make up that area are calculated, and the images are then retrieved.
+While in \texttt{parking\_detection\_local.py}, the original parking detection script is adapted to run on a database of locally stored Mapbox Satellite images and the corresponding Mapbox Streets images, covering the entirety of Dublin city.\\ \\
+
+Extensive testing was done at all the different stages of development of the scripts to identify the optimal thresholds and parameters using test images from Mapbox, in a variety of scenarios including edge cases or cases prone to causing issues.\\
 
 \textbf{2. Amenity data}\\
 CSV files were collected from multiple sources mentioned above, notable Data.gov.ie and Smart Dublin. Below is a list relative to each amenity currently present on Magpie:
 \begin{itemize}
-    \item Parking meter = Data.gov.ie
-    \item Bike stand = Data.gov.ie
-    \item Public Wifi = Smart Dublin
-    \item Library = Smart Dublin
-    \item Multi-storey Car park = Data.gov.ie
-    \item Drinking water fountain = Data.gov.ie
-    \item Public toilet = Data.gov.ie
-    \item Bike sharing station = Data.gov.ie
+    \item Parking meter = Data.gov.ie (link to appendix)
+    \item Bike stand = Data.gov.ie (link to appendix)
+    \item Public Wifi = Smart Dublin (link to appendix)
+    \item Library = Smart Dublin (link to appendix)
+    \item Multi-storey Car park = Data.gov.ie (link to appendix)
+    \item Drinking water fountain = Data.gov.ie (link to appendix)
+    \item Public toilet = Data.gov.ie (link to appendix)
+    \item Bike sharing station = Data.gov.ie (link to appendix)
     \item Car parking = Novel ML technique
-    \item Accessible parking = Data.gov.ie
-    \item Public bins = Smart Dublin
-    \item Coach parking = Data.gov.ie
+    \item Accessible parking = Data.gov.ie (link to appendix)
+    \item Public bins = Smart Dublin (link to appendix)
+    \item Coach parking = Data.gov.ie (link to appendix)
 \end{itemize}
-To complement this data visually on the map, we used SVG icons from \textbf{Icons8}, a UX turned design agency that provide high quality, free-to-use icons for personal and commercial web projects.\\
+To complement this data visually on the map, we used SVG icons from \textbf{Icons8}, a UX design agency that provide high quality, free-to-use icons for personal and commercial web projects.\\
 
 \textbf{3. Search functionality}\\
 Nominatim is a geocoding solution created by the OpenStreetMap Foundation. Magpie uses a self-hosted instance of Nominatim for geocoding and reverse-geocoding tasks. Using the Nominatim API, the frontend server can request the coordinates associated with a place name. This is used in the search functionality of the frontend.
@@ -92,11 +106,11 @@ location data.
 \subsubsection{Data storage}
 \textbf{Machine learning models data}\\
 The 250 training images are stored locally.
-The 19,536 satellite and map-view images are also stored locally.
+The 19,536 satellite and 19,536 map-view images are also stored locally.
 
 \textbf{Amenity points}\\
-The CSV data obtained from sources named above are stored on the Postgres database server.
+The CSV data obtained from sources named above are stored on the Postgres database server.\\
 The amenity icons were downloaded locally then stored on the Magpie frontend server.
 
 \textbf{Search functionality}\\
-Any actions which involve data querying, requests and storage are handled by Nomatim, and therefore not stored on any of Magpie's servers.
+Any actions which involve data querying, requests and storage are handled by Nominatim, and therefore not stored on any of Magpie's servers.
