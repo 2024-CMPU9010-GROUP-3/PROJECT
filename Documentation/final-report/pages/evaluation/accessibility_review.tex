@@ -1,6 +1,6 @@
 In the context of this project, accessibility refers to considerations for users with visual, auditory, cognitive and/or physical impairments; inclusiveness refers to considerations for users for whom English isn't their first language, older users and users with gender or affective issues; and universal design refers to compatibility of Magpie with different devices, browsers and networks.\\
 
-\noindent The accessibility general guidelines we'll be evaluating Magpie on are from the EU Web Accessibility Directive which directly affect public bodies in Ireland although map systems are exempt. This directive came into effect at the end of 2016 and aims to \emph{make public sector websites and mobile applications more accessible, and to harmonise varying standards within the European Union (\ldots)} (\cite{webaccessibilitydirective2016}).\\
+\noindent The EU Web Accessibility Directive provides a general set of guidelines which bound public bodies in Europe to make their websites and online content accessible. This directive came into effect at the end of 2016 and aims to \emph{make public sector websites and mobile applications more accessible, and to harmonise varying standards within the European Union (\ldots)} (\cite{webaccessibilitydirective2016}).\\
 %figure for accessibility guidelines
 \begin{figure}[h!]
     \centering
@@ -8,16 +8,16 @@ In the context of this project, accessibility refers to considerations for users
     \caption{WCAG 2.1 Scope, Guidelines \& Exemptions}
 \end{figure}
 
-\noindent There is an inherent limitation of accessibility for map\-based systems due to their visual nature.\\
+\noindent However, there is an inherent limitation of accessibility for map\-based systems due to their visual nature.\\
 Visual impairment is categorized as having a type of eye disorder and/or a degree of vision loss; an estimate of 2.2 billion people globally have vision impairment (\cite{whoworldreportvision2019}) and 297,000 (5.6\%) of the population in Ireland(\cite{visionirelandcensus}).\\
-
-\noindent The paper by \cite{accessibilitywebmapsrecommendations2017} which relied on data from two projects aimed at developing web\-map applications for visually impaired individuals has presented several recommendations, the following which we will guide Magpie's accessibility evaluation and subsequent iterative development:
-\begin{itemize}
-    \item\textbf{UI components:} Creating a UI that is simple, understandable and follows a clear predictable layout. Implement only necessary control elements, group them by similar focus and place them in areas that are familiar (similar in other programs). The UI should be flat while avoiding dropdowns, scrolling and nested/overlapping elements. Control elements overlapping the map makes it difficult for visually impaired users to read the map and use the controls, so this practice should be avoided.\\
-    \item\textbf{UI design:} Size and colour of UI components should be chosen to provide high contrast between different elements; if symbols are used they should be easily recognizable and complex backgrounds should be avoided.\\
+Magpie falls under the exemptions of the WCAG, as it has content which cannot be made reasonably accessible. However, efforts must still be made to make it as \emph{accessible as possible}.\\
+\noindent The paper by \cite{accessibilitywebmapsrecommendations2017} which relied on data from two projects aimed at developing web\-map applications for visually impaired individuals has presented several recommendations, the following which guided Magpie's UI development and the subsequent accessibility evaluation:
+\begin{enumerate}
+    \item\textbf{UI components:} Creating a UI that is simple, understandable and follows a clear predictable layout. Implement only necessary control elements, group them by similar focus and place them in areas that are familiar (similar in other programs). The UI should be flat while avoiding dropdowns, scrolling and nested/overlapping elements.\\ Control elements overlapping the map makes it difficult for visually impaired users to read the map and use the controls, so this practice should be avoided.\\
+    \item\textbf{UI design:} Size and colour of UI components should be chosen to provide high contrast between different elements; if symbols are used, they should be easily recognizable. Complex backgrounds should be avoided.\\
     \item\textbf{UI language:} Familiar and easy recognizable terms should be used on the interface so as to not scare off users with unknown technical terms and make the application accessible to all.\\
-    \item\textbf{UI interaction:} A user should be able to interact with the interface using both a mouse and keyboard on desktop; keyboard accessibility is key for improving accessibility for visually impaired users.
-\end{itemize}
+    \item\textbf{UI interaction:} A user should be able to interact with the interface using both a mouse and keyboard on desktop; keyboard accessibility is very important for visually impaired users.
+\end{enumerate}
 
 \newpage
 \noindent We requested a review from Accessibility expert Damian Gordon.\\
@@ -45,7 +45,7 @@ The scenario given can be seen in the table below. A scenario was given so as to
             \item \textbf{Analyse amenity density:} Based on your findings, determine which types of amenities are abundant and which are lacking around the centre.
             \item \textbf{Assess accesibility:} Check how accessible the recreation centre is by identifying nearby transportation options. Note any gaps in accessibility that might need addressing.
             \item \textbf{Plan for additional amenities:} Suggest which new amenities should be added as part of the recreation centre's expansion to better serve the community. For example: if car parking is insufficient, recommend additional parking spaces.
-        \end{enumerate}                                              \\
+        \end{enumerate}                                             \\
         \hline
     \end{tabular}
 \end{table}
