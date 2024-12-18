@@ -1,0 +1,2527 @@
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.12.1)  17 DEC 2024 11:09
+entering extended mode
+ restricted \write18 enabled.
+ file:line:error style messages enabled.
+ %&-line parsing enabled.
+**main
+(./main.tex
+LaTeX2e <2024-11-01> patch level 1
+L3 programming layer <2024-11-02>
+(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2024/06/29 v1.4n Standard LaTeX document class
+(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2024/06/29 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count192
+\c@chapter=\count193
+\c@section=\count194
+\c@subsection=\count195
+\c@subsubsection=\count196
+\c@paragraph=\count197
+\c@subparagraph=\count198
+\c@figure=\count199
+\c@table=\count266
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen141
+) (./structure.tex (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2024/11/30 v24.14 The multilingual framework for pdfLaTeX, LuaLaTeX and XeLaTeX
+\babel@savecnt=\count267
+\U@D=\dimen142
+\l@unhyphenated=\language89
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/babel/xebabel.def)
+\bbl@readstream=\read2
+\bbl@dirlevel=\count268
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/babel-english/english.ldf
+Language: english 2017/06/06 v3.3r English support from the babel system
+Package babel Info: Hyphen rules for 'canadian' set to \l@english
+(babel)             (\language0). Reported on input line 102.
+Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
+(babel)             (\language23). Reported on input line 105.
+Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
+(babel)             (\language23). Reported on input line 108.
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/babel/locale/en/babel-english.tex
+Package babel Info: Importing font and identification data for english
+(babel)             from babel-en.ini. Reported on input line 11.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/microtype.sty
+Package: microtype 2024/03/29 v3.1b Micro-typographical refinements (RS)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count269
+)
+\MT@toks=\toks18
+\MT@tempbox=\box52
+\MT@count=\count270
+LaTeX Info: Redefining \noprotrusionifhmode on input line 1061.
+LaTeX Info: Redefining \leftprotrusion on input line 1062.
+\MT@prot@toks=\toks19
+LaTeX Info: Redefining \rightprotrusion on input line 1081.
+LaTeX Info: Redefining \textls on input line 1392.
+\MT@outer@kern=\dimen143
+LaTeX Info: Redefining \textmicrotypecontext on input line 2013.
+\MT@listname@count=\count271
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/microtype-xetex.def
+File: microtype-xetex.def 2024/03/29 v3.1b Definitions specific to xetex (RS)
+LaTeX Info: Redefining \lsstyle on input line 238.
+)
+Package microtype Info: Loading configuration file microtype.cfg.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/microtype.cfg
+File: microtype.cfg 2024/03/29 v3.1b microtype main configuration file (RS)
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2024/11/05 v2.17t AMS math features
+\@mathmargin=\skip51
+
+For additional information on amsmath, use the `?' option.
+(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks20
+\ex@=\dimen144
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen145
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count272
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count273
+\leftroot@=\count274
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count275
+\DOTSCASE@=\count276
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box53
+\strutbox@=\box54
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen146
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count277
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count278
+\dotsspace@=\muskip17
+\c@parentequation=\count279
+\dspbrk@lvl=\count280
+\tag@help=\toks21
+\row@=\count281
+\column@=\count282
+\maxfields@=\count283
+\andhelp@=\toks22
+\eqnshift@=\dimen147
+\alignsep@=\dimen148
+\tagshift@=\dimen149
+\tagwidth@=\dimen150
+\totwidth@=\dimen151
+\lineht@=\dimen152
+\@envbody=\toks23
+\multlinegap=\skip52
+\multlinetaggap=\skip53
+\mathdisplay@stack=\toks24
+LaTeX Info: Redefining \[ on input line 2953.
+LaTeX Info: Redefining \] on input line 2954.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amscls/amsthm.sty
+Package: amsthm 2020/05/29 v2.20.6
+\thm@style=\toks25
+\thm@bodyfont=\toks26
+\thm@headfont=\toks27
+\thm@notefont=\toks28
+\thm@headpunct=\toks29
+\thm@preskip=\skip54
+\thm@postskip=\skip55
+\thm@headsep=\skip56
+\dth@everypar=\toks30
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2024/09/29 v3.02 LaTeX color extensions (UK)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: xetex.def on input line 274.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-def/xetex.def
+File: xetex.def 2022/09/22 v5.0n Graphics/color driver for xetex
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1349.
+Package xcolor Info: Model `RGB' extended on input line 1365.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1367.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1370.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1371.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1372.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcolor/svgnam.def
+File: svgnam.def 2024/09/29 v3.02 Predefined colors according to SVG 1.1 (UK)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/svg/svg.sty
+Package: svg 2020/11/26 v2.02k (include SVG pictures)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/koma-script/scrbase.sty
+Package: scrbase 2024/10/24 v3.43 KOMA-Script package (KOMA-Script-independent basics and keyval usage)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/koma-script/scrlfile.sty
+Package: scrlfile 2024/10/24 v3.43 KOMA-Script package (file load hooks)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/koma-script/scrlfile-hook.sty
+Package: scrlfile-hook 2024/10/24 v3.43 KOMA-Script package (using LaTeX hooks)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/koma-script/scrlogo.sty
+Package: scrlogo 2024/10/24 v3.43 KOMA-Script package (logo)
+)))
+Applying: [2021/05/01] Usage of raw or classic option list on input line 254.
+Already applied: [0000/00/00] Usage of raw or classic option list on input line 370.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode not found.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/trimspaces/trimspaces.sty
+Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/08/06 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: xetex.def on input line 106.
+)
+\Gin@req@height=\dimen153
+\Gin@req@width=\dimen154
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/tools/shellesc.sty
+Package: shellesc 2023/07/08 v1.0d unified shell escape interface for LaTeX
+Package shellesc Info: Restricted shell escape enabled on input line 77.
+)
+\c@svg@param@lastpage=\count284
+\svg@box=\box55
+\c@svg@param@currpage=\count285
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/transparent/transparent.sty
+Package: transparent 2022-10-27 v1.5 Transparency with color stacks
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/transparent/transparent-nometadata.sty
+Package: transparent-nometadata 2022-10-27 v1.5 Transparency via pdfTeX's color stack (HO)
+
+
+Package transparent Warning: Loading aborted, because pdfTeX is not running in PDF mode.
+
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/pgf/systemlayer/pgfsys.sty (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/pgf/utilities/pgfrcs.sty (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfutil-common.tex
+\pgfutil@everybye=\toks31
+\pgfutil@tempdima=\dimen155
+\pgfutil@tempdimb=\dimen156
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfutil-latex.def
+\pgfutil@abb=\box56
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfrcs.code.tex (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/pgf.revision.tex)
+Package: pgfrcs 2023-01-15 v3.1.10 (3.1.10)
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/systemlayer/pgfsys.code.tex
+Package: pgfsys 2023-01-15 v3.1.10 (3.1.10)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+\pgfkeys@pathtoks=\toks32
+\pgfkeys@temptoks=\toks33
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered.code.tex
+\pgfkeys@tmptoks=\toks34
+))
+\pgf@x=\dimen157
+\pgf@y=\dimen158
+\pgf@xa=\dimen159
+\pgf@ya=\dimen160
+\pgf@xb=\dimen161
+\pgf@yb=\dimen162
+\pgf@xc=\dimen163
+\pgf@yc=\dimen164
+\pgf@xd=\dimen165
+\pgf@yd=\dimen166
+\w@pgf@writea=\write3
+\r@pgf@reada=\read3
+\c@pgf@counta=\count286
+\c@pgf@countb=\count287
+\c@pgf@countc=\count288
+\c@pgf@countd=\count289
+\t@pgf@toka=\toks35
+\t@pgf@tokb=\toks36
+\t@pgf@tokc=\toks37
+\pgf@sys@id@count=\count290
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/systemlayer/pgf.cfg
+File: pgf.cfg 2023-01-15 v3.1.10 (3.1.10)
+)
+Driver file for pgf: pgfsys-xetex.def
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-xetex.def
+File: pgfsys-xetex.def 2023-01-15 v3.1.10 (3.1.10)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-dvipdfmx.def
+File: pgfsys-dvipdfmx.def 2023-01-15 v3.1.10 (3.1.10)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/systemlayer/pgfsys-common-pdf.def
+File: pgfsys-common-pdf.def 2023-01-15 v3.1.10 (3.1.10)
+)
+\pgfsys@objnum=\count291
+))) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/systemlayer/pgfsyssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfsyssoftpath@smallbuffer@items=\count292
+\pgfsyssoftpath@bigbuffer@items=\count293
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/systemlayer/pgfsysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/minted/minted.sty
+Package: minted 2024/11/17 v3.4.0 Yet another Pygments shim for LaTeX
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/catchfile/catchfile.sty
+Package: catchfile 2019/12/09 v1.8 Catch the contents of a file (HO)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/fvextra/fvextra.sty
+Package: fvextra 2024/11/17 v1.10.0 fvextra - extensions and patches for fancyvrb
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
+\FV@CodeLineNo=\count294
+\FV@InFile=\read4
+\FV@TabBox=\box57
+\c@FancyVerbLine=\count295
+\FV@StepNumber=\count296
+\FV@OutFile=\write4
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/upquote/upquote.sty
+Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verbatim
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2024/04/24 v2.1b Standard LaTeX package
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/lineno/lineno.sty
+Package: lineno 2023/05/20 line numbers on paragraphs v5.3
+Invalid UTF-8 byte or sequence at line 292 replaced by U+FFFD.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+))
+\linenopenalty=\count297
+\output=\toks38
+\linenoprevgraf=\count298
+\linenumbersep=\dimen167
+\linenumberwidth=\dimen168
+\c@linenumber=\count299
+\c@pagewiselinenumber=\count300
+\c@LN@truepage=\count301
+\c@internallinenumber=\count302
+\c@internallinenumbers=\count303
+\quotelinenumbersep=\dimen169
+\bframerule=\dimen170
+\bframesep=\dimen171
+\bframebox=\box58
+\linenoamsmath@ams@eqpen=\count304
+LaTeX Info: Redefining \\ on input line 3180.
+)
+\c@FancyVerbWriteLine=\count305
+\c@FancyVerbBufferLine=\count306
+\c@FV@TrueTabGroupLevel=\count307
+\c@FV@TrueTabCounter=\count308
+\FV@TabBox@Group=\box59
+\FV@TmpLength=\skip57
+\c@FV@HighlightLinesStart=\count309
+\c@FV@HighlightLinesStop=\count310
+\FV@LoopCount=\count311
+\FV@NCharsBox=\box60
+\FV@BreakIndent=\dimen172
+\FV@BreakIndentNChars=\count312
+\FV@BreakSymbolSepLeft=\dimen173
+\FV@BreakSymbolSepLeftNChars=\count313
+\FV@BreakSymbolSepRight=\dimen174
+\FV@BreakSymbolSepRightNChars=\count314
+\FV@BreakSymbolIndentLeft=\dimen175
+\FV@BreakSymbolIndentLeftNChars=\count315
+\FV@BreakSymbolIndentRight=\dimen176
+\FV@BreakSymbolIndentRightNChars=\count316
+\c@FancyVerbLineBreakLast=\count317
+\FV@LineBox=\box61
+\FV@LineIndentBox=\box62
+\c@FV@BreakBufferDepth=\count318
+\FV@LineWidth=\dimen177
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/latex2pydata/latex2pydata.sty
+Package: latex2pydata 2024/11/17 v0.4.0 latex2pydata - write data to file in Python literal format
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/pgfopts/pgfopts.sty
+Package: pgfopts 2014/07/10 v2.1a LaTeX package options with pgfkeys
+\pgfopts@list@add@a@toks=\toks39
+\pgfopts@list@add@b@toks=\toks40
+)
+
+d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/minted/minted.sty:282: Package minted Error: Package option "outputdir" is no longer needed with minted v3+; the output directory is automatically detected for TeX Live 2024+, and the environment variable TEXMF_OUTPUT_DIRECTORY can be set manually in other cases.
+
+See the minted package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.282 \ProcessPgfOptions{/minted/pkg}
+                                     
+This error message was generated by an \errmessage
+command, so I can't give any explicit help.
+Pretend that you're Hercule Poirot: Examine all clues,
+and deduce the truth by order and method.
+
+(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count319
+\float@exts=\toks41
+\float@box=\box63
+\@float@everytoks=\toks42
+\@floatcapt=\box64
+)
+\c@minted@FancyVerbLineTemp=\count320
+\@float@every@listing=\toks43
+\c@listing=\count321
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2023/08/05 v3.6o Customizing captions (AR)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2023/07/31 v2.4d caption3 kernel (AR)
+\caption@tempdima=\dimen178
+\captionmargin=\dimen179
+\caption@leftmargin=\dimen180
+\caption@rightmargin=\dimen181
+\caption@width=\dimen182
+\caption@indent=\dimen183
+\caption@parindent=\dimen184
+\caption@hangindent=\dimen185
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count322
+\c@continuedfloat=\count323
+Package caption Info: float package is loaded.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/booktabs/booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen186
+\lightrulewidth=\dimen187
+\cmidrulewidth=\dimen188
+\belowrulesep=\dimen189
+\belowbottomsep=\dimen190
+\aboverulesep=\dimen191
+\abovetopsep=\dimen192
+\cmidrulesep=\dimen193
+\cmidrulekern=\dimen194
+\defaultaddspace=\dimen195
+\@cmidla=\count324
+\@cmidlb=\count325
+\@aboverulesep=\dimen196
+\@belowrulesep=\dimen197
+\@thisruleclass=\count326
+\@lastruleclass=\count327
+\@thisrulewidth=\dimen198
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/lastpage/lastpage.sty
+Package: lastpage 2024/07/07 v2.1c lastpage: 2.09 or 2e? (HMM)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/lastpage/lastpage2e.sty
+Package: lastpage2e 2024/07/07 v2.1c Decide which 2e lastpage version to use (HMM)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/lastpage/lastpagemodern.sty
+Package: lastpagemodern 2024-07-07 v2.1c Refers to last page's name (HMM; JPG)
+\c@lastpagecount=\count328
+) 
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/enumitem/enumitem.sty
+Package: enumitem 2019/06/20 v3.9 Customized lists
+\labelindent=\skip58
+\enit@outerparindent=\dimen199
+\enit@toks=\toks44
+\enit@inbox=\box65
+\enit@count@id=\count329
+\enitdp@description=\count330
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/sectsty/sectsty.sty
+Package: sectsty 2002/02/25 v2.0.2 Commands to change all sectional heading styles
+
+
+LaTeX Warning: Command \underbar  has changed.
+               Check if current package is valid.
+
+
+LaTeX Warning: Command \underline  has changed.
+               Check if current package is valid.
+
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/mdframed/mdframed.sty
+Package: mdframed 2013/07/01 1.9b: mdframed
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/l3packages/xparse/xparse.sty (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2024-11-02 L3 programming layer (loader) 
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
+File: l3backend-xetex.def 2024-05-08 L3 backend support: XeTeX
+\g__graphics_track_int=\count331
+\l__pdf_internal_box=\box66
+\g__pdf_backend_annotation_int=\count332
+\g__pdf_backend_link_int=\count333
+))
+Package: xparse 2024-08-16 L3 Experimental document command parser
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/zref/zref-abspage.sty
+Package: zref-abspage 2023-09-14 v2.35 Module abspage for zref (HO)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/zref/zref-base.sty
+Package: zref-base 2023-09-14 v2.35 Module base for zref (HO)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+Package zref Info: New property list: main on input line 767.
+Package zref Info: New property: default on input line 768.
+Package zref Info: New property: page on input line 769.
+)
+\c@abspage=\count334
+Package zref Info: New property: abspage on input line 67.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/needspace/needspace.sty
+Package: needspace 2010/09/12 v1.3d reserve vertical space
+)
+\mdf@templength=\skip59
+\c@mdf@globalstyle@cnt=\count335
+\mdf@skipabove@length=\skip60
+\mdf@skipbelow@length=\skip61
+\mdf@leftmargin@length=\skip62
+\mdf@rightmargin@length=\skip63
+\mdf@innerleftmargin@length=\skip64
+\mdf@innerrightmargin@length=\skip65
+\mdf@innertopmargin@length=\skip66
+\mdf@innerbottommargin@length=\skip67
+\mdf@splittopskip@length=\skip68
+\mdf@splitbottomskip@length=\skip69
+\mdf@outermargin@length=\skip70
+\mdf@innermargin@length=\skip71
+\mdf@linewidth@length=\skip72
+\mdf@innerlinewidth@length=\skip73
+\mdf@middlelinewidth@length=\skip74
+\mdf@outerlinewidth@length=\skip75
+\mdf@roundcorner@length=\skip76
+\mdf@footenotedistance@length=\skip77
+\mdf@userdefinedwidth@length=\skip78
+\mdf@needspace@length=\skip79
+\mdf@frametitleaboveskip@length=\skip80
+\mdf@frametitlebelowskip@length=\skip81
+\mdf@frametitlerulewidth@length=\skip82
+\mdf@frametitleleftmargin@length=\skip83
+\mdf@frametitlerightmargin@length=\skip84
+\mdf@shadowsize@length=\skip85
+\mdf@extratopheight@length=\skip86
+\mdf@subtitleabovelinewidth@length=\skip87
+\mdf@subtitlebelowlinewidth@length=\skip88
+\mdf@subtitleaboveskip@length=\skip89
+\mdf@subtitlebelowskip@length=\skip90
+\mdf@subtitleinneraboveskip@length=\skip91
+\mdf@subtitleinnerbelowskip@length=\skip92
+\mdf@subsubtitleabovelinewidth@length=\skip93
+\mdf@subsubtitlebelowlinewidth@length=\skip94
+\mdf@subsubtitleaboveskip@length=\skip95
+\mdf@subsubtitlebelowskip@length=\skip96
+\mdf@subsubtitleinneraboveskip@length=\skip97
+\mdf@subsubtitleinnerbelowskip@length=\skip98
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/mdframed/md-frame-0.mdf
+File: md-frame-0.mdf 2013/07/01\ 1.9b: md-frame-0
+)
+\mdf@frametitlebox=\box67
+\mdf@footnotebox=\box68
+\mdf@splitbox@one=\box69
+\mdf@splitbox@two=\box70
+\mdf@splitbox@save=\box71
+\mdfsplitboxwidth=\skip99
+\mdfsplitboxtotalwidth=\skip100
+\mdfsplitboxheight=\skip101
+\mdfsplitboxdepth=\skip102
+\mdfsplitboxtotalheight=\skip103
+\mdfframetitleboxwidth=\skip104
+\mdfframetitleboxtotalwidth=\skip105
+\mdfframetitleboxheight=\skip106
+\mdfframetitleboxdepth=\skip107
+\mdfframetitleboxtotalheight=\skip108
+\mdffootnoteboxwidth=\skip109
+\mdffootnoteboxtotalwidth=\skip110
+\mdffootnoteboxheight=\skip111
+\mdffootnoteboxdepth=\skip112
+\mdffootnoteboxtotalheight=\skip113
+\mdftotallinewidth=\skip114
+\mdfboundingboxwidth=\skip115
+\mdfboundingboxtotalwidth=\skip116
+\mdfboundingboxheight=\skip117
+\mdfboundingboxdepth=\skip118
+\mdfboundingboxtotalheight=\skip119
+\mdf@freevspace@length=\skip120
+\mdf@horizontalwidthofbox@length=\skip121
+\mdf@verticalmarginwhole@length=\skip122
+\mdf@horizontalspaceofbox=\skip123
+\mdfsubtitleheight=\skip124
+\mdfsubsubtitleheight=\skip125
+\c@mdfcountframes=\count336
+
+****** mdframed patching \endmdf@trivlist
+
+****** -- success******
+
+\mdf@envdepth=\count337
+\c@mdf@env@i=\count338
+\c@mdf@env@ii=\count339
+\c@mdf@zref@counter=\count340
+Package zref Info: New property: mdf@pagevalue on input line 895.
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2024-11-05 v7.01l Hypertext links for LaTeX
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2023-11-26 v2.56 Cross-referencing by name of section
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count341
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/stringenc/stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
+)
+\@linkdim=\dimen256
+\Hy@linkcounter=\count342
+\Hy@pagecounter=\count343
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2024-11-05 v7.01l Hyperref: PDFDocEncoding definition (HO)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count344
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2024-11-05 v7.01l Hyperref: PDF Unicode definition (HO)
+)
+Package hyperref Info: Hyper figures OFF on input line 4157.
+Package hyperref Info: Link nesting OFF on input line 4162.
+Package hyperref Info: Hyper index ON on input line 4165.
+Package hyperref Info: Plain pages OFF on input line 4172.
+Package hyperref Info: Backreferencing OFF on input line 4177.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4424.
+\c@Hy@tempcnt=\count345
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4763.
+\XeTeXLinkMargin=\dimen257
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO)
+))
+\Fld@menulength=\count346
+\Field@Width=\dimen258
+\Fld@charsize=\dimen259
+Package hyperref Info: Hyper figures OFF on input line 6042.
+Package hyperref Info: Link nesting OFF on input line 6047.
+Package hyperref Info: Hyper index ON on input line 6050.
+Package hyperref Info: backreferencing OFF on input line 6057.
+Package hyperref Info: Link coloring OFF on input line 6062.
+Package hyperref Info: Link coloring with OCG OFF on input line 6067.
+Package hyperref Info: PDF/A mode OFF on input line 6072.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count347
+\c@Item=\count348
+\c@Hfootnote=\count349
+)
+Package hyperref Info: Driver (autodetected): hxetex.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/hyperref/hxetex.def
+File: hxetex.def 2024-11-05 v7.01l Hyperref driver for XeTeX
+\pdfm@box=\box72
+\c@Hy@AnnotLevel=\count350
+\HyField@AnnotCount=\count351
+\Fld@listcount=\count352
+\c@bookmark@seq@number=\count353
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2022-07-10 v1.10 Rerun checks for auxiliary files (HO)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend package
+with kernel methods
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 285.
+)
+\Hy@SectionHShift=\skip126
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+)
+\Gm@cnth=\count354
+\Gm@cntv=\count355
+\c@Gm@tempcnt=\count356
+\Gm@bindingoffset=\dimen260
+\Gm@wd@mp=\dimen261
+\Gm@odd@mp=\dimen262
+\Gm@even@mp=\dimen263
+\Gm@layoutwidth=\dimen264
+\Gm@layoutheight=\dimen265
+\Gm@layouthoffset=\dimen266
+\Gm@layoutvoffset=\dimen267
+\Gm@dimlist=\toks45
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 116.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/lm/t1lmr.fd
+File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2024/02/08 v1.3d Input encoding file
+\inpenc@prehook=\toks46
+\inpenc@posthook=\toks47
+
+
+Package inputenc Warning: inputenc package ignored with utf8 based engines.
+
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcharter/XCharter.sty
+Package: XCharter 2023/07/21 v1.25
+ `XCharter' v1.25, 2023/07/21 Text macros for XCharter, an extension of Charter (msharpe) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2022/06/16 v2.9 package option processing (HA)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/xkeyval/xkeyval.tex (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks48
+\XKV@tempa@toks=\toks49
+)
+\XKV@depth=\count357
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/xstring/xstring.sty (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/generic/xstring/xstring.tex
+\xs_counta=\count358
+\xs_countb=\count359
+)
+Package: xstring 2023/08/22 v1.86 String manipulations (CT)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/carlisle/scalefnt.sty)
+\xch@cnt=\count360
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/fontspec/fontspec.sty
+Package: fontspec 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/fontspec/fontspec-xetex.sty
+Package: fontspec-xetex 2024/05/11 v2.9e Font selection for XeLaTeX and LuaLaTeX
+\l__fontspec_script_int=\count361
+\l__fontspec_language_int=\count362
+\l__fontspec_strnum_int=\count363
+\l__fontspec_tmp_int=\count364
+\l__fontspec_tmpa_int=\count365
+\l__fontspec_tmpb_int=\count366
+\l__fontspec_tmpc_int=\count367
+\l__fontspec_em_int=\count368
+\l__fontspec_emdef_int=\count369
+\l__fontspec_strong_int=\count370
+\l__fontspec_strongdef_int=\count371
+\l__fontspec_tmpa_dim=\dimen268
+\l__fontspec_tmpb_dim=\dimen269
+\l__fontspec_tmpc_dim=\dimen270
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/fontspec/fontspec.cfg)))
+LaTeX Info: Redefining \textsl on input line 506.
+LaTeX Info: Redefining \oldstylenums on input line 524.
+LaTeX Info: Redefining \liningnums on input line 532.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/xcharter/XCharter.fontspec)
+Requested font "[XCharter-Roman.otf]/OT" at 9.99997pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.otf
+Requested font "[XCharter-Roman.otf]/OT" at 10.00003pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.otf
+
+Package fontspec Info: 
+(fontspec)             XCharter-Roman scale = 1.
+
+Requested font "[XCharter-Roman.otf]/OT:script=latn;language=dflt;" at 10.00003pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.otf
+
+Package fontspec Info: 
+(fontspec)             XCharter-Roman scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             XCharter-Roman scale = 1.
+
+Requested font "[XCharter-Bold.otf]/OT:script=latn;language=dflt;" at 10.00003pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Bold.otf
+
+Package fontspec Info: 
+(fontspec)             XCharter-Bold scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             XCharter-Bold scale = 1.
+
+Requested font "[XCharter-Italic.otf]/OT:script=latn;language=dflt;" at 10.00003pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Italic.otf
+
+Package fontspec Info: 
+(fontspec)             XCharter-Italic scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             XCharter-Italic scale = 1.
+
+Requested font "[XCharter-Slanted.otf]/OT:script=latn;language=dflt;" at 10.00003pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Slanted.otf
+
+Package fontspec Info: 
+(fontspec)             XCharter-Slanted scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             XCharter-Slanted scale = 1.
+
+Requested font "[XCharter-BoldItalic.otf]/OT:script=latn;language=dflt;" at 10.00003pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-BoldItalic.otf
+
+Package fontspec Info: 
+(fontspec)             XCharter-BoldItalic scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             XCharter-BoldItalic scale = 1.
+
+Requested font "[XCharter-BoldSlanted.otf]/OT:script=latn;language=dflt;" at 10.00003pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-BoldSlanted.otf
+
+Package fontspec Info: 
+(fontspec)             XCharter-BoldSlanted scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             XCharter-BoldSlanted scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'XCharter(0)' created for font 'XCharter'
+(fontspec)             with options [Ligatures = TeX,Extension =
+(fontspec)             .otf,SmallCapsFeatures={Letters=SmallCaps},Ligatures=TeX,Extension
+(fontspec)             = .otf,UprightFont = XCharter-Roman,BoldFont =
+(fontspec)             XCharter-Bold,ItalicFont =
+(fontspec)             XCharter-Italic,BoldItalicFont =
+(fontspec)             XCharter-BoldItalic,SlantedFont =
+(fontspec)             XCharter-Slanted,BoldSlantedFont =
+(fontspec)             XCharter-BoldSlanted,SmallCapsFeatures =
+(fontspec)             {Letters=SmallCaps},Extension = .otf,Numbers =
+(fontspec)             {Monospaced,Lining},Scale = 1,UprightFont =
+(fontspec)             *-Roman,ItalicFont = *-Italic,SlantedFont =
+(fontspec)             *-Slanted,BoldFont = *-Bold,BoldItalicFont =
+(fontspec)             *-BoldItalic,BoldSlantedFont=
+(fontspec)             *-BoldSlanted,SmallCapsFeatures={Letters=SmallCaps},CharacterVariant={1:0}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Roman.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Roman.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;+smcp;mapping=tex-text;"
+(fontspec)             - 'bold' (b/n) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Bold.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Bold.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;+smcp;mapping=tex-text;"
+(fontspec)             - 'italic' (m/it) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Italic.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Italic.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;+smcp;mapping=tex-text;"
+(fontspec)             - 'slanted' (m/sl) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Slanted.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;"
+(fontspec)             - 'slanted small caps'  (m/scsl) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Slanted.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;+smcp;mapping=tex-text;"
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-BoldItalic.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-BoldItalic.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;+smcp;mapping=tex-text;"
+(fontspec)             - 'bold slanted' (b/sl) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-BoldSlanted.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;"
+(fontspec)             - 'bold slanted small caps'  (b/scsl) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-BoldSlanted.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;+smcp;mapping=tex-text;"
+
+LaTeX Font Info:    Font shape `TU/XCharter(0)/m/n' will be
+(Font)              scaled to size 10.0pt on input line 669.
+Requested font "[XCharter-Roman.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.otf
+
+Package fontspec Info: 
+(fontspec)             XCharter-Roman scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             XCharter-Roman scale = 1.
+
+
+Package fontspec Info: 
+(fontspec)             Font family 'XCharter-Roman(0)' created for font
+(fontspec)             'XCharter-Roman' with options [Ligatures =
+(fontspec)             TeX,Extension =
+(fontspec)             .otf,SmallCapsFeatures={Letters=SmallCaps},BoldFont={},ItalicFont={},SmallCapsFont={},Scale
+(fontspec)             = 1,SmallCapsFeatures={Letters=SmallCaps}].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.:
+(fontspec)             <->s*[1]"[XCharter-Roman.otf]/OT:script=latn;language=dflt;mapping=tex-text;"
+
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2024/11/20 v4.4 Extensive control of page headers and footers
+\f@nch@headwidth=\skip127
+\f@nch@O@elh=\skip128
+\f@nch@O@erh=\skip129
+\f@nch@O@olh=\skip130
+\f@nch@O@orh=\skip131
+\f@nch@O@elf=\skip132
+\f@nch@O@erf=\skip133
+\f@nch@O@olf=\skip134
+\f@nch@O@orf=\skip135
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/titling/titling.sty
+Package: titling 2009/09/04 v2.1d maketitle typesetting
+\thanksmarkwidth=\skip136
+\thanksmargin=\skip137
+\droptitle=\skip138
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/tocloft/tocloft.sty
+Package: tocloft 2017/08/31 v2.3i parameterised ToC, etc., typesetting
+Package tocloft Info: The document has chapter divisions on input line 51.
+\cftparskip=\skip139
+\cftbeforetoctitleskip=\skip140
+\cftaftertoctitleskip=\skip141
+\cftbeforepartskip=\skip142
+\cftpartnumwidth=\skip143
+\cftpartindent=\skip144
+\cftbeforechapskip=\skip145
+\cftchapindent=\skip146
+\cftchapnumwidth=\skip147
+\cftbeforesecskip=\skip148
+\cftsecindent=\skip149
+\cftsecnumwidth=\skip150
+\cftbeforesubsecskip=\skip151
+\cftsubsecindent=\skip152
+\cftsubsecnumwidth=\skip153
+\cftbeforesubsubsecskip=\skip154
+\cftsubsubsecindent=\skip155
+\cftsubsubsecnumwidth=\skip156
+\cftbeforeparaskip=\skip157
+\cftparaindent=\skip158
+\cftparanumwidth=\skip159
+\cftbeforesubparaskip=\skip160
+\cftsubparaindent=\skip161
+\cftsubparanumwidth=\skip162
+\cftbeforeloftitleskip=\skip163
+\cftafterloftitleskip=\skip164
+\cftbeforefigskip=\skip165
+\cftfigindent=\skip166
+\cftfignumwidth=\skip167
+\c@lofdepth=\count372
+\c@lotdepth=\count373
+\cftbeforelottitleskip=\skip168
+\cftafterlottitleskip=\skip169
+\cftbeforetabskip=\skip170
+\cfttabindent=\skip171
+\cfttabnumwidth=\skip172
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/lettrine/lettrine.sty
+File: lettrine.sty 2024-11-14 v2.70 (Daniel Flipo)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/l3packages/xfp/xfp.sty
+Package: xfp 2024-08-16 L3 Floating point unit
+)
+\c@DefaultLines=\count374
+\c@DefaultDepth=\count375
+\DefaultFindent=\dimen271
+\DefaultNindent=\dimen272
+\DefaultSlope=\dimen273
+\DiscardVskip=\dimen274
+\L@lettrine=\box73
+\L@lbox=\box74
+\L@tbox=\box75
+\c@L@lines=\count376
+\c@L@depth=\count377
+\L@Pindent=\dimen275
+\L@Findent=\dimen276
+\L@Nindent=\dimen277
+\L@lraise=\dimen278
+\L@first=\dimen279
+\L@next=\dimen280
+\L@slope=\dimen281
+\L@height=\dimen282
+\L@novskip=\dimen283
+\L@ruleht=\dimen284
+\L@target@ht=\dimen285
+\L@target@dp=\dimen286
+\L@target@tht=\dimen287
+\LettrineWidth=\dimen288
+\LettrineHeight=\dimen289
+\LettrineDepth=\dimen290
+
+Loading lettrine.cfg
+(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/lettrine/lettrine.cfg)
+\Lettrine@tweaks=\toks50
+\Llist@everypar=\toks51
+) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/fix-cm.sty
+Package: fix-cm 2020/11/24 v1.1t fixes to LaTeX
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/base/ts1enc.def
+File: ts1enc.def 2001/06/05 v3.0e (jk/car/fm) Standard LaTeX file
+LaTeX Font Info:    Redeclaring font encoding TS1 on input line 47.
+)) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/biblatex.sty
+Package: biblatex 2024/03/21 v3.20 programmable bibliographies (PK/MW)
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/logreq/logreq.sty
+Package: logreq 2010/08/04 v1.0 xml request logger
+\lrq@indent=\count378
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/logreq/logreq.def
+File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
+))
+\c@tabx@nest=\count379
+\c@listtotal=\count380
+\c@listcount=\count381
+\c@liststart=\count382
+\c@liststop=\count383
+\c@citecount=\count384
+\c@citetotal=\count385
+\c@multicitecount=\count386
+\c@multicitetotal=\count387
+\c@instcount=\count388
+\c@maxnames=\count389
+\c@minnames=\count390
+\c@maxitems=\count391
+\c@minitems=\count392
+\c@citecounter=\count393
+\c@maxcitecounter=\count394
+\c@savedcitecounter=\count395
+\c@uniquelist=\count396
+\c@uniquename=\count397
+\c@refsection=\count398
+\c@refsegment=\count399
+\c@maxextratitle=\count400
+\c@maxextratitleyear=\count401
+\c@maxextraname=\count402
+\c@maxextradate=\count403
+\c@maxextraalpha=\count404
+\c@abbrvpenalty=\count405
+\c@highnamepenalty=\count406
+\c@lownamepenalty=\count407
+\c@maxparens=\count408
+\c@parenlevel=\count409
+\blx@tempcnta=\count410
+\blx@tempcntb=\count411
+\blx@tempcntc=\count412
+\c@blx@maxsection=\count413
+\blx@maxsegment@0=\count414
+\blx@notetype=\count415
+\blx@parenlevel@text=\count416
+\blx@parenlevel@foot=\count417
+\blx@sectionciteorder@0=\count418
+\blx@sectionciteorderinternal@0=\count419
+\blx@entrysetcounter=\count420
+\blx@biblioinstance=\count421
+\labelnumberwidth=\skip173
+\labelalphawidth=\skip174
+\biblabelsep=\skip175
+\bibitemsep=\skip176
+\bibnamesep=\skip177
+\bibinitsep=\skip178
+\bibparsep=\skip179
+\bibhang=\skip180
+\blx@bcfin=\read5
+\blx@bcfout=\write5
+\blx@langwohyphens=\language90
+\c@mincomprange=\count422
+\c@maxcomprange=\count423
+\c@mincompwidth=\count424
+Package biblatex Info: Trying to load biblatex default data model...
+Package biblatex Info: ... file 'blx-dm.def' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/blx-dm.def
+File: blx-dm.def 2024/03/21 v3.20 biblatex datamodel (PK/MW)
+)
+Package biblatex Info: Trying to load biblatex style data model...
+Package biblatex Info: ... file 'authoryear.dbx' not found.
+Package biblatex Info: Trying to load biblatex custom data model...
+Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
+\c@afterword=\count425
+\c@savedafterword=\count426
+\c@annotator=\count427
+\c@savedannotator=\count428
+\c@author=\count429
+\c@savedauthor=\count430
+\c@bookauthor=\count431
+\c@savedbookauthor=\count432
+\c@commentator=\count433
+\c@savedcommentator=\count434
+\c@editor=\count435
+\c@savededitor=\count436
+\c@editora=\count437
+\c@savededitora=\count438
+\c@editorb=\count439
+\c@savededitorb=\count440
+\c@editorc=\count441
+\c@savededitorc=\count442
+\c@foreword=\count443
+\c@savedforeword=\count444
+\c@holder=\count445
+\c@savedholder=\count446
+\c@introduction=\count447
+\c@savedintroduction=\count448
+\c@namea=\count449
+\c@savednamea=\count450
+\c@nameb=\count451
+\c@savednameb=\count452
+\c@namec=\count453
+\c@savednamec=\count454
+\c@translator=\count455
+\c@savedtranslator=\count456
+\c@shortauthor=\count457
+\c@savedshortauthor=\count458
+\c@shorteditor=\count459
+\c@savedshorteditor=\count460
+\c@labelname=\count461
+\c@savedlabelname=\count462
+\c@institution=\count463
+\c@savedinstitution=\count464
+\c@lista=\count465
+\c@savedlista=\count466
+\c@listb=\count467
+\c@savedlistb=\count468
+\c@listc=\count469
+\c@savedlistc=\count470
+\c@listd=\count471
+\c@savedlistd=\count472
+\c@liste=\count473
+\c@savedliste=\count474
+\c@listf=\count475
+\c@savedlistf=\count476
+\c@location=\count477
+\c@savedlocation=\count478
+\c@organization=\count479
+\c@savedorganization=\count480
+\c@origlocation=\count481
+\c@savedoriglocation=\count482
+\c@origpublisher=\count483
+\c@savedorigpublisher=\count484
+\c@publisher=\count485
+\c@savedpublisher=\count486
+\c@language=\count487
+\c@savedlanguage=\count488
+\c@origlanguage=\count489
+\c@savedoriglanguage=\count490
+\c@pageref=\count491
+\c@savedpageref=\count492
+\shorthandwidth=\skip181
+\shortjournalwidth=\skip182
+\shortserieswidth=\skip183
+\shorttitlewidth=\skip184
+\shortauthorwidth=\skip185
+\shorteditorwidth=\skip186
+\locallabelnumberwidth=\skip187
+\locallabelalphawidth=\skip188
+\localshorthandwidth=\skip189
+\localshortjournalwidth=\skip190
+\localshortserieswidth=\skip191
+\localshorttitlewidth=\skip192
+\localshortauthorwidth=\skip193
+\localshorteditorwidth=\skip194
+Package biblatex Info: Trying to load enhanced support for Unicode engines...
+Package biblatex Info: ... file 'blx-unicode.def' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/blx-unicode.def)
+Package biblatex Info: Trying to load compatibility code...
+Package biblatex Info: ... file 'blx-compat.def' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/blx-compat.def
+File: blx-compat.def 2024/03/21 v3.20 biblatex compatibility (PK/MW)
+)
+Package biblatex Info: Trying to load BibTeX backend compatibility...
+Package biblatex Info: ... file 'blx-bibtex.def' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/blx-bibtex.def
+File: blx-bibtex.def 2024/03/21 v3.20 biblatex compatibility (PK/MW)
+
+
+Package biblatex Warning: Using fall-back bibtex backend:
+(biblatex)                functionality may be reduced/unavailable.
+
+)
+Package biblatex Info: Trying to load generic definitions...
+Package biblatex Info: ... file 'biblatex.def' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/biblatex.def
+File: biblatex.def 2024/03/21 v3.20 biblatex compatibility (PK/MW)
+\c@textcitecount=\count493
+\c@textcitetotal=\count494
+\c@textcitemaxnames=\count495
+\c@biburlbigbreakpenalty=\count496
+\c@biburlbreakpenalty=\count497
+\c@biburlnumpenalty=\count498
+\c@biburlucpenalty=\count499
+\c@biburllcpenalty=\count500
+\biburlbigskip=\muskip19
+\biburlnumskip=\muskip20
+\biburlucskip=\muskip21
+\biburllcskip=\muskip22
+\c@smartand=\count501
+)
+Package biblatex Info: Trying to load natbib compatibility...
+Package biblatex Info: ... file 'blx-natbib.def' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/blx-natbib.def
+File: blx-natbib.def 2024/03/21 v3.20 biblatex compatibility (PK/MW)
+Package biblatex Info: Delimiter 'nameyeardelim' in context '' already defined, overwriting.
+)
+Package biblatex Info: Trying to load bibliography style 'authoryear'...
+Package biblatex Info: ... file 'authoryear.bbx' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/bbx/authoryear.bbx
+File: authoryear.bbx 2024/03/21 v3.20 biblatex bibliography style (PK/MW)
+Package biblatex Info: Trying to load bibliography style 'standard'...
+Package biblatex Info: ... file 'standard.bbx' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/bbx/standard.bbx
+File: standard.bbx 2024/03/21 v3.20 biblatex bibliography style (PK/MW)
+\c@bbx:relatedcount=\count502
+\c@bbx:relatedtotal=\count503
+))
+Package biblatex Info: Trying to load citation style 'authoryear'...
+Package biblatex Info: ... file 'authoryear.cbx' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/cbx/authoryear.cbx
+File: authoryear.cbx 2024/03/21 v3.20 biblatex citation style (PK/MW)
+Package biblatex Info: Redefining '\cite'.
+Package biblatex Info: Redefining '\parencite'.
+Package biblatex Info: Redefining '\footcite'.
+Package biblatex Info: Redefining '\footcitetext'.
+Package biblatex Info: Redefining '\smartcite'.
+Package biblatex Info: Redefining '\textcite'.
+Package biblatex Info: Redefining '\textcites'.
+)
+Package biblatex Info: Trying to load configuration file...
+Package biblatex Info: ... file 'biblatex.cfg' found.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/biblatex.cfg
+File: biblatex.cfg 
+)
+Package biblatex Info: XeTeX detected.
+(biblatex)             Assuming input encoding 'utf8'.
+Package biblatex Info: Document encoding is UTF8 ....
+Package biblatex Info: ... and expl3
+(biblatex)             2024-11-02 L3 programming layer (loader) 
+(biblatex)             is new enough (at least 2020/04/06),
+(biblatex)             setting 'casechanger=expl3'.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
+Package: blx-case-expl3 2024/03/21 v3.20 expl3 case changing code for biblatex
+))) (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/csquotes/csquotes.sty
+Package: csquotes 2024-04-04 v5.2o context-sensitive quotations (JAW)
+\csq@reset=\count504
+\csq@gtype=\count505
+\csq@glevel=\count506
+\csq@qlevel=\count507
+\csq@maxlvl=\count508
+\csq@tshold=\count509
+\csq@ltx@everypar=\toks52
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/csquotes/csquotes.def
+File: csquotes.def 2024-04-04 v5.2o csquotes generic definitions (JAW)
+)
+Package csquotes Info: Trying to load configuration file 'csquotes.cfg'...
+Package csquotes Info: ... configuration file loaded successfully.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/csquotes/csquotes.cfg
+File: csquotes.cfg 
+)
+Package csquotes Info: Enabling multilingual quotes.
+)
+Package csquotes Info: Checking for multilingual support...
+Package csquotes Info: ... found 'babel' package.
+ (./main.aux)
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 46.
+LaTeX Font Info:    ... okay on input line 46.
+LaTeX Info: Redefining \microtypecontext on input line 46.
+Package microtype Info: Applying patch `item' on input line 46.
+Package microtype Info: Applying patch `toc' on input line 46.
+Package microtype Info: Applying patch `eqnum' on input line 46.
+Package microtype Info: Applying patch `footnote' on input line 46.
+Package microtype Info: Applying patch `verbatim' on input line 46.
+Package microtype Info: Character protrusion enabled (level 2).
+Package microtype Info: Using default protrusion set `alltext'.
+Package microtype Info: No adjustment of tracking.
+Package microtype Info: No adjustment of spacing.
+Package microtype Info: No adjustment of kerning.
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `XCharter' (encoding: TU).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: hyperref package is loaded.
+Package caption Info: End \AtBeginDocument code.
+Package hyperref Info: Link coloring OFF on input line 46.
+ (./main.out) (./main.out)
+\@outlinefile=\write6
+\openout6 = `main.out'.
+
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+*geometry* verbose mode - [ preamble ] result:
+* driver: xetex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: includehead includefoot 
+* h-part:(L,W,R)=(56.9055pt, 483.69687pt, 56.9055pt)
+* v-part:(T,H,B)=(28.45274pt, 773.91498pt, 42.67912pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=483.69687pt
+* \textheight=706.91498pt
+* \oddsidemargin=-15.36449pt
+* \evensidemargin=-15.36449pt
+* \topmargin=-43.81725pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=57.0pt
+* \marginparsep=11.0pt
+* \columnsep=7.11317pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package biblatex Info: Trying to load language 'english'...
+Package biblatex Info: ... file 'english.lbx' found.
+(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/biblatex/lbx/english.lbx
+File: english.lbx 2024/03/21 v3.20 biblatex localization (PK/MW)
+)
+Package biblatex Info: XeTeX detected.
+(biblatex)             Assuming input encoding 'utf8'.
+Package biblatex Info: Automatic encoding selection.
+(biblatex)             Assuming data encoding 'utf8'.
+Package biblatex Info: XeTeX detected.
+(biblatex)             Assuming input encoding 'utf8'.
+Package biblatex Info: Data encoding 'utf8' specified.
+(biblatex)             No need to reencode data.
+\openout5 = `main-blx.bib'.
+
+Package biblatex Info: Trying to load bibliographic data...
+Package biblatex Info: ... file 'main.bbl' found.
+ (./main.bbl)
+Package biblatex Info: Reference section=0 on input line 46.
+Package biblatex Info: Reference segment=0 on input line 46.
+LaTeX Font Info:    Font shape `TU/XCharter(0)/m/n' will be
+(Font)              scaled to size 14.4pt on input line 50.
+Requested font "[XCharter-Roman.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.otf
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 50.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/psnfss/ot1phv.fd
+File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
+)
+Requested font "phvb7t" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `phv' (encoding: OT1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+File: images/TUDublin_Colour_RGB.png Graphic file (type bmp)
+<images/TUDublin_Colour_RGB.png>
+Requested font "phvb7t" at 24.88pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+Requested font "cmr12" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-cmr.cfg
+File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman (RS)
+)
+Requested font "cmmi12" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
+Requested font "cmsy10" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
+Requested font "cmex10" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
+Requested font "cmex7" at 7.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+LaTeX Font Info:    Trying to load font information for U+msa on input line 73.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+Requested font "msam10" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-msa.cfg
+File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
+)
+Requested font "msam10" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+Requested font "msam7" at 7.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
+LaTeX Font Info:    Trying to load font information for U+msb on input line 73.
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+Requested font "msbm10" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+ (d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
+)
+Requested font "msbm10" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+Requested font "msbm7" at 7.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+
+
+[1
+
+] (./tables.tex
+*geometry* verbose mode - [ newgeometry ] result:
+* driver: xetex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(142.26378pt, 312.98032pt, 142.26378pt)
+* v-part:(T,H,B)=(56.9055pt, 717.00946pt, 71.13188pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=312.98032pt
+* \textheight=717.00946pt
+* \oddsidemargin=69.99379pt
+* \evensidemargin=69.99379pt
+* \topmargin=-52.36449pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=57.0pt
+* \marginparsep=11.0pt
+* \columnsep=7.11317pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+LaTeX Font Info:    Font shape `TU/XCharter(0)/b/n' will be
+(Font)              scaled to size 14.4pt on input line 20.
+Requested font "[XCharter-Bold.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Bold.otf
+
+No file main.toc.
+\tf@toc=\write7
+\openout7 = `main.toc'.
+
+
+
+Requested font "[lmsans10-regular]:mapping=tex-text;" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmsans10-regular.otf
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `lmss' (encoding: TU).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+[1
+
+
+
+
+]
+LaTeX Font Info:    Trying to load font information for TU+phv on input line 25.
+LaTeX Font Info:    No file TUphv.fd. on input line 25.
+
+
+LaTeX Font Warning: Font shape `TU/phv/m/n' undefined
+(Font)              using `TU/lmr/m/n' instead on input line 25.
+
+(d:/Develop Software/Texlive/texlive/2024/texmf-dist/tex/latex/microtype/mt-LatinModernRoman.cfg
+File: mt-LatinModernRoman.cfg 2021/02/21 v1.1 microtype config. file: Latin Modern Roman (RS)
+)
+Requested font "[lmroman12-regular]:mapping=tex-text;" at 14.4pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmroman12-regular.otf
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `phv' (encoding: TU).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+
+
+LaTeX Font Warning: Font shape `TU/phv/b/n' undefined
+(Font)              using `TU/phv/m/n' instead on input line 25.
+
+No file main.lof.
+\tf@lof=\write8
+\openout8 = `main.lof'.
+
+
+
+[2
+
+]
+No file main.lot.
+\tf@lot=\write9
+\openout9 = `main.lot'.
+
+
+
+[3
+
+]
+LaTeX Font Info:    Font shape `TU/XCharter(0)/m/n' will be
+(Font)              scaled to size 24.88pt on input line 35.
+Requested font "[XCharter-Roman.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 24.88pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.otf
+LaTeX Font Info:    Font shape `TU/XCharter(0)/b/n' will be
+(Font)              scaled to size 24.88pt on input line 35.
+Requested font "[XCharter-Bold.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 24.88pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Bold.otf
+ (./main.lol
+Requested font "cmex7" at 5.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+Requested font "msam5" at 5.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm
+Requested font "msbm5" at 5.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
+LaTeX Font Info:    Font shape `TU/XCharter(0)/m/it' will be
+(Font)              scaled to size 10.0pt on input line 4.
+Requested font "[XCharter-Italic.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Italic.otf
+)
+\tf@lol=\write10
+\openout10 = `main.lol'.
+
+
+
+[4
+
+
+]) (./pages/introduction.tex) (./pages/user_scenario.tex) (./pages/technical_problem.tex) (./pages/technical_solution/_main.tex
+LaTeX Font Info:    Font shape `TU/XCharter(0)/m/n' will be
+(Font)              scaled to size 12.0pt on input line 1.
+Requested font "[XCharter-Roman.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 12.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.otf
+LaTeX Font Info:    Font shape `TU/XCharter(0)/b/n' will be
+(Font)              scaled to size 12.0pt on input line 1.
+Requested font "[XCharter-Bold.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 12.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Bold.otf
+Requested font "phvb7t" at 12.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+ (./pages/technical_solution/system_overview.tex) (./pages/technical_solution/system_architecture.tex) (./pages/technical_solution/data_sources.tex) (./pages/technical_solution/machine_learning.tex
+LaTeX Font Info:    Font shape `TU/XCharter(0)/b/n' will be
+(Font)              scaled to size 10.0pt on input line 1.
+Requested font "[XCharter-Bold.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Bold.otf
+Requested font "phvb7t" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm
+Requested font "[lmmono10-regular]:" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `lmtt' (encoding: TU).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+
+
+
+LaTeX Font Warning: Font shape `TU/phv/m/it' undefined
+(Font)              using `TU/phv/m/n' instead on input line 28.
+
+Requested font "[lmroman8-regular]:mapping=tex-text;" at 8.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmroman8-regular.otf
+[1
+
+
+
+
+]
+
+[2]
+
+[3]
+LaTeX Font Info:    Font shape `TU/XCharter(0)/m/n' will be
+(Font)              scaled to size 9.0pt on input line 115.
+Requested font "[XCharter-Roman.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 9.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Roman.otf
+LaTeX Font Info:    Font shape `TU/XCharter(0)/b/n' will be
+(Font)              scaled to size 9.0pt on input line 115.
+Requested font "[XCharter-Bold.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 9.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Bold.otf
+LaTeX Font Info:    Font shape `TU/XCharter(0)/m/it' will be
+(Font)              scaled to size 9.0pt on input line 115.
+Requested font "[XCharter-Italic.otf]/OT:script=latn;language=dflt;+tnum;+lnum;+cv01=0;mapping=tex-text;" at 9.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/xcharter/XCharter-Italic.otf
+File: images/image1_road_mask_classification_test_set.png Graphic file (type bmp)
+<images/image1_road_mask_classification_test_set.png>
+File: images/image2_road_mask_classification_test_set.png.png Graphic file (type bmp)
+<images/image2_road_mask_classification_test_set.png.png>
+File: images/image3_road_mask_classification_test_set.png Graphic file (type bmp)
+<images/image3_road_mask_classification_test_set.png>
+File: images/image4_road_mask_classification_test_set.png Graphic file (type bmp)
+<images/image4_road_mask_classification_test_set.png>
+File: images/image5_road_mask_classification_test_set.png Graphic file (type bmp)
+<images/image5_road_mask_classification_test_set.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[4]
+File: images/image1_empty_parking_detection_test_set.png Graphic file (type bmp)
+<images/image1_empty_parking_detection_test_set.png>
+File: images/image2_empty_parking_detection_test_set.png Graphic file (type bmp)
+<images/image2_empty_parking_detection_test_set.png>
+File: images/image3_empty_parking_detection_test_set.png Graphic file (type bmp)
+<images/image3_empty_parking_detection_test_set.png>
+File: images/image4_empty_parking_detection_test_set.png Graphic file (type bmp)
+<images/image4_empty_parking_detection_test_set.png>
+File: images/image5_empty_parking_detection_test_set.png Graphic file (type bmp)
+<images/image5_empty_parking_detection_test_set.png>
+File: images/image6_empty_parking_detection_test_set.png Graphic file (type bmp)
+<images/image6_empty_parking_detection_test_set.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Overfull \hbox (91.44176pt too wide) in paragraph at lines 185--188
+\TU/XCharter(0)/m/n/10 The classification of the spots detected into private, public and parking lot is evaluated in the \TU/lmtt/m/n/10 evaluate_classification_of_spots.py
+ []
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+File: images/image1_classification_test_set.png Graphic file (type bmp)
+<images/image1_classification_test_set.png>
+File: images/image2_classification_test_set.png Graphic file (type bmp)
+<images/image2_classification_test_set.png>
+File: images/image3_classification_test_set.png Graphic file (type bmp)
+<images/image3_classification_test_set.png>
+File: images/image4_classification_test_set.png Graphic file (type bmp)
+<images/image4_classification_test_set.png>
+File: images/image5_classification_test_set.png Graphic file (type bmp)
+<images/image5_classification_test_set.png>
+File: images/image6_classification_test_set.png Graphic file (type bmp)
+<images/image6_classification_test_set.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+) (./pages/technical_solution/frontend.tex
+
+[5]
+Overfull \hbox (2.4709pt too wide) in paragraph at lines 25--26
+[]\TU/XCharter(0)/m/n/10 In addition to TailwindCSS, we incorporated several tools to enhance the framework’s capabilities. \TU/XCharter(0)/b/n/10 Tailwind-
+ []
+
+
+
+[6]
+
+[7]
+File: images/site/sitemap.png Graphic file (type bmp)
+<images/site/sitemap.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+File: images/site/landing/landing_6_header.png Graphic file (type bmp)
+<images/site/landing/landing_6_header.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+File: images/site/landing/landing_1_hero.png Graphic file (type bmp)
+<images/site/landing/landing_1_hero.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[8]
+File: images/site/landing/landing_2_about.png Graphic file (type bmp)
+<images/site/landing/landing_2_about.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+File: images/site/landing/landing_3_features.png Graphic file (type bmp)
+<images/site/landing/landing_3_features.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+File: images/site/landing/landing_4_usecases.png Graphic file (type bmp)
+<images/site/landing/landing_4_usecases.png>
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[9]
+File: images/site/landing/landing_5_cta.png Graphic file (type bmp)
+<images/site/landing/landing_5_cta.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[10]
+File: images/site/signup/signup_page.png Graphic file (type bmp)
+<images/site/signup/signup_page.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[11]
+
+[12]
+
+[13]
+File: images/site/login/login_page.png Graphic file (type bmp)
+<images/site/login/login_page.png>
+
+
+[14]
+File: images/site/home/homepage_1.png Graphic file (type bmp)
+<images/site/home/homepage_1.png>
+
+
+[15]
+Underfull \hbox (badness 10000) in paragraph at lines 342--342
+[]\TU/XCharter(0)/m/n/10 Requirement Collection
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+File: images/sketch.jpg Graphic file (type bmp)
+<images/sketch.jpg>
+
+
+[16]
+File: images/wireframe-home.jpg Graphic file (type bmp)
+<images/wireframe-home.jpg>
+File: images/wireframe-signup.jpg Graphic file (type bmp)
+<images/wireframe-signup.jpg>
+
+
+LaTeX Warning: Citation 'psycray2023' on page 17 undefined on input line 426.
+
+
+
+[17]
+File: images/v1_Home Page.png Graphic file (type bmp)
+<images/v1_Home Page.png>
+File: images/v1_Login.png Graphic file (type bmp)
+<images/v1_Login.png>
+File: images/v2_Home Page.png Graphic file (type bmp)
+<images/v2_Home Page.png>
+File: images/v3_Home Page.png Graphic file (type bmp)
+<images/v3_Home Page.png>
+File: images/v3_History.png Graphic file (type bmp)
+<images/v3_History.png>
+File: images/v3_onboarding.png Graphic file (type bmp)
+<images/v3_onboarding.png>
+
+
+[18]
+File: images/v4_Home.png Graphic file (type bmp)
+<images/v4_Home.png>
+File: images/v4_Landing Page.png Graphic file (type bmp)
+<images/v4_Landing Page.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+
+[19]
+
+[20]) (./pages/technical_solution/backend.tex
+
+[21]
+
+LaTeX Warning: Citation 'sqlc_introduction' on page 22 undefined on input line 109.
+
+
+LaTeX Warning: Citation 'sqlc_documentation_language_support' on page 22 undefined on input line 118.
+
+
+
+[22]
+
+LaTeX Warning: Citation 'sqlc_injection' on page 23 undefined on input line 122.
+
+\pydata@fh@_FAD58DE7366495DB4650CFEFAC2FCD61.data.minted=\write11
+\openout11 = `_FAD58DE7366495DB4650CFEFAC2FCD61.data.minted'.
+
+runsystem(latexminted config  --timestamp 20241217110958Z FAD58DE7366495DB4650CFEFAC2FCD61)...executed safely (allowed).
+
+(./_FAD58DE7366495DB4650CFEFAC2FCD61.config.minted)
+runsystem(latexminted cleanconfig  --timestamp 20241217110958Z FAD58DE7366495DB4650CFEFAC2FCD61)...executed safely (allowed).
+
+ (./_minted/default.style.minted) (./_minted/6C0BFFDDE34F8AC05828592B9A57ABC5.highlight.minted
+LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10> not available
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 2.
+Requested font "[lmmonolt10-bold]:" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmmonolt10-bold.otf
+)
+Package hyperref Info: bookmark level for unknown listing defaults to 0 on input line 167.
+ (./_minted/173C6D93576A7F9C11628D3D96A8276C.highlight.minted
+Requested font "[lmmono10-italic]:" at 10.0pt
+ -> d:/Develop Software/Texlive/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmmono10-italic.otf
+) (./_minted/7A179533837E517ED94F63BF2A8B134F.highlight.minted)
+File: ../d2-diagrams/database_workflow.png Graphic file (type bmp)
+<../d2-diagrams/database_workflow.png>
+
+
+[23]
+
+[24]) (./pages/technical_solution/deployment.tex))
+
+[25]
+
+[26] (./pages/software_management.tex
+
+LaTeX Warning: Citation 'DevOps' on page 27 undefined on input line 20.
+
+
+LaTeX Warning: Citation 'DevOps' on page 27 undefined on input line 33.
+
+
+LaTeX Warning: Citation 'DevOps' on page 27 undefined on input line 38.
+
+File: ../d2-diagrams/issues-prs/diagram.png Graphic file (type bmp)
+<../d2-diagrams/issues-prs/diagram.png>
+
+
+[27]
+File: images/github_issue.png Graphic file (type bmp)
+<images/github_issue.png>
+
+
+[28] (./_minted/6D816D43B2185EBC052DCEE6389B3AB5.highlight.minted)
+
+[29]
+File: images/github_pr.png Graphic file (type bmp)
+<images/github_pr.png>
+
+
+[30] (./_minted/E87C63AA69C9F578B566A552CDEEAB4D.highlight.minted)
+
+[31]
+File: images/github_kanban.png Graphic file (type bmp)
+<images/github_kanban.png>
+File: images/github_roadmap.png Graphic file (type bmp)
+<images/github_roadmap.png>
+
+
+[32] (./_minted/7171E41D44539BDC6425B63F6DC49EB9.highlight.minted) (./_minted/106264ADC8821840FE352092FABCA624.highlight.minted)
+
+[33] (./_minted/42F7F426C01CE4A2CCDCAC4CFF09593A.highlight.minted)
+
+[34]) (./pages/evaluation/_main.tex (./pages/evaluation/user_evaluation.tex
+
+LaTeX Warning: Citation 'usabilitycomponentsnielsen' on page 35 undefined on input line 2.
+
+
+LaTeX Warning: Citation 'usertestingdefinition' on page 35 undefined on input line 3.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2--4
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 5--6
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--8
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 20--23
+
+ []
+
+File: images/user-satisfaction-survey.png Graphic file (type bmp)
+<images/user-satisfaction-survey.png>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[35])
+
+[36] (./pages/evaluation/general_evaluation.tex
+Underfull \hbox (badness 10000) in paragraph at lines 2--6
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 6--7
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--8
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 8--9
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 9--10
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 10--11
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 13--14
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 13--14
+
+ []
+
+
+
+[37]
+File: images/survey-brendan.png Graphic file (type bmp)
+<images/survey-brendan.png>
+
+
+[38]
+Underfull \hbox (badness 10000) in paragraph at lines 25--27
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 31--32
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 32--33
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 33--34
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 35--36
+
+ []
+
+File: images/survey-maira.png Graphic file (type bmp)
+<images/survey-maira.png>
+
+
+[39]
+Underfull \hbox (badness 10000) in paragraph at lines 55--55
+[]\TU/XCharter(0)/b/n/10 Time
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 71--72
+[]\TU/XCharter(0)/m/n/10 Required
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 73--74
+[]\TU/XCharter(0)/m/n/10 Required
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 75--76
+[]\TU/XCharter(0)/m/n/10 Couldn’t
+ []
+
+File: images/survey-paul.png Graphic file (type bmp)
+<images/survey-paul.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 47--90
+
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[40]
+Underfull \hbox (badness 10000) in paragraph at lines 101--101
+[]\TU/XCharter(0)/b/n/10 Time
+ []
+
+File: images/survey-livia.png Graphic file (type bmp)
+<images/survey-livia.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 93--136
+
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[41]
+File: images/survey-ben.png Graphic file (type bmp)
+<images/survey-ben.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 139--186
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 139--186
+
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[42]
+Underfull \hbox (badness 10000) in paragraph at lines 189--229
+
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--230
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 230--231
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 231--232
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 234--236
+
+ []
+
+
+
+[43]
+File: images/survey-jakub.png Graphic file (type bmp)
+<images/survey-jakub.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 237--244
+
+ []
+
+File: images/survey-casual-summary.png Graphic file (type bmp)
+<images/survey-casual-summary.png>
+)
+
+[44] (./pages/evaluation/target_evaluation.tex
+Underfull \hbox (badness 10000) in paragraph at lines 1--4
+
+ []
+
+
+LaTeX Warning: Citation 'bryanboyleplaygroundinclusion2023' on page 45 undefined on input line 12.
+
+
+LaTeX Warning: Citation 'bryanboylechildrenautism2022' on page 45 undefined on input line 12.
+
+File: images/bryan-amenity-info.png Graphic file (type bmp)
+<images/bryan-amenity-info.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 12--22
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 12--22
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 23--61
+
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[45]
+Underfull \hbox (badness 10000) in paragraph at lines 63--64
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 64--65
+
+ []
+
+File: images/survey-bryan.png Graphic file (type bmp)
+<images/survey-bryan.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 67--74
+
+ []
+
+
+
+[46]
+File: images/sarah-amenity-info.png Graphic file (type bmp)
+<images/sarah-amenity-info.png>
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[47]
+Overfull \hbox (7.33759pt too wide) in paragraph at lines 127--128
+[]\TU/XCharter(0)/b/n/10 Data: \TU/XCharter(0)/m/n/10 the tooltips on each icon is very interesting. Perhaps cross-check the information there and add/remove
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 127--128
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 128--129
+
+ []
+
+File: images/survey-sarah.png Graphic file (type bmp)
+<images/survey-sarah.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 131--138
+
+ []
+
+
+
+[48]
+File: images/odran-amenity-info.png Graphic file (type bmp)
+<images/odran-amenity-info.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 153--154
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 154--155
+
+ []
+
+File: images/survey-odran.png Graphic file (type bmp)
+<images/survey-odran.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--165
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--165
+
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[49]
+File: images/survey-target-summary.png Graphic file (type bmp)
+<images/survey-target-summary.png>
+)
+Underfull \hbox (badness 10000) in paragraph at lines 168--11
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 168--11
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 168--11
+
+ []
+
+
+
+[50] (./pages/evaluation/ux_review.tex
+
+LaTeX Warning: Citation 'uiuxguidelines2023' on page 51 undefined on input line 3.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1--4
+
+ []
+
+
+LaTeX Warning: Citation 'uiuxguidelinesnielsen2016' on page 51 undefined on input line 5.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 7--8
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 8--9
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 9--10
+
+ []
+
+
+LaTeX Warning: Citation 'mixsurveyquestions2020' on page 51 undefined on input line 18.
+
+
+Overfull \hbox (3.9197pt too wide) in paragraph at lines 45--45
+[]\TU/XCharter(0)/m/n/10 Q10| 
+ []
+
+
+Overfull \hbox (3.9197pt too wide) in paragraph at lines 47--47
+[]\TU/XCharter(0)/m/n/10 Q11| 
+ []
+
+
+Overfull \hbox (3.9197pt too wide) in paragraph at lines 49--49
+[]\TU/XCharter(0)/m/n/10 Q12| 
+ []
+
+
+Overfull \hbox (2.13766pt too wide) in paragraph at lines 23--52
+ [][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 13--53
+
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[51]
+File: images/old-dashboard_opt.png Graphic file (type bmp)
+<images/old-dashboard_opt.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--72
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--72
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 56--72
+
+ []
+
+
+
+[52]
+File: images/old-login-error.png Graphic file (type bmp)
+<images/old-login-error.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--85
+
+ []
+
+File: images/ux-survey1-ui.png Graphic file (type bmp)
+<images/ux-survey1-ui.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 86--95
+
+ []
+
+
+
+[53]
+File: images/ux-survey1-data.png Graphic file (type bmp)
+<images/ux-survey1-data.png>
+
+
+[54]
+File: images/ux-survey1-technical.png Graphic file (type bmp)
+<images/ux-survey1-technical.png>
+File: images/ux-survey1-summary.png Graphic file (type bmp)
+<images/ux-survey1-summary.png>
+
+
+[55]
+Underfull \hbox (badness 10000) in paragraph at lines 125--126
+
+ []
+
+File: images/landing-page-current.png Graphic file (type bmp)
+<images/landing-page-current.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 127--136
+
+ []
+
+File: images/dashboard-current.png Graphic file (type bmp)
+<images/dashboard-current.png>
+
+
+[56]
+File: images/map-icons-group.png Graphic file (type bmp)
+<images/map-icons-group.png>
+File: images/search-results-fail.png Graphic file (type bmp)
+<images/search-results-fail.png>
+
+
+[57]
+File: images/search-results-parnell.png Graphic file (type bmp)
+<images/search-results-parnell.png>
+File: images/saved-locations.png Graphic file (type bmp)
+<images/saved-locations.png>
+
+
+[58]
+File: images/ux-survey2-ui.png Graphic file (type bmp)
+<images/ux-survey2-ui.png>
+File: images/ux-survey2-data.png Graphic file (type bmp)
+<images/ux-survey2-data.png>
+
+
+[59]
+File: images/ux-survey2-technical.png Graphic file (type bmp)
+<images/ux-survey2-technical.png>
+File: images/ux-survey2-summary.png Graphic file (type bmp)
+<images/ux-survey2-summary.png>
+)
+Underfull \hbox (badness 10000) in paragraph at lines 202--15
+
+ []
+
+
+
+[60] (./pages/evaluation/accessibility_review.tex
+Underfull \hbox (badness 10000) in paragraph at lines 1--2
+
+ []
+
+
+LaTeX Warning: Citation 'webaccessibilitydirective2016' on page 61 undefined on input line 3.
+
+File: images/wcag-guidelines.png Graphic file (type bmp)
+<images/wcag-guidelines.png>
+
+LaTeX Warning: Citation 'whoworldreportvision2019' on page 61 undefined on input line 12.
+
+
+LaTeX Warning: Citation 'visionirelandcensus' on page 61 undefined on input line 12.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 11--13
+
+ []
+
+
+LaTeX Warning: Citation 'accessibilitywebmapsrecommendations2017' on page 61 undefined on input line 14.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 16--17
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 17--18
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 18--19
+
+ []
+
+
+
+[61]
+Underfull \hbox (badness 10000) in paragraph at lines 23--25
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 26--27
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 28--52
+
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--54
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 55--56
+
+ []
+
+
+Underfull \hbox (badness 1314) in paragraph at lines 76--77
+[]\TU/XCharter(0)/m/n/10 Did not know how to use the
+ []
+
+
+Underfull \hbox (badness 2293) in paragraph at lines 82--82
+[]\TU/XCharter(0)/m/n/10 Clear marker and radius from
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+
+[62]
+File: images/onboarding-text-v1.png Graphic file (type bmp)
+<images/onboarding-text-v1.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 96--107
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 96--107
+
+ []
+
+
+
+[63]
+File: images/old-icons-map.png Graphic file (type bmp)
+<images/old-icons-map.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--119
+
+ []
+
+File: images/accessb-survey-components.png Graphic file (type bmp)
+<images/accessb-survey-components.png>
+
+
+[64]
+File: images/accessb-survey-design.png Graphic file (type bmp)
+<images/accessb-survey-design.png>
+File: images/accessb-survey-interaction.png Graphic file (type bmp)
+<images/accessb-survey-interaction.png>
+
+
+[65]
+File: images/accessb-survey-summary.png Graphic file (type bmp)
+<images/accessb-survey-summary.png>
+)) (./pages/future_work/_main.tex (./pages/future_work/machine_learning.tex) (./pages/future_work/frontend.tex) (./pages/future_work/backend.tex) (./pages/future_work/deployment.tex)) (./pages/conclusion.tex)
+
+[66]
+
+[67]
+
+[68]
+
+[69]
+
+[70]
+
+[71]
+
+[72]
+
+[73]
+
+[74]
+
+[75] (./pages/appendix/_main.tex (./pages/appendix/A.tex) (./pages/appendix/B.tex))
+
+[76
+
+]
+
+LaTeX Warning: Empty bibliography on input line 125.
+
+
+enddocument/afterlastpage: lastpage setting LastPage.
+(./main.aux)
+ ***********
+LaTeX2e <2024-11-01> patch level 1
+L3 programming layer <2024-11-02>
+ ***********
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+
+LaTeX Warning: There were undefined references.
+
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: E7C6FB871D87018B307072E60BB7DE79;14014.
+
+Package biblatex Warning: Please (re)run BibTeX on the file(s):
+(biblatex)                main
+(biblatex)                and rerun LaTeX afterwards.
+
+Package logreq Info: Writing requests to 'main.run.xml'.
+\openout1 = `main.run.xml'.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 34786 strings out of 473965
+ 747101 string characters out of 5725257
+ 1809030 words of memory out of 5000000
+ 56995 multiletter control sequences out of 15000+600000
+ 567031 words of font info for 84 fonts, out of 8000000 for 9000
+ 1348 hyphenation exceptions out of 8191
+ 99i,12n,127p,1931b,3848s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on main.pdf (81 pages).

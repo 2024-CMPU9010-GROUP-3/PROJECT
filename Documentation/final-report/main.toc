@@ -1,0 +1,108 @@
+\babel@toc {english}{}\relax 
+\contentsline {section}{Table of Contents}{\textsf {I}}{Doc-Start}%
+\contentsline {section}{List of Figures}{\textsf {II}}{section*.1}%
+\contentsline {section}{List of Tables}{\textsf {III}}{section*.1}%
+\contentsline {section}{List of Listings}{\textsf {IV}}{section*.1}%
+\contentsline {section}{\numberline {0.1}Introduction}{1}{section.0.1}%
+\contentsline {section}{\numberline {0.2}User Scenario}{1}{section.0.2}%
+\contentsline {section}{\numberline {0.3}Technical Problem}{1}{section.0.3}%
+\contentsline {section}{\numberline {0.4}Technical Solution}{1}{section.0.4}%
+\contentsline {subsection}{\numberline {0.4.1}System Overview}{1}{subsection.0.4.1}%
+\contentsline {subsection}{\numberline {0.4.2}System Architecture}{1}{subsection.0.4.2}%
+\contentsline {subsection}{\numberline {0.4.3}Data Sources}{1}{subsection.0.4.3}%
+\contentsline {subsection}{\numberline {0.4.4}Machine Learning}{1}{subsection.0.4.4}%
+\contentsline {subsubsection}{Data collection process}{1}{section*.3}%
+\contentsline {subsubsection}{Yolo model used for car detection}{1}{section*.4}%
+\contentsline {subsubsection}{Parking spot detection}{1}{section*.5}%
+\contentsline {subsubsection}{Road mask generation}{1}{section*.6}%
+\contentsline {subsubsection}{Classifiction of cars into on the road or parked}{2}{section*.7}%
+\contentsline {subsubsection}{Empty parking spot detection}{2}{section*.8}%
+\contentsline {subsubsection}{Classification of all spots detected}{3}{section*.9}%
+\contentsline {subsubsection}{Uploading points to the backend server}{3}{section*.10}%
+\contentsline {subsubsection}{Evaluation of each submodule of the parking detection model}{4}{section*.11}%
+\contentsline {subsubsection}{Evaluation of the Yolo model}{4}{section*.12}%
+\contentsline {subsubsection}{Evaluation of the classifiction of cars into on the road or parked}{4}{section*.13}%
+\contentsline {subsubsection}{Evaluation of the empty parking detection}{4}{section*.16}%
+\contentsline {subsubsection}{Evaluation of the classification of the spots detected into private, public and parking lot}{5}{section*.19}%
+\contentsline {subsection}{\numberline {0.4.5}Frontend}{5}{subsection.0.4.5}%
+\contentsline {subsubsection}{Frontend Architecture and Implementation}{5}{section*.22}%
+\contentsline {subsubsection}{Client State Management}{7}{section*.23}%
+\contentsline {paragraph}{Introduction}{7}{section*.24}%
+\contentsline {paragraph}{React Context}{7}{section*.25}%
+\contentsline {paragraph}{Redux}{8}{section*.26}%
+\contentsline {paragraph}{Consistent User Experience}{8}{section*.27}%
+\contentsline {paragraph}{Conclusion}{8}{section*.28}%
+\contentsline {subsubsection}{UI Walkthrough}{8}{section*.29}%
+\contentsline {paragraph}{Landing Page}{8}{section*.31}%
+\contentsline {paragraph}{Homepage}{15}{section*.40}%
+\contentsline {paragraph}{}{16}{section*.42}%
+\contentsline {subsubsection}{Prototyping}{16}{section*.43}%
+\contentsline {subsubsection}{Prototype methods}{16}{section*.44}%
+\contentsline {subsubsection}{Low-fidelity prototypes}{16}{section*.46}%
+\contentsline {subsubsection}{Medium Fidelity Prototyping}{17}{section*.49}%
+\contentsline {subsubsection}{High Fidelity Prototyping}{17}{section*.50}%
+\contentsline {subsubsection}{User Interface Iteration}{18}{section*.51}%
+\contentsline {paragraph}{Iteration 1:}{18}{section*.52}%
+\contentsline {paragraph}{Iteration 2:}{18}{section*.54}%
+\contentsline {paragraph}{Iteration 3:}{18}{section*.56}%
+\contentsline {paragraph}{Iteration 4:}{19}{section*.58}%
+\contentsline {subsubsection}{User Feedback and Prototype Evolution}{19}{section*.60}%
+\contentsline {subsubsection}{User Feedback and Prototype Evolution}{19}{section*.61}%
+\contentsline {paragraph}{First Iteration}{20}{section*.62}%
+\contentsline {paragraph}{Second Iteration}{20}{section*.63}%
+\contentsline {paragraph}{Third Iteration}{21}{section*.64}%
+\contentsline {paragraph}{Fourth Iteration}{21}{section*.65}%
+\contentsline {paragraph}{Ongoing Development}{21}{section*.66}%
+\contentsline {subsection}{\numberline {0.4.6}Backend}{21}{subsection.0.4.6}%
+\contentsline {subsubsection}{Backend Technologies}{21}{section*.67}%
+\contentsline {paragraph}{Go}{21}{section*.68}%
+\contentsline {paragraph}{PostgreSQL}{22}{section*.69}%
+\contentsline {paragraph}{sqlc}{22}{section*.70}%
+\contentsline {paragraph}{golang-migrate}{23}{section*.71}%
+\contentsline {paragraph}{bcrypt}{23}{section*.73}%
+\contentsline {subsubsection}{Backend Development}{25}{section*.74}%
+\contentsline {subsubsection}{Middlewares}{25}{section*.75}%
+\contentsline {paragraph}{Authentication}{25}{section*.76}%
+\contentsline {paragraph}{Authorisation}{25}{section*.77}%
+\contentsline {subsubsection}{Data Validation}{25}{section*.78}%
+\contentsline {subsubsection}{Error Handling}{25}{section*.79}%
+\contentsline {subsubsection}{Testing}{25}{section*.80}%
+\contentsline {subsection}{\numberline {0.4.7}Deployment}{25}{subsection.0.4.7}%
+\contentsline {section}{\numberline {0.5}Software Management}{27}{section.0.5}%
+\contentsline {subsection}{\numberline {0.5.1}Why is Software Management important?}{27}{subsection.0.5.1}%
+\contentsline {subsection}{\numberline {0.5.2}What is DevOps?}{27}{subsection.0.5.2}%
+\contentsline {subsection}{\numberline {0.5.3}Continuous Integration}{27}{subsection.0.5.3}%
+\contentsline {subsubsection}{Issues}{28}{section*.82}%
+\contentsline {subsubsection}{Pull Requests}{30}{section*.84}%
+\contentsline {subsubsection}{Projects}{32}{section*.86}%
+\contentsline {subsection}{\numberline {0.5.4}Actions}{33}{subsection.0.5.4}%
+\contentsline {subsubsection}{Houskeeping}{33}{section*.89}%
+\contentsline {subsubsection}{Checks}{34}{section*.90}%
+\contentsline {section}{\numberline {0.6}Evaluation}{35}{section.0.6}%
+\contentsline {subsection}{\numberline {0.6.1}Components of usability}{35}{subsection.0.6.1}%
+\contentsline {subsubsection}{User experience design and testing}{35}{section*.91}%
+\contentsline {subsection}{\numberline {0.6.2}General user evaluation}{37}{subsection.0.6.2}%
+\contentsline {subsubsection}{User 1 - Brendan}{37}{section*.93}%
+\contentsline {subsubsection}{User 2 - Anonymous 1}{39}{section*.95}%
+\contentsline {subsubsection}{User 3 - Paul}{40}{section*.97}%
+\contentsline {subsubsection}{User 4 - Livia}{41}{section*.100}%
+\contentsline {subsubsection}{User 5 - Ben}{42}{section*.103}%
+\contentsline {subsubsection}{User 6 - Jakub}{43}{section*.106}%
+\contentsline {subsubsection}{General user overview}{44}{section*.109}%
+\contentsline {subsection}{\numberline {0.6.3}Targeted user evaluation}{45}{subsection.0.6.3}%
+\contentsline {subsubsection}{User 7 - Bryan Boyle}{45}{section*.111}%
+\contentsline {subsubsection}{User 8 - Anonymous 2}{47}{section*.115}%
+\contentsline {subsubsection}{User 9 - Anonymous 3}{49}{section*.119}%
+\contentsline {subsubsection}{Targeted users overview}{50}{section*.122}%
+\contentsline {subsection}{\numberline {0.6.4}UI/UX Expert Review}{51}{subsection.0.6.4}%
+\contentsline {subsubsection}{Session 1}{52}{section*.125}%
+\contentsline {subsubsection}{Session 2}{56}{section*.132}%
+\contentsline {subsection}{\numberline {0.6.5}Accessibility Expert Review}{61}{subsection.0.6.5}%
+\contentsline {section}{\numberline {0.7}Future Work}{66}{section.0.7}%
+\contentsline {subsection}{\numberline {0.7.1}Machine Learning}{66}{subsection.0.7.1}%
+\contentsline {subsection}{\numberline {0.7.2}Frontend}{66}{subsection.0.7.2}%
+\contentsline {subsection}{\numberline {0.7.3}Backend}{66}{subsection.0.7.3}%
+\contentsline {subsection}{\numberline {0.7.4}Deployment}{66}{subsection.0.7.4}%
+\contentsline {section}{\numberline {0.8}Conclusion}{66}{section.0.8}%
+\contentsline {section}{\numberline {0.9}Appendix A: ABC}{76}{section.0.9}%
+\contentsline {section}{\numberline {0.10}Appendix B: XYZ}{76}{section.0.10}%
