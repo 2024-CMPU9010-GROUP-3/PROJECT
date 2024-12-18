@@ -1,30 +1,47 @@
 \subsubsection{Application Security}
+\textbf{Fix Issues with JWTs}\\
 As mentioned in the discussion of JSON Web Tokens on page \pageref{jwt}, the use
 of JWTs comes with its own set of caveats.
 
 One solution for this issue would be implementing a list of revoked tokens on
 the server and offering the user a way to add a stolen token to that list. If an
 attacker then uses one of these revoked tokens, their requests can be easily
-denied. However, this added complexity and development time that the team didn't
-have in the MVP phase of the project. So to mitigate the issue, the JWTs were
-given a very short expiration time, making them useless after only a few hours.
-This led to annoyance and friction during development and testing, so the
-expiration time was increased to a week. This made the application less secure,
-but much easier to use in both development and regular usage. The backend team
-took a unanimous decision to keep the token handling in this state for the time
-being, as the application was still considered very much secure enough. The time
-and effort needed to implement those additional security features were weighed
-up and it became obvious that they would not result in any easily perceptible
-improvement to the application.
+denied.
+
+\textbf{Implement Email-based Features}\\
+Right at the end of the project, the team experimented with email-based features
+like email verification and password reset. Unfortunately, emails sent by our
+system were always classified either classified as spam or didn't get delivered
+at all as they were considered untrustworthy. Since the deadline was fast
+approaching, the team decided to abandon this idea and focus on other issues.
+
+Nonetheless, these features are essential components for any public facing web
+application. This is why one of the next steps would be to implement email
+verification and password reset using a service like SendGrid. This way, the
+issue of emails being blocked automatically should be mitigated. email
+verification, forgot password
+
+\textbf{Replacing bcrypt}\\
+Switching out bcrypt for Argon2id is not as pressing as other issues on this
+list as it is still functional and secure, but sometime in the future it would
+be a good idea to switch to a newer password encryption solution. This would
+bring Magpie in line with the current recommendations for secure password
+storage by the \textcite{owasp_password_storage_cheatsheet}.
+
+Replacing the bcrypt library would make it necessary to reset the passwords of
+all users, as it is not possible to convert a bcrypt hash to a Argon2id hash.
+This should therefore be done before the number of users grows to affect as few
+people as possible.
 
 The issue of improving application security was kept in mind during the whole
 development process, but other issues always took precedence. Given more time,
 improving the application security would be one of the top priorities in terms
 of further backend development.
-\fcolorbox{orange}{orange}{Add section on Application Security}
 
 \subsubsection{Performance}
-\fcolorbox{orange}{orange}{Add section on Performance}
+\textbf{Database Optimisation}\\
+optimise database, implement data streaming
+
+\textbf{Improve Data Transmission Speed}\\
 
 \subsubsection{Fully Automated Data Ingress}
-\fcolorbox{orange}{orange}{Add section on Automated Data Ingress}
