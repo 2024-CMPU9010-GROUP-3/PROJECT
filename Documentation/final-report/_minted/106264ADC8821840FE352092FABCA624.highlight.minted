@@ -1,6 +1,0 @@
-\begin{MintedVerbatim}[commandchars=\\\{\}]
-\PYG{+w}{        }\PYG{n+nt}{on}\PYG{p}{:}
-\PYG{+w}{            }\PYG{n+nt}{push}\PYG{p}{:}
-\PYG{+w}{                }\PYG{n+nt}{paths}\PYG{p}{:}
-\PYG{+w}{                }\PYG{p+pIndicator}{\PYGZhy{}}\PYG{+w}{ }\PYG{l+s}{\PYGZsq{}}\PYG{l+s}{Backend/**}\PYG{l+s}{\PYGZsq{}}
-\end{MintedVerbatim}
