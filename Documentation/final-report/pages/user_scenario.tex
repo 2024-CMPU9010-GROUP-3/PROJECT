@@ -6,10 +6,11 @@ of sustainable and resilient communities. \\
 Our secondary target is any casual user who is interested in amenities planning, and this includes but is not limited to the following: Sustainability Advocates, Commuters, event planners, journalists, political advisors, and parking companies.\\
 
 Two main user personas were developed for the context of Magpie's development. \\
-These personas serve to guide the feature implementation and the user evaluation cycle.\\ \\
+These personas serve to guide the feature implementation and the user evaluation cycle.\\
 
 \subsubsection{User persona 1 - Michael O'Brien}
-\noindent Michael O'Brien is a 48-year-old Urban Planning Specialist at Dublin City Council, deeply committed to enhancing his hometown of Lusk. He specializes in sustainable urban development, integrating smart technologies with traditional planning principles, and has contributed to notable projects like Dublin's cycle lane network. He represents our primary target user.
+\noindent Michael O'Brien is a 48-year-old Urban Planning Specialist at Dublin City Council, deeply committed to enhancing his hometown of Lusk. He specializes in sustainable urban development, integrating smart technologies with traditional planning principles, and has contributed to notable projects like Dublin's cycle lane network. He represents our primary target user. \\
+\newpage
 %michael user persona
 \begin{figure}[h!]
     \centering
@@ -17,7 +18,7 @@ These personas serve to guide the feature implementation and the user evaluation
     \caption{User persona - Michael O'Brien}
 \end{figure}
 Michael is currently working on the expansion of Dublin's cycle lane network southbound. He is facing some challenges because the maps provided by Dublin city council are static and don't show crucial information such as public facilities and amenities. The datasets he's been accessing seem out of date and not comprehensive at all.\\
-Michael needs a tool that allows him to interact with a map that contains key data on public facilities and amenities, as well as options to extract that information for analysis and planning.\\
+Michael needs a tool that allows him to interact with a map that contains key data on public facilities and amenities, as well as options to extract that information for analysis and planning.
 
 \subsubsection{User person 2 - Sarah Thompson}
 Sarah thompson is a 35 year old CEO of an event's planning company based in Dublin, Ireland. She specializes in corporate events and weddings, and is known for creating memorable experiences while addressing key logistical challenges such as venue selection, catering, accessibility and transportation. She represents our secondary target user.
@@ -30,6 +31,7 @@ Sarah thompson is a 35 year old CEO of an event's planning company based in Dubl
 Currently, she faces many challenges planning events within Dublin city. She has limited time to manually research transport and parking options and to visually assess the accessibility of a possible venue.\\
 She's looking for a tool that will give her a visual overview of transportation and parking options in an area, with additional information on their location  \& their quantity. She also needs something quick and easy to use!\\
 
+\newpage
 \subsection{Why are they important?}
 Urban Planners are crucial for the holistic development of cities and towns.
 They ensure that urban development is sustainable, balancing economic growth and
@@ -45,13 +47,7 @@ sustainability.
 
 \subsection{What problem are we solving?}
 Urban Planners often face challenges with accessing and analysing data. Data is
-typically siloed, making it difficult to access and analyse.\\
-In Ireland and the United Kingdom, the prevalence of proper digitised records in county
-administrations varies wildly (\cite{WebAccessibilityIreland}). Some make use of state-of-the-art geographical information systems (GIS) while others rely on spreadsheets which are manually kept up to date. (\cite{clark2002amenities}). \\
-A system that would allow users to quickly inspect a combined dataset grounded in
-automatically generated, real-world data could accelerate processes like planning permissions, urban development, or resource allocation.\\
-This can compromise their capacity to make informed decisions. Our project aims to address the difficulty in accessing and analysing data, by providing a platform that
-aggregates data from multiple sources.
+typically siloed, making it difficult to access and analyse.
 
 We aim to provide Urban Planners with a tool that allows them to access this
 information in a single, easy to use, platform. This will allow Urban Planners
@@ -68,5 +64,95 @@ A market research survey was conducted to answer key demographic \& product ques
     \item Are they satisfied with those tools?
     \item Would they consider Magpie useful in filling the gaps in their toolset?
 \end{enumerate}
+This market research survey was shared via email to local councils, constructions companies, event planners across Ireland, as well as via social media channels.
+
+\subsubsection{Demographic data}
+This first section of the survey covered demographic data, to allow us to build a profile for the respondents. Personal identifiable information was not collected for the purposes of anonymity.
+
+We had a total of 118 respondents, which we divided into 2 categories:
+
+\emph{User A}: Respondents who did not use amenity data in their work = \textbf{88 users}.
+\emph{User B}: Respondents who used amenity data in their work = \textbf{30 users}.
+Splitting the respondents allows us to better analyse the answers in the context of if they belong to our primary or our secondary target user group.
+
+Both user groups were evenly distributed in employment sector and counties they work in, as illustrated in the figures below.
+%user sector distribution
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-sector-distribution.png}
+    \caption{Market analysis - User Sector Distribution}
+\end{figure}
+%user sector distribution
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-county-distribution.png}
+    \caption{Market analysis - User County Distribution}
+\end{figure}
+
+\subsubsection{Amenity data}
+This section specifically questions respondents in the User B group on their use of amenity data in their work.
+
+We can see that the most common amenity data accessed is transportation (\fcolorbox{yellow}{yellow}{try get by sector}).
+%amenity data type accessed
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-userb-amenity.png}
+    \caption{Market analysis - User B Amenity Data Type Distribution}
+\end{figure}
+
+\subsubsection{Devices \& Tools}
+This section looks at the devices used by both users groups, as well as the applications or tools they are using to access amenity data.
+
+User A was specifically questioned on which device they use for navigation and at what frequency.
+%device + freq user A
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-usera-device-freq.png}
+    \caption{Market analysis - User A Preferred device \& Usage frequency}
+\end{figure}
+
+User B was specifically questioned on which device they use for their day-to-day work, as well as what tool they are currently using to access amenity data.
+%device + freq user B
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-userb-tool-freq.png}
+    \caption{Market analysis - User B Tool type \& Usage frequency}
+\end{figure}
+User B were also questioned on their satisfaction with their current tool. More than 50\% of respondents said they weren't completely satisfied, citing incomplete information, lack of user friendliness and poor speed as reasons.
+%tool + satisfaction user B
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-userb-tool-satisfaction.png}
+    \caption{Market analysis - User B Tool satisfaction \& Usage frequency}
+\end{figure}
+
+\subsubsection{Thoughts on Magpie}
+Lastly, this section covers questions regarding Magpie's potential to bridge the gap in modern visualizing solutions.
+%magpie usefulness user a
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-userb-tool-freq.png}
+    \caption{Market analysis - User A Thoughts on Magpie}
+\end{figure}
+%magpie usefulness user b
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-userb-tool-freq.png}
+    \caption{Market analysis - User B Thoughts on Magpie}
+\end{figure}
+
+Both user groups found that Magpie would be useful to access amenity data, less than 5\% citing it would be impractical because either they did not require access to this information, or other tools such as Google Maps already satisfied their needs.
+
+Users from group B were also asked what additional features they would like to see on Magpie. The highest rated ones were a \textbf{search functionality} and \textbf{filters}.
+%magpie usefulness user b
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{images/mr-extra-features.png}
+    \caption{Market analysis - User B Rating Additional Features}
+\end{figure}
+
+\textbf{Overall}, this exploratory work allows us to confirm our primary and secondary target users as \emph{urban planners} and \emph{general users} respectively.
+
+Additionally, it gave us insight into a feature list to implement throughout development, as well as competitors to research into.
 
 \newpage{}
