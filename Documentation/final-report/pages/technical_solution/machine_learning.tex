@@ -202,7 +202,7 @@ For testing and debugging purposes, all the bounding boxes of the cars found by 
 
 \subsubsection{Empty parking spot detection}
 Subsequently, empty parking spots are detected between parked cars in each image, based on the parked cars detected by the Yolo model and classified using the road mask.
-Originally 4 cases were considered, cars parked horizontally in a row or in a column, cars parked vertically in a column and cars parked vertically side by side. However horizontally parked in a column and vertically parked side by side were removed as they lead to too many misclassifications, namely the vertically parked side by side lead to adding many additional cars in driveways in residential areas.
+Originally 4 cases were considered, cars parked horizontally in a row or in a column, cars parked vertically in a column and cars parked vertically side by side. However horizontally parked in a column and vertically parked side by side were removed as they lead to too many misclassifications, namely the vertically parked side by side lead to adding many additional cars in driveways in residential areas.\\
 A number of different variations and calculation techniques were tested out, however only the final version will be explained below.
 
 Average parking spot width and length in pixels are calculated for each image, to draw the empty spots more uniformly. Average parking spot width and length in meters are set to 3.05 as found to be the optimal value through testing accounting for the variations in size.
@@ -251,8 +251,8 @@ All the parking spots detected, including the parked cars identified by the mode
 
 Multiple different clustering approaches were tested out to cluster spots together, such as DBSCAN, HDBSCAN and OPTICS.
 Overall DBSCAN performed the best and the quickest out of all the clustering algorithms, given that some images contained very few parking spots, meaning clustering was only significant in cases with a minimum number of parking spots.
-Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds were not set correctly.
-\texttt{eps} refers to the maximum distance between two points for them to be considered as neighbors and \texttt{min\_samples} refers to the minimum number of points required to form a cluster.
+Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds were not set correctly.\\
+\texttt{eps} refers to the maximum distance between two points for them to be considered as neighbors and \texttt{min\_samples} refers to the minimum number of points required to form a cluster.\\
 Using HDBSCAN and OPTICS required a minimum number of samples larger or equal to 2, however given that not all images necessarily contained at least 2 parked cars (some images may contain only on the road cars for example), clustering using those algorithms was not possible in all cases, therefore -1 was assigned to the spots belonging to no clusters similarly to the default behaviour of DBSCAN.
 Clustering using HDBSCAN gave similar results to DBSCAN, however not as good, while OPTICS only found smaller clusters which were not as significant and not particularly helpful to subsequently classify the spots into the parking lot category.
 
@@ -597,4 +597,5 @@ Retraining the Yolo model on a dataset containing more manually annotated satell
 Improving the road mask's accuracy in classifying cars as on the road and parked correctly is especially crucial, as the current misclassificatiosn lead to issues afterwards particularly in the empty parking detection section.
 It could be interesting to test out enlarging the roads by a certain ratio, depending on the road width to begin with in order to find a way of identifying only larger roads with multiple lanes.
 
-The empty parking detection could be further improved by adding additional heuristics to find the empty spots more efficiently. Moreover, the 2 cases that were removed as too many additional spots were being detected could be refined and implemented differently.
+The empty parking detection could be further improved by adding additional heuristics to find the empty spots more efficiently.\\
+Moreover, the 2 cases that were removed as too many additional spots were being detected could be refined and implemented differently.
