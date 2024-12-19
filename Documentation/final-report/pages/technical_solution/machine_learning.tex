@@ -1,12 +1,26 @@
+Early on, we considered car parking an amenity that had to be included on
+Magpie's interface. Through our search of publicly available datasets, we were
+unable to find any information on public, on the street or private parking
+spaces in Ireland.
+
+Thus, we settled on creating our own dataset of car parking spots in Dublin
+using a novel machine learning approach.
+This approach is divided into 3 main steps:
+\begin{enumerate}
+  \item Car detection on satellite images
+  \item Parking detection using custom road mask
+  \item Classification \& evaluation of the parking spots
+\end{enumerate}
 \subsubsection{YOLO model used for car detection}
 YOLO (You Only Look Once) is an object detection and image segmentation model
 launched in 2015 which quickly gained popularity for its high speed and
 accuracy.
 
-We started playing with this model because on label studio there was an
-extension (ML Backend) which could be used to automate the labelling using an
+We were introduced to YOLO on Label Studio, an image labelling software used for
+image recognition \& detection tasks. There is an extension called ML Backend on
+the platform which can be used to automate the labelling process using an
 integration of the YOLOv5 model. However, this extension was not working as
-intended which caused us to dig further into Ultralytics, the company behind the
+intended which caused us to pivot towards Ultralytics, the company behind the
 YOLO models.
 
 Several papers focusing on object detection cited YOLO over other popular models
@@ -25,6 +39,8 @@ process for both.
   \includegraphics[width=0.7\textwidth]{images/single-vs-two-stage-obj-detector.png}
   \caption{Single vs Two-Stage Object Detection Process}
 \end{figure}
+
+\newpage{}
 \textbf{Single stage} object detector models processes an image through a
 feature extractor using a CNN (Convolutional Neural Network) and then directly
 uses the extracted features for classification and regression of bounding boxes.
@@ -41,15 +57,17 @@ are used for tasks where accuracy is prioritized over speed in the medical field
 for example RCNN, Fast-RCNN and Faster-RCNN(\cite{singlevstwostagedetectors}).
 
 For the scope of this project, we chose to continue with the YOLO models because
-of their speed, their scalability, their lack of computational resources and
-they are free!
+of their speed, their scalability and their lack of computational resources.
 
-We moved away from Label studio and studied the Ultralytics documentation and
-tried out the YOLOv5 model to recognise the cars on the satellite images. We
-experimented with different versions of the YOLOv5 model, then slowly levelled
-up the versions up to version 8, monitoring metrics such as mAP (Mean Average
-Precision), F1-score and the false positive rate. The figure below shows the
-metrics of the model as we iteratively experimented up the version chain.
+We experimented with different versions of the YOLOv5 model, then slowly
+levelled up the versions up to version 8.  The YOLOv8 model has been pre-trained
+on the COCO (Common Object in Context) dataset, a popular large scale dataset
+with 200,000 images across 80 object categories commonly used for benchmarking
+computer vision models (\cite{cocodataset}).
+
+We monitored metrics such as mAP (Mean Average Precision), F1-score and the
+false positive rate. The figure below shows the metrics of the model as we
+iteratively experimented up the version chain.
 
 %model metrics graph
 \begin{figure}[htbp]
@@ -59,11 +77,7 @@ metrics of the model as we iteratively experimented up the version chain.
 \end{figure}
 
 We ended the object detection modelling training with the YOLOv8 - Oriented
-Bounding Boxes (OBB). The YOLOv8 model has been pre-trained on the COCO (Common
-Object in Context) dataset, a popular large scale dataset with 200,000 images
-across 80 object categories commonly used for benchmarking computer vision
-models (\cite{cocodataset}).
-
+Bounding Boxes (OBB).
 Oriented bounding boxes are a newer type of bounding box where the bounding box
 capture the orientation of the object providing a more accurate fit of the
 object. They are defined by 5 parameters (center xy, width, height and rotation
@@ -115,14 +129,27 @@ road mask.
 different iterations of the road mask were used, the main iterations and their
 differences are explained and showed below in Figure~\ref{fig:mask_iterations}.
 
-The original mask was a very simple binary mask which identified the road pixels by their color, as the majority of roads were depicted in white and darkened the rest of the pixels in the image.
+The original mask was a very simple binary mask which identified the road pixels
+by their color, as the majority of roads were depicted in white and darkened the
+rest of the pixels in the image.
 
-Through testing and thoroughly analysing the Mapbox Streets images, motorways and national roads were discovered to be depicted in yellow or orange. Therefore, two additional color masks (for orange and yellow) were concatenated to the original binary mask through bitwise operations.
+Through testing and thoroughly analysing the Mapbox Streets images, motorways
+and national roads were discovered to be depicted in yellow or orange.
+Therefore, two additional color masks (for orange and yellow) were concatenated
+to the original binary mask through bitwise operations.
 
-To refine the mask, and reduce misclassification errors, additional annotations contained on the Mapbox Streets images such as street names and white dotted lines which denote a multitude of things (foot paths, planter boxes, pedestrian crosswalks, football fields delimitations, etc. ) were removed through morphological operations, leaving only a plain white line for each road.
-A number of different kernel sizes, different contour thresholds and other parameters were tested to achieve the optimal removal of the street names and additional annotations.
+To refine the mask, and reduce misclassification errors, additional annotations
+contained on the Mapbox Streets images such as street names and white dotted
+lines which denote a multitude of things (foot paths, planter boxes, pedestrian
+crosswalks, football fields delimitations, etc. ) were removed through
+morphological operations, leaving only a plain white line for each road. A
+number of different kernel sizes, different contour thresholds and other
+parameters were tested to achieve the optimal removal of the street names and
+additional annotations.
 
-A different approach using Canny Edge Detection was tested, however due to the nature of the Mapbox Streets images, the edges picked up were not significant and the overall performances was much worse than the current mask at the time.
+A different approach using Canny Edge Detection was tested, however due to the
+nature of the Mapbox Streets images, the edges picked up were not significant
+and the overall performances was much worse than the current mask at the time.
 
 \newpage{}
 
@@ -137,13 +164,13 @@ tested to find the optimal solution.
 \begin{figure}[htbp]
   \centering{}
   \begin{tabular}{cc}
-    \includegraphics[width=0.30\textwidth]{images/streets.png} &
-    \includegraphics[width=0.30\textwidth]{images/old_mask.png} \\
-    Mapbox Streets Image & Initial Mask \\
-    \includegraphics[width=0.30\textwidth]{images/new_mask.png} &
-    \includegraphics[width=0.30\textwidth]{images/canny_edge_mask.png} \\
-    Mask with Added Color Masks & Canny Edge Detection Mask \\
-    \multicolumn{2}{c}{\includegraphics[width=0.30\textwidth]{images/current_mask.png}} \\
+    \includegraphics[width=0.30\textwidth]{images/streets.png}  & 
+    \includegraphics[width=0.30\textwidth]{images/old_mask.png}                             \\
+    Mapbox Streets Image                                        & Initial Mask              \\
+    \includegraphics[width=0.30\textwidth]{images/new_mask.png} & 
+    \includegraphics[width=0.30\textwidth]{images/canny_edge_mask.png}                      \\
+    Mask with Added Color Masks                                 & Canny Edge Detection Mask \\
+    \multicolumn{2}{c}{\includegraphics[width=0.30\textwidth]{images/current_mask.png}}     \\
     \multicolumn{2}{c}{Current Mask}
   \end{tabular}
   \caption{Different Iterations of the Road Mask}
@@ -153,20 +180,34 @@ tested to find the optimal solution.
 \newpage{}
 
 \subsubsection{Classification of cars into on the road or parked}
-The cars detected by the Yolo model are then sorted into on the road or parked based on the road mask previously generated, which is explained in more detail below.
+The cars detected by the Yolo model are then sorted into on the road or parked
+based on the road mask previously generated, which is explained in more detail
+below.
 
-The model's predictions which are lower than the confidence threshold of 0.4 are discarded as they are more likely to be misclassifications, such as chimneys or roof pieces which were often misclassified as cars, which can be seen below on the second image of Figure~\ref{fig:Road_mask_classification}.
+The model's predictions which are lower than the confidence threshold of 0.4 are
+discarded as they are more likely to be misclassifications, such as chimneys or
+roof pieces which were often misclassified as cars, which can be seen below on
+the second image of Figure~\ref{fig:Road_mask_classification}.
 
-A bounding box for each of the model's predictions is computed from the center pixel coordinates, the width and the height returned from the model.
-The overlap between the bounding box and the road pixels is calculated, and if the overlap is higher than the threshold of 0.5, the prediction is discarded, keeping only the parked cars.
-Different thresholds were tested as well, however overall a harsher threshold works better given that these detections are used later on for the empty parking detection.
+A bounding box for each of the model's predictions is computed from the center
+pixel coordinates, the width and the height returned from the model. The overlap
+between the bounding box and the road pixels is calculated, and if the overlap
+is higher than the threshold of 0.5, the prediction is discarded, keeping only
+the parked cars. Different thresholds were tested as well, however overall a
+harsher threshold works better given that these detections are used later on for
+the empty parking detection.
 
-For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, rotation and orientation based on the angle are saved. The horizontal orientation is assigned for spots that have a rotational angle in degrees ranging between -45 and 45 or between 135 and 225, while the vertical orientation is assigned to the remaining spots that do not fit the criteria.
+For each of the model's predictions for parked cars, the center pixels
+coordinates are mapped to geographic coordinates (longitude and latitude), and
+the width, height, rotation and orientation based on the angle are saved. The
+horizontal orientation is assigned for spots that have a rotational angle in
+degrees ranging between -45 and 45 or between 135 and 225, while the vertical
+orientation is assigned to the remaining spots that do not fit the criteria.
 
 For testing and debugging purposes, all the bounding boxes of the cars found by
 the model are drawn onto the satellite image, on the road cars are drawn in blue
 while parked cars are drawn in red as seen below in
-Figure~\ref{fig:Road_mask_classification}.
+Figure 21.
 
 \begin{figure}[htbp]
   \centering
@@ -183,23 +224,48 @@ Figure~\ref{fig:Road_mask_classification}.
 \newpage
 
 \subsubsection{Empty parking spot detection}
-Subsequently, empty parking spots are detected between parked cars in each image, based on the parked cars detected by the Yolo model and classified using the road mask.
-Originally 4 cases were considered, cars parked horizontally in a row or in a column, cars parked vertically in a column and cars parked vertically side by side. However horizontally parked in a column and vertically parked side by side were removed as they lead to too many misclassifications, namely the vertically parked side by side lead to adding many additional cars in driveways in residential areas.\\
-A number of different variations and calculation techniques were tested out, however only the final version will be explained below.
+Subsequently, empty parking spots are detected between parked cars in each
+image, based on the parked cars detected by the Yolo model and classified using
+the road mask. Originally 4 cases were considered, cars parked horizontally in a
+row or in a column, cars parked vertically in a column and cars parked
+vertically side by side. However horizontally parked in a column and vertically
+parked side by side were removed as they lead to too many misclassifications,
+namely the vertically parked side by side lead to adding many additional cars in
+driveways in residential areas.\\
+A number of different variations and calculation techniques were tested out,
+however only the final version will be explained below.
 
-Average parking spot width and length in pixels are calculated for each image, to draw the empty spots more uniformly. Average parking spot width and length in meters are set to 3.05 as found to be the optimal value through testing accounting for the variations in size.
-Setting this value avoids misclassifications as previously the average width and length in meters were calculated dynamically, however in cases where the averages were lesser than 3, spots tended to overlap.
+Average parking spot width and length in pixels are calculated for each image,
+to draw the empty spots more uniformly. Average parking spot width and length in
+meters are set to 3.05 as found to be the optimal value through testing
+accounting for the variations in size. Setting this value avoids
+misclassifications as previously the average width and length in meters were
+calculated dynamically, however in cases where the averages were lesser than 3,
+spots tended to overlap.
 
-The parked cars detected are then sorted by latitude for horizontally aligned cars and by longitude for vertically aligned cars, to identify gaps between consecutive cars.
-For each pair of consecutive spots, the distance in meters in between them is calculated. The gap is adjusted to account for the half cars on both sides, as the coordinates of the parked car represent the center of the car.
-For the gaps smaller than the maximum gap threshold of 12 meters and larger than the average size of a car, where there is enough space to fit 1 or more car, and where the angle deviation is smaller than a threshold of 35 degrees, to ensure the spots are sufficiently aligned, the number of cars that fit into the gap is calculated.
-Based on the number of empty spots found, the coordinates for those empty spots are calculated to be aligned with the 2 consecutive cars and then added to a list of empty spots detected.
+The parked cars detected are then sorted by latitude for horizontally aligned
+cars and by longitude for vertically aligned cars, to identify gaps between
+consecutive cars. For each pair of consecutive spots, the distance in meters in
+between them is calculated. The gap is adjusted to account for the half cars on
+both sides, as the coordinates of the parked car represent the center of the
+car. For the gaps smaller than the maximum gap threshold of 12 meters and larger
+than the average size of a car, where there is enough space to fit 1 or more
+car, and where the angle deviation is smaller than a threshold of 35 degrees, to
+ensure the spots are sufficiently aligned, the number of cars that fit into the
+gap is calculated. Based on the number of empty spots found, the coordinates for
+those empty spots are calculated to be aligned with the 2 consecutive cars and
+then added to a list of empty spots detected.
 
-Afterwards, duplicate spots defined as spots that overlap too much and where the distance between 2 spots is smaller than a threshold of 1 meter are removed.
-As well, spots coinciding with cars identified by the Yolo model, where the distance between them is smaller than 1.25 meters are removed from the empty spots found.
-Subsequently, empty spots that overlap with the road are filter out in a similar manner to the classification done by the road mask.
+Afterwards, duplicate spots defined as spots that overlap too much and where the
+distance between 2 spots is smaller than a threshold of 1 meter are removed. As
+well, spots coinciding with cars identified by the Yolo model, where the
+distance between them is smaller than 1.25 meters are removed from the empty
+spots found. Subsequently, empty spots that overlap with the road are filter out
+in a similar manner to the classification done by the road mask.
 
-Following the detection of all the empty spots, the bounding boxes corresponding to each spot are drawn onto the satellite image in green as shown in Figure~\ref{fig:Empty_parking_detection}.
+Following the detection of all the empty spots, the bounding boxes corresponding
+to each spot are drawn onto the satellite image in green as shown in
+Figure 22.
 
 \begin{figure}[htbp]
   \centering
@@ -229,19 +295,48 @@ Following the detection of all the empty spots, the bounding boxes corresponding
 \newpage
 
 \subsubsection{Classification of all spots detected}
-All the parking spots detected, including the parked cars identified by the model and the empty parking spots are then classified into 3 different classes: public (on the street parking), private (residential parking) and parking lot, based on their proximity to the nearest road.
+All the parking spots detected, including the parked cars identified by the
+model and the empty parking spots are then classified into 3 different classes:
+public (on the street parking), private (residential parking) and parking lot,
+based on their proximity to the nearest road.
 
-Multiple different clustering approaches were tested out to cluster spots together, such as DBSCAN, HDBSCAN and OPTICS.
-Overall DBSCAN performed the best and the quickest out of all the clustering algorithms, given that some images contained very few parking spots, meaning clustering was only significant in cases with a minimum number of parking spots.
-Through testing, the optimal hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples} : 5, which allow the correct identification of the clusters, avoiding misclassifications of residential areas with many cars as parking lots, which was a common misclassification initially, when the hyperparameters and thresholds were not set correctly.\\
-\texttt{eps} refers to the maximum distance between two points for them to be considered as neighbors and \texttt{min\_samples} refers to the minimum number of points required to form a cluster.\\
-Using HDBSCAN and OPTICS required a minimum number of samples larger or equal to 2, however given that not all images necessarily contained at least 2 parked cars (some images may contain only on the road cars for example), clustering using those algorithms was not possible in all cases, therefore -1 was assigned to the spots belonging to no clusters similarly to the default behaviour of DBSCAN.
-Clustering using HDBSCAN gave similar results to DBSCAN, however not as good, while OPTICS only found smaller clusters which were not as significant and not particularly helpful to subsequently classify the spots into the parking lot category.
+Multiple different clustering approaches were tested out to cluster spots
+together, such as DBSCAN, HDBSCAN and OPTICS. Overall DBSCAN performed the best
+and the quickest out of all the clustering algorithms, given that some images
+contained very few parking spots, meaning clustering was only significant in
+cases with a minimum number of parking spots. Through testing, the optimal
+hyperparmeters found for DBSCAN are \texttt{eps} : 55 and \texttt{min\_samples}
+: 5, which allow the correct identification of the clusters, avoiding
+misclassifications of residential areas with many cars as parking lots, which
+was a common misclassification initially, when the hyperparameters and
+thresholds were not set correctly.\\
+\texttt{eps} refers to the maximum distance between two points for them to be
+considered as neighbors and \texttt{min\_samples} refers to the minimum number
+of points required to form a cluster.\\
+Using HDBSCAN and OPTICS required a minimum number of samples larger or equal to
+2, however given that not all images necessarily contained at least 2 parked
+cars (some images may contain only on the road cars for example), clustering
+using those algorithms was not possible in all cases, therefore -1 was assigned
+to the spots belonging to no clusters similarly to the default behaviour of
+DBSCAN. Clustering using HDBSCAN gave similar results to DBSCAN, however not as
+good, while OPTICS only found smaller clusters which were not as significant and
+not particularly helpful to subsequently classify the spots into the parking lot
+category.
 
-Parking spots are classified as public if the proximity to the nearest road is less than a pixel threshold of 30, otherwise the parking spots are considered private. This optimal threshold was found through extensive testing on a test set containing various edge cases.
-Parking spots are classified as parking lots, when clusters of 18 or more spots are identified in an image. Larger clusters are prioritized as parking lots containing less spots are not as relevant to the target user and given that the threshold of 18 spots minimizes the risk of misclassifying residential areas as parking lots.
+Parking spots are classified as public if the proximity to the nearest road is
+less than a pixel threshold of 30, otherwise the parking spots are considered
+private. This optimal threshold was found through extensive testing on a test
+set containing various edge cases. Parking spots are classified as parking lots,
+when clusters of 18 or more spots are identified in an image. Larger clusters
+are prioritized as parking lots containing less spots are not as relevant to the
+target user and given that the threshold of 18 spots minimizes the risk of
+misclassifying residential areas as parking lots.
 
-Afterwards, clusters and classification labels are drawn onto the satellite image. The clusters are color coded and denoted as a circle at the center of the bounding box, while the classification label is written to the right of the bounding box. The private class in written in red, public in green and parking lot in white as seen below in Figure~\ref{fig:classification_all_spots}.
+Afterwards, clusters and classification labels are drawn onto the satellite
+image. The clusters are color coded and denoted as a circle at the center of the
+bounding box, while the classification label is written to the right of the
+bounding box. The private class in written in red, public in green and parking
+lot in white as seen below in Figure 23.
 
 \begin{figure}[htbp]
   \centering
@@ -271,11 +366,16 @@ Afterwards, clusters and classification labels are drawn onto the satellite imag
 \newpage
 
 \subsubsection{Uploading points to the backend server}
-The longitude, latitude and classification of all the parking spots detected are then saved to a csv file.
-Potential spot duplicates are dropped, as the same car may be in multiple images given that the images are defined by their center coordinates, which causes adjacent images to overlap and share common areas. The rightmost part of one image can overlap with the leftmost part of another image.
+The longitude, latitude and classification of all the parking spots detected are
+then saved to a csv file. Potential spot duplicates are dropped, as the same car
+may be in multiple images given that the images are defined by their center
+coordinates, which causes adjacent images to overlap and share common areas. The
+rightmost part of one image can overlap with the leftmost part of another image.
 
-Subsequently, the parking zones and costs associated to each parking spot found are added to the csv file.
-Dublin City Council defines different parking zones by color, based on their high to moderate demand which changes the price per zone as seen below in Figure~\ref{fig:Parking_zones}
+Subsequently, the parking zones and costs associated to each parking spot found
+are added to the csv file. Dublin City Council defines different parking zones
+by color, based on their high to moderate demand which changes the price per
+zone as seen below in Figure 24.
 
 \begin{figure}[htbp]
   \centering
@@ -292,33 +392,76 @@ Dublin City Council defines different parking zones by color, based on their hig
   \label{fig:Parking_zones}
 \end{figure}
 
-The csv file containing the longitude, latitude, classification label, parking zone and parking cost is then uploaded to the PostgreSQL database, in the backend server using the \texttt{send\_points.py} script.
+The csv file containing the longitude, latitude, classification label, parking
+zone and parking cost is then uploaded to the PostgreSQL database, in the
+backend server using the \texttt{send\_points.py} script.
 
-\subsubsection{Main challenges}
-Throughout the course of this project, there have been many major challenges and changes which will be discussed in this section.
+\subsection{Summary of main challenges}
+Throughout the implementation of our technical solution, there have been many
+major challenges and changes which will be discussed in this section.
 
-The biggest initial hurdle was finding a labelling software to annotate our satellite images. Initially, we had settled on LabelImg, however it was no longer being supported on most of our operating systems and was crashing on launch.
-Instead, we turned towards Label Studio and the ML Backend extension, we had intended on using for its active learning functionality that would have enabled using Yolo v5 to automatically label our training images, after only annotating a few images.
-After much troubleshooting, we decided to switch approaches to manually label the images and subsequently train the Yolo model on those images.
 
-The next challenge related to training the YOLO model to identify cars on the satellite images. An object detection model remains a deep neural network model, which is computationally intensive the more complex it becomes.
+The biggest initial hurdle was finding a labelling software to annotate our
+satellite images. Initially, we had settled on LabelImg, however it was no
+longer being supported on most of our operating systems and was crashing on
+launch. Instead, we turned towards Label Studio and the ML Backend extension, we
+had intended on using for its active learning functionality that would have
+enabled using Yolo v5 to automatically label our training images, after only
+annotating a few images. After much troubleshooting, we decided to switch
+approaches to manually label the images and subsequently train the Yolo model on
+those images.
 
-We were limited in our training of the model due to limitations in available computational resources. Tuning for 35 iterations would last several hours, and training above a certain number of epochs would not yield better results. Training the model was both computationally expensive and very time consuming.
-Another challenge referred to the low resolution of the satellite images, heavily contributing the high misclassification rate in the early beginnings of model training. We managed to stabilised that through proper model choosing and tuning however, the biggest factor contributing to the remaining false positive rate is the low number of training data.
+The next challenge related to training the YOLO model to identify cars on the
+satellite images. An object detection model remains a deep neural network model,
+which is computationally intensive the more complex it becomes.
 
-Ideally we would've preferred to have at least 500 training images, however due to time constraints we settled on half of that, and compensated by putting a higher confidence threshold than the one dictated by the F1-curve.
+We were limited in our training of the model due to limitations in available
+computational resources. Tuning for 35 iterations would last several hours, and
+training above a certain number of epochs would not yield better results.
+Training the model was both computationally expensive and very time consuming.
+Another challenge referred to the low resolution of the satellite images,
+heavily contributing the high misclassification rate in the early beginnings of
+model training. We managed to stabilised that through proper model choosing and
+tuning however, the biggest factor contributing to the remaining false positive
+rate is the low number of training data.
 
-Another major challenge, was the empty parking detection section. The crucial decisions and changes are recounted below, following the timeline of our project: \\
-In Week 8, the \texttt{parking\_detection.py} script was updated to use the most up to date trained Yolo model, Yolo v8 obb, that returned oriented bounding boxes, causing many issues in the version of our script at the time, specifically the way of access the bounding boxes predicted by the model had changed.
-Furthermore, given the change to oriented bounding boxes, the size of the bounding boxes became more variable, which allowed the script to be adapted to use average parking spot dimensions.\\
-Week 9 was decisive in implementing a double passthrough to sort the cars by longitude and the latitude to identify both the horizontal and vertical spots.
-Moreover, the \texttt{parking\_detection.py} script was updated to use the xywhr(centre coordinates, width, height and rotation) bounding boxes instead of the xyxy (top left, bottom right)  bounding boxes we were using initially.
-This major change was crucial and allowed for more modularity and allowed the separation into horizontal and vertical cases in a more consistent manner. As well many additional improvement were made that week, such as the removal of overlapping spots and filtering out the empty spots detected on the road.\\
-In week 12, the empty parking detection was completely finalized, resolving the majority of the outstanding issues. The 2 cases causing too many false positives were removed and the condition on the angle alignment was refined and added.
+Ideally we would've preferred to have at least 500 training images, however due
+to time constraints we settled on half of that, and compensated by putting a
+higher confidence threshold than the one dictated by the F1-curve.
 
-Another major issue was the selection and accurate labelling of the test sets to evaluate each subpart of our model.
-Week 11 marked the beginning of the empty parking detection evaluation. Labelling the test set accurately was a big challenge, many different phases of relabelling and improvements occurred, to ensure the maximum overlap between the true labels and the predictions and achieve a high enough IoU.
-During Week 12, the 2 other evaluation scripts were finalized. Similarly, multiple phases of labelling and relabelling happened. For the classification of spots evaluation, additional images needed to be added to the test set for the private class, as the lack of enough instances was making that class perform much more poorly in comparison to the other classes.
+Another major challenge, was the empty parking detection section. The crucial
+decisions and changes are recounted below, following the timeline of our
+project: \\
+In Week 8, the \texttt{parking\_detection.py} script was updated to use the most
+up to date trained Yolo model, Yolo v8 obb, that returned oriented bounding
+boxes, causing many issues in the version of our script at the time,
+specifically the way of access the bounding boxes predicted by the model had
+changed. Furthermore, given the change to oriented bounding boxes, the size of
+the bounding boxes became more variable, which allowed the script to be adapted
+to use average parking spot dimensions.\\
+Week 9 was decisive in implementing a double passthrough to sort the cars by
+longitude and the latitude to identify both the horizontal and vertical spots.
+Moreover, the \texttt{parking\_detection.py} script was updated to use the
+xywhr(centre coordinates, width, height and rotation) bounding boxes instead of
+the xyxy (top left, bottom right)  bounding boxes we were using initially. This
+major change was crucial and allowed for more modularity and allowed the
+separation into horizontal and vertical cases in a more consistent manner. As
+well many additional improvement were made that week, such as the removal of
+overlapping spots and filtering out the empty spots detected on the road.\\
+In week 12, the empty parking detection was completely finalized, resolving the
+majority of the outstanding issues. The 2 cases causing too many false positives
+were removed and the condition on the angle alignment was refined and added.
+
+Another major issue was the selection and accurate labelling of the test sets to
+evaluate each subpart of our model. Week 11 marked the beginning of the empty
+parking detection evaluation. Labelling the test set accurately was a big
+challenge, many different phases of relabelling and improvements occurred, to
+ensure the maximum overlap between the true labels and the predictions and
+achieve a high enough IoU. During Week 12, the 2 other evaluation scripts were
+finalized. Similarly, multiple phases of labelling and relabelling happened. For
+the classification of spots evaluation, additional images needed to be added to
+the test set for the private class, as the lack of enough instances was making
+that class perform much more poorly in comparison to the other classes.
 
 \subsubsection{Evaluation of each submodule of the parking detection model}
 Each major section of the parking detection model was evaluated individually in order to assess the overall performance. The results will be presented for each section below.
