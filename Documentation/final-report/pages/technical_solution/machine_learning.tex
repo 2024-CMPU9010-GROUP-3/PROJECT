@@ -768,27 +768,24 @@ major challenges and changes throughout the project timeline.
 This iteration focused on the startup of the project, exploratory work, machine
 learning model tryouts and setting up Magpie's environment.
 
-The biggest initial
-hurdle was finding a labelling software to annotate our satellite images.
-Initially, we turned towards Label Studio and the ML Backend extension, 
-which we intended on using
-for its active learning functionality that would have enabled using YOLO v5 to
-automatically label our training images, after only annotating a few images.
-However, after much troubleshooting, we decided to switch approaches to
-manually label the images and subsequently train the YOLO model on those images.
+The biggest initial hurdle was finding a labelling software to annotate our satellite images.
+Initially, Label Studio, a popular labelling software with their integrated ML backend extension was chosen, 
+to use YOLO v5 to automatically label our training images, after only annotating a few images.
+However, after much troubleshooting, the approach was switched to
+manually labelling the images and subsequently training the YOLO model on those images.
 
-The next challenge related to training the YOLO model to identify cars on the
+The next challenge concerned to training the YOLO model to identify cars on the
 satellite images. An object detection model remains a deep neural network model,
 which is computationally intensive the more complex it becomes.
 
-We were limited in our training of the model due to limitations in available
-computational resources. Tuning for 35 iterations would last several hours, and
+Due to limitations in available computational resources training of the model was difficult. 
+Tuning for 35 iterations would last several hours, and
 training above a certain number of epochs would not yield better results.
 Training the model was both computationally expensive and very time consuming.
 
 Another challenge referred to the low resolution of the satellite images,
 heavily contributing to the high misclassification rate in the early beginnings of
-model training. We managed to stabilise it through proper model choosing and
+model training. This was stabilised through proper model choosing and
 tuning however, the biggest factor contributing to the remaining false positive
 rate is the low number of training data.
 
@@ -809,25 +806,25 @@ Week 9 was decisive in implementing a double pass-through to sort the cars by
 longitude and the latitude to identify both the horizontal and vertical spots.
 The \texttt{parking\_detection.py} script was updated to use the
 xywhr(centre coordinates, width, height and rotation) bounding boxes instead of
-the xyxy (top left, bottom right)  bounding boxes we were using initially. This
+the xyxy (top left, bottom right)  bounding boxes initially used. This
 major change was crucial, adding more modularity and allowing the
 separation into horizontal and vertical cases in a more consistent manner.
 Many additional improvement were made that week, such as the removal of
 overlapping spots and filtering out the empty spots detected on the road.
 
 In week 12, the unoccupied parking detection was completely finalized, resolving the
-majority of the outstanding issues.\\
+majority of the outstanding issues.
 Originally 4 cases were considered, cars parked horizontally in a row or in a
 column, cars parked vertically in a column and cars parked vertically side by
 side. However, horizontally parked in a column and vertically parked side by side
-were removed as they led to too many misclassifications.\\
+were removed as they led to too many misclassifications.
 
 Another major issue was the selection and accurate labelling of the test sets to
-evaluate each subpart of our model.\\
+evaluate each subpart of our model.
 Week 11 marked the beginning of the unoccupied parking detection evaluation. 
 Labelling the test set accurately was a significant challenge, multiple different 
 phases of relabelling and improvements occurred, to ensure the maximum overlap 
-between the true labels and the model's predictions.\\
+between the true labels and the model's predictions.
 During Week 12, the two other evaluation scripts were finalized. 
 Similarly, multiple phases of labelling and relabelling occurred. For
 the classification of spots evaluation, additional images containing private class instances
