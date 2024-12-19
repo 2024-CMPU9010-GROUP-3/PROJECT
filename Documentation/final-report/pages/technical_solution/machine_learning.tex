@@ -788,7 +788,7 @@ Training the model was both computationally expensive and very time consuming.
 
 Another challenge referred to the low resolution of the satellite images,
 heavily contributing to the high misclassification rate in the early beginnings of
-model training. We managed to stabilised that through proper model choosing and
+model training. We managed to stabilise it through proper model choosing and
 tuning however, the biggest factor contributing to the remaining false positive
 rate is the low number of training data.
 
@@ -821,17 +821,13 @@ Originally 4 cases were considered, cars parked horizontally in a row or in a
 column, cars parked vertically in a column and cars parked vertically side by
 side. However, horizontally parked in a column and vertically parked side by side
 were removed as they led to too many misclassifications.\\
-Additionally the condition on the angle alignment was refined to ensure
-the detection of spots only between cars properly aligned.
 
 Another major issue was the selection and accurate labelling of the test sets to
 evaluate each subpart of our model.\\
 Week 11 marked the beginning of the unoccupied parking detection evaluation. 
 Labelling the test set accurately was a significant challenge, multiple different 
 phases of relabelling and improvements occurred, to ensure the maximum overlap 
-between the true labels and the model's predictions, achieving a high enough IoU.
-The images were originally annotated using rotated bounding boxes, however given that
-the rotation cannot be exported in Label Studio, they were subsequently relabelled without rotation.\\ 
+between the true labels and the model's predictions.\\
 During Week 12, the two other evaluation scripts were finalized. 
 Similarly, multiple phases of labelling and relabelling occurred. For
 the classification of spots evaluation, additional images containing private class instances
