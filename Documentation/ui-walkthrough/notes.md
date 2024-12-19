@@ -1,6 +1,10 @@
 # What is Magpie
 
-Hi everyone, thank you for joining us as we demonstrate our new tool, Magpie. Magpie is a web application that allows civil planners, and general users, to gather data on public amenities in a given area. This data can be used to inform decisions on where to build new amenities, or, to identify areas that are *lacking* in certain amenities.
+Hi everyone, thank you for joining us as we demonstrate our new tool, Magpie.
+Magpie is a web application that allows civil planners, and Non-Expert Users, to
+gather data on public amenities in a given area. This data can be used to inform
+decisions on where to build new amenities, or, to identify areas that are
+*lacking* in certain amenities.
 
 # Why is Magpie better than our competitors
 
