@@ -36,18 +36,6 @@ as rentals, coach parking, public parks. This location was latitude and
 longitude which we needed to input into the script to download images, as well
 as the street name of that location which was used to name the downloaded image.
 
-Some data cleaning and processing had to be done to obtain a new csv file with
-longitudes and latitudes in the right format to send to the backend using our
-send points script.
-
-For example in 2 datasets the coordinates were in a local coordinates system
-(easting/northing) and not the universal longitude/latitude so we had to write a
-script to convert them properly. And certain datasets were only in geojson
-format so we had to write a script to handle the conversion to csv. (For one
-file the geometry field which contains the point data, the coordinates was not
-being read into a pandas dataframe correctly so we had to parse it using json
-and extract the fields instead)
-
 \begin{listing}[htbp]
     \centering
     \caption{Python script to obtain training images for ML model}
@@ -106,7 +94,7 @@ images necessary to make up that area are calculated, and the images are then
 retrieved. While in \texttt{parking\_detection\_local.py}, the original parking
 detection script is adapted to run on a database of locally stored Mapbox
 Satellite images and the corresponding Mapbox Streets images, covering the
-entirety of Dublin city. 
+entirety of Dublin city.
 
 Extensive testing was done at all the different stages of development of the
 scripts to identify the optimal thresholds and parameters using test images from
@@ -133,6 +121,18 @@ present on Magpie:
     \item Public bins = Smart Dublin (link to appendix)
     \item Coach parking = Data.gov.ie (link to appendix)
 \end{itemize}
+Some data cleaning and processing had to be done to obtain a new csv file with
+longitudes and latitudes in the right format to send to the backend using our
+send points script.
+
+For example in 2 datasets the coordinates were in a local coordinates system
+(easting/northing) and not the universal longitude/latitude so we had to write a
+script to convert them properly. And certain datasets were only in geojson
+format so we had to write a script to handle the conversion to csv. For one
+file, the geometry field which contains the point data, the coordinates were not
+being read into a pandas dataframe correctly so we had to parse it using json
+and extract the fields instead.
+
 To complement this data visually on the map, we used SVG icons from
 \textbf{Icons8}, a UX design agency that provide high quality, free-to-use icons
 for personal and commercial web projects.
