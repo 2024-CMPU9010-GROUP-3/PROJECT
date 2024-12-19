@@ -770,12 +770,11 @@ learning model tryouts and setting up Magpie's environment.
 
 The biggest initial
 hurdle was finding a labelling software to annotate our satellite images.
-Initially, we had settled on LabelImg, however it was no longer being supported
-on most of our operating systems and was crashing on launch. Instead, we turned
-towards Label Studio and the ML Backend extension, which we intended on using
+Initially, we turned towards Label Studio and the ML Backend extension, 
+which we intended on using
 for its active learning functionality that would have enabled using YOLO v5 to
 automatically label our training images, after only annotating a few images.
-After much unsuccessful troubleshooting, we decided to switch approaches to
+However, after much troubleshooting, we decided to switch approaches to
 manually label the images and subsequently train the YOLO model on those images.
 
 The next challenge related to training the YOLO model to identify cars on the
@@ -793,21 +792,14 @@ model training. We managed to stabilised that through proper model choosing and
 tuning however, the biggest factor contributing to the remaining false positive
 rate is the low number of training data.
 
-Ideally we would've preferred to have at least 500 training images, however due
-to time constraints we settled on half of that, and compensated by putting a
-higher confidence threshold than the one dictated by the F1-curve.
-
 \textbf{Week 5-8}
 
 Another major challenge, was the unoccupied parking detection section. The key
-decisions and changes are recounted below, following the timeline of our
-project:
+decisions and changes are recounted below.
 
 In Week 8, the \texttt{parking\_detection.py} script was updated to use the most
 up to date trained YOLO model, YOLO v8 obb, that returned oriented bounding
-boxes, causing many issues in the version of our script at the time,
-specifically the way of accessing the bounding boxes predicted by the model had
-changed. Furthermore, given the change to oriented bounding boxes, the size of
+boxes. Furthermore, given that change, the size of
 the bounding boxes became more variable, which allowed the script to be adapted
 to use average parking spot dimensions.
 
@@ -815,7 +807,7 @@ to use average parking spot dimensions.
 
 Week 9 was decisive in implementing a double pass-through to sort the cars by
 longitude and the latitude to identify both the horizontal and vertical spots.
-Moreover, the \texttt{parking\_detection.py} script was updated to use the
+The \texttt{parking\_detection.py} script was updated to use the
 xywhr(centre coordinates, width, height and rotation) bounding boxes instead of
 the xyxy (top left, bottom right)  bounding boxes we were using initially. This
 major change was crucial, adding more modularity and allowing the
@@ -828,10 +820,8 @@ majority of the outstanding issues.\\
 Originally 4 cases were considered, cars parked horizontally in a row or in a
 column, cars parked vertically in a column and cars parked vertically side by
 side. However, horizontally parked in a column and vertically parked side by side
-were removed as they led to too many misclassifications, namely the vertically
-parked side by side lead to adding many additional cars in driveways in
-residential areas.
-Additionally the condition on the angle alignment was refined and added to ensure
+were removed as they led to too many misclassifications.\\
+Additionally the condition on the angle alignment was refined to ensure
 the detection of spots only between cars properly aligned.
 
 Another major issue was the selection and accurate labelling of the test sets to
@@ -840,7 +830,7 @@ Week 11 marked the beginning of the unoccupied parking detection evaluation.
 Labelling the test set accurately was a significant challenge, multiple different 
 phases of relabelling and improvements occurred, to ensure the maximum overlap 
 between the true labels and the model's predictions, achieving a high enough IoU.
-The images were originally annotated using rotated bounding boxes, however due to the fact that
+The images were originally annotated using rotated bounding boxes, however given that
 the rotation cannot be exported in Label Studio, they were subsequently relabelled without rotation.\\ 
 During Week 12, the two other evaluation scripts were finalized. 
 Similarly, multiple phases of labelling and relabelling occurred. For
