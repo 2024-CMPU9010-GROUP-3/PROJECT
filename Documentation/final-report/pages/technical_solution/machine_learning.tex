@@ -784,10 +784,10 @@ major challenges and changes which will be discussed in this section.
 The biggest initial hurdle was finding a labelling software to annotate our
 satellite images. Initially, we had settled on LabelImg, however it was no
 longer being supported on most of our operating systems and was crashing on
-launch. Instead, we turned towards Label Studio and the ML Backend extension, we
-had intended on using for its active learning functionality that would have
+launch. Instead, we turned towards Label Studio and the ML Backend extension, which we
+intended on using for its active learning functionality that would have
 enabled using YOLO v5 to automatically label our training images, after only
-annotating a few images. After much troubleshooting, we decided to switch
+annotating a few images. After much unsuccessful troubleshooting, we decided to switch
 approaches to manually label the images and subsequently train the YOLO model on
 those images.
 
@@ -799,8 +799,9 @@ We were limited in our training of the model due to limitations in available
 computational resources. Tuning for 35 iterations would last several hours, and
 training above a certain number of epochs would not yield better results.
 Training the model was both computationally expensive and very time consuming.
+
 Another challenge referred to the low resolution of the satellite images,
-heavily contributing the high misclassification rate in the early beginnings of
+heavily contributing to the high misclassification rate in the early beginnings of
 model training. We managed to stabilised that through proper model choosing and
 tuning however, the biggest factor contributing to the remaining false positive
 rate is the low number of training data.
@@ -809,46 +810,51 @@ Ideally we would've preferred to have at least 500 training images, however due
 to time constraints we settled on half of that, and compensated by putting a
 higher confidence threshold than the one dictated by the F1-curve.
 
-Another major challenge, was the empty parking detection section. The crucial
+Another major challenge, was the unoccupied parking detection section. The key
 decisions and changes are recounted below, following the timeline of our
-project: \\
+project: 
+
 In Week 8, the \texttt{parking\_detection.py} script was updated to use the most
 up to date trained YOLO model, YOLO v8 obb, that returned oriented bounding
 boxes, causing many issues in the version of our script at the time,
-specifically the way of access the bounding boxes predicted by the model had
+specifically the way of accessing the bounding boxes predicted by the model had
 changed. Furthermore, given the change to oriented bounding boxes, the size of
 the bounding boxes became more variable, which allowed the script to be adapted
-to use average parking spot dimensions.\\
-
-Originally 4 cases were considered, cars parked horizontally in a row or in a
-column, cars parked vertically in a column and cars parked vertically side by
-side. However, horizontally parked in a column and vertically parked side by side
-were removed as they led to too many misclassifications, namely the vertically
-parked side by side lead to adding many additional cars in driveways in
-residential areas.
+to use average parking spot dimensions.
 
 Week 9 was decisive in implementing a double pass-through to sort the cars by
 longitude and the latitude to identify both the horizontal and vertical spots.
 Moreover, the \texttt{parking\_detection.py} script was updated to use the
 xywhr(centre coordinates, width, height and rotation) bounding boxes instead of
 the xyxy (top left, bottom right)  bounding boxes we were using initially. This
-major change was crucial and allowed for more modularity and allowed the
-separation into horizontal and vertical cases in a more consistent manner. As
-well many additional improvement were made that week, such as the removal of
-overlapping spots and filtering out the empty spots detected on the road.\\
-In week 12, the empty parking detection was completely finalized, resolving the
-majority of the outstanding issues. The 2 cases causing too many false positives
-were removed and the condition on the angle alignment was refined and added.
+major change was crucial, adding more modularity and allowing the
+separation into horizontal and vertical cases in a more consistent manner.
+Many additional improvement were made that week, such as the removal of
+overlapping spots and filtering out the empty spots detected on the road.
+
+In week 12, the unoccupied parking detection was completely finalized, resolving the
+majority of the outstanding issues.\\
+Originally 4 cases were considered, cars parked horizontally in a row or in a
+column, cars parked vertically in a column and cars parked vertically side by
+side. However, horizontally parked in a column and vertically parked side by side
+were removed as they led to too many misclassifications, namely the vertically
+parked side by side lead to adding many additional cars in driveways in
+residential areas.
+Additionally the condition on the angle alignment was refined and added to ensure
+the detection of spots only between cars properly aligned.
 
 Another major issue was the selection and accurate labelling of the test sets to
-evaluate each subpart of our model. Week 11 marked the beginning of the empty
-parking detection evaluation. Labelling the test set accurately was a big
-challenge, many different phases of relabelling and improvements occurred, to
-ensure the maximum overlap between the true labels and the predictions and
-achieve a high enough IoU. During Week 12, the 2 other evaluation scripts were
-finalized. Similarly, multiple phases of labelling and relabelling happened. For
-the classification of spots evaluation, additional images needed to be added to
-the test set for the private class, as the lack of enough instances was making
-that class perform much more poorly in comparison to the other classes.
+evaluate each subpart of our model.\\
+Week 11 marked the beginning of the unoccupied parking detection evaluation. 
+Labelling the test set accurately was a significant challenge, multiple different 
+phases of relabelling and improvements occurred, to ensure the maximum overlap 
+between the true labels and the model's predictions, achieving a high enough IoU.
+The images were originally annotated using rotated bounding boxes, however due to the fact that
+the rotation cannot be exported in Label Studio, they were subsequently relabelled without rotation.\\ 
+During Week 12, the two other evaluation scripts were finalized. 
+Similarly, multiple phases of labelling and relabelling occurred. For
+the classification of spots evaluation, additional images containing private class instances
+were added to the test set, as the initial lack of enough instances was making
+that class perform poorly in comparison to the other classes.
 
 \newpage{}
