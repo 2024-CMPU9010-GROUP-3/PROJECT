@@ -1,22 +1,23 @@
-Early on, we considered car parking an amenity that had to be included on
-Magpie's interface. Through our search of publicly available datasets, we were
-unable to find any information on public, on the street or private parking
-spaces in Ireland.
+Early on, car parking was considered an amenity that had to be included on
+Magpie's interface. Through searching for publicly available datasets, 
+no information on public, on the street or private parking
+spaces in Ireland was found.
 
-Thus, we settled on creating our own dataset of car parking spots in Dublin
-using a novel machine learning approach.
+Thus, creating our own dataset of car parking spots in Dublin
+using a novel machine learning approach was settled upon.
 This approach is divided into 3 main steps:
 \begin{enumerate}
   \item Car detection on satellite images
   \item Parking detection using custom road mask
   \item Classification \& evaluation of the parking spots
 \end{enumerate}
+
 \subsubsection{YOLO model used for car detection}
 YOLO (You Only Look Once) is an object detection and image segmentation model
 launched in 2015 which quickly gained popularity for its high speed and
 accuracy.
 
-We were introduced to YOLO on Label Studio, an image labelling software used for
+The YOLO model was introduced to us on Label Studio, an image labelling software used for
 image recognition \& detection tasks. There is an extension called ML Backend on
 the platform which can be used to automate the labelling process using an
 integration of the YOLOv5 model. However, this extension was not working as
@@ -56,17 +57,17 @@ bounding boxes. These models are much more accurate than one stage detectors and
 are used for tasks where accuracy is prioritized over speed in the medical field
 for example RCNN, Fast-RCNN and Faster-RCNN(\cite{singlevstwostagedetectors}).
 
-For the scope of this project, we chose to continue with the YOLO models because
-of their speed, their scalability and their lack of computational resources.
+For the scope of this project, YOLO models were chosen for
+their speed, their scalability and their lack of computational resources.
 
-We experimented with different versions of the YOLOv5 model, then slowly
-levelled up the versions up to version 8.  The YOLOv8 model has been pre-trained
+Different versions of the YOLOv5 model were experimented with, slowly
+levelling up the versions up to version 8.  The YOLOv8 model has been pre-trained
 on the COCO (Common Object in Context) dataset, a popular large scale dataset
 with 200,000 images across 80 object categories commonly used for benchmarking
 computer vision models (\cite{cocodataset}).
 
-We monitored metrics such as mAP (mean Average Precision), F1-score and the
-false positive rate. The figure below shows the metrics of the model as we
+Metrics such as mAP (mean Average Precision), F1-score and the
+false positive rate were monitored. The figure below shows the metrics of the model
 iteratively experimented up the version chain.
 
 %model metrics graph
@@ -76,7 +77,7 @@ iteratively experimented up the version chain.
   \caption{YOLO Model training graph}
 \end{figure}
 
-We ended the object detection modelling training with the YOLOv8 - Oriented
+The object detection modelling training ended with the YOLOv8 - Oriented
 Bounding Boxes (OBB).
 Oriented bounding boxes are a newer type of bounding box where the bounding box
 capture the orientation of the object providing a more accurate fit of the
@@ -221,7 +222,7 @@ Figure 21.
 
 \textbf{Step 2: Detecting unoccupied parking spots}
 
-We have managed to identify occupied parking spots, therefore it is necessary to
+Occupied parking spots were indentified, therefore it is necessary to
 identify unoccupied ones to offer a more comprehensive view of car parking in
 Dublin city.
 
