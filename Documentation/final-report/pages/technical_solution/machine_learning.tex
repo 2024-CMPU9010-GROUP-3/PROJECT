@@ -85,6 +85,7 @@ angle) and capture the object's spatial orientation more precisely, reducing
 overlap and improving the robustness of the object detection model
 (\cite{obblit}).
 
+\newpage{}
 Below you can see the difference in bounding boxes between the labelled image
 used for the non-OBB YOLOv5 \& YOLOv8 iterations versus the OBB YOLOv8.
 
@@ -95,9 +96,7 @@ used for the non-OBB YOLOv5 \& YOLOv8 iterations versus the OBB YOLOv8.
   \caption{Non-OBB labels (left) versus OBB labels (right)}
 \end{figure}
 
-\newpage{}
-
-Thus, the YOLOv8-OBB model was trained on the settings below:
+Lasly, the YOLOv8-OBB model was trained on the settings below:
 
 \begin{listing}[htbp]
   \centering
@@ -120,14 +119,15 @@ The weights of the YOLOv8-OBB model were then saved and used to identify parked
 cars on over 18,000 satellite images spanning Dublin City. These images are then
 used to identify parking spots.
 
+\newpage{}
 \subsubsection{Parking spot detection}
 Subsequently, to identify the parking spots in each satellite image, the cars
 detected by the YOLO model are classified into on the road or parked, based on a
 road mask.
 
-\subsubsection{Road mask generation} \label{sec:road_mask_generation} Many
-different iterations of the road mask were used, the main iterations and their
-differences are explained and showed below in Figure~\ref{fig:mask_iterations}.
+\textbf{4.3.2.1 Road mask generation}\\
+Many different iterations of the road mask were used, the main iterations and
+their differences are explained and shown below in Figure 20.
 
 The original mask was a very simple binary mask which identified the road pixels
 by their color, as the majority of roads were depicted in white and darkened the
@@ -151,8 +151,6 @@ A different approach using Canny Edge Detection was tested, however due to the
 nature of the Mapbox Streets images, the edges picked up were not significant
 and the overall performances was much worse than the current mask at the time.
 
-\newpage{}
-
 A final improvement to the mask was made to avoid certain misclassification due
 to the Mapbox Streets road width not correctly reflecting all the lanes of the
 road and therefore classifying on the road cars as parked. This issue was most
@@ -163,16 +161,7 @@ tested to find the optimal solution.
 
 \begin{figure}[htbp]
   \centering{}
-  \begin{tabular}{cc}
-    \includegraphics[width=0.30\textwidth]{images/streets.png}  & 
-    \includegraphics[width=0.30\textwidth]{images/old_mask.png}                             \\
-    Mapbox Streets Image                                        & Initial Mask              \\
-    \includegraphics[width=0.30\textwidth]{images/new_mask.png} & 
-    \includegraphics[width=0.30\textwidth]{images/canny_edge_mask.png}                      \\
-    Mask with Added Color Masks                                 & Canny Edge Detection Mask \\
-    \multicolumn{2}{c}{\includegraphics[width=0.30\textwidth]{images/current_mask.png}}     \\
-    \multicolumn{2}{c}{Current Mask}
-  \end{tabular}
+  \includegraphics[width=0.80\textwidth]{images/road-mask-iteration.png}
   \caption{Different Iterations of the Road Mask}
   \label{fig:mask_iterations}
 \end{figure}
