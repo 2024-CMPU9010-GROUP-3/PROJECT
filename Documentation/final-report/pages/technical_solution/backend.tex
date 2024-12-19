@@ -188,21 +188,12 @@ the backend keeping pace with the other developers.
   \label{listing:sqlc_config_file}
 \end{listing}
 
+\newpage{}
+
 \begin{listing}[htbp]
   \centering{}
   \begin{minipage}{0.85\textwidth}
   \begin{minted}{go}
-    const getPointsInRadius = `-- name: GetPointsInRadius :many
-    SELECT Id, LongLat::geometry, Type from points
-    WHERE ST_DWithin(
-      LongLat::geography,
-      ST_SetSRID(ST_MakePoint($1::float, $2::float), 4326)::geography,
-      $3::float
-    ) AND (
-      $4::point_type[] IS NULL OR Type = ANY($4::point_type[])
-    )
-    `
-
     type GetPointsInRadiusParams struct {
       Longitude float64     `json:"longitude"`
       Latitude  float64     `json:"latitude"`
@@ -248,6 +239,8 @@ the backend keeping pace with the other developers.
   Listing \ref{listing:sqlc_query_input}}
   \label{listing:sqlc_generated_bindings}
 \end{listing}
+
+\newpage{}
 
 \textbf{golang-migrate}\\
 During the first weeks of the project, the database was defined by a simple
@@ -619,6 +612,8 @@ For a detailed explanation of the route access restriction modes, see Section
 \textbf{\nameref{middleware_route_authorisation}} on page
 \pageref{middleware_route_authorisation}.
 
+\newpage{}
+
 \textbf{Public API}\\
 The public API is used to retrieve relevant data for display in the frontend and
 for authentication of the user.
@@ -682,6 +677,7 @@ for authentication of the user.
         ids (request body)\\
         \textbf{Returns:} Status 202 if no errors occurred during deletion.\\
       }
+      \newpage{}
       \item {
         \textbf{Name:} Save location\\
         \textbf{Method + Route:} \texttt{POST /v1/public/history/\{id\}}\\
@@ -889,6 +885,8 @@ example of the logs produced by the public backend server can be found in Figure
   \label{fig:backend_logging}
 \end{figure}
 
+\newpage{}
+
 \phantomsection\label{middleware_cors}\textbf{Cross-origin Resource Sharing (CORS)}\\
 Since the frontend and the backend are not hosted at the same origin, it is
 necessary for the backend to enable cross-origin resource sharing. If this is
@@ -917,6 +915,8 @@ they do improve data integrity. During development, the sanity checks have
 proven to be instrumental in catching errors early when implementing a new
 function that sends data to the API.
 
+\newpage{}
+
 \begin{listing}[htbp]
   \centering{}
   \begin{minipage}{0.7\textwidth}
@@ -935,30 +935,26 @@ function that sends data to the API.
       if err != nil {
         return customErrors.Payload.InvalidPayloadUserError
       }
-
       return self.Validate()
     }
 
     func (self *CreateUserDto) Validate() error {
       if len(self.Username) == 0 {
-        err := customErrors.
-                Parameter.
+        err := customErrors.Parameter.
                 RequiredParameterMissingError.
                 WithCause(fmt.Errorf("Username is required"))
         return err
       }
 
       if len(self.Email) == 0 {
-        err := customErrors.
-                Parameter.
+        err := customErrors.Parameter.
                 RequiredParameterMissingError.
                 WithCause(fmt.Errorf("Email is required"))
         return err
       }
 
       if len(self.Password) == 0 {
-        err := customErrors.
-                Parameter.
+        err := customErrors.Parameter.
                 RequiredParameterMissingError.
                 WithCause(fmt.Errorf("Password is required"))
         return err
@@ -976,6 +972,8 @@ function that sends data to the API.
   \caption{An example of a DTO including data validation used by the backend}
   \label{listing:dto_example}
 \end{listing}
+
+\newpage{}
 
 \subsubsection{Error Handling}
 
@@ -1003,6 +1001,8 @@ available to the frontend developers throughout the project. An excerpt of this
 documentation can be seen in Figure \ref{fig:error_code_documentation}. This
 prevented miscommunication and eliminated the need for joint bug hunting
 meetings, decoupling the development of frontend and backend further.
+
+
 
 \begin{listing}[htbp]
   \centering{}
@@ -1114,33 +1114,35 @@ and failure conditions (see Listing \ref{listing:test_case_definition}). Using
 this, it is possible to efficiently create a multitude of testcases with
 different parameters which share the underlying test execution code.
 
+\newpage{}
+
 \begin{listing}[htbp]
   \centering{}
   \begin{minipage}{\textwidth}
   \begin{minted}{go}
-    {
-      Name: "Valid input",
-      Method: "POST",
-      Route: "/points",
-      InputJSON: `{
-        "longlat": {
-          "type": "Point",
-          "coordinates": [11, 12]
-        },
-        "type": "parking",
-        "details": {
-          "test": 1234
-        }
-      }`,
-      MockSetup: func(mock pgxmock.PgxPoolIface) {
-        mock.ExpectQuery("INSERT INTO points").
-            WithArgs(
-              pgxmock.AnyArg(), db.PointType("parking"), []byte(`{"test":1234}`),).
-            WillReturnRows(pgxmock.NewRows([]string{"id"}).
-            AddRow(int64(1)))
+  {
+    Name: "Valid input",
+    Method: "POST",
+    Route: "/points",
+    InputJSON: `{
+      "longlat": {
+        "type": "Point",
+        "coordinates": [11, 12]
       },
-      ExpectedStatus: http.StatusCreated,
-    }
+      "type": "parking",
+      "details": {
+        "test": 1234
+      }
+    }`,
+    MockSetup: func(mock pgxmock.PgxPoolIface) {
+      mock.ExpectQuery("INSERT INTO points").
+          WithArgs(
+            pgxmock.AnyArg(), db.PointType("parking"), []byte(`{"test":1234}`),).
+          WillReturnRows(pgxmock.NewRows([]string{"id"}).
+          AddRow(int64(1)))
+    },
+    ExpectedStatus: http.StatusCreated,
+  }
   \end{minted}
   \end{minipage}
   \caption{An example of a test case for a table-based unit test of the private points handler}
@@ -1177,3 +1179,5 @@ main code base and by extension the deployment.
   \ref{fig:backend_github_action}), providing detailed, function level coverage}
   \label{fig:backend_github_action_coverage}
 \end{figure}
+
+\newpage{}

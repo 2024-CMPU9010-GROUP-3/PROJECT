@@ -1,426 +1,874 @@
 \subsubsection{Frontend Architecture and Implementation}
-In the development of this project, we adopted a modern web development stack that incorporated a combination of cutting{-}edge technologies aimed at optimizing performance, scalability, and maintainability. The integration of these technologies facilitated the creation of a highly efficient and user{-}friendly web application. This section provides a comprehensive overview of the key technologies used in the frontend of the application, outlining their individual roles and how they collectively contributed to the success of the project.
-\begin{enumerate}
-    \item{} \textbf{React}
+In the development of this project, we adopted a modern web development stack
+that incorporated a combination of cutting{-}edge technologies aimed at
+optimizing performance, scalability, and maintainability. The integration of
+these technologies facilitated the creation of a highly efficient and
+user{-}friendly web application. This section provides a comprehensive overview
+of the key technologies used in the frontend of the application, outlining their
+individual roles and how they collectively contributed to the success of the
+project.
 
-     React is a widely used and powerful JavaScript/TypeScript library that is primarily designed for building user interfaces. It was chosen for this project due to its ability to facilitate the development of dynamic and responsive web applications. In conjunction with \textbf{Next.js}, React allowed for the implementation of a component{-}driven architecture. This architectural approach enables the reuse of individual UI components throughout the application, which not only streamlined the development process but also ensured greater maintainability in the long term. By breaking down the user interface into smaller, reusable components, we were able to manage and scale the application more effectively. React’s virtual DOM mechanism also ensured efficient rendering of changes to the UI, contributing to an enhanced user experience by minimizing the amount of time required to update the interface.
-     
-    Moreover, React’s active community and vast ecosystem of libraries and tools made it easier to integrate other technologies and features into the application, further improving its overall functionality and performance. As a result, React played a crucial role in enabling a seamless, interactive experience for users, while also enhancing the maintainability and scalability of the codebase.
+\vspace{0.5cm}
 
-    \item{} \textbf{Next.js}
-    
-    Next.js is a robust React framework that extends the capabilities of React by offering features such as server{-}side rendering (SSR) and static site generation (SSG). These features proved to be essential for optimizing the application's load times, which was critical to the project’s success. Server{-}side rendering allows the server to generate the HTML for the page on each request, as opposed to client{-}side rendering where the browser must first download and execute JavaScript to generate the page. This process significantly reduces the time required for the page to be displayed to the user, resulting in a faster and more efficient application.
+\textbf{React} \\
+React is a widely used and powerful JavaScript/TypeScript library that is
+primarily designed for building user interfaces. It was chosen for this
+project due to its ability to facilitate the development of dynamic and
+responsive web applications. In conjunction with \textbf{Next.js}, React
+allowed for the implementation of a component{-}driven architecture. This
+architectural approach enables the reuse of individual UI components
+throughout the application, which not only streamlined the development
+process but also ensured greater maintainability in the long term. By
+breaking down the user interface into smaller, reusable components, we were
+able to manage and scale the application more effectively. React's virtual
+DOM mechanism also ensured efficient rendering of changes to the UI,
+contributing to an enhanced user experience by minimizing the amount of
+time required to update the interface.
 
-    Additionally, Next.js’ static site generation capabilities allowed us to pre{-}render pages at build time, meaning that the application could serve static HTML files for commonly accessed pages, further enhancing performance. The combination of SSR and SSG enabled a smooth and responsive user experience.
+Moreover, React's active community and vast ecosystem of libraries and tools
+made it easier to integrate other technologies and features into the
+application, further improving its overall functionality and performance. As
+a result, React played a crucial role in enabling a seamless, interactive
+experience for users, while also enhancing the maintainability and
+scalability of the codebase.
 
-    Next.js also provided a robust routing system that made it easier to manage the application’s navigation. The framework’s file{-}based routing system allowed for simple, declarative routing, which contributed to the overall maintainability of the project. Next.js’ out{-}of{-}the{-}box support for features like code splitting and automatic optimization ensured that the application remained highly performant, even as it grew in complexity.
+\vspace{0.5cm}
+
+\textbf{Next.js} \\
+Next.js is a robust React framework that extends the capabilities of React
+by offering features such as server{-}side rendering (SSR) and static site
+generation (SSG). These features proved to be essential for optimizing the
+application's load times, which was critical to the project's success.
+Server{-}side rendering allows the server to generate the HTML for the page
+on each request, as opposed to client{-}side rendering where the browser
+must first download and execute JavaScript to generate the page. This
+process significantly reduces the time required for the page to be displayed
+to the user, resulting in a faster and more efficient application.
+
+Additionally, Next.js' static site generation capabilities allowed us to
+pre{-}render pages at build time, meaning that the application could serve
+static HTML files for commonly accessed pages, further enhancing
+performance. The combination of SSR and SSG enabled a smooth and responsive
+user experience.
+
+Next.js also provided a robust routing system that made it easier to manage
+the application's navigation. The framework's file{-}based routing system
+allowed for simple, declarative routing, which contributed to the overall
+maintainability of the project. Next.js' out{-}of{-}the{-}box support for
+features like code splitting and automatic optimization ensured that the
+application remained highly performant, even as it grew in complexity.
+
+\newpage{}
+
+\textbf{TailwindCSS} \\
+For styling the application, \textbf{TailwindCSS}, a utility{-}first CSS
+framework, was chosen for its ability to enable rapid UI development. Unlike
+traditional CSS frameworks, which rely on pre{-}defined UI components and
+styles, TailwindCSS provides low{-}level utility classes that can be
+combined to build custom designs. This approach allowed for greater
+flexibility in styling the application, as developers were able to apply
+precise and granular control over the UI without the need for writing custom
+CSS from scratch.
+
+One of the key advantages of using TailwindCSS was the speed with which we
+could implement and modify styles. By utilizing utility classes, we were
+able to quickly experiment with different design configurations and make
+adjustments on the fly. This approach also minimized the need for additional
+CSS files, reducing the overall complexity of the styling process.
+
+In addition to TailwindCSS, we incorporated several tools to enhance the
+framework's capabilities. \textbf{Tailwind{-}merge} was used to
+intelligently combine conflicting utility classes, ensuring that styles were
+applied consistently throughout the application.
+\textbf{TailwindCSS{-}animate} provided utility classes for adding
+animations, which helped bring dynamic visual elements to life without
+needing to write custom animation logic. These tools, when used in tandem,
+allowed for more advanced styling and complex animations while maintaining
+the simplicity and ease of use that TailwindCSS is known for.
+
+\vspace{0.5cm}
+
+\textbf{Mapbox GL and React Map GL} \\
+The integration of interactive maps and advanced visualization features
+played a key role in the functionality of the project. For this purpose, we
+utilized \textbf{Mapbox GL} and \textbf{React Map GL}. \textbf{Mapbox GL} is
+a powerful mapping library that provides advanced capabilities for rendering
+interactive maps with smooth transitions and animations. It is built to
+handle large datasets, enabling the display of dynamic geospatial
+information with high performance and precision. Mapbox GL was used to power
+the core mapping functionality of the application, allowing users to
+interact with maps seamlessly.
+
+To integrate Mapbox GL with our React application, we used \textbf{React Map
+GL}, a library that provides a simple wrapper around Mapbox GL, making it
+easier to embed and control interactive maps within React components. React
+Map GL allowed us to leverage the full potential of Mapbox GL while
+maintaining a consistent and efficient React{-}based architecture.
+
+In addition to basic mapping functionality, we integrated \textbf{Deck.gl}
+for advanced data visualization. Deck.gl is a framework that enhances Mapbox
+GL by enabling the display of complex data visualizations on top of
+interactive maps. This was particularly beneficial for our project, as it
+allowed us to visualize large datasets in an efficient and interactive
+manner, providing users with a rich and engaging experience.
+
+\newpage{}
+
+\textbf{ShadCN/UI} \\
+To streamline the development of UI components, we incorporated
+\textbf{ShadCN}, a component library built on top of \textbf{Radix
+Primitives}. ShadCN combines the flexibility of Radix UI with a more
+opinionated design system, tailored for projects that require custom styling
+with the power of TailwindCSS\@. Radix Primitives offers a set of
+low{-}level UI components that are highly customizable, accessible, and
+composable, making them ideal for building complex user interfaces.
+
+By using ShadCN, we were able to access a suite of pre{-}built, customizable
+components that adhered to accessibility standards, ensuring that our
+application was usable by all users, including those with disabilities.
+ShadCN's integration with Radix Primitives allowed us to quickly implement
+accessible and customizable components, reducing the need for additional
+development and ensuring consistency across the application.
+
+The combination of ShadCN's flexible components and TailwindCSS allowed us
+to build a visually appealing and highly functional user interface with
+minimal configuration. Furthermore, ShadCN's tight integration with
+accessibility guidelines ensured that the application met the required
+standards for usability, providing an inclusive experience for all users.
+
+\vspace{0.5cm}
+
+\textbf{Radix Primitives} \\
+Radix Primitives played a crucial role in the design and development of our
+user interface components. Radix Primitives provides a set of foundational,
+high{-}quality UI components that serve as the core building blocks for any
+application. These components are unstyled and highly customizable, giving
+developers full control over the look and behaviour of the elements while
+ensuring accessibility and functionality out of the box.
+
+The core of Radix Primitives includes essential UI elements such as buttons,
+modals, popovers, sliders, tabs, and other interactive components. These
+primitives are designed to be flexible and composable, allowing developers
+to combine them in various ways to create complex UI patterns. The
+components are built to be accessible, ensuring that the user interface
+remains usable for all users, including those with disabilities, without
+requiring additional development effort to meet accessibility standards.
+
+One of the standout features of Radix Primitives is its focus on
+accessibility. The components are designed with built{-}in features like
+keyboard navigation, screen reader support, and proper focus management.
+This allows the application to be fully functional and accessible across a
+wide range of devices and assistive technologies, without the need for
+custom implementation of these features. As accessibility is a fundamental
+aspect of modern web development, Radix Primitives ensured that the project
+adhered to the highest standards for inclusive design.
+
+In addition to accessibility, Radix Primitives allows for extensive
+customization. While the components come with sensible defaults, they are
+unstyled, which provides the flexibility to apply custom styles that match
+the overall design language of the application. This level of customization
+allowed the development team to ensure that the UI components blended
+seamlessly with the rest of the application's design. By combining Radix
+Primitives with **TailwindCSS**, we could easily customize the components
+using utility{-}first CSS classes, speeding up the styling process and
+ensuring consistency across the entire application.
+
+The composability of Radix Primitives also played a significant role in the
+project's development. The library is designed to allow developers to create
+complex user interface patterns by combining simple components in flexible
+ways. For instance, we could easily integrate modal dialogs, dropdown menus,
+and tooltips to form cohesive UI patterns that enhanced the user experience.
+This approach not only saved development time but also reduced the
+likelihood of introducing bugs, as we could rely on well{-}tested,
+standardized components rather than building these features from scratch.
+
+By leveraging Radix Primitives, we were able to focus on creating a polished
+and accessible user interface while avoiding the complexity of building
+low{-}level components. The ability to use these pre{-}built, flexible
+primitives allowed us to deliver a high{-}quality user experience with
+minimal overhead. Radix Primitives was an essential tool in ensuring that
+the application was both user{-}friendly and accessible, all while
+maintaining the flexibility to customize and extend the components as needed
+for the project.
 
 
-    \item{} \textbf{TailwindCSS}
-
-    For styling the application, \textbf{TailwindCSS}, a utility{-}first CSS framework, was chosen for its ability to enable rapid UI development. Unlike traditional CSS frameworks, which rely on pre{-}defined UI components and styles, TailwindCSS provides low{-}level utility classes that can be combined to build custom designs. This approach allowed for greater flexibility in styling the application, as developers were able to apply precise and granular control over the UI without the need for writing custom CSS from scratch.
-
-    One of the key advantages of using TailwindCSS was the speed with which we could implement and modify styles. By utilizing utility classes, we were able to quickly experiment with different design configurations and make adjustments on the fly. This approach also minimized the need for additional CSS files, reducing the overall complexity of the styling process.
-
-    In addition to TailwindCSS, we incorporated several tools to enhance the framework’s capabilities. \textbf{Tailwind{-}merge} was used to intelligently combine conflicting utility classes, ensuring that styles were applied consistently throughout the application. \textbf{TailwindCSS{-}animate} provided utility classes for adding animations, which helped bring dynamic visual elements to life without needing to write custom animation logic. These tools, when used in tandem, allowed for more advanced styling and complex animations while maintaining the simplicity and ease of use that TailwindCSS is known for.
-
-    \item{} \textbf{Mapbox GL and React Map GL} \\
-    The integration of interactive maps and advanced visualization features played a key role in the functionality of the project. For this purpose, we utilized \textbf{Mapbox GL} and \textbf{React Map GL}. \textbf{Mapbox GL} is a powerful mapping library that provides advanced capabilities for rendering interactive maps with smooth transitions and animations. It is built to handle large datasets, enabling the display of dynamic geospatial information with high performance and precision. Mapbox GL was used to power the core mapping functionality of the application, allowing users to interact with maps seamlessly.
-
-    To integrate Mapbox GL with our React application, we used \textbf{React Map GL}, a library that provides a simple wrapper around Mapbox GL, making it easier to embed and control interactive maps within React components. React Map GL allowed us to leverage the full potential of Mapbox GL while maintaining a consistent and efficient React{-}based architecture.
-
-    In addition to basic mapping functionality, we integrated \textbf{Deck.gl} for advanced data visualization. Deck.gl is a framework that enhances Mapbox GL by enabling the display of complex data visualizations on top of interactive maps. This was particularly beneficial for our project, as it allowed us to visualize large datasets in an efficient and interactive manner, providing users with a rich and engaging experience.
-
-    \item{} \textbf{ShadCN/UI} \\
-    To streamline the development of UI components, we incorporated \textbf{ShadCN}, a component library built on top of \textbf{Radix Primitives}. ShadCN combines the flexibility of Radix UI with a more opinionated design system, tailored for projects that require custom styling with the power of TailwindCSS\@. Radix Primitives offers a set of low{-}level UI components that are highly customizable, accessible, and composable, making them ideal for building complex user interfaces.
-
-    By using ShadCN, we were able to access a suite of pre{-}built, customizable components that adhered to accessibility standards, ensuring that our application was usable by all users, including those with disabilities. ShadCN's integration with Radix Primitives allowed us to quickly implement accessible and customizable components, reducing the need for additional development and ensuring consistency across the application.
-
-    The combination of ShadCN’s flexible components and TailwindCSS allowed us to build a visually appealing and highly functional user interface with minimal configuration. Furthermore, ShadCN's tight integration with accessibility guidelines ensured that the application met the required standards for usability, providing an inclusive experience for all users.
-
-    \item{} \textbf{Radix Primitives} \\
-    Radix Primitives played a crucial role in the design and development of our user interface components. Radix Primitives provides a set of foundational, high{-}quality UI components that serve as the core building blocks for any application. These components are unstyled and highly customizable, giving developers full control over the look and behaviour of the elements while ensuring accessibility and functionality out of the box.
-
-    The core of Radix Primitives includes essential UI elements such as buttons, modals, popovers, sliders, tabs, and other interactive components. These primitives are designed to be flexible and composable, allowing developers to combine them in various ways to create complex UI patterns. The components are built to be accessible, ensuring that the user interface remains usable for all users, including those with disabilities, without requiring additional development effort to meet accessibility standards.
-
-    One of the standout features of Radix Primitives is its focus on accessibility. The components are designed with built{-}in features like keyboard navigation, screen reader support, and proper focus management. This allows the application to be fully functional and accessible across a wide range of devices and assistive technologies, without the need for custom implementation of these features. As accessibility is a fundamental aspect of modern web development, Radix Primitives ensured that the project adhered to the highest standards for inclusive design.
-
-    In addition to accessibility, Radix Primitives allows for extensive customization. While the components come with sensible defaults, they are unstyled, which provides the flexibility to apply custom styles that match the overall design language of the application. This level of customization allowed the development team to ensure that the UI components blended seamlessly with the rest of the application’s design. By combining Radix Primitives with **TailwindCSS**, we could easily customize the components using utility{-}first CSS classes, speeding up the styling process and ensuring consistency across the entire application.
-
-    The composability of Radix Primitives also played a significant role in the project's development. The library is designed to allow developers to create complex user interface patterns by combining simple components in flexible ways. For instance, we could easily integrate modal dialogs, dropdown menus, and tooltips to form cohesive UI patterns that enhanced the user experience. This approach not only saved development time but also reduced the likelihood of introducing bugs, as we could rely on well{-}tested, standardized components rather than building these features from scratch.
-
-    By leveraging Radix Primitives, we were able to focus on creating a polished and accessible user interface while avoiding the complexity of building low{-}level components. The ability to use these pre{-}built, flexible primitives allowed us to deliver a high{-}quality user experience with minimal overhead. Radix Primitives was an essential tool in ensuring that the application was both user{-}friendly and accessible, all while maintaining the flexibility to customize and extend the components as needed for the project.
-
-
-\end{enumerate}
-
-The integration of these technologies into the frontend of the project provided a solid foundation for building a high{-}performance, scalable, and user{-}friendly web application. From the server{-}side rendering capabilities of Next.js to the highly customizable components offered by ShadCN, each technology played a critical role in the overall success of the project. The use of React and Next.js allowed for a modular and efficient development process, while TailwindCSS and its associated tools streamlined the styling process and enabled rapid UI development. The incorporation of Mapbox GL and Deck.gl brought advanced mapping and data visualization capabilities to the application, making it more interactive and engaging for users. Together, these technologies enabled us to deliver an application that met high standards of code quality, user experience, and performance, ensuring its success in achieving the project’s objectives.
+The integration of these technologies into the frontend of the project provided
+a solid foundation for building a high{-}performance, scalable, and
+user{-}friendly web application. From the server{-}side rendering capabilities
+of Next.js to the highly customizable components offered by ShadCN, each
+technology played a critical role in the overall success of the project. The use
+of React and Next.js allowed for a modular and efficient development process,
+while TailwindCSS and its associated tools streamlined the styling process and
+enabled rapid UI development. The incorporation of Mapbox GL and Deck.gl brought
+advanced mapping and data visualization capabilities to the application, making
+it more interactive and engaging for users. Together, these technologies enabled
+us to deliver an application that met high standards of code quality, user
+experience, and performance, ensuring its success in achieving the project's
+objectives.
 
 \subsubsection{Client State Management}
-    \paragraph{Introduction}\mbox{}
+\paragraph{Introduction}\mbox{}
 
-    Effective client state management is a crucial aspect of the \textbf{Magpie} frontend, as it ensures a seamless and consistent user experience. Given the dynamic nature of the application, with interactive elements such as maps, search filters, and property details, it is essential to maintain synchronization between different UI components while preventing errors and inconsistencies. Managing state efficiently is particularly important when handling large datasets that need to be presented in a user{-}friendly manner across various parts of the application.
-    \paragraph{React Context}\mbox{}
+Effective client state management is a crucial aspect of the \textbf{Magpie}
+frontend, as it ensures a seamless and consistent user experience. Given the
+dynamic nature of the application, with interactive elements such as maps,
+search filters, and property details, it is essential to maintain
+synchronization between different UI components while preventing errors and
+inconsistencies. Managing state efficiently is particularly important when
+handling large datasets that need to be presented in a user{-}friendly
+manner across various parts of the application. \paragraph{React
+Context}\mbox{}
 
-    To achieve this, the application employs state management techniques that allow for centralized control of the application’s state. One of the core tools used for this purpose is \textbf{React Context}, which provides a simple way to share state across multiple components without having to pass data manually through props. React Context enables the application to manage the user’s preferences, search filters, and saved properties in a global state, ensuring that these settings are accessible across various parts of the application. This method of state management is particularly useful for dynamic features, such as filtering search results based on user input or retaining user selections when navigating between different pages or sections of the platform.
-    \paragraph{Redux}\mbox{}
+To achieve this, the application employs state management techniques that
+allow for centralized control of the application's state. One of the core
+tools used for this purpose is \textbf{React Context}, which provides a
+simple way to share state across multiple components without having to pass
+data manually through props. React Context enables the application to manage
+the user's preferences, search filters, and saved properties in a global
+state, ensuring that these settings are accessible across various parts of
+the application. This method of state management is particularly useful for
+dynamic features, such as filtering search results based on user input or
+retaining user selections when navigating between different pages or
+sections of the platform. \paragraph{Redux}\mbox{}
 
-    In addition to React Context, the use of more advanced state management libraries such as Redux can be considered for larger{-}scale applications that require more complex state handling. Redux facilitates a unidirectional data flow and provides a centralized store that allows the state to be updated in a predictable manner. With Redux, the application can ensure that all components are working with the most up{-}to{-}date information, whether that involves real{-}time data from maps or user{-}selected property preferences. Redux also allows for more complex actions, such as asynchronous data fetching, and can be used in conjunction with middleware like Redux Thunk for handling side effects, further enhancing the application’s performance and stability.
-    \paragraph{Consistent User Experience}\mbox{}
+In addition to React Context, the use of more advanced state management
+libraries such as Redux can be considered for larger{-}scale applications
+that require more complex state handling. Redux facilitates a unidirectional
+data flow and provides a centralized store that allows the state to be
+updated in a predictable manner. With Redux, the application can ensure that
+all components are working with the most up{-}to{-}date information, whether
+that involves real{-}time data from maps or user{-}selected property
+preferences. Redux also allows for more complex actions, such as
+asynchronous data fetching, and can be used in conjunction with middleware
+like Redux Thunk for handling side effects, further enhancing the
+application's performance and stability. \paragraph{Consistent User
+Experience}\mbox{}
 
-    Client state management also ensures that the data displayed to the user remains consistent. For instance, when a user interacts with a map, the system must track the map's current state and the filter options that the user has selected. By maintaining this state across different components, users can switch between different views (such as property details and map views) without losing their previous selections. Additionally, state management ensures that updates to the user interface, such as property filtering or adding a property to the favourites list, are reflected across the entire application in real{-}time, maintaining data integrity and providing users with a smooth browsing experience.
-    \paragraph{Conclusion}\mbox{}
+Client state management also ensures that the data displayed to the user
+remains consistent. For instance, when a user interacts with a map, the
+system must track the map's current state and the filter options that the
+user has selected. By maintaining this state across different components,
+users can switch between different views (such as property details and map
+views) without losing their previous selections. Additionally, state
+management ensures that updates to the user interface, such as property
+filtering or adding a property to the favourites list, are reflected across
+the entire application in real{-}time, maintaining data integrity and
+providing users with a smooth browsing experience.
+\paragraph{Conclusion}\mbox{}
 
-    Overall, client state management plays a vital role in improving the usability and responsiveness of the frontend, reducing redundancy and complexity by centralizing control over the application’s data. This centralized management allows for easier maintenance and scalability as the application evolves and new features are added.
+Overall, client state management plays a vital role in improving the
+usability and responsiveness of the frontend, reducing redundancy and
+complexity by centralizing control over the application's data. This
+centralized management allows for easier maintenance and scalability as the
+application evolves and new features are added.
+
+\newpage{}
 
 \subsubsection{UI Walkthrough}
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=0.6\textwidth]{images/site/sitemap.png}
     \caption{Site map {-} magpie}
 \end{figure}
+
 \paragraph{Landing Page}\mbox{}\\
 \textbf{Introduction}
 
-Upon accessing the landing page, users are greeted with a clean and modern layout that introduces them to `Magpie' {-} a geographical information service providing a glance at available public services in Dublin. The layout is designed to be visually appealing, with prominent calls to action and easily navigable sections.
+Upon accessing the landing page, users are greeted with a clean and modern
+layout that introduces them to `Magpie' {-} a geographical information service
+providing a glance at available public services in Dublin. The layout is
+designed to be visually appealing, with prominent calls to action and easily
+navigable sections.
+
+\newpage{}
 
 \textbf{Header Section}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/landing/landing_6_header.png}
     \caption{Landing page {-} Header}
 \end{figure}
+
 \begin{itemize}
-    \item{} \textbf{Navigation Bar:} At the top of the page, the navigation bar features the \textbf{Magpie logo} on the left side, offering a simple and recognizable brand identity. To the right, navigation links for \textbf{About}, \textbf{Features}, \textbf{Use Cases}, and \textbf{Get Started} provide quick access to key sections. Additionally, a \textbf{Sign Up} button stands out in black with white text for clear calls to action.
-    \item{} \textbf{Mobile Menu:} For mobile views, a hamburger menu (three horizontal lines) appears, ensuring that the navigation remains compact and accessible on smaller screens.
+    \item{} \textbf{Navigation Bar:} At the top of the page, the navigation bar
+    features the \textbf{Magpie logo} on the left side, offering a simple and
+    recognizable brand identity. To the right, navigation links for
+    \textbf{About}, \textbf{Features}, \textbf{Use Cases}, and \textbf{Get
+    Started} provide quick access to key sections. Additionally, a \textbf{Sign
+    Up} button stands out in black with white text for clear calls to action.
+    \item{} \textbf{Mobile Menu:} For mobile views, a hamburger menu (three
+    horizontal lines) appears, ensuring that the navigation remains compact and
+    accessible on smaller screens.
 \end{itemize}
 
 \textbf{Hero Section}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/landing/landing_1_hero.png}
     \caption{Landing page {-} Hero section}
 \end{figure}
 
 \begin{itemize}
-    \item{} \textbf{Headline:} The page features a bold, eye{-}catching headline that reads `Magpie' in a gradient text style, followed by the tagline `Services at a Glance.' This is a clear and engaging introduction to the site's purpose.
-    \item{} \textbf{Subheading:} A short description reinforces the value proposition: `Access Dublin's most comprehensive database of public services; quickly, easily, and reliably.' This emphasizes the platform's utility and target audience.
-    \item{} \textbf{Primary CTA:} A large button titled `Get Started' invites users to sign up or log in, accompanied by an icon of a map pin to add a visual cue to the call to action.
-    \item{} \textbf{Secondary CTA:} A `Learn More' button encourages users to explore more details about the platform. It’s designed to stand out but with a lighter visual treatment compared to the primary CTA\@.
+    \item{} \textbf{Headline:} The page features a bold, eye{-}catching headline
+    that reads `Magpie' in a gradient text style, followed by the tagline
+    `Services at a Glance.' This is a clear and engaging introduction to the
+    site's purpose.
+    \item{} \textbf{Subheading:} A short description reinforces the value
+    proposition: `Access Dublin's most comprehensive database of public
+    services; quickly, easily, and reliably.' This emphasizes the platform's
+    utility and target audience.
+    \item{} \textbf{Primary CTA:} A large button titled `Get Started' invites
+    users to sign up or log in, accompanied by an icon of a map pin to add a
+    visual cue to the call to action.
+    \item{} \textbf{Secondary CTA:} A `Learn More' button encourages users to
+    explore more details about the platform. It's designed to stand out but with
+    a lighter visual treatment compared to the primary CTA\@.
 \end{itemize}
 
 \newpage{}
 
 \textbf{About Section}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/landing/landing_2_about.png}
     \caption{Landing page {-} About section}
 \end{figure}
 
-\textbf{What is Magpie?:} This section introduces \textbf{Magpie} as a \textbf{geographical information service}, explaining its functionality and target users. It emphasizes its usefulness for urban planners, residents, and other stakeholders by providing interactive maps, smart search capabilities, and detailed analysis tools.
+\textbf{What is Magpie?:} This section introduces \textbf{Magpie} as a
+\textbf{geographical information service}, explaining its functionality and
+target users. It emphasizes its usefulness for urban planners, residents, and
+other stakeholders by providing interactive maps, smart search capabilities, and
+detailed analysis tools.
 
-\textbf{How Magpie Uses Machine Learning:} This section explains the use of \textbf{machine learning} to analyze satellite images and detect parking spaces. It provides insight into the model used (YOLOv8 OBB), detailing how it detects cars and identifies available parking spaces. A breakdown of the process offers technical depth while remaining accessible to a general audience.
+\textbf{How Magpie Uses Machine Learning:} This section explains the use of
+\textbf{machine learning} to analyze satellite images and detect parking spaces.
+It provides insight into the model used (YOLOv8 OBB), detailing how it detects
+cars and identifies available parking spaces. A breakdown of the process offers
+technical depth while remaining accessible to a general audience.
+
+\newpage{}
 
 \textbf{Features Section}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/landing/landing_3_features.png}
     \caption{Landing page {-} Features section}
 \end{figure}
 
-\textbf{Unique Features {-} } This section highlights the core capabilities of Magpie:
+\textbf{Unique Features {-} } This section highlights the core capabilities of
+Magpie:
 
 \begin{itemize}
-    \item{} \textbf{Interactive Map Visualization:} The ability to search, filter, and visualize services through an interactive map.
-    \item{} \textbf{Smart Search \& Analysis:} Provides detailed insights with multi{-}layer data visualizations.
-    \item{} \textbf{Professional Tools:} Features designed to export reports and analyze historical trends.
+    \item{} \textbf{Interactive Map Visualization:} The ability to search,
+    filter, and visualize services through an interactive map.
+    \item{} \textbf{Smart Search \& Analysis:} Provides detailed insights with
+    multi{-}layer data visualizations.
+    \item{} \textbf{Professional Tools:} Features designed to export reports and
+    analyze historical trends.
 \end{itemize}
 
-Each feature is represented by a card that contains an icon, a title, and a brief description. Hovering over these cards gives users more details, encouraging them to explore further.
+Each feature is represented by a card that contains an icon, a title, and a
+brief description. Hovering over these cards gives users more details,
+encouraging them to explore further.
 
 
 \textbf{Use Case section}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/landing/landing_4_usecases.png}
     \caption{Landing page {-} Use Case section}
 \end{figure}
 
-\textbf{Magpie Works for Everyone:} This section presents specific use cases for different user types:
+\textbf{Magpie Works for Everyone:} This section presents specific use cases for
+different user types:
 \begin{itemize}
-    \item{}  \textbf{Urban Planners \& City Authorities:} Features such as optimizing infrastructure, analysing service distribution, and generating reports.
-    \item{} \textbf{General Users \& Residents:} Services to find nearby amenities, access transport options, and plan efficient routes.
+    \item{}  \textbf{Urban Planners \& City Authorities:} Features such as
+    optimizing infrastructure, analysing service distribution, and generating
+    reports.
+    \item{} \textbf{General Users \& Residents:} Services to find nearby
+    amenities, access transport options, and plan efficient routes.
 \end{itemize}
+
+\newpage{}
 
 \textbf{Call To Action (CTA) Section}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/landing/landing_5_cta.png}
     \caption{Landing page {-} CTA section}
 \end{figure}
 
 \begin{itemize}
-    \item{} \textbf{Ready to Transform How You Plan?:} The page concludes with a strong call to action, urging users to \textbf{sign up} and start using Magpie. This section reiterates the platform's value in making data{-}driven decisions, featuring a large, attention{-}grabbing button labelled `Sign Up Now.'
-    \item{} \textbf{Gradient Background:} The footer section features a subtle gradient background, reinforcing the design's sleek and modern aesthetic.
+    \item{} \textbf{Ready to Transform How You Plan?:} The page concludes with a
+    strong call to action, urging users to \textbf{sign up} and start using
+    Magpie. This section reiterates the platform's value in making data{-}driven
+    decisions, featuring a large, attention{-}grabbing button labelled `Sign Up
+    Now.'
+    \item{} \textbf{Gradient Background:} The footer section features a subtle
+    gradient background, reinforcing the design's sleek and modern aesthetic.
 \end{itemize}
 
-The landing page for \textbf{Magpie} is designed to effectively introduce the platform’s features, functionality, and benefits through a series of engaging sections. The page focuses on presenting Magpie as a user{-}friendly tool for urban planners and residents, with clear calls to action and visually appealing design elements. It balances technical information with an approachable layout, ensuring that both potential users and technical stakeholders can easily understand its offerings.
-
-\newpage{}
+The landing page for \textbf{Magpie} is designed to effectively introduce the
+platform's features, functionality, and benefits through a series of engaging
+sections. The page focuses on presenting Magpie as a user{-}friendly tool for
+urban planners and residents, with clear calls to action and visually appealing
+design elements. It balances technical information with an approachable layout,
+ensuring that both potential users and technical stakeholders can easily
+understand its offerings.
 
 \textbf{Signup Page}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/signup/signup_page.png}
     \caption{The Signup Page}
 \end{figure}
 
-The \textbf{Signup} page serves as the gateway for users to create an account on Magpie. It is designed with a straightforward layout to guide users through the process of entering their personal information securely.
+The \textbf{Signup} page serves as the gateway for users to create an account on
+Magpie. It is designed with a straightforward layout to guide users through the
+process of entering their personal information securely.
 
 \textbf{Header Section}
 
-The header section plays a crucial role in establishing the identity of the page.
+The header section plays a crucial role in establishing the identity of the
+page.
 \begin{itemize}
-    \item{} \textbf{Magpie Logo:} Positioned prominently at the top of the page is the \textbf{Magpie logo}, providing immediate brand recognition. The logo’s size and placement are intentional to make it easy for users to identify the platform and navigate back to the homepage, should they need to.
-    \item{} \textbf{Tagline:} Below the logo, the tagline \textbf{`Services at a Glance'} emphasizes the platform's purpose, providing a succinct description of its functionality{-}offering users quick access to available public services in Dublin.
-    \item{} \textbf{Call to Action:} The headline in the header invites users to \textbf{Create your Magpie Account} in large, bold text, making the goal of the page clear and guiding users toward account creation. This is an important call to action that users are encouraged to follow.
+    \item{} \textbf{Magpie Logo:} Positioned prominently at the top of the page
+    is the \textbf{Magpie logo}, providing immediate brand recognition. The
+    logo's size and placement are intentional to make it easy for users to
+    identify the platform and navigate back to the homepage, should they need
+    to.
+    \item{} \textbf{Tagline:} Below the logo, the tagline \textbf{`Services at a
+    Glance'} emphasizes the platform's purpose, providing a succinct description
+    of its functionality{-}offering users quick access to available public
+    services in Dublin.
+    \item{} \textbf{Call to Action:} The headline in the header invites users to
+    \textbf{Create your Magpie Account} in large, bold text, making the goal of
+    the page clear and guiding users toward account creation. This is an
+    important call to action that users are encouraged to follow.
 \end{itemize}
 
 \textbf{Form Inputs}
 
-The heart of the Signup page is the \textbf{form inputs}, where users input their details to create an account.
+The heart of the Signup page is the \textbf{form inputs}, where users input
+their details to create an account.
 
 \begin{itemize}
     \item{} \textbf{Required Fields:}
     \begin{itemize}
-        \item{} \textbf{First Name} and \textbf{Last Name} fields ensure that the platform has accurate personal information about the user. These fields are essential for building a profile that can be used for various personalization features across the Magpie platform. 
-        \item{} \textbf{Email Address} is also required, which is important for account verification, password recovery, and communication with the platform. Users are reminded that this email will be used for correspondence related to their account.
-        \item{} \textbf{Username} allows the user to choose a unique identifier for logging into the platform. This is an important step in personalizing the account, as the username will be used alongside the password to access the Magpie dashboard. 
+        \item{} \textbf{First Name} and \textbf{Last Name} fields ensure that
+        the platform has accurate personal information about the user. These
+        fields are essential for building a profile that can be used for various
+        personalization features across the Magpie platform. 
+        \item{} \textbf{Email Address} is also required, which is important for
+        account verification, password recovery, and communication with the
+        platform. Users are reminded that this email will be used for
+        correspondence related to their account.
+        \item{} \textbf{Username} allows the user to choose a unique identifier
+        for logging into the platform. This is an important step in
+        personalizing the account, as the username will be used alongside the
+        password to access the Magpie dashboard. 
     \end{itemize}
     \item{} \textbf{Password Fields:}
     \begin{itemize}
-        \item{} The \textbf{Password} field is critical for securing the account, and users are encouraged to choose a strong, secure password.
-        \item{} A \textbf{Confirm Password} field is included for verification to reduce errors and ensure that users input their password correctly.
-        \item{} \textbf{Password Visibility Toggle:} A key feature for convenience is the \textbf{toggle} to show or hide the password as users type. This helps users ensure they’ve entered the correct password without exposing it to others around them.
+        \item{} The \textbf{Password} field is critical for securing the
+        account, and users are encouraged to choose a strong, secure password.
+        \item{} A \textbf{Confirm Password} field is included for verification
+        to reduce errors and ensure that users input their password correctly.
+        \item{} \textbf{Password Visibility Toggle:} A key feature for
+        convenience is the \textbf{toggle} to show or hide the password as users
+        type. This helps users ensure they've entered the correct password
+        without exposing it to others around them.
     \end{itemize}
 \end{itemize}
 
 \textbf{Call To Action}
 
 \begin{itemize}
-    \item{}  \textbf{Sign Up Button:} The page features a prominent \textbf{Sign Up} button in the center of the form. The button is large and visually distinct to stand out, ensuring that users know where to click to complete their registration once all fields are filled. The button uses an eye{-}catching color, making it easy to find.
-    \item{} \textbf{Link to Log In:} A secondary, less prominent link underneath the main form invites users who already have an account to \textbf{Log in}. This ensures that returning users do not feel lost and can quickly find their way to the login page.
+    \item{}  \textbf{Sign Up Button:} The page features a prominent \textbf{Sign
+    Up} button in the center of the form. The button is large and visually
+    distinct to stand out, ensuring that users know where to click to complete
+    their registration once all fields are filled. The button uses an
+    eye{-}catching color, making it easy to find.
+    \item{} \textbf{Link to Log In:} A secondary, less prominent link underneath
+    the main form invites users who already have an account to \textbf{Log in}.
+    This ensures that returning users do not feel lost and can quickly find
+    their way to the login page.
 \end{itemize}
+
+\newpage{}
 
 \textbf{Terms and Privacy}
 
 \begin{itemize}
-    \item{} \textbf{Consent to Terms:} At the bottom of the form, there is an important reminder for users that by signing up for the platform, they agree to Magpie's \textbf{Terms and Privacy Policy}. This ensures that users are informed about the platform’s legal agreements before proceeding. 
-    \item{} \textbf{Link to Terms:} A clickable link is provided for users to read the \textbf{Terms and Privacy Policy} in detail. The link opens the full document, so users have access to the complete legal information regarding their data, privacy, and the platform's use.
+    \item{} \textbf{Consent to Terms:} At the bottom of the form, there is an
+    important reminder for users that by signing up for the platform, they agree
+    to Magpie's \textbf{Terms and Privacy Policy}. This ensures that users are
+    informed about the platform's legal agreements before proceeding. 
+    \item{} \textbf{Link to Terms:} A clickable link is provided for users to
+    read the \textbf{Terms and Privacy Policy} in detail. The link opens the
+    full document, so users have access to the complete legal information
+    regarding their data, privacy, and the platform's use.
 \end{itemize}
 
 \textbf{Overall Design and Experience}
 
-The design of the signup page is intuitive and responsive, providing a smooth experience for users on both desktop and mobile devices. It is minimalistic, focusing on the essential information without distractions, while the color scheme and layout are optimized for clarity and usability. The goal of the page is to simplify the signup process, ensuring that users can easily create their accounts while being informed about the necessary legal terms.
+The design of the signup page is intuitive and responsive, providing a smooth
+experience for users on both desktop and mobile devices. It is minimalistic,
+focusing on the essential information without distractions, while the color
+scheme and layout are optimized for clarity and usability. The goal of the page
+is to simplify the signup process, ensuring that users can easily create their
+accounts while being informed about the necessary legal terms.
 
-This page ensures that users feel confident about creating an account by making the process as straightforward as possible while providing clear information about data privacy and platform policies. The inclusion of visual cues like the password visibility toggle and clearly marked sections for each field enhances usability, contributing to a positive user experience.
-
-
-
-\newpage{}
+This page ensures that users feel confident about creating an account by making
+the process as straightforward as possible while providing clear information
+about data privacy and platform policies. The inclusion of visual cues like the
+password visibility toggle and clearly marked sections for each field enhances
+usability, contributing to a positive user experience.
 
 \textbf{Login Page}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/login/login_page.png}
     \caption{The Login Page}
 \end{figure}
 
-The \textbf{Login} page is designed to provide a smooth and efficient experience for registered users to access their Magpie accounts. This page ensures that returning users can log in quickly and securely, reinforcing the brand’s focus on user experience and data protection.
+The \textbf{Login} page is designed to provide a smooth and efficient experience
+for registered users to access their Magpie accounts. This page ensures that
+returning users can log in quickly and securely, reinforcing the brand's focus
+on user experience and data protection.
+
+\newpage{}
 
 \textbf{Header section}
 
-The header section plays a crucial role in maintaining consistent branding.0
+The header section plays a crucial role in maintaining consistent branding.
 \begin{itemize}
-    \item{} \textbf{Magpie Logo:} Just like on the signup page, the \textbf{Magpie logo} is prominently displayed at the top of the page. The logo serves to create immediate brand recognition and assures users they are on the official platform. It is positioned alongside the tagline \textbf{`Services at a Glance'}, which reinforces the site's purpose—providing users with an easy and visual way to view available public services across Dublin.
-    \item{} \textbf{Visual Consistency:} The design maintains visual consistency with the rest of the platform, using the same color schemes and font styles, ensuring that users immediately feel familiar with the interface. This consistency across pages helps enhance the overall user experience and navigational ease. 
+    \item{} \textbf{Magpie Logo:} Just like on the signup page, the
+    \textbf{Magpie logo} is prominently displayed at the top of the page. The
+    logo serves to create immediate brand recognition and assures users they are
+    on the official platform. It is positioned alongside the tagline
+    \textbf{`Services at a Glance'}, which reinforces the site's
+    purpose—providing users with an easy and visual way to view available public
+    services across Dublin.
+    \item{} \textbf{Visual Consistency:} The design maintains visual consistency
+    with the rest of the platform, using the same color schemes and font styles,
+    ensuring that users immediately feel familiar with the interface. This
+    consistency across pages helps enhance the overall user experience and
+    navigational ease. 
 \end{itemize}
 
 \textbf{Form Inputs}
 
-The core functionality of the page revolves around the \textbf{login form}, which requires users to enter their credentials to access their accounts.
+The core functionality of the page revolves around the \textbf{login form},
+which requires users to enter their credentials to access their accounts.
 
 \begin{itemize}
-    \item{} \textbf{Username Input:} The form begins with an input field for the \textbf{Username}. This field is critical for user identification, allowing the platform to locate the correct account. The label for the input field is clearly marked, and the field is large enough for easy typing, which is particularly important for mobile users.
-    \item{} \textbf{Password Input:} Below the username, users are required to enter their \textbf{Password}. This ensures secure access to the platform and protects user data. The password input field features a `Show' button, allowing users to toggle between obscured and visible text, which reduces errors during login, especially when using complex passwords. This feature enhances user convenience, making it easier for them to confirm they are entering the correct password.
+    \item{} \textbf{Username Input:} The form begins with an input field for the
+    \textbf{Username}. This field is critical for user identification, allowing
+    the platform to locate the correct account. The label for the input field is
+    clearly marked, and the field is large enough for easy typing, which is
+    particularly important for mobile users.
+    \item{} \textbf{Password Input:} Below the username, users are required to
+    enter their \textbf{Password}. This ensures secure access to the platform
+    and protects user data. The password input field features a `Show' button,
+    allowing users to toggle between obscured and visible text, which reduces
+    errors during login, especially when using complex passwords. This feature
+    enhances user convenience, making it easier for them to confirm they are
+    entering the correct password.
 \end{itemize}
 
 \newpage{}
 
 \paragraph{Homepage}\mbox{}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/home/homepage_1.png}
     \caption{Homepage}
 \end{figure}
 
-
-
-
 \textbf{Introduction}
 
-Upon landing on the page, users are greeted with a map interface centred on Dublin and its surroundings, displaying various public services available in the area. The page provides an interactive map to explore amenities and services in the region, such as parking meters, bike stands, public Wi{-}Fi, libraries, and more.
+Upon landing on the page, users are greeted with a map interface centred on
+Dublin and its surroundings, displaying various public services available in the
+area. The page provides an interactive map to explore amenities and services in
+the region, such as parking meters, bike stands, public Wi{-}Fi, libraries, and
+more.
 
 \textbf{Top section}
 
 \begin{itemize}
-    \item{} \textbf{Logo and Title:} At the top{-}right corner, you’ll see the Magpie logo and the dashboard title.
-    \item{} \textbf{Search Bar and Radius Control:} Beneath the header, there is a search bar to find specific locations, accompanied by a `Search Radius' slider. This allows users to set the distance range for viewing available services. The slider can adjust the search radius between 1m and 10km.
+    \item{} \textbf{Logo and Title:} At the top{-}right corner, you'll see the
+    Magpie logo and the dashboard title.
+    \item{} \textbf{Search Bar and Radius Control:} Beneath the header, there is
+    a search bar to find specific locations, accompanied by a `Search Radius'
+    slider. This allows users to set the distance range for viewing available
+    services. The slider can adjust the search radius between 1m and 10km.
 \end{itemize}
 
 \textbf{Map interface}
 
-The main focus of the page is the map, which occupies a large portion of the screen
+The main focus of the page is the map, which occupies a large portion of the
+screen
 
 \begin{itemize}
-    \item{} \textbf{Interactive Map:} The map is interactive, powered by Mapbox, where users can zoom in and out using a mouse or touchpad gestures (pinch to zoom). Location markers represent different public services, such as parking meters or bike stands. These markers provide both a visual and interactive experience for users.
-    \item{} \textbf{Service Markers:} Clicking on any marker will display detailed information about the selected service, such as its name, type, and available count.
+    \item{} \textbf{Interactive Map:} The map is interactive, powered by Mapbox,
+    where users can zoom in and out using a mouse or touchpad gestures (pinch to
+    zoom). Location markers represent different public services, such as parking
+    meters or bike stands. These markers provide both a visual and interactive
+    experience for users.
+    \item{} \textbf{Service Markers:} Clicking on any marker will display
+    detailed information about the selected service, such as its name, type, and
+    available count.
 \end{itemize}
+
+\newpage{}
 
 \textbf{Sidebar}
 
 \begin{itemize}
-    \item{} \textbf{Interactive Map:} The map is interactive, powered by Mapbox, where users can zoom in and out using a mouse or touchpad gestures (pinch to zoom). Location markers represent different public services, such as parking meters or bike stands. These markers provide both a visual and interactive experience for users.
-    \item{} \textbf{Service Markers:} Clicking on any marker will display detailed information about the selected service, such as its name, type, and available count.
+    \item{} \textbf{Interactive Map:} The map is interactive, powered by Mapbox,
+    where users can zoom in and out using a mouse or touchpad gestures (pinch to
+    zoom). Location markers represent different public services, such as parking
+    meters or bike stands. These markers provide both a visual and interactive
+    experience for users.
+    \item{} \textbf{Service Markers:} Clicking on any marker will display
+    detailed information about the selected service, such as its name, type, and
+    available count.
 \end{itemize}
 
 \textbf{Onboarding Tour:}
 
-A guided onboarding process walks the user through the various features of the platform, highlighting key elements such as:
+A guided onboarding process walks the user through the various features of the
+platform, highlighting key elements such as:
 
 \begin{enumerate}
     \item{} \textbf{Search Radius:} Adjusting the search range.
-    \item{} \textbf{Marker Data:} Information displayed upon selecting a service marker.
-    \item{} \textbf{Selecting Amenities:} The ability to toggle amenity visibility.
-    \item{} \textbf{Map Interaction:} How  to click and zoom on the map to select locations.
+    \item{} \textbf{Marker Data:} Information displayed upon selecting a service
+    marker.
+    \item{} \textbf{Selecting Amenities:} The ability to toggle amenity
+    visibility.
+    \item{} \textbf{Map Interaction:} How  to click and zoom on the map to
+    select locations.
 \end{enumerate}
 
 \textbf{Footer and Cookie Consent:}
 
-\textbf{Footer:} At the bottom of the page, the user is shown a cookie consent banner, offering the option to accept or decline cookies for the site’s functionality.
+\textbf{Footer:} At the bottom of the page, the user is shown a cookie consent
+banner, offering the option to accept or decline cookies for the site's
+functionality.
 
-This page is designed to provide users with an easy{-}to{-}use and interactive interface to view and search for public services across Dublin. The combination of a detailed map with customizable filters and an intuitive onboarding process ensures that users can quickly understand and make use of the platform’s features. The inclusion of interactive elements like the service markers and radius control further enhances the user experience.
+This page is designed to provide users with an easy{-}to{-}use and interactive
+interface to view and search for public services across Dublin. The combination
+of a detailed map with customizable filters and an intuitive onboarding process
+ensures that users can quickly understand and make use of the platform's
+features. The inclusion of interactive elements like the service markers and
+radius control further enhances the user experience.
 
 
 \paragraph{History Page}\mbox{}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering{}
     \includegraphics[width=1\textwidth]{images/site/history/history_page.png}
     \caption{History Page}
 \end{figure}
 
-The \textbf{History} page in Magpie provides users with a clear view of their saved location data, allowing them to easily manage and track their previously stored points of interest related to public services. This page is designed to help users interact with their historical data in a seamless and intuitive way.
+The \textbf{History} page in Magpie provides users with a clear view of their
+saved location data, allowing them to easily manage and track their previously
+stored points of interest related to public services. This page is designed to
+help users interact with their historical data in a seamless and intuitive way.
 
 \subparagraph{Header Section}\mbox{}
 
 \begin{itemize}
-    \item{} \textbf{Navigation Back Button:} Located at the top left of the page, there is a prominent \textbf{Back Button}. This button allows users to quickly navigate back to the previous page. It’s styled with an icon of a leftward arrow, making it easily identifiable. Its positioning ensures that users can always return to the previous screen without confusion.
-    \item{} \textbf{Page Title and Description:} The main section of the header includes a title \textbf{`Saved Locations'} displayed in a large, bold font. This title makes it clear to the user that they are viewing a list of locations they have saved. Beneath the title, a brief description—\textbf{`Here's a list of your saved amenity locations!'}—adds context to the page, helping users understand the purpose of the section.
+    \item{} \textbf{Navigation Back Button:} Located at the top left of the
+    page, there is a prominent \textbf{Back Button}. This button allows users to
+    quickly navigate back to the previous page. It's styled with an icon of a
+    leftward arrow, making it easily identifiable. Its positioning ensures that
+    users can always return to the previous screen without confusion.
+    \item{} \textbf{Page Title and Description:} The main section of the header
+    includes a title \textbf{`Saved Locations'} displayed in a large, bold font.
+    This title makes it clear to the user that they are viewing a list of
+    locations they have saved. Beneath the title, a brief
+    description—\textbf{`Here's a list of your saved amenity locations!'}—adds
+    context to the page, helping users understand the purpose of the section.
 \end{itemize}
 
 \textbf{Saved Locations list}
 
-The central feature of the page is a table that displays the user's saved locations along with key details about each entry.
+The central feature of the page is a table that displays the user's saved
+locations along with key details about each entry.
 
 \begin{itemize}
-    \item{} \textbf{Delete Button:} Above the list of saved locations, there is a \textbf{Delete button}. This button allows users to remove one or more saved locations from their history. However, the button is disabled in this view, indicating that no deletions are currently available, possibly due to the absence of selected items.
-    \item{} \textbf{Location Table:} Below the \textbf{Delete} button, the saved locations are listed in a table format. The table is neatly divided into columns, each containing specific information about the saved location. The columns include:
+    \item{} \textbf{Delete Button:} Above the list of saved locations, there is
+    a \textbf{Delete button}. This button allows users to remove one or more
+    saved locations from their history. However, the button is disabled in this
+    view, indicating that no deletions are currently available, possibly due to
+    the absence of selected items.
+    \item{} \textbf{Location Table:} Below the \textbf{Delete} button, the saved
+    locations are listed in a table format. The table is neatly divided into
+    columns, each containing specific information about the saved location. The
+    columns include:
     \begin{itemize}
-        \item{} \textbf{Location:} The name or description of the saved location.
-        \item{} \textbf{Radius:} The radius within which services are displayed for the location.
-        \item{} \textbf{Amenity Types:} A list or description of the types of amenities (e.g., parking meters, bike stands) available at the saved location.
-        \item{} \textbf{Date Created:} The date when the location was saved to the system, helping users track when the data was added.
-        \item{} \textbf{Show on Map:} A column that likely provides users with the option to display the saved location on a map.
+        \item{} \textbf{Location:} The name or description of the saved
+        location.
+        \item{} \textbf{Radius:} The radius within which services are displayed
+        for the location.
+        \item{} \textbf{Amenity Types:} A list or description of the types of
+        amenities (e.g., parking meters, bike stands) available at the saved
+        location.
+        \item{} \textbf{Date Created:} The date when the location was saved to
+        the system, helping users track when the data was added.
+        \item{} \textbf{Show on Map:} A column that likely provides users with
+        the option to display the saved location on a map.
     \end{itemize}
 
-    If there were saved locations, this table would dynamically populate with relevant data.
+    If there were saved locations, this table would dynamically populate with
+    relevant data.
 
 \end{itemize}
 
 \subparagraph{No Results Found}\mbox{}
 
-\textbf{Empty State Message:} If there are no saved locations, the table displays a message in the form of a single row: \textbf{`No results found.'} This message is centred in the table, letting users know that there are currently no saved entries to view. This feature ensures that users don’t encounter an empty or broken page but rather receive a clear indication of the state of their saved data.
+\textbf{Empty State Message:} If there are no saved locations, the table
+displays a message in the form of a single row: \textbf{`No results found.'}
+This message is centred in the table, letting users know that there are
+currently no saved entries to view. This feature ensures that users don't
+encounter an empty or broken page but rather receive a clear indication of the
+state of their saved data.
 
 \textbf{Pagination Controls}
 
 \begin{itemize}
-    \item{} \textbf{Previous and Next Buttons:} At the bottom of the saved locations table, there are pagination buttons for navigating through multiple pages of saved locations. These buttons are disabled in the current state, indicating that there is no additional data to paginate through at this moment.
+    \item{} \textbf{Previous and Next Buttons:} At the bottom of the saved
+    locations table, there are pagination buttons for navigating through
+    multiple pages of saved locations. These buttons are disabled in the current
+    state, indicating that there is no additional data to paginate through at
+    this moment.
     \begin{itemize}
-        \item{} The \textbf{Previous} button allows users to go back to earlier pages of saved data.
+        \item{} The \textbf{Previous} button allows users to go back to earlier
+        pages of saved data.
         \item{} The \textbf{Next} button lets users move forward in the list.
     \end{itemize}
-    These controls are hidden when the data table is empty, as no navigation is necessary.
+    These controls are hidden when the data table is empty, as no navigation is
+    necessary.
 \end{itemize}
 
 \subparagraph{Overall Functionality and User Experience}\mbox{}
 
-The \textbf{History Page} allows users to manage their saved locations effectively. The ability to track location{-}based services, adjust the radius, and view amenity types gives users a comprehensive understanding of the locations they have marked. Although the page currently features an empty state, its design allows for easy data manipulation once locations are added, with clear options to delete or view the locations on a map.
+The \textbf{History Page} allows users to manage their saved locations
+effectively. The ability to track location{-}based services, adjust the radius,
+and view amenity types gives users a comprehensive understanding of the
+locations they have marked. Although the page currently features an empty state,
+its design allows for easy data manipulation once locations are added, with
+clear options to delete or view the locations on a map.
 
-This page’s clean layout, with intuitive table navigation and clear instructions, ensures that users can easily understand and manage their saved data. The disabled pagination and delete button indicate that users need to take action before those features become available, which helps guide them toward a more active interaction with the page.\subsubsection{Prototyping}
+This page's clean layout, with intuitive table navigation and clear
+instructions, ensures that users can easily understand and manage their saved
+data. The disabled pagination and delete button indicate that users need to take
+action before those features become available, which helps guide them toward a
+more active interaction with the page.
 
-A prototype is a useful design tool for testing concepts, clarifying requirements, and starting user interaction and feedback.
-Prototyping methods can be categorized by fidelity—ranging from low-fidelity sketches to high-fidelity digital mockup.
+
+\subsubsection{Prototyping}
+A prototype is a useful design tool for testing concepts, clarifying
+requirements, and starting user interaction and feedback. Prototyping methods
+can be categorized by fidelity—ranging from low-fidelity sketches to
+high-fidelity digital mockups.
 
 
 \subsubsection{Prototype methods}
-We use Evolutionary prototyping to continuously update our prototypes.Part of the prototyping process involves dealing with feedback and subsequent revisions. It helps designers test and retest their ideas over and over again. The faster designers are able to test their design concepts and make improvements, the faster they can get to a satisfactory final version. In addition, our team uses Agile development methodologies in prototyping. Agile increases flexibility, collaboration, and rapid feedback cycles to create product prototypes in rapid iterations with continuous ones after collecting feedback and guided ones.
+We use evolutionary prototyping to continuously update our prototypes. Part of
+the prototyping process involves dealing with feedback and subsequent revisions.
+It helps designers test and retest their ideas over and over again. The faster
+designers are able to test their design concepts and make improvements, the
+faster they can get to a satisfactory final version. In addition, our team uses
+Agile development methodologies in prototyping. Agile increases flexibility,
+collaboration, and rapid feedback cycles to create product prototypes in rapid
+iterations with continuous ones after collecting feedback and guided ones.
+At every stage of the prototype design process, user feedback served as a
+essential guide for our next development steps.
 
-Under the guidance of agile development methodology and Evolutionary strategy, we established the following prototyping process:
+We carried out low-intensity, one-on-one person interviews that allowed us to 
+collect valuable qualitative feedback from users. We focused on collecting remarks 
+about the intuitiveness of the interface and made sure to take note of any issues 
+they encountered during their interactions with the platform.
 
-At some stage in the prototype design process, user feedback served as a essential guiding precept. We applied a comprehensive framework for gathering and studying remarks to make certain non-stop optimization primarily based on real user desires and experiences.
+We created unique tasks for test users to complete, while we observed their usage 
+behaviour and how they navigate through the interface. This technique proved
+particularly effective in identifying areas where users were confused, experienced 
+difficulties or hesitated while they interacted with the platform.
 
-Our remarks series method encompassed 3 major procedures. First, we carried out in-intensity, one-on-one person interviews that allowed us to collect distinct qualitative remarks approximately customers' intuitive responses to the interface and become aware of specific demanding situations they encountered at some point of their interactions with the platform. these interviews supplied treasured insights into the consumer experience from a non-public angle.
+To complement our qualitative studies, we applied quantitative testing through 
+carefully designed questionnaires. Those surveys utilized the Likert scale to 
+gauge user satisfaction throughout numerous aspects of the platform
+and included open-ended questions to capture additional suggestions and remarks.
+The quantitative statistics collected through those questionnaires enabled us to
+perform statistical analysis of consumer satisfaction levels and identify common
+user opinions and pain factors.
 
-the second approach worried based usability trying out classes. at some point of these periods, we created unique mission scenarios for customers to finish while we cautiously located their behavioral patterns and navigation paths through the interface. This technique proved particularly effective in identifying factors of bewilderment and regions wherein customers experienced difficulties or hesitation of their interactions with the platform.
-
-To complement our qualitative studies, we applied a quantitative remarks device through cautiously designed questionnaires. those surveys utilized the Likert scale to degree person satisfaction throughout numerous aspects of the platform and included open-ended questions to capture additional suggestions and remarks. The quantitative statistics amassed thru those questionnaires enabled us to perform statistical analysis of consumer delight tiers and identify traits in person options and pain factors.
 \begin{table}[h!]
     \centering
     \renewcommand{\arraystretch}{1.5}
     \begin{tabular}{|c|p{4cm}|p{10cm}|}
     \hline
-    \textbf{Step} & \textbf{Stage}           & \textbf{Tasks}                                                                                 \\ \hline
+    \textbf{Step} & \textbf{Stage}           & \textbf{Tasks}
+    \\ \hline
     1             & Requirement Collection and Analysis & \begin{itemize}
-                                                            \item Identify core functional requirements through user interviews and research
-                                                            \item Analyze the strengths and weaknesses of competitors and existing solutions
-                                                            \item Prioritize prototype design and create an iteration plan
-                                                        \end{itemize}                                                                                  \\ \hline
+                                                            \item Identify core
+                                                            functional
+                                                            requirements through
+                                                            user interviews and
+                                                            research
+                                                            \item Analyze the
+                                                            strengths and
+                                                            weaknesses of
+                                                            competitors and
+                                                            existing solutions
+                                                            \item Prioritize
+                                                        prototype design and
+                                                        create an iteration plan
+                                                        \end{itemize}
+                                                        \\ \hline
     2             & Prototype Design and Development & \begin{itemize}
-                                                        \item Create prototypes using tools like FigJam and Figma
-                                                        \item Follow a consistent design system and guidelines
-                                                        \item Focus on intuitive and user-friendly interaction design
-                                                    \end{itemize}                                                                                  \\ \hline
+                                                        \item Create prototypes
+                                                        using tools like FigJam
+                                                        and Figma
+                                                        \item Follow a
+                                                        consistent design system
+                                                        and guidelines
+                                                        \item Focus on intuitive
+                                                    and user-friendly
+                                                    interaction design
+                                                    \end{itemize}
+                                                    \\ \hline
     3             & User Testing and Feedback & \begin{itemize}
-                                                \item Conduct user usability testing
-                                                \item Gather qualitative and quantitative user feedback
-                                                \item Analyze test data and develop improvement plans
-                                            \end{itemize}                                                                                  \\ \hline
+                                                \item Conduct user usability
+                                                testing
+                                                \item Gather qualitative and
+                                                quantitative user feedback
+                                                \item Analyze test data and
+                                            develop improvement plans
+                                            \end{itemize}
+                                            \\ \hline
     4             & Iterative Optimization       & \begin{itemize}
-                                                    \item Adjust design solutions based on feedback
-                                                    \item Continuously improve the user experience
-                                                    \item Ensure the design meets project objectives
-                                                \end{itemize}                                                                                  \\ \hline
+                                                    \item Adjust design
+                                                    solutions based on feedback
+                                                    \item Continuously improve
+                                                    the user experience
+                                                    \item Ensure the design
+                                                meets project objectives
+                                                \end{itemize}
+                                                \\ \hline
     \end{tabular}
     \caption{Process Flow Table: Design and Development Stages}
     \label{tab:process_flow}
@@ -433,24 +881,37 @@ To complement our qualitative studies, we applied a quantitative remarks device 
 \begin{itemize}
 \item \textbf{Sketches}
 
-We used FigJam for the sketch concept, which allowed us to do a full online brainstorm. we started out with a card format, where the top right side displays the filter and the bottom side displays the rotation of the three icon styles, and the top left and bottom left side have the branding icon and the cookie component, which made the whole page more cluttered. This made the whole page more complicated, so we updated it so that the filter, radius range are on the right as a whole dashboard, and the branding icon is also moved to the dashboard, so that users can better remember our brand.
+We used FigJam for the sketch concept, which allowed us to do online brainstorming 
+sessions. We started out with a card format, where the top right side displays
+the filter and the bottom side displays the rotation of the three icon styles, 
+the top left has the Magpie logo and the bottom left corner shows the cookie
+component. This made the whole page too complicated, so we updated it so that 
+the filter options and radius slider are placed on the right side of the screen
+as a dashboard. The logo is also moved to the dashboard, improving brand 
+recognition.
 
-
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.48\textwidth]{images/sketch.jpg}
     \caption{Evolution of interface design from initial card-based layout to consolidated dashboard approach}
     \label{fig:prototype-evolution}
 \end{figure}
-This evolution in our design approach demonstrates the value of iterative prototyping in achieving a balance between functionality and visual clarity. The final layout creates a more focused user experience while maintaining all essential features in an intuitive, accessible format.
 
+This evolution in our design approach demonstrates the value of iterative
+prototyping in achieving a balance between functionality and visual clarity. The
+final layout creates a more focused user experience while maintaining all
+essential features in an intuitive, accessible format.
 
 \item \textbf{Wireframe}
 
-Wireframe as a low-fidelity tool, unlike sketches, wireframes show the structure of an interface design, but often lack detail or colour. We also made wireframes of individual pages to build on, such as the home page and the login/signup page in Figure~\ref{fig:wireframe-home} and Figure~\ref{fig:wireframe-signup}, which lay out the structure of the prototype.
+We used wireframes as a low-fidelity prototyping tool. Unlike sketches, wireframes 
+show the structure of an interface design, but do so with reduced detail or colour. 
+We also created wireframes of individual pages, such as the home page and the 
+login and signup pages in Figure~\ref{fig:wireframe-home} and Figure~\ref{fig:wireframe-signup},
+which lay out the structure of the prototype.
 \end{itemize}
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
@@ -468,32 +929,83 @@ Wireframe as a low-fidelity tool, unlike sketches, wireframes show the structure
 \end{figure}
 
 \subsubsection{Medium Fidelity Prototyping}
+We moved through the prototyping process from low-fidelity sketches and
+wireframes to medium-fidelity prototypes. This change allowed us to improve the
+layout, interactions, and structure while keeping the ability to iterate
+quickly. Medium-fidelity prototypes are often greyscale designs with simple
+lettering and placeholders, emphasizing functionality and user flow over visual
+features.
 
-We moved through the prototyping process from low-fidelity sketches and wireframes to medium-fidelity prototypes. This change allowed us to improve the layout, interactions, and structure while keeping the ability to iterate quickly. Medium-fidelity prototypes are often grayscale designs with simple lettering and placeholders, emphasizing functionality and user flow over visual features.
-
-Medium-fidelity prototypes enabled our team to test crucial design decisions such as navigation structures, button placements, and overall usability without being constrained by aesthetic concerns. We created these prototypes in Figma, where we built interactive flows for tasks such as logging in, signing up, and navigating the dashboard. To simulate user interactions, we used more realistic spacing, component alignment, and basic interactive elements like clickable buttons and form fields.
-The purpose of medium-fidelity prototyping was to collect input on the primary user path, providing a smooth experience from task start to finish. We saved money on later versions by fixing faults at this stage.
-
+Medium-fidelity prototypes enabled our team to test crucial design decisions
+such as navigation structures, button placements, and overall usability without
+being constrained by aesthetic concerns. We created these prototypes in Figma,
+where we built interactive flows for tasks such as logging in, signing up, and
+navigating the dashboard. To simulate user interactions, we used more realistic
+spacing, component alignment, and basic interactive elements like clickable
+buttons and form fields. The purpose of medium-fidelity prototyping was to
+collect input on the primary user path, providing a smooth experience from task
+start to finish. We saved time on later versions by fixing faults at this
+stage.
 
 \subsubsection{High Fidelity Prototyping}
-High-fidelity prototypes closely resemble the final product in terms of design and functionality. These prototypes include comprehensive visual aspects including the finalized color scheme, typography, iconography, and branding assets, as well as genuine data and interactive transitions. At this point, our team worked on matching the prototype with user expectations and responding to specific feedback from previous versions.
+High-fidelity prototypes closely resemble the final product in terms of design
+and functionality. These prototypes include comprehensive visual aspects
+including the finalized color scheme, typography, iconography, and branding
+assets, as well as genuine data and interactive transitions. At this point, our
+team worked on matching the prototype with user expectations and responding to
+specific feedback from previous versions.
 
-The high-fidelity prototypes were utilized in advanced user testing to assess visual appeal, responsiveness, and accessibility. We focused on how users interacted with the final design features, such as hover effects, animations, and error states. This level of detail meant that the finished product was intuitive, visually consistent, and satisfied usability criteria.
+The high-fidelity prototypes were utilized in advanced user testing to assess
+visual appeal, responsiveness, and accessibility. We focused on how users
+interacted with the final design features, such as hover effects, animations,
+and error states. This level of detail meant that the finished product was
+intuitive, visually consistent, and satisfied usability criteria.
 
-By the time we moved on to high-fidelity prototyping, the emphasis had switched to improving the user experience and preparing the design for deployment. The feedback gathered during this stage directly influenced the UI iteration process, which is documented in the next section and demonstrates how specific issues were handled and changes were made to obtain the final design.
+By the time we moved on to high-fidelity prototyping, the emphasis had switched
+to improving the user experience and preparing the design for deployment. The
+feedback gathered during this stage directly influenced the UI iteration
+process, which is documented in the next section and demonstrates how specific
+issues were handled and changes were made to obtain the final design.
 
 
 
 \subsubsection{User Interface Iteration}
-Our iterative UI process focuses on the overall process involved in the User Interface (UI) and User Experience (UX). For example, the visual and interactive components that users use, including buttons, icons, and layouts, while UX covers the overall journey and emotional response of the user during an interaction. The importance of good UI and UX design lies in the improvement of user satisfaction, which then links to better customer retention and enterprise success. It is believed, through studies, that well-thought-out user experiences can increase retention manyfold.\cite{psycray2023} We did extensive reviews of each and every aspect in our iterations-from color scheme and typography to layout and how the navigation structures work-to ensure usability and interactivity. In terms of visual elements, we used a single colour scheme of predominantly black to create a cohesive and less intrusive design. In addition to cultural considerations, the colour black is also inclusive and has a wide audience. The contrast between the accessible text and the background is also stronger, with enough contrast to improve readability for the user.
+Our iterative UI process focuses on the overall process involved in the User
+Interface (UI) and User Experience (UX). For example, the visual and interactive
+components that users use, including buttons, icons, and layouts, while UX
+covers the overall journey and emotional response of the user during an
+interaction. The importance of good UI and UX design lies in the improvement of
+user satisfaction, which then links to better customer retention and commercial
+success. It is believed, through studies, that well-thought-out user experiences
+can increase retention greatly.\cite{psycray2023} We did extensive reviews of
+each and every aspect in our iterations-from color scheme and typography to
+layout and how the navigation structures work-to ensure usability and
+interactivity. In terms of visual elements, we used a single colour scheme of
+predominantly black to create a cohesive and less intrusive design. In addition
+to cultural considerations, the colour black is also inclusive and has a wide
+audience. The contrast between the accessible text and the background is also
+stronger, with enough contrast to improve readability for the user.
 
 \paragraph{Iteration 1:}
 
-Our preliminary prototype revealed several essential demanding situations thru person testing. The interface layout, whilst purposeful, presented customers with a fragmented experience because of its card-primarily based design. customers suggested problem in dealing with multiple interface factors scattered across the display screen, mainly noting the disconnected placement of filters and radius controls. The login and signup pages, which applied default shadcn styling, lacked customization and logo consistency. additionally, the map interface, whilst critical to the utility's functionality, wanted refinement in terms of icon visibility and interplay comments.
+Our preliminary prototype revealed several essential pain points through
+user testing. The interface layout, while intended, presented users
+with a fragmented experience because of its card-based design.
+Users encountered problems in dealing with multiple interface elements scattered
+across the display screen, mainly noting the disconnected placement of filters
+and radius controls. The login and signup pages, which applied default shadcn
+styling, lacked customization and consistent branding. Additionally, the map
+view, whilst critical to the Magpie's functionality, needed refinement in
+terms of icon visibility and usability.
 
-In response to these early findings, we consolidated the interface elements into a unified dashboard on the right aspect of the display. This substantial architectural exchange progressed the consumer enjoy by using developing a extra cohesive and intuitive layout. The authentication glide changed into additionally cautiously considered, with the group in the end determining to keep separate login and signup steps to make sure safety while improving the visible layout and branding consistency of these important access factors.
+In response to these early findings, we consolidated the interface elements into
+a unified dashboard on the right side of the screen. By switching to a more cohesive 
+and intuitive interface we achieved increased user satisfaction. We also reevaluated
+the design of the authentication journey, but in the end we decided to keep separate 
+login and signup steps. To create visual consistency, a similar, but distinct design 
+was implemented for the authentication pages.
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
@@ -512,10 +1024,23 @@ In response to these early findings, we consolidated the interface elements into
 
 
 \paragraph{Iteration 2:}
-The second iteration targeted on enhancing the core capability and person interaction patterns. A prime addition turned into the introduction of the search bar, initially positioned at the top of the display screen. but, person testing revealed that this placement, even as conventional, did not align optimally with the workflow of our unique utility. The clear out gadget, applied as checkboxes, proved to be much less intuitive than expected, with customers expressing a choice for greater immediate visible remarks all through their interactions.
+The second iteration aimed on enhancing the core capability and person
+interaction patterns. An important addition was the introduction of the
+search bar, which was initially positioned at the top of the screen. But, user
+testing revealed that this placement, whilst conventional, did not align
+optimally with the specific workflow of Magpie. Designing the amenities filter 
+as checkboxes proved to be much less intuitive than expected, with users
+expressing a preference for greater immediately visible feedback throughout 
+their interactions.
 
-We replied by using integrating the search capability into the proper-aspect dashboard, creating a more consolidated control center for all person interactions. The amenity filters have been redesigned to provide clearer visual comments, even though this generation nonetheless highlighted the want for in addition refinement in the clear out interface design. those changes marked full-size development in developing a greater streamlined person revel in, however also illuminated areas requiring extra attention in subsequent iterations.
-\begin{figure}[h]
+We incorporated that feedback by integrating the search functionality into the
+dashboard, creating a consolidated control center for all user interactions. 
+The amenity filters have been redesigned to provide clearer visual feedback. 
+However, this iteration highlighted the need for additional refinement in the 
+filter interface design. Those changes were a large improvement in streamlining 
+the user experience, however they also illuminated areas that require extra 
+attention in subsequent iterations.
+\begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
@@ -527,9 +1052,22 @@ We replied by using integrating the search capability into the proper-aspect das
 
 
 \paragraph{Iteration 3:}
-The third new release delivered massive upgrades to person onboarding and interface clarity. We added a complete tutorial system to guide new users through the platform's capabilities. This addition changed into complemented by means of updates to the records page and the implementation of clear phrases and privacy regulations. but, person testing revealed that our try to streamline the amenity choice through a dropdown menu truly extended interplay complexity. expert customers especially mentioned problems with map icon visibility, highlighting the need for higher visible distinction between exceptional amenity kinds.
+The third iteration included significant improvements to the onboarding experience 
+and interface clarity. We added a comprehensive and interactive tutorial to guide 
+new users through the Magpie's capabilities. We also added pages for interacting 
+with Saved Locations, as well as the Terms and Privacy page. However, user testing 
+revealed that our efforts to streamline the amenity filter function using a dropdown 
+menu was in reality detrimental to usability. Expert users in particular mentioned 
+problems with map icon visibility, highlighting the need for higher contrast between 
+different amenity types.
 
-The feedback from this phase proved specifically valuable in figuring out the sensitive stability between functionality consolidation and accessibility. whilst the dropdown menu was meant to simplify the interface, it truely created a further layer of complexity that hindered consumer performance. This insight at once motivated our method to the fourth iteration's layout selections.\begin{figure}[h]
+The feedback from this phase proved especially valuable in figuring out the
+fine line between making the interface simpler and making it more accessible.
+The dropdown menu was meant to simplify the interface, but in reality it created
+an additional layer of complexity that impacted usability. This insight motivated 
+the layout changes in the fourth iteration.
+
+\begin{figure}[htbp]
     \centering
     \begin{minipage}{0.32\textwidth}
         \centering
@@ -554,13 +1092,21 @@ The feedback from this phase proved specifically valuable in figuring out the se
 
 \end{figure}
 
-
-
 \paragraph{Iteration 4:}
-Our fourth and maximum subtle new release delivered comprehensive modifications primarily based on gathered person feedback. The icon device become completely made over, implementing a differentiated color spectrum for various facilities to beautify visibility and brief recognition. We deserted the dropdown menu approach in favor of immediately available feature buttons, appreciably improving the discoverability of key capabilities inclusive of history get admission to and the onboarding educational.
+Our fourth and last iteration made comprehensive changes based on the user 
+feedback we gathered. The map icons were completely redesigned, adding contrasting 
+colours for different amenity types. This helped to improve visibility and aids fast 
+recognition. We abandoned the dropdown menu approach in favour of directly available
+buttons, considerably improving the discoverability of Magpie's features.
 
-Professional user remarks brought about the addition of advanced capabilities such as zoom controls and scale rulers, although a number of those features remained in development because of time constraints. the quest capability became greater with predefined variety alternatives (100m, 200m, etc.) and relocated to the dashboard's upper segment for higher accessibility. perhaps most significantly, the filter out device was redesigned with intuitive toggle controls, allowing customers to enable or disable facilities through easy, seen interactions.
-\begin{figure}[h]
+Professional user feedback resulted in the addition of quality-of-life features
+such as zoom controls and a scale ruler. However, a number of features remained in 
+development due to time constraints. The preset buttons for the search radius were 
+relocated to the upper segment of the dashboard for better accessibility, with more 
+options being added (100m, 200m, etc.) as well. The filtering function was redesigned 
+with intuitive toggle controls, allowing users to enable or disable amenities easily.
+
+\begin{figure}[htbp]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
@@ -579,8 +1125,18 @@ Professional user remarks brought about the addition of advanced capabilities su
 
 \paragraph{Ongoing Development}
 
-Through those iterations, we recognized numerous regions for future enhancement. those encompass improving cross-browser compatibility, mainly addressing layout problems in area browsers in which dashboard factors overlap with the quest interface. The accuracy of amenity locations calls for verification thru systematic checking out, and the quest capability desires expansion to address various address layout conventions. additionally, expert users have requested advanced capabilities which includes map extraction capabilities with scale signs and amenity density visualization tools.
+Through these iterations, we identified numerous regions for future enhancements.
+They include improving cross-browser compatibility, mainly concerning layout
+issues where dashboard features overlap with the search interface. 
+The accuracy of amenity locations must also be validated through spot checks.
+The search functionality needs to be updated to find various kinds of location 
+names more consistently. Additionally, expert users have requested more advanced 
+features such as exporting a portion of the map as an image which includes a scale 
+ruler, data export or amenity density visualization capabilities.
 
-This iterative improvement method has verified the price of consistent person comments in growing a higher and person-pleasant platform. each new release delivered us in the direction of our purpose of presenting an intuitive, green tool for each casual customers and expert city planners, whilst additionally highlighting the significance of continuous refinement and model to person desires.
-
-
+This iterative improvement method has validated the value of constant user
+feedback in creating a user-friendly platform. Each iteration helped us to
+get a step closer to achieving our goal of creating an intuitive but capable
+tool for both casual users and professionals. Basing Magpie's development on this 
+design process underlined the importance of continuously refining the product and
+listening to the needs of users.

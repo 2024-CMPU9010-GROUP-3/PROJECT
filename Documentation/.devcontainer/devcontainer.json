@@ -24,7 +24,8 @@
                 "terrastruct.d2",
                 "awtnb.d2-arrow",
                 // Other
-                "vscode-icons-team.vscode-icons"
+                "vscode-icons-team.vscode-icons",
+                "ms-vsliveshare.vsliveshare"
             ],
             "settings": {
                 // Spellcheck settings
@@ -41,18 +42,47 @@
                 "files.associations": {
                     "*.tex": "latex"
                 },
+                "latex-workshop.latex.recipes": [
+                    {
+                        "name": "Fast Build",
+                        "tools": [
+                            "compile-focused"
+                        ]
+                    },
+                    {
+                        "name": "Full Build",
+                        "tools": [
+                            "latexmk"
+                        ]
+                    }
+                ],
                 "latex-workshop.latex.tools": [
                     {
                         "name": "latexmk",
                         "command": "latexmk",
                         "args": [
-                            "-shell-escape", // <---- added this line
-                            "-synctex=1",
+                            "-shell-escape",
+                            "-synctex=0",
                             "-interaction=nonstopmode",
                             "-file-line-error",
                             "-pdf",
+                            "-silent",
+                            "-pdflatex=pdflatex",
                             "-outdir=%OUTDIR%",
                             "%DOC%"
+                        ],
+                        "env": {}
+                    },
+                    {
+                        "name": "compile-focused",
+                        "command": "pdflatex",
+                        "args": [
+                            "-shell-escape",
+                            "-synctex=0",
+                            "-interaction=nonstopmode",
+                            "-file-line-error",
+                            "-output-directory=%OUTDIR%",
+                            "%DOCFILE%"
                         ],
                         "env": {}
                     }

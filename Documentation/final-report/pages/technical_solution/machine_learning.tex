@@ -1,40 +1,91 @@
 \subsubsection{YOLO model used for car detection}
-YOLO (You Only Look Once) is an object detection and image segmentation model launched in 2015 which quickly gained popularity for its high speed and accuracy.
+YOLO (You Only Look Once) is an object detection and image segmentation model
+launched in 2015 which quickly gained popularity for its high speed and
+accuracy.
 
-We started playing with this model because on label studio there was an extension (ML Backend) which could be used to automate the labelling using an integration of the YOLOv5 model. However, this extension was not working as intended which caused us to dig further into Ultralytics, the company behind the YOLO models.
+We started playing with this model because on label studio there was an
+extension (ML Backend) which could be used to automate the labelling using an
+integration of the YOLOv5 model. However, this extension was not working as
+intended which caused us to dig further into Ultralytics, the company behind the
+YOLO models.
 
-Several papers focusing on object detection cited YOLO over other popular models such as (\cite{firedetectionyolo}) and (\cite{polypdetectionyolo}). A key challenge that influences the choice of model for the object detection task is effectively managing fluctuations in image resolutions and aspect ratios, as well as the computational resources required to run image detection models.\\
+Several papers focusing on object detection cited YOLO over other popular models
+such as (\cite{firedetectionyolo}) and (\cite{polypdetectionyolo}). A key
+challenge that influences the choice of model for the object detection task is
+effectively managing fluctuations in image resolutions and aspect ratios, as
+well as the computational resources required to run image detection models.
 
-There are two main types of models for object detection tasks: single stage and two-stage. The figure below from \cite{singlevstwodetectorimg} illustrates the process for both.
+There are two main types of models for object detection tasks: single stage and
+two-stage. The figure below from \cite{singlevstwodetectorimg} illustrates the
+process for both.
+
 %single vs two stage model process
-\begin{figure}[h!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\textwidth]{images/single-vs-two-stage-obj-detector.png}
   \caption{Single vs Two-Stage Object Detection Process}
 \end{figure}
-\textbf{Single stage} object detector models processes an image through a feature extractor using a CNN (Convolutional Neural Network) and then directly uses the extracted features for classification and regression of bounding boxes. These models are very fast which is why they are popular for real-time object detection tasks; however their accuracy performance can sometimes be poor. Examples of single stage models are SSD, YOLO and RefineDet (\cite{yoloversionsliterature}.)\\
-\textbf{Two stage} object detector models divides the process into two main steps. First, it extracts features from the image using a CNN, then selects regions of interests that will only be used for classification and regression of bounding boxes. These models are much more accurate than one stage detectors and are used for tasks where accuracy is prioritized over speed in the medical field for example RCNN, Fast-RCNN and Faster-RCNN(\cite{singlevstwostagedetectors}).\\
+\textbf{Single stage} object detector models processes an image through a
+feature extractor using a CNN (Convolutional Neural Network) and then directly
+uses the extracted features for classification and regression of bounding boxes.
+These models are very fast which is why they are popular for real-time object
+detection tasks; however their accuracy performance can sometimes be poor.
+Examples of single stage models are SSD, YOLO and RefineDet
+(\cite{yoloversionsliterature}.)
 
-For the scope of this project, we chose to continue with the YOLO models because of their speed, their scalability, their lack of computational resources and they are free!\\
+\textbf{Two stage} object detector models divides the process into two main
+steps. First, it extracts features from the image using a CNN, then selects
+regions of interests that will only be used for classification and regression of
+bounding boxes. These models are much more accurate than one stage detectors and
+are used for tasks where accuracy is prioritized over speed in the medical field
+for example RCNN, Fast-RCNN and Faster-RCNN(\cite{singlevstwostagedetectors}).
 
-We moved away from Label studio and studied the Ultralytics documentation and tried out the YOLOv5 model to recognise the cars on the satellite images. We experimented with different versions of the YOLOv5 model, then slowly levelled up the versions up to version 8, monitoring metrics such as mAP (Mean Average Precision), F1-score and the false positive rate. The figure below shows the metrics of the model as we iteratively experimented up the version chain.
+For the scope of this project, we chose to continue with the YOLO models because
+of their speed, their scalability, their lack of computational resources and
+they are free!
+
+We moved away from Label studio and studied the Ultralytics documentation and
+tried out the YOLOv5 model to recognise the cars on the satellite images. We
+experimented with different versions of the YOLOv5 model, then slowly levelled
+up the versions up to version 8, monitoring metrics such as mAP (Mean Average
+Precision), F1-score and the false positive rate. The figure below shows the
+metrics of the model as we iteratively experimented up the version chain.
+
 %model metrics graph
-\begin{figure}[h!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.85\textwidth]{images/yolo-results.png}
   \caption{YOLO Model training graph}
 \end{figure}
-We ended the object detection modelling training with the YOLOv8 - Oriented Bounding Boxes (OBB). The YOLOv8 model has been pre-trained on the COCO (Common Object in Context) dataset, a popular large scale dataset with 200,000 images across 80 object categories commonly used for benchmarking computer vision models (\cite{cocodataset}).\\ \\
-Oriented bounding boxes are a newer type of bounding box where the bounding box capture the orientation of the object providing a more accurate fit of the object. They are defined by 5 parameters (center xy, width, height and rotation angle) and capture the object's spatial orientation more precisely, reducing overlap and improving the robustness of the object detection model (\cite{obblit}).\\
-Below you can see the difference in bounding boxes between the labelled image used for the non-OBB YOLOv5 \& YOLOv8 iterations versus the OBB YOLOv8.
+
+We ended the object detection modelling training with the YOLOv8 - Oriented
+Bounding Boxes (OBB). The YOLOv8 model has been pre-trained on the COCO (Common
+Object in Context) dataset, a popular large scale dataset with 200,000 images
+across 80 object categories commonly used for benchmarking computer vision
+models (\cite{cocodataset}).
+
+Oriented bounding boxes are a newer type of bounding box where the bounding box
+capture the orientation of the object providing a more accurate fit of the
+object. They are defined by 5 parameters (center xy, width, height and rotation
+angle) and capture the object's spatial orientation more precisely, reducing
+overlap and improving the robustness of the object detection model
+(\cite{obblit}).
+
+Below you can see the difference in bounding boxes between the labelled image
+used for the non-OBB YOLOv5 \& YOLOv8 iterations versus the OBB YOLOv8.
+
 %obb vs non obb bounding boxes
-\begin{figure}[h!]
+\begin{figure}[htbp]
   \centering
   \includegraphics[width=0.85\textwidth]{images/obb-vs-nonobb-img.png}
   \caption{Non-OBB labels (left) versus OBB labels (right)}
-\end{figure}\\
+\end{figure}
+
+\newpage{}
+
 Thus, the YOLOv8-OBB model was trained on the settings below:
-\begin{listing}[h!]
+
+\begin{listing}[htbp]
   \centering
   \begin{minted}{python3}
     train_results_obb = yolo8s_obb_model.train(data=data_config,
@@ -48,16 +99,20 @@ Thus, the YOLOv8-OBB model was trained on the settings below:
                   cache="disk",
                   )
   \end{minted}
-\end{listing}\\
+\end{listing}
 
-The weights of the YOLOv8-OBB model were then saved and used to identify parked cars on over 18,000 satellite images spanning Dublin City. These images are then used to identify parking spots.
+The weights of the YOLOv8-OBB model were then saved and used to identify parked
+cars on over 18,000 satellite images spanning Dublin City. These images are then
+used to identify parking spots.
 
-\newpage
 \subsubsection{Parking spot detection}
-Subsequently, to identify the parking spots in each satellite image, the cars detected by the YOLO model are classified into on the road or parked, based on a road mask.
+Subsequently, to identify the parking spots in each satellite image, the cars
+detected by the YOLO model are classified into on the road or parked, based on a
+road mask.
 
-\subsubsection{Road mask generation} \label{sec:road_mask_generation}
-Many different iterations of the road mask were used, the main iterations and their differences are explained and showed below in Figure~\ref{fig:Mask_Iterations}.
+\subsubsection{Road mask generation} \label{sec:road_mask_generation} Many
+different iterations of the road mask were used, the main iterations and their
+differences are explained and showed below in Figure~\ref{fig:mask_iterations}.
 
 The original mask was a very simple binary mask which identified the road pixels by their color, as the majority of roads were depicted in white and darkened the rest of the pixels in the image.
 
@@ -68,44 +123,33 @@ A number of different kernel sizes, different contour thresholds and other param
 
 A different approach using Canny Edge Detection was tested, however due to the nature of the Mapbox Streets images, the edges picked up were not significant and the overall performances was much worse than the current mask at the time.
 
-A final improvement to the mask was made to avoid certain misclassification due to the Mapbox Streets road width not correctly reflecting all the lanes of the road and therefore classifying on the road cars as parked. This issue was most prominent for motorways and national roads and was resolved by enlarging those roads using a dilation technique. Multiple different kernel sizes, different number of iterations and kernels of different sizes applied consecutively were tested to find the optimal solution.
+\newpage{}
+
+A final improvement to the mask was made to avoid certain misclassification due
+to the Mapbox Streets road width not correctly reflecting all the lanes of the
+road and therefore classifying on the road cars as parked. This issue was most
+prominent for motorways and national roads and was resolved by enlarging those
+roads using a dilation technique. Multiple different kernel sizes, different
+number of iterations and kernels of different sizes applied consecutively were
+tested to find the optimal solution.
 
 \begin{figure}[htbp]
-  \centering
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/streets.png}
-    \caption*{Mapbox Streets Image}
-  \end{minipage}
-  \hfill
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/old_mask.png}
-    \caption*{Initial Mask}
-  \end{minipage}
-  \hfill
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/new_mask.png}
-    \caption*{Mask with additional color masks}
-  \end{minipage}
-  \hfill
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/canny_edge_mask.png}
-    \caption*{Canny Edge Detection Mask}
-  \end{minipage}
-  \hfill
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/current_mask.png}
-    \caption*{Current Mask}
-  \end{minipage}
+  \centering{}
+  \begin{tabular}{cc}
+    \includegraphics[width=0.30\textwidth]{images/streets.png} &
+    \includegraphics[width=0.30\textwidth]{images/old_mask.png} \\
+    Mapbox Streets Image & Initial Mask \\
+    \includegraphics[width=0.30\textwidth]{images/new_mask.png} &
+    \includegraphics[width=0.30\textwidth]{images/canny_edge_mask.png} \\
+    Mask with Added Color Masks & Canny Edge Detection Mask \\
+    \multicolumn{2}{c}{\includegraphics[width=0.30\textwidth]{images/current_mask.png}} \\
+    \multicolumn{2}{c}{Current Mask}
+  \end{tabular}
   \caption{Different Iterations of the Road Mask}
-  \label{fig:Mask_Iterations}
+  \label{fig:mask_iterations}
 \end{figure}
 
-\newpage
+\newpage{}
 
 \subsubsection{Classification of cars into on the road or parked}
 The cars detected by the Yolo model are then sorted into on the road or parked based on the road mask previously generated, which is explained in more detail below.
@@ -118,27 +162,22 @@ Different thresholds were tested as well, however overall a harsher threshold wo
 
 For each of the model's predictions for parked cars, the center pixels coordinates are mapped to geographic coordinates (longitude and latitude), and the width, height, rotation and orientation based on the angle are saved. The horizontal orientation is assigned for spots that have a rotational angle in degrees ranging between -45 and 45 or between 135 and 225, while the vertical orientation is assigned to the remaining spots that do not fit the criteria.
 
-For testing and debugging purposes, all the bounding boxes of the cars found by the model are drawn onto the satellite image, on the road cars are drawn in blue while parked cars are drawn in red as seen below in Figure~\ref{fig:Road_mask_classification}.
+For testing and debugging purposes, all the bounding boxes of the cars found by
+the model are drawn onto the satellite image, on the road cars are drawn in blue
+while parked cars are drawn in red as seen below in
+Figure~\ref{fig:Road_mask_classification}.
 
 \begin{figure}[htbp]
   \centering
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/road_mask_classification1.png}
-  \end{minipage}
+  \includegraphics[width=0.30\textwidth]{images/road_mask_classification1.png}
   \hfill
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/road_mask_classification2.png}
-  \end{minipage}
+  \includegraphics[width=0.30\textwidth]{images/road_mask_classification2.png}
   \hfill
-  \begin{minipage}{0.45\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{images/road_mask_classification3.png}
-  \end{minipage}
-  \caption{Classification of cars into on the road or parked}
-  \label{fig:Road_mask_classification}
+  \includegraphics[width=0.30\textwidth]{images/road_mask_classification3.png}
+  \caption{Classification of cars as on the road or parked: (left) Initial Classification, (center) Intermediate Stage, (right) Final Classification.}
+  \label{fig:road_mask_classification}
 \end{figure}
+
 
 \newpage
 
@@ -161,7 +200,7 @@ Subsequently, empty spots that overlap with the road are filter out in a similar
 
 Following the detection of all the empty spots, the bounding boxes corresponding to each spot are drawn onto the satellite image in green as shown in Figure~\ref{fig:Empty_parking_detection}.
 
-\begin{figure}[h!]
+\begin{figure}[htbp]
   \centering
   \begin{minipage}{0.45\textwidth}
     \centering
@@ -286,7 +325,7 @@ Each major section of the parking detection model was evaluated individually in 
 \subsubsection{Evaluation of the YOLOv8-OBB model}
 The YOLOv8-OBB model was evaluated on a validation set of 51 images, where precision, recall, accuracy, mean average precision (mAP@50) and F1-score were computed. These were the scores below:
 %yolov8 obb results
-\begin{table}[h!]
+\begin{table}[htbp]
   \centering
   \begin{tabular}{|p{0.18\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.1\textwidth}|p{0.12\textwidth}|}
     \hline
@@ -394,6 +433,8 @@ The overall results on test set are presented below in Table~\ref{tab:metrics1}.
 \end{table}
 
 Precision and Recall are relatively high for both classes. Precision for the on the road cars class is extremely high as the majority of the cars in the test set were perfectly horizontally or vertically aligned, and given that the rotation cannot be exported in label studio, the bounding box is drawn less accurately unless if it is perfectly horizontally or vertically aligned.
+
+\newpage{}
 
 The majority of papers available, that explore object detection for cars on satellite images, evaluate their experiment on more general metrics such as Average Precision (AP) and Mean Average Precision (mAP). AP represents the area under the precision-recall curve and mAP represents the mean of the APs across all the different classes. These metrics provide a broader overview of the model's performance as it is measured across varying thresholds.
 Therefore the results obtained are not as comparable, given that precision, recall and f1 score are calculated for a fixed IoU threshold in our evaluation.
@@ -570,17 +611,3 @@ The predicted public spots are drawn in green while the true labels are in dark 
 \end{table}
 
 \newpage{}
-
-\subsubsection{Future Work : ML}
-
-For future work, the most pressing task would be to add additional data sources, in particular transportation data such as bus and luas routes, bus stops and luas stations.
-Information on the water supply and the electrical infrastructure would equally be helpful to add, in particular information pertaining to the municipal water supply, the power grid, off the grid solar panels and backup generators.\\
-Furthermore, the current amenities should be extended to include more counties, close to Dublin such as Fingal, South Dublin and Meath, as well as extended to larger cities in Ireland like Cork, Galway, Limerick and Sligo.
-
-Retraining the Yolo model on a dataset containing more manually annotated satellite images should be explored in order to improve the model's performance and reduce the number of false positives.
-
-Improving the road mask's accuracy in classifying cars as on the road and parked correctly is especially crucial, as the current misclassificatiosn lead to issues afterwards particularly in the empty parking detection section.
-It could be interesting to test out enlarging the roads by a certain ratio, depending on the road width to begin with in order to find a way of identifying only larger roads with multiple lanes.
-
-The empty parking detection could be further improved by adding additional heuristics to find the empty spots more efficiently.\\
-Moreover, the 2 cases that were removed as too many additional spots were being detected could be refined and implemented differently.
