@@ -636,49 +636,34 @@ The overall results on test set are presented below in Table 3.
   \label{tab:metrics2}
 \end{table}
 
-The Average Orientation Accuracy being somewhat low of only 0.64, is expected as
-the orientation labels for the test set are calculated automatically based on
-the width and length of the bounding box, while the orientation associated with
-the model’s prediction is based on the rotation.
+The Average Orientation Accuracy being somewhat low of only 0.64 is expected
+because the orientation labels for the test set are calculated automatically
+based on the width and length of the bounding box. On the other hand, the
+orientation associated with the model’s prediction is based on the rotation.
+This is illustrated below, the orientated label in \textbf{pink} and the
+non-oriented one in \textbf{green}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.6\textwidth]{images/empty-detection-orientation.png}
+  \caption{Empty detection test set - True label vs Predicted label}
+\end{figure}
+
+\newpage{}
 
 The results achieved are similar to other articles performing car detection on
 satellite imagery such as \cite{similarresults}.
 
-The main reason empty parking spots are not detected is due to the fact that
-cars are classed as on the road by the road mask, therefore given that the empty
-parking detection logic only fills in gaps between parked cars it cannot find
-the empty spots, as seen in the bottom left of the second image of
-Table~\ref{tab:test_images2}.
-
-Additionally, due to the misclassifications of chimneys or roof pieces as cars
-by the YOLO model, additional empty spots that should not be identified are
-detected, as seen on the left of the third image of
-Table~\ref{tab:test_images3}. Furthermore, some spots are too small to be found
-by the model given the threshold set for the average width and average height.
-
-Other minor issues that sometimes lead to empty parking spots not being detected
-are due to angle misalignment, when one car is oriented incorrectly and more
-slanted, leading to the angle between the 2 cars being larger that the threshold
-or when 2 cars are too far apart to fill in the gap.
-
-A few images from the test set are displayed below, in
-Table~\ref{tab:test_images2}. The predicted empty parking spots are drawn in
-green while the true labels are in light pink.
-
-\begin{table}[htbp]
+The main reason unoccupied parking spots are not detected is because cars are
+classified as on the road by the road mask and the empty parking detection logic
+only applies to parked cars. This is illustrated in the figure below.
+\begin{figure}[htbp]
   \centering
-  \begin{tabular}{cc}
-    \includegraphics[width=0.4\textwidth]{images/image1_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_empty_parking_detection_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image3_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_empty_parking_detection_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image5_empty_parking_detection_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_empty_parking_detection_test_set.png} \\
-  \end{tabular}
-  \caption{Images from the Empty Parking Detection Test Set}
-  \label{tab:test_images2}
-\end{table}
+  \includegraphics[width=0.5\textwidth]{images/empty-detection-orientation2.png}
+  \caption{Empty detection test set - True label vs Predicted label}
+\end{figure}
 
-\newpage{}
-
-\textbf{Evaluation of the classification of the spots detected into private, public and parking lot}
+\textbf{Evaluation of classification of spots into private, public \& parking lot}
 The classification of the spots detected into private, public and parking lot is
 evaluated in the \texttt{evaluate\_classification\_of\_spots.py} Python script.
 The classification is evaluated on the following metrics as defined previously:
@@ -689,7 +674,7 @@ as well as the overall average metrics on the entire test set.
 Similarly, a test set of 50 images was carefully selected and consistently
 labelled in Label Studio, without rotation to ensure the maximum overlap.
 
-The overall results on test set are presented below in Table~\ref{tab:metrics3}.
+The overall results on the test set are presented below in Table 4.
 
 \begin{table}[htbp]
   \centering
@@ -708,38 +693,35 @@ The overall results on test set are presented below in Table~\ref{tab:metrics3}.
   \label{tab:metrics3}
 \end{table}
 
+\newpage{}
+
 The performance is similar for all 3 classes, however for the parking lot class
 more false positives are present, given that having many bounding boxes
 clustered together creates more unpredictability adding more additional spots.
 
-The results achieved, presented above in Table~\ref{tab:metrics3}, are in line
-with other articles performing car detection on satellite imagery such as
-\cite{similarresults}.
+The results presented above are in line with other articles performing car
+detection on satellite imagery such as \cite{similarresults}.
 
 The main outstanding problem for this section is residential areas which are
 very rarely misclassified as parking lots. Additionally, in cases where public
 spots are quite far from the nearest road, the spots are misclassified as
-private, which is not a major issue.\\
+private, which is not a major issue.
+
 Another point worth noting is that smaller parking lots with less than 18 spots
 are not detected though that is intentional and by design in order to focus on
 larger parking lots and avoid misclassifications.
 
-A few images from the test set are shown below, in Table~\ref{tab:test_images3}.
+A few images from the test set are shown below in Figure 28.
 The predicted public spots are drawn in green while the true labels are in dark
 green. The predicted private spots are highlighted in red while the true labels
 are in light pink. The predicted parking lot spots are shown in blue while the
 true labels are in cyan.
 
-\begin{table}[htbp]
+\begin{figure}[htbp]
   \centering
-  \begin{tabular}{cc}
-    \includegraphics[width=0.4\textwidth]{images/image1_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image2_classification_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image3_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image4_classification_test_set.png} \\
-    \includegraphics[width=0.4\textwidth]{images/image5_classification_test_set.png} & \includegraphics[width=0.4\textwidth]{images/image6_classification_test_set.png} \\
-  \end{tabular}
-  \caption{Images from the Parking Spot Classification Test Set}
-  \label{tab:test_images3}
-\end{table}
+  \includegraphics[width=0.9\textwidth]{images/classification-spots-test.png}
+  \caption{Classification of spots test set - True label vs Predicted label}
+\end{figure}
 
 \newpage{}
 
