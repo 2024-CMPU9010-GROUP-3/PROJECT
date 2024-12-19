@@ -65,7 +65,7 @@ on the COCO (Common Object in Context) dataset, a popular large scale dataset
 with 200,000 images across 80 object categories commonly used for benchmarking
 computer vision models (\cite{cocodataset}).
 
-We monitored metrics such as mAP (Mean Average Precision), F1-score and the
+We monitored metrics such as mAP (mean Average Precision), F1-score and the
 false positive rate. The figure below shows the metrics of the model as we
 iteratively experimented up the version chain.
 
@@ -236,7 +236,7 @@ to draw the empty spots more uniformly. Average parking spot width and length in
 meters are set to 3.05 as found to be the optimal value through testing
 accounting for the variations in size.
 
-Setting this value avoids misclassifications as previously the average width and
+Setting this value avoids misclassifications, as previously the average width and
 length in meters were calculated dynamically, however in cases where the
 averages were lesser than 3, spots tended to overlap.
 
@@ -765,16 +765,18 @@ Throughout the implementation of our technical solution, there have been many
 major challenges and changes throughout the project timeline.
 
 \textbf{Week 1-4}
+This iteration focused on the startup of the project, exploratory work, machine
+learning model tryouts and setting up Magpie's environment.
 
-The biggest initial hurdle was finding a labelling software to annotate our
-satellite images. Initially, we had settled on LabelImg, however it was no
-longer being supported on most of our operating systems and was crashing on
-launch. Instead, we turned towards Label Studio and the ML Backend extension, which we
-intended on using for its active learning functionality that would have
-enabled using YOLO v5 to automatically label our training images, after only
-annotating a few images. After much unsuccessful troubleshooting, we decided to switch
-approaches to manually label the images and subsequently train the YOLO model on
-those images.
+The biggest initial
+hurdle was finding a labelling software to annotate our satellite images.
+Initially, we had settled on LabelImg, however it was no longer being supported
+on most of our operating systems and was crashing on launch. Instead, we turned
+towards Label Studio and the ML Backend extension, which we intended on using
+for its active learning functionality that would have enabled using YOLO v5 to
+automatically label our training images, after only annotating a few images.
+After much unsuccessful troubleshooting, we decided to switch approaches to
+manually label the images and subsequently train the YOLO model on those images.
 
 The next challenge related to training the YOLO model to identify cars on the
 satellite images. An object detection model remains a deep neural network model,
