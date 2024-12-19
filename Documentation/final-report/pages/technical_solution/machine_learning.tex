@@ -88,17 +88,18 @@ Thus, the YOLOv8-OBB model was trained on the settings below:
 \begin{listing}[htbp]
   \centering
   \begin{minted}{python3}
-    train_results_obb = yolo8s_obb_model.train(data=data_config,
-                  epochs=35,
-                  patience=15,
-                  optimizer="AdamW",    # Adam + weight decay for less overfitting
-                  val=True, # validate during training
-                  seed=1,
-                  imgsz=416,
-                  batch=16,
-                  cache="disk",
-                  )
+train_results_obb = yolo8s_obb_model.train(data=data_config,
+              epochs=35,
+              patience=15,
+              optimizer="AdamW",    # Adam + weight decay for less overfitting
+              val=True, # validate during training
+              seed=1,
+              imgsz=416,
+              batch=16,
+              cache="disk",
+              )
   \end{minted}
+  \caption{YOLOv8-OBB model training settings}
 \end{listing}
 
 The weights of the YOLOv8-OBB model were then saved and used to identify parked

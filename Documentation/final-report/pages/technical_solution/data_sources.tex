@@ -52,33 +52,34 @@ and extract the fields instead)
     \centering
     \caption{Python script to obtain training images for ML model}
     \begin{minted}{python3}
-        # CSV file containing location information
-        df = pd.read_csv("2020-coach-parking-dcc-1.csv")
-        location_data = df.to_dict('records')
+# CSV file containing location information
+df = pd.read_csv("2020-coach-parking-dcc-1.csv")
+location_data = df.to_dict('records')
 
-        # function to download image using location information from CSV dataset
-        def get_images(name, latitude, longitude):
-            url = f'https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/{longitude},{latitude},18,0,0/400x400?access_token=pk.eyJ1Ijoia2F1c3R1Ymh0cml2ZWRpIiwiYSI6ImNtMWo2NndsbzB4N3EycHM1aGF2cDd5NzkifQ.4aegzX6Kfy3zW8pHkLWU7Q'
-            response = requests.get(url)
-            print(response)
-            if response.status_code == 200:
-                img = Image.open(BytesIO(response.content))
-                if not os.path.exists('output'):
-                    os.makedirs('output')
+# function to download image using location information from CSV dataset
+def get_images(name, latitude, longitude):
+    url = f'''https://api.mapbox.com/styles/v1/mapbox/satellite-v9/
+            static/{longitude},{latitude},18,0,0/400x400'''
+    response = requests.get(url)
+    print(response)
+    if response.status_code == 200:
+        img = Image.open(BytesIO(response.content))
+        if not os.path.exists('output'):
+            os.makedirs('output')
 
-                output_folder = 'output'
-                output_path = os.path.join(output_folder, f'{name}_coach_parking.png')
-                img.save(output_path)
-                print(f"Image saved to {output_path}")
+        output_folder = 'output'
+        output_path = os.path.join(output_folder, f'{name}_coach_parking.png')
+        img.save(output_path)
+        print(f"Image saved to {output_path}")
 
-        # function to extract location \& name location from CSV dataset
-        for place in location_data:
-        name = place["Street Name"]
-        if ("/" in name):
-            name = name.replace("/", "-")
-        latitude = place["Latitude"]
-        longitude = place["Longitude"]
-        get_images(name, latitude, longitude)
+# function to extract location & name location from CSV dataset
+for place in location_data:
+name = place["Street Name"]
+if ("/" in name):
+    name = name.replace("/", "-")
+latitude = place["Latitude"]
+longitude = place["Longitude"]
+get_images(name, latitude, longitude)
     \end{minted}
 \end{listing}
 Following successful model training and tuning, a further 19,536 satellite
