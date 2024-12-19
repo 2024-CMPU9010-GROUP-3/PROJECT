@@ -1,22 +1,23 @@
-Early on, we considered car parking an amenity that had to be included on
-Magpie's interface. Through our search of publicly available datasets, we were
-unable to find any information on public, on the street or private parking
-spaces in Ireland.
+Early on, car parking was considered an amenity that had to be included on
+Magpie's interface. Through searching for publicly available datasets, 
+no information on public, on the street or private parking
+spaces in Ireland was found.
 
-Thus, we settled on creating our own dataset of car parking spots in Dublin
-using a novel machine learning approach.
+Thus, creating our own dataset of car parking spots in Dublin
+using a novel machine learning approach was settled upon.
 This approach is divided into 3 main steps:
 \begin{enumerate}
   \item Car detection on satellite images
   \item Parking detection using custom road mask
   \item Classification \& evaluation of the parking spots
 \end{enumerate}
+
 \subsubsection{YOLO model used for car detection}
 YOLO (You Only Look Once) is an object detection and image segmentation model
 launched in 2015 which quickly gained popularity for its high speed and
 accuracy.
 
-We were introduced to YOLO on Label Studio, an image labelling software used for
+The YOLO model was introduced to us on Label Studio, an image labelling software used for
 image recognition \& detection tasks. There is an extension called ML Backend on
 the platform which can be used to automate the labelling process using an
 integration of the YOLOv5 model. However, this extension was not working as
@@ -56,17 +57,17 @@ bounding boxes. These models are much more accurate than one stage detectors and
 are used for tasks where accuracy is prioritized over speed in the medical field
 for example RCNN, Fast-RCNN and Faster-RCNN(\cite{singlevstwostagedetectors}).
 
-For the scope of this project, we chose to continue with the YOLO models because
-of their speed, their scalability and their lack of computational resources.
+For the scope of this project, YOLO models were chosen for
+their speed, their scalability and their lack of computational resources.
 
-We experimented with different versions of the YOLOv5 model, then slowly
-levelled up the versions up to version 8.  The YOLOv8 model has been pre-trained
+Different versions of the YOLOv5 model were experimented with, slowly
+levelling up the versions up to version 8.  The YOLOv8 model has been pre-trained
 on the COCO (Common Object in Context) dataset, a popular large scale dataset
 with 200,000 images across 80 object categories commonly used for benchmarking
 computer vision models (\cite{cocodataset}).
 
-We monitored metrics such as mAP (mean Average Precision), F1-score and the
-false positive rate. The figure below shows the metrics of the model as we
+Metrics such as mAP (mean Average Precision), F1-score and the
+false positive rate were monitored. The figure below shows the metrics of the model
 iteratively experimented up the version chain.
 
 %model metrics graph
@@ -76,7 +77,7 @@ iteratively experimented up the version chain.
   \caption{YOLO Model training graph}
 \end{figure}
 
-We ended the object detection modelling training with the YOLOv8 - Oriented
+The object detection modelling training ended with the YOLOv8 - Oriented
 Bounding Boxes (OBB).
 Oriented bounding boxes are a newer type of bounding box where the bounding box
 capture the orientation of the object providing a more accurate fit of the
@@ -221,7 +222,7 @@ Figure 21.
 
 \textbf{Step 2: Detecting unoccupied parking spots}
 
-We have managed to identify occupied parking spots, therefore it is necessary to
+Occupied parking spots were indentified, therefore it is necessary to
 identify unoccupied ones to offer a more comprehensive view of car parking in
 Dublin city.
 
@@ -768,46 +769,35 @@ major challenges and changes throughout the project timeline.
 This iteration focused on the startup of the project, exploratory work, machine
 learning model tryouts and setting up Magpie's environment.
 
-The biggest initial
-hurdle was finding a labelling software to annotate our satellite images.
-Initially, we had settled on LabelImg, however it was no longer being supported
-on most of our operating systems and was crashing on launch. Instead, we turned
-towards Label Studio and the ML Backend extension, which we intended on using
-for its active learning functionality that would have enabled using YOLO v5 to
-automatically label our training images, after only annotating a few images.
-After much unsuccessful troubleshooting, we decided to switch approaches to
-manually label the images and subsequently train the YOLO model on those images.
+The biggest initial hurdle was finding a labelling software to annotate our satellite images.
+Initially, Label Studio, a popular labelling software with their integrated ML backend extension was chosen, 
+to use YOLO v5 to automatically label our training images, after only annotating a few images.
+However, after much troubleshooting, the approach was switched to
+manually labelling the images and subsequently training the YOLO model on those images.
 
-The next challenge related to training the YOLO model to identify cars on the
+The next challenge concerned to training the YOLO model to identify cars on the
 satellite images. An object detection model remains a deep neural network model,
 which is computationally intensive the more complex it becomes.
 
-We were limited in our training of the model due to limitations in available
-computational resources. Tuning for 35 iterations would last several hours, and
+Due to limitations in available computational resources training of the model was difficult. 
+Tuning for 35 iterations would last several hours, and
 training above a certain number of epochs would not yield better results.
 Training the model was both computationally expensive and very time consuming.
 
 Another challenge referred to the low resolution of the satellite images,
 heavily contributing to the high misclassification rate in the early beginnings of
-model training. We managed to stabilised that through proper model choosing and
+model training. This was stabilised through proper model choosing and
 tuning however, the biggest factor contributing to the remaining false positive
 rate is the low number of training data.
-
-Ideally we would've preferred to have at least 500 training images, however due
-to time constraints we settled on half of that, and compensated by putting a
-higher confidence threshold than the one dictated by the F1-curve.
 
 \textbf{Week 5-8}
 
 Another major challenge, was the unoccupied parking detection section. The key
-decisions and changes are recounted below, following the timeline of our
-project:
+decisions and changes are recounted below.
 
 In Week 8, the \texttt{parking\_detection.py} script was updated to use the most
 up to date trained YOLO model, YOLO v8 obb, that returned oriented bounding
-boxes, causing many issues in the version of our script at the time,
-specifically the way of accessing the bounding boxes predicted by the model had
-changed. Furthermore, given the change to oriented bounding boxes, the size of
+boxes. Furthermore, given that change, the size of
 the bounding boxes became more variable, which allowed the script to be adapted
 to use average parking spot dimensions.
 
@@ -815,33 +805,27 @@ to use average parking spot dimensions.
 
 Week 9 was decisive in implementing a double pass-through to sort the cars by
 longitude and the latitude to identify both the horizontal and vertical spots.
-Moreover, the \texttt{parking\_detection.py} script was updated to use the
+The \texttt{parking\_detection.py} script was updated to use the
 xywhr(centre coordinates, width, height and rotation) bounding boxes instead of
-the xyxy (top left, bottom right)  bounding boxes we were using initially. This
+the xyxy (top left, bottom right)  bounding boxes initially used. This
 major change was crucial, adding more modularity and allowing the
 separation into horizontal and vertical cases in a more consistent manner.
 Many additional improvement were made that week, such as the removal of
 overlapping spots and filtering out the empty spots detected on the road.
 
 In week 12, the unoccupied parking detection was completely finalized, resolving the
-majority of the outstanding issues.\\
+majority of the outstanding issues.
 Originally 4 cases were considered, cars parked horizontally in a row or in a
 column, cars parked vertically in a column and cars parked vertically side by
 side. However, horizontally parked in a column and vertically parked side by side
-were removed as they led to too many misclassifications, namely the vertically
-parked side by side lead to adding many additional cars in driveways in
-residential areas.
-Additionally the condition on the angle alignment was refined and added to ensure
-the detection of spots only between cars properly aligned.
+were removed as they led to too many misclassifications.
 
 Another major issue was the selection and accurate labelling of the test sets to
-evaluate each subpart of our model.\\
+evaluate each subpart of our model.
 Week 11 marked the beginning of the unoccupied parking detection evaluation. 
 Labelling the test set accurately was a significant challenge, multiple different 
 phases of relabelling and improvements occurred, to ensure the maximum overlap 
-between the true labels and the model's predictions, achieving a high enough IoU.
-The images were originally annotated using rotated bounding boxes, however due to the fact that
-the rotation cannot be exported in Label Studio, they were subsequently relabelled without rotation.\\ 
+between the true labels and the model's predictions.
 During Week 12, the two other evaluation scripts were finalized. 
 Similarly, multiple phases of labelling and relabelling occurred. For
 the classification of spots evaluation, additional images containing private class instances
