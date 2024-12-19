@@ -183,25 +183,25 @@ particularly working in a team environment.
 \begin{listing}[htbp]
     \centering{}
     \begin{minted}{html}
-        ### Description
+### Description
 
-        Replace this with a summary of the change. Please also include relevant
-        motivation and context.
+Replace this with a summary of the change. Please also include relevant
+motivation and context.
 
-        Fixes # (issue)
+Fixes # (issue)
 
-        ### Type of change
+### Type of change
 
-        Please select the option that best describes the changes made:
+Please select the option that best describes the changes made:
 
-        - [ ] Bug fix (non-breaking change which fixes an issue)
-        - [ ] New feature (non-breaking change which adds functionality)
-        - [ ] Breaking change (fix or feature that would break existing functionality)
-        - [ ] Documentation update
+- [ ] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would break existing functionality)
+- [ ] Documentation update
 
-        ### Changes
+### Changes
 
-        Replace this with a list of changes made in the pull request.
+Replace this with a list of changes made in the pull request.
     \end{minted}
     \caption{An example of a pull request template used in \textit{Magpie}}
 \end{listing}
@@ -275,12 +275,14 @@ they do not function as expected. For example:
 
 \begin{listing}[htbp]
     \centering{}
+    \begin{minipage}{0.85\textwidth}
     \begin{minted}{yaml}
         on:
             push:
                 branches:
                 - 'feature/*'
     \end{minted}
+    \end{minipage}
     \caption{An example of a GitHub Actions workflow that will not work}
 \end{listing}
 
@@ -294,12 +296,14 @@ being changed. This was done by using the \textbf{paths} key in the workflow.
 
 \begin{listing}[htbp]
     \centering{}
+    \begin{minipage}{0.85\textwidth}
     \begin{minted}{yaml}
         on:
             push:
                 paths:
                 - 'Backend/**'
     \end{minted}
+    \end{minipage}
     \caption{An example of a GitHub Actions workflow that will work}
 \end{listing}
 
@@ -315,41 +319,41 @@ Checks will prevent a PR from being merged if they fail.
 
 \begin{listing}[htbp]
     \begin{minted}{yaml}
-        name: Branch Checks
+name: Branch Checks
 
-        on:
-        pull_request:
+on:
+pull_request:
 
-        jobs:
-        validate-name:
-            runs-on: ubuntu-latest
+jobs:
+validate-name:
+    runs-on: ubuntu-latest
 
-            steps:
-            - name: Check out repository
-                uses: actions/checkout@v4
+    steps:
+    - name: Check out repository
+        uses: actions/checkout@v4
 
-            - name: Get branch name
-                id: get_branch_name
-                run: echo "branch=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
+    - name: Get branch name
+        id: get_branch_name
+        run: echo "branch=${GITHUB_HEAD_REF}" >> $GITHUB_OUTPUT
 
-            - name: Validate branch name
-                run: |
-                BRANCH_NAME="${{ steps.get_branch_name.outputs.branch }}"
-                if [[ ! "$BRANCH_NAME" =~ ^(
-                    backend/ frontend/|
-                    documentation/ python/|
-                    distribution/ misc/|
-                    update/
-                    ).* ]]; then
-                    echo "Branch name '$BRANCH_NAME' is not valid."
-                    echo "Rename the branch to match one of the following patterns:"
-                    echo "'backend/', 'frontend/',"
-                    echo "'documentation/', 'distribution/',"
-                    echo "'update/', 'python/',"
-                    echo "or 'misc/'."
-                    exit 1
-                fi
-            shell: bash
+    - name: Validate branch name
+        run: |
+        BRANCH_NAME="${{ steps.get_branch_name.outputs.branch }}"
+        if [[ ! "$BRANCH_NAME" =~ ^(
+            backend/ frontend/|
+            documentation/ python/|
+            distribution/ misc/|
+            update/
+            ).* ]]; then
+            echo "Branch name '$BRANCH_NAME' is not valid."
+            echo "Rename the branch to match one of the following patterns:"
+            echo "'backend/', 'frontend/',"
+            echo "'documentation/', 'distribution/',"
+            echo "'update/', 'python/',"
+            echo "or 'misc/'."
+            exit 1
+        fi
+    shell: bash
     \end{minted}
     \caption{A github action that checks the branch name (this was edited for brevity)}
 \end{listing}
@@ -475,48 +479,48 @@ restored to a known good state defined in version-controlled repositories.
 
 \begin{listing}[htbp]
     \begin{minted}{yaml}
-        ---
-        apiVersion: apps/v1
-        kind: Deployment
-        metadata:
-        name: public-backend-deployment
-        spec:
-        replicas: 1
-        strategy:
-            rollingUpdate:
-            maxSurge: 1
-            maxUnavailable: 1
-            type: RollingUpdate
-        selector:
-            matchLabels:
-            app: public-backend
-        template:
-            metadata:
-            labels:
-                app: public-backend
-            spec:
-            containers:
-                - name: public-backend
-                image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.12.0
-                resources: {}
-                ports:
-                    - containerPort: 8080
-                livenessProbe:
-                    exec:
-                    command:
-                        - curl
-                        - --fail
-                        - http://localhost:8080/heartbeat
-                    failureThreshold: 1
-                    periodSeconds: 30
-                startupProbe:
-                    exec:
-                    command:
-                        - curl
-                        - --fail
-                        - http://localhost:8080/heartbeat
-                    failureThreshold: 30
-                    periodSeconds: 10
+      ---
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+      name: public-backend-deployment
+      spec:
+      replicas: 1
+      strategy:
+          rollingUpdate:
+          maxSurge: 1
+          maxUnavailable: 1
+          type: RollingUpdate
+      selector:
+          matchLabels:
+          app: public-backend
+      template:
+          metadata:
+          labels:
+              app: public-backend
+          spec:
+          containers:
+              - name: public-backend
+              image: ghcr.io/2024-cmpu9010-group-3/backend-public:0.12.0
+              resources: {}
+              ports:
+                  - containerPort: 8080
+              livenessProbe:
+                  exec:
+                  command:
+                      - curl
+                      - --fail
+                      - http://localhost:8080/heartbeat
+                  failureThreshold: 1
+                  periodSeconds: 30
+              startupProbe:
+                  exec:
+                  command:
+                      - curl
+                      - --fail
+                      - http://localhost:8080/heartbeat
+                  failureThreshold: 30
+                  periodSeconds: 10
     \end{minted}
     \caption{Example of a Kubernetes Deployment for the public backend}
 \end{listing}
