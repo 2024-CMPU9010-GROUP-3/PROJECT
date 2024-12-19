@@ -1,3 +1,12 @@
+\subsubsection{Backend Architecture}
+
+\begin{figure}[htbp]
+  \centering{}
+  \includegraphics[width=0.8\columnwidth]{../d2-diagrams/system-diagram/system-diagram-backend.png}
+  \caption{Backend Architecture Diagram}
+  \label{fig:arcgis}
+\end{figure}
+
 \subsubsection{Backend Technologies}
 \textbf{Go}\\
 At the start of the project, a portion of the team deliberated about which
@@ -107,8 +116,6 @@ send to the database needs to be prepared into a format the database queries
 expect. Data that the application wants to retrieve from the database needs to
 be parsed back into the data model that's used by the application.
 
-\newpage{}
-
 To make interfacing with databases easier, so called ORMs (Object Relational
 Models) were developed. These are libraries that the application developer can
 include. Database queries are not done in SQL, but in the same programming
@@ -192,8 +199,6 @@ the backend keeping pace with the other developers.
   \caption{An example of a sqlc configuration file with two targets with separate query inputs and type replacement}
   \label{listing:sqlc_config_file}
 \end{listing}
-
-\newpage{}
 
 \begin{listing}[htbp]
   \centering{}
@@ -516,6 +521,8 @@ currently not considered one of them.
   \label{fig:database_final_schema}
 \end{figure}
 
+\newpage{}
+
 \subsubsection{Routing}
 Routing the frontend's requests to the appropriate handlers was done using the
 \textbf{net/http} package, which is included in the Go standard library. The Go
@@ -543,7 +550,7 @@ route (Authorisation), see Section \ref{backend_middlewares}
 
 \begin{figure}[htbp]
   \centering{}
-  \includegraphics[width=\textwidth]{../d2-diagrams/backend-routing/backend-routing.png}
+  \includegraphics[width=0.9\textwidth]{../d2-diagrams/backend-routing/backend-routing.png}
   \caption{Routing in the Backend: from Request to Handler}
   \label{fig:backend_routing}
 \end{figure}
@@ -605,6 +612,8 @@ func locationHistory() *http.ServeMux {
   \label{listing:routing_example}
 \end{listing}
 
+\newpage{}
+
 \subsubsection{APIs}
 All API routes that the backends expose are listed below. This information was
 available to the frontend and data stack developers throughout the project in
@@ -617,8 +626,6 @@ communication between the different areas of responsibility.
 For a detailed explanation of the route access restriction modes, see Section
 \textbf{\nameref{middleware_route_authorisation}} on page
 \pageref{middleware_route_authorisation}.
-
-\newpage{}
 
 \textbf{Public API}\\
 The public API is used to retrieve relevant data for display in the frontend and
@@ -683,7 +690,6 @@ for authentication of the user.
         ids (request body)\\
         \textbf{Returns:} Status 202 if no errors occurred during deletion.\\
       }
-      \newpage{}
       \item {
         \textbf{Name:} Save location\\
         \textbf{Method + Route:} \texttt{POST /v1/public/history/\{id\}}\\
@@ -890,8 +896,6 @@ example of the logs produced by the public backend server can be found in Figure
   \caption{Example of logs produced by the public backend server}
   \label{fig:backend_logging}
 \end{figure}
-
-\newpage{}
 
 \phantomsection\label{middleware_cors}\textbf{Cross-origin Resource Sharing (CORS)}\\
 Since the frontend and the backend are not hosted at the same origin, it is
@@ -1190,20 +1194,63 @@ main code base and by extension the deployment.
 
 \newpage{}
 
-\subsubsection{conclusion}
+\subsection{Conclusion Technical Solution}
 
-The \textbf{Magpie} platform demonstrates how emerging technologies can address complex urban planning challenges. By combining machine learning, a user{-}friendly interface, and a robust backend, it makes public amenity data more accessible and actionable. This integration reshapes how urban planners and other stakeholders interact with and interpret city data, providing a tool that empowers users with diverse technical backgrounds to gain valuable insights. As a result, \textbf{Magpie} helps inform better decision{-}making in urban development.
+The \textbf{Magpie} platform demonstrates how emerging technologies can address
+complex urban planning challenges. By combining machine learning, a
+user{-}friendly interface, and a robust backend, it makes public amenity data
+more accessible and actionable. This integration reshapes how urban planners and
+other stakeholders interact with and interpret city data, providing a tool that
+empowers users with diverse technical backgrounds to gain valuable insights. As
+a result, \textbf{Magpie} helps inform better decision{-}making in urban
+development.
 
-One of the platform's standout achievements is its ability to seamlessly integrate data from various sources into a unified, easy{-}to{-}navigate interface. Through automation, it handles tasks such as data extraction, cleaning, and visualization, offering a clear, comprehensive view of public amenities. The combination of geospatial data, machine learning, and interactive maps creates a flexible system that can evolve alongside changing urban planning needs.
+One of the platform's standout achievements is its ability to seamlessly
+integrate data from various sources into a unified, easy{-}to{-}navigate
+interface. Through automation, it handles tasks such as data extraction,
+cleaning, and visualization, offering a clear, comprehensive view of public
+amenities. The combination of geospatial data, machine learning, and interactive
+maps creates a flexible system that can evolve alongside changing urban planning
+needs.
 
-A critical component of the platform's success is its use of scalable machine learning models, such as YOLOv8 for object detection. These models enable the platform to efficiently identify public amenities like parking spaces, eliminating the need for time{-}consuming manual data collection. Additionally, the platform's use of oriented bounding boxes enhances detection accuracy, allowing it to adapt to diverse geographical contexts. This scalability ensures the platform can handle growing amounts of data as cities expand, positioning it as a forward{-}thinking tool for urban planning.
+A critical component of the platform's success is its use of scalable machine
+learning models, such as YOLOv8 for object detection. These models enable the
+platform to efficiently identify public amenities like parking spaces,
+eliminating the need for time{-}consuming manual data collection. Additionally,
+the platform's use of oriented bounding boxes enhances detection accuracy,
+allowing it to adapt to diverse geographical contexts. This scalability ensures
+the platform can handle growing amounts of data as cities expand, positioning it
+as a forward{-}thinking tool for urban planning.
 
-Supporting this functionality is the platform’s robust backend infrastructure, built with Go and PostGIS for geospatial data. This foundation allows for efficient data processing and search capabilities, ensuring users always have access to accurate information. The backend is designed with future growth in mind, ensuring the platform can handle increasingly complex data sets as urban environments become more intricate.
+Supporting this functionality is the platform's robust backend infrastructure,
+built with Go and PostGIS for geospatial data. This foundation allows for
+efficient data processing and search capabilities, ensuring users always have
+access to accurate information. The backend is designed with future growth in
+mind, ensuring the platform can handle increasingly complex data sets as urban
+environments become more intricate.
 
-The development process wasn’t without its challenges, particularly in terms of data variability, computing limits, and resolution issues. The team addressed these hurdles with creative solutions, developing data processing systems that could handle variations in geographic precision, data formats, and update frequencies. By working with smaller datasets and adjusting settings, they balanced training and accuracy, and advanced techniques helped overcome the limitations of low{-}resolution satellite imagery, enhancing the platform's overall reliability.
+The development process wasn't without its challenges, particularly in terms of
+data variability, computing limits, and resolution issues. The team addressed
+these hurdles with creative solutions, developing data processing systems that
+could handle variations in geographic precision, data formats, and update
+frequencies. By working with smaller datasets and adjusting settings, they
+balanced training and accuracy, and advanced techniques helped overcome the
+limitations of low{-}resolution satellite imagery, enhancing the platform's
+overall reliability.
 
-Throughout the development, continuous improvement was a key theme. Testing and refining features like object detection and parking spot identification allowed the team to steadily enhance the platform. Input from users and experts played a crucial role in improving usability, ensuring the platform is accessible to both technical and non{-}technical users.
+Throughout the development, continuous improvement was a key theme. Testing and
+refining features like object detection and parking spot identification allowed
+the team to steadily enhance the platform. Input from users and experts played a
+crucial role in improving usability, ensuring the platform is accessible to both
+technical and non{-}technical users.
 
-Looking ahead, the \textbf{Magpie} platform is poised for further growth. With planned advancements in machine learning models, data integration, and user features, the platform is ready to expand its capabilities. These improvements will strengthen its impact on urban planning, supporting more sustainable resource management and ensuring equitable access to amenities. As cities continue to grow, \textbf{Magpie} can help planners design smarter, more efficient urban environments, shaping the future of urban data accessibility and analysis.
+Looking ahead, the \textbf{Magpie} platform is poised for further growth. With
+planned advancements in machine learning models, data integration, and user
+features, the platform is ready to expand its capabilities. These improvements
+will strengthen its impact on urban planning, supporting more sustainable
+resource management and ensuring equitable access to amenities. As cities
+continue to grow, \textbf{Magpie} can help planners design smarter, more
+efficient urban environments, shaping the future of urban data accessibility and
+analysis.
 
 \newpage{}

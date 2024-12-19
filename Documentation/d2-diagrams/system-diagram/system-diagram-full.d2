@@ -1,0 +1,81 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 300
+  }
+}
+
+direction: down
+
+client side: {
+  browser: {
+    Magpie SPA: {
+      shape: image
+      icon: magpie_logo.png
+    }
+  }
+}
+
+server side: {
+  kubernetes cluster: {
+    icon: https://icons.terrastruct.com/azure%2F_Companies%2FKubernetes.svg
+    icon.near: top-left
+    label.near: top-center
+
+    traefik: {
+      shape: image
+      icon: traefik.svg
+    }
+    nominatim: {
+      shape: image
+      icon: openstreetmap-logo-14.png
+    }
+    frontend server: {
+      shape: image
+      icon: nextjs.svg
+    }
+    public backend: {
+      shape: image
+      icon: https://icons.terrastruct.com/dev%2Fgo.svg
+    }
+    database: {
+      shape: image
+      icon: https://icons.terrastruct.com/dev%2Fpostgresql.svg
+    }
+    private backend: {
+      shape: image
+      icon: https://icons.terrastruct.com/dev%2Fgo.svg
+    }
+    data stack: {
+      shape: image
+      icon: https://icons.terrastruct.com/dev%2Fpython.svg
+    }
+
+    frontend server <-> nominatim
+    traefik <-> frontend server
+    frontend server <-> public backend
+    public backend <-> database
+
+    private backend <-> database
+    data stack <-> private backend
+  }
+}
+
+external data providers: {
+  grid-columns: 2
+  horizontal-gap: 100
+  mapbox: {
+    shape: image
+    icon: mapbox.svg
+  }
+
+  gov\.ie: {
+    shape: image
+    icon: govie.png
+  }
+}
+
+client side.browser.Magpie SPA -> external data providers.mapbox
+client side.browser.Magpie SPA <-> server side.kubernetes cluster.traefik
+server side.kubernetes cluster.data stack -> external data providers.mapbox
+server side.kubernetes cluster.data stack -> external data providers.gov\.ie

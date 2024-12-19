@@ -1,0 +1,60 @@
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 300
+  }
+}
+
+direction: down
+
+server side: {
+  kubernetes cluster: {
+    icon: https://icons.terrastruct.com/azure%2F_Companies%2FKubernetes.svg
+    icon.near: top-left
+    label.near: top-center
+
+    frontend server: {
+      shape: image
+      icon: nextjs.svg
+    }
+    public backend: {
+      shape: image
+      icon: https://icons.terrastruct.com/dev%2Fgo.svg
+    }
+    database: {
+      shape: image
+      icon: https://icons.terrastruct.com/dev%2Fpostgresql.svg
+    }
+    private backend: {
+      shape: image
+      icon: https://icons.terrastruct.com/dev%2Fgo.svg
+    }
+    data stack: {
+      shape: image
+      icon: https://icons.terrastruct.com/dev%2Fpython.svg
+    }
+
+    frontend server <-> public backend
+    public backend <-> database
+
+    private backend <-> database
+    data stack <-> private backend
+  }
+}
+
+external data providers: {
+  grid-columns: 2
+  horizontal-gap: 100
+  mapbox: {
+    shape: image
+    icon: mapbox.svg
+  }
+
+  gov\.ie: {
+    shape: image
+    icon: govie.png
+  }
+}
+
+server side.kubernetes cluster.data stack -> external data providers.mapbox
+server side.kubernetes cluster.data stack -> external data providers.gov\.ie
