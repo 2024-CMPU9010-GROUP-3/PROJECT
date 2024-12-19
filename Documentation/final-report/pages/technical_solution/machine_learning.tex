@@ -725,17 +725,19 @@ true labels are in cyan.
 
 \newpage{}
 
-\subsubsection{Uploading points to the backend server}
-The longitude, latitude and classification of all the parking spots detected are
-then saved to a csv file. Potential spot duplicates are dropped, as the same car
-may be in multiple images given that the images are defined by their center
-coordinates, which causes adjacent images to overlap and share common areas. The
-rightmost part of one image can overlap with the leftmost part of another image.
+\subsubsection{Integration with Magpie system}
+Once all the parking spots have been identified, their longitude, latitude and
+class are saved to a csv file. Potential spot duplicates are dropped, and
+parking zones and associated tariffs are added.
 
-Subsequently, the parking zones and costs associated to each parking spot found
-are added to the csv file. Dublin City Council defines different parking zones
-by color, based on their high to moderate demand which changes the price per
-zone as seen below in Figure 24.
+Parking zone and tariff were obtained by manipulating the map shown in the
+figure below in QGIS, a geographic information system used for working with
+spatial data. Polygons were drawn on a raster layer, and associated id, zone
+name and tariff were defined before being exported as a geojson.
+
+Dublin City Council defines different parking zones by color, based on their
+high to moderate demand which changes the price per zone as seen below in Figure
+24.
 
 \begin{figure}[htbp]
   \centering
@@ -752,7 +754,7 @@ zone as seen below in Figure 24.
   \label{fig:Parking_zones}
 \end{figure}
 
-The csv file containing the longitude, latitude, classification label, parking
+Lastly, the csv file containing the longitude, latitude, classification label, parking
 zone and parking cost is then uploaded to the PostgreSQL database, in the
 backend server using the \texttt{send\_points.py} script.
 
@@ -760,8 +762,9 @@ backend server using the \texttt{send\_points.py} script.
 
 \subsubsection{Summary of main challenges}
 Throughout the implementation of our technical solution, there have been many
-major challenges and changes which will be discussed in this section.
+major challenges and changes throughout the project timeline.
 
+\textbf{Week 1-4}
 
 The biggest initial hurdle was finding a labelling software to annotate our
 satellite images. Initially, we had settled on LabelImg, however it was no
@@ -792,9 +795,11 @@ Ideally we would've preferred to have at least 500 training images, however due
 to time constraints we settled on half of that, and compensated by putting a
 higher confidence threshold than the one dictated by the F1-curve.
 
+\textbf{Week 5-8}
+
 Another major challenge, was the unoccupied parking detection section. The key
 decisions and changes are recounted below, following the timeline of our
-project: 
+project:
 
 In Week 8, the \texttt{parking\_detection.py} script was updated to use the most
 up to date trained YOLO model, YOLO v8 obb, that returned oriented bounding
@@ -803,6 +808,8 @@ specifically the way of accessing the bounding boxes predicted by the model had
 changed. Furthermore, given the change to oriented bounding boxes, the size of
 the bounding boxes became more variable, which allowed the script to be adapted
 to use average parking spot dimensions.
+
+\textbf{Week 9-12}
 
 Week 9 was decisive in implementing a double pass-through to sort the cars by
 longitude and the latitude to identify both the horizontal and vertical spots.
