@@ -12,9 +12,9 @@ denied.
 \textbf{Implement Email-based Features}\\
 Right at the end of the project, the team experimented with email-based features
 like email verification and password reset. Unfortunately, emails sent by our
-system were always classified either classified as spam or didn't get delivered
-at all as they were considered untrustworthy. Since the deadline was fast
-approaching, the team decided to abandon this idea and focus on other issues.
+system were always either classified as spam or didn't get delivered at all as
+they were considered untrustworthy. Since the deadline was fast approaching, the
+team decided to abandon this idea and focus on other issues.
 
 Nonetheless, these features are essential components for any public facing web
 application. This is why one of the next steps would be to implement email
@@ -42,7 +42,7 @@ of further backend development.
 \textbf{Improve Data Transmission Speed}\\
 Currently, when a user selects a large area of the map it can take a couple of
 seconds from when they place the circle until the points appear on the map. This
-is due the data being sent in one big chunk which then needs to be processed
+is due to the data being sent in one big chunk which then needs to be processed
 completely before the points can be shown. This is not ideal and better
 responsiveness could improve the user experience.
 
@@ -53,10 +53,10 @@ transmit all of the data, the user would be presented with some data earlier,
 making the application feel much more responsive.
 
 One technical solution to this problem would be streaming the data between
-backend and frontend. This could be implemented using Server{-}sent Events,
-which is a one{-}way data transfer solution that allow progressive delivery of
-large amounts of data. Alternatively, a WebSocket connection could be used to
-achieve a similar result.
+backend and frontend. This could be implemented using Server{-}Sent Events
+(SSEs), which is a one{-}way data transfer solution that allows for progressive
+delivery of large amounts of data. Alternatively, a WebSocket connection could
+be used to achieve a similar result.
 
 \textbf{Database Optimisation}\\
 As discussed in the section on database development on page
@@ -68,7 +68,7 @@ A straightforward optimisation would be to add a geospatial index to the points
 table. Using geospatial indexing would help the database eliminate many rows
 early in the querying process, leading to a much more efficient search. Some
 sources achieved a six times speed increase without any other optimisations
-\cite{postgis_indexing}. The team recognises that such an index should have been
+(\cite{postgis_indexing}). The team recognises that such an index should have been
 added early in development, as it would reduce retrieval time and could make the
 application as a whole more responsive.
 

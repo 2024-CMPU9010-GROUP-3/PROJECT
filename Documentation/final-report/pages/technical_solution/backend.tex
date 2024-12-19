@@ -107,17 +107,20 @@ send to the database needs to be prepared into a format the database queries
 expect. Data that the application wants to retrieve from the database needs to
 be parsed back into the data model that's used by the application.
 
+\newpage{}
+
 To make interfacing with databases easier, so called ORMs (Object Relational
 Models) were developed. These are libraries that the application developer can
 include. Database queries are not done in SQL, but in the same programming
 language the application is written in. The ORM provides database interface
 functions that take in the data in the format the application uses. To actually
-perform any queries or make any changes to the database, the ORM runs its own
-SQL queries against the database via a compatible driver internally. ORMs
-abstract away the direct communication with the database and provide a simpler
-wrapper in the programming language that is used anyway. This can make it easier
-and quicker to develop an application that makes use of a database, but it takes
-away some of the agency that the developer has.
+retrieve any data or make any changes to the database, the ORM runs its
+internally generated SQL queries on the database using a compatible driver. ORMs
+provide and abstraction layer, removing the need for directly interacting with
+the database and providing a data access wrapper in the main programming
+language of the project. This can make it easier and quicker to develop an
+application that makes use of a database, but it takes away some of the agency
+that the developer has.
 
 The team wasn't really happy with either of these solutions, so an alternative
 called \textbf{sqlc} was chosen. This tool combines the freedom that using SQL gives
@@ -271,12 +274,13 @@ Multiple options satisfied these requirements. The backend team decided to use
 \textbf{golang-migrate}, due to its straightforward usage and easy integration as a
 library.
 
-At the time this decision was taken, golang-migrate also seemed like
-the most actively developed of the options. This has since changed and at the
-time of writing, golang-migrate is the solution with the least recent update of
-the options. Nonetheless, using golang-migrate the team was able to integrate automated
-database migrations into the app, eliminating the need to spend valuable time
-performing manual database updates each time the schema is changed.
+At the time this decision was taken, golang-migrate also seemed like it was
+being developed most actively. This has since changed and at the time of
+writing, golang-migrate is the solution with the least recent update of the
+options. Nonetheless, using golang-migrate, the team was able to integrate
+automated database migrations into the app, eliminating the need to spend
+valuable time performing manual database updates each time the schema is
+changed.
 
 The complete database development workflow for the backend server is visualised
 in Figure \ref{fig:database_workflow_diagram}.
@@ -301,8 +305,9 @@ recent technologies over bcrypt, they also don't discourage its use in any way.
 In the case of Magpie, bcrypt was chosen because the team had past experience
 working with it. This was desirable as the registration and login functionality
 was deemed to be one of the core features of the MVP. Choosing a technology that
-the team did not have any experience could have resulted in slower development,
-bugs or even security vulnerabilities as a result of improper implementation.
+the team did not have any experience with could have resulted in slower
+development, bugs, or even security vulnerabilities as a result of improper
+implementation.
 
 Since the application was not intended to store highly valuable personal data
 such as banking information, personal addresses or health care records it was
@@ -333,7 +338,7 @@ in Figure \ref{fig:jwt_example}). Since the tokens are generated on the backend
 server using a private secret, JWTs can be checked for integrity during
 decoding. Should the content not match up with the private secret of the backend
 server, it can be assumed that the token has been tempered with. In this case,
-the request would be discarded and a "Unauthorized" error message would be
+the request would be discarded and an "Unauthorized" error message would be
 returned instead.
 
 This structure allows for the authentication system to be decoupled between
@@ -432,12 +437,12 @@ principles, it makes querying the data more straightforward and was therefore
 preferred in this time-constrained project.
 
 Encoding the point type in an enum has benefits and drawbacks. Using an enum
-enforces stricter data integrity, only point with a type that is present in the
-enum can be inserted into the database. By extension, this helps to standardise
-the names of point types accross all layers of the application. On the other
-hand, storing the point type in an enum makes the database a lot less flexible.
-Adding a new dataset will almost certainly require changing the point type in
-the database. This creates a barrier to quickly expanding the number of
+enforces stricter data integrity, only a point with a type that is present in
+the enum can be inserted into the database. By extension, this helps to
+standardise the names of point types accross all layers of the application. On
+the other hand, storing the point type in an enum makes the database a lot less
+flexible. Adding a new dataset will almost certainly require changing the point
+type in the database. This creates a barrier to quickly expanding the number of
 different datasets in Magpie. Creating what is essentially a custom data type in
 the database also led to issues with connecting the backend to the database. The
 driver used for this purpose (\texttt{pgx}) expects custom data types to be
@@ -460,8 +465,8 @@ golang-migrate to track the current version of the database.
 During the course of the project, two significant changes were made to the
 database. The first one was the addition of more point types to the
 \texttt{Point\_Type} enum. To make it possible to seamlessly move between
-database versions, migrations were designed to reversible and (where possible)
-without data loss.
+database versions, migrations were designed to be reversible and (where
+possible) prevent data loss.
 
 Unfortunately, PostgreSQL only allows the addition of enum values but not the
 deletion. Because of this, the down (reverse) migration for this change have to
@@ -499,7 +504,7 @@ The team recognises that neither the database nor the queries can be considered
 fully optimised. This was a concious choice, trading some performance for
 quicker development time. Benchmarks of the point retrieval query performed by
 the team showed that the database took less than 100ms to retrieve 58,192 rows
-of points in a raius of 10 kilometers. The time it took to for the data to be
+of points in a radius of 10 kilometres. The time it took to for the data to be
 transmitted to and be parsed by the frontend was in excess of 1.4 seconds. While
 there are performance bottlenecks in Magpie, the database's performance is
 currently not considered one of them.
@@ -992,7 +997,7 @@ object. This structure holds either an error or the response content. Listing
 \ref{listing:response_dto_success} shows a successful request, the
 \texttt{error} field is empty while the \texttt{response} field is populated.
 Listing \ref{listing:response_dto_error} shows the response to a malformed
-request, the \texttt{error} field is populated with a custom error code and a
+request, the \texttt{error} field is populated with a custom error code and an
 error message for additional detail. The \texttt{response} field is empty. This
 allows the frontend to react appropriately to specific errors.
 
@@ -1088,10 +1093,10 @@ environment variables are set, only \texttt{MAGPIE\_DB\_URL} will be used to
 establish a connection.
 
 \subsubsection{Testing}
-During development, the both backends were outfitted with automated unit
-testing. This allowed for bugs to be caught early and consistently. The tests
-covered all vital functions of the backends, namely the routing and -- most
-importantly -- the request handlers.
+During development, both backends were outfitted with automated unit testing.
+This allowed for bugs to be caught early and consistently. The tests covered all
+vital functions of the backends, namely the routing and -- most importantly --
+the request handlers.
 
 Implementing unit tests also allows for future regression testing, making it
 easier to spot issues like increased latency between versions of the backend.
@@ -1155,7 +1160,7 @@ different parameters which share the underlying test execution code.
 To discourage pushing or merging untested code, the decision was made to
 automatically run the defined test cases when changes to the backend are pushed
 to the repository. For this project, GitHub Actions was used as the CI/CD
-solution. Unfortunately, there at the time of writing this there is no built-in
+solution. At the time of writing this, there is unfortunately no built-in
 support for Go unit tests in GitHub Actions.
 
 For this reason, a custom GitHub Action workflow was set up. It automatically
