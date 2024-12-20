@@ -1,3 +1,4 @@
+\subsubsection{Additonal Data Sources}
 For future work, the most pressing task would be to add additional data sources,
 in particular transportation data such as bus and luas routes, bus stops and
 luas stations. Information on the water supply and the electrical infrastructure
@@ -7,18 +8,28 @@ generators. Furthermore, the current amenities should be extended to include
 more counties, close to Dublin such as Fingal, South Dublin and Meath, as well
 as extended to larger cities in Ireland like Cork, Galway, Limerick and Sligo.
 
+
+\subsubsection{Yolo Model Improvements}
 Retraining the Yolo model on a dataset containing more manually annotated
 satellite images should be explored in order to improve the model's performance
 and reduce the number of false positives.
 
+Experimenting with additional fine-tuning of the YOLO model and exploring lighter 
+versions of YOLO, such as YOLOv8-nano should be explored, to see if it yeilds better results.
+
+\subsubsection{General Parking Detection Improvements}
+
 Improving the road mask's accuracy in classifying cars as on the road and parked
-correctly is especially crucial, as the current misclassificatiosn lead to
-issues afterwards particularly in the empty parking detection section. It could
+correctly is especially crucial, as the current misclassificatios lead to
+issues afterwards particularly in the unoccupied parking detection section. It could
 be interesting to test out enlarging the roads by a certain ratio, depending on
 the road width to begin with in order to find a way of identifying only larger
 roads with multiple lanes.
 
-The empty parking detection could be further improved by adding additional
+The unoccupied parking detection could be further improved by adding additional
 heuristics to find the empty spots more efficiently. Moreover, the 2 cases that
 were removed as too many additional spots were being detected could be refined
 and implemented differently.
+
+It would be iteresting to explore methods to extend the detection to be able to identify partially 
+occluded vehicles, as cars are often hidden behind trees, in shadows or near the edge of the images.
