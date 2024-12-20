@@ -100,10 +100,10 @@ detection script is adapted to run on a database of locally stored Mapbox
 Satellite images and the corresponding Mapbox Streets images, covering the
 entirety of Dublin city.
 
-Extensive testing was done at all the different stages of development of the
-scripts to identify the optimal thresholds and parameters using test images from
-Mapbox, in a variety of scenarios including edge cases or cases prone to causing
-issues.
+Extensive testing was done at all the different stages of development of
+the scripts, to identify the optimal thresholds and parameters using test images
+from Mapbox, in a variety of scenarios including edge cases or cases prone to
+causing issues.
 
 \newpage{}
 
@@ -129,15 +129,15 @@ Some data cleaning and processing had to be done to obtain a new csv file with
 longitudes and latitudes in the right format to send to the backend using our
 send points script.
 
-For example in 2 datasets the coordinates were in a local coordinates system
-(easting/northing) and not the universal longitude/latitude so we had to write a
-script to convert them properly. And certain datasets were only in geojson
-format so we had to write a script to handle the conversion to csv. For one
-file, the geometry field which contains the point data, the coordinates were not
-being read into a pandas dataframe correctly so we had to parse it using json
-and extract the fields instead.
+For example in 2 datasets, the coordinates were in a local coordinates system
+(easting/northing) and not the universal longitude/latitude requiring us to
+write a script to convert them properly. And certain datasets were only in
+geojson format so we had to write a script to handle the conversion to csv. For
+one file, the geometry field, which contains the point data, the coordinates
+were not being read into a pandas dataframe correctly necessitating that we
+parse it using json and extract the fields instead.
 
-To complement this data visually on the map, we used SVG icons from
+To complement this data visually on the map, SVG icons were used from
 \textbf{Icons8}, a UX design agency that provide high quality, free-to-use icons
 for personal and commercial web projects.
 

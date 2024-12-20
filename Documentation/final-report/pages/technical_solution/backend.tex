@@ -11,20 +11,19 @@
 
 \subsubsection{Backend Technologies}
 \textbf{Go}\\
-At the start of the project, a portion of the team deliberated about which
+At the start of the project, the team deliberated about which
 technologies to choose for the backend. Options using JavaScript such as NodeJS
 or Deno with accompanying frameworks like ExpressJS or NestJS were considered,
-as was Rust and its Rocket framework. They would have been excellent choices as
+as was Rust and its Rocket framework. These would have been excellent choices as
 they are well established in the industry and tried-and-tested.
 
-The majority of the team has development experience with JavaScript, so going
-with that would have made a lot of sense. However, it was planned from the very
-beginning to deploy this application on a server hosted by one of the team
-members. Therefore, the usage of computing and memory resources was very
-important to them, as they did not want to strain their Kubernetes cluster more
-than necessary. Since NodeJS runs on the JavaScript runtime V8, which also
-powers Google Chrome, our experience indicated that it would be quite resource
-intensive to run. Findings by \textcite{Tanadechopon2023} confirm this.
+The majority of the team has development experience with JavaScript. However, it
+was planned instead to deploy this application on a server hosted by one of the
+team members. Therefore, the usage of computing and memory resources was very
+important to not strain their Kubernetes cluster more than necessary. Since
+NodeJS runs on the JavaScript runtime V8, which also powers Google Chrome, our
+experience indicated that it would be quite resource intensive to run. Findings
+by \textcite{Tanadechopon2023} confirm this.
 
 Due to this, the team shifted towards using compiled rather than interpreted
 languages, as these are generally more resource efficient. Since small
@@ -131,8 +130,8 @@ language of the project. This can make it easier and quicker to develop an
 application that makes use of a database, but it takes away some of the agency
 that the developer has.
 
-The team wasn't really happy with either of these solutions, so an alternative
-called \textbf{sqlc} was chosen. This tool combines the freedom that using SQL gives
+The team was dissatisfied with both of these solutions, so an alternative called
+\textbf{sqlc} was chosen. This tool combines the freedom that using SQL gives
 developers with the productivity increase that ORMs offer. sqlc flips the
 typical ORM workflow on its head. This means, the developer writes standard SQL
 queries and schemas, but includes sqlc directives such as the name of the query
