@@ -185,7 +185,7 @@ below.
 The model's predictions which are lower than the confidence threshold of 0.4 are
 discarded as they are more likely to be misclassifications, such as chimneys or
 roof pieces which were often misclassified as cars, which can be seen below on
-the second image of Figure 21.
+the second image of Figure 22.
 
 \begin{figure}[htbp]
   \centering
@@ -215,8 +215,7 @@ orientation is assigned to the remaining spots that do not fit the criteria.
 
 For testing and debugging purposes, all the bounding boxes of the cars found by
 the model are drawn onto the satellite image, on the road cars are drawn in blue
-while parked cars are drawn in \textbf{red} as seen above in
-Figure 21.
+while parked cars are drawn in \textbf{red} as seen above in Figure 22.
 
 \newpage{}
 
@@ -266,7 +265,7 @@ manner to the classification done by the road mask.
 
 Following the detection of all the unoccupied spots, the bounding boxes
 corresponding to each spot are drawn onto the satellite image in \textbf{green} as shown
-in Figure 22.
+in Figure 23.
 
 \begin{figure}[htbp]
   \centering
@@ -283,20 +282,29 @@ then classified into 3 different classes: \emph{public} (on the street parking),
 private (residential parking) and parking lot, based on their proximity to the
 nearest road.
 
-\hspace{2em}\textbf{Public \& private parking spots}
+\vspace{0.5cm}
 
-Parking spots are classified as \emph{public} if the proximity to the nearest
-road is less than a pixel threshold of 30, otherwise the parking spots are
-considered \emph{private}.
+\begin{quote}
+  \textbf{Public \& private parking spots} \\
+  Parking spots are classified as \emph{public} if the proximity to the nearest
+  road is less than a pixel threshold of 30, otherwise the parking spots are
+  considered \emph{private}.
 
-This optimal threshold was found through extensive testing on a test
-set containing various edge cases.
+  This optimal threshold was found through extensive testing on a test set
+  containing various edge cases.
+\end{quote}
 
-\hspace{2em}\textbf{Parking lot spots}
+\vspace{0.5cm}
 
-Parking spots are classified as parking lots, when clusters of 18 or more spots
-are identified in an image. Larger clusters are prioritized as parking lots to
-minimize the risk of misclassifying residential areas as parking lots.
+\begin{quote}
+  \textbf{Parking lot spots} \\
+  Parking spots are classified as parking lots, when clusters of 18 or
+  more spots are identified in an image. Larger clusters are prioritized as
+  parking lots to minimize the risk of misclassifying residential areas as parking
+  lots.
+\end{quote}
+
+\vspace{0.5cm}
 
 Multiple different clustering approaches were tested out to cluster spots
 together, such as DBSCAN, HDBSCAN and OPTICS.
@@ -328,7 +336,7 @@ Afterwards, clusters and classification labels are drawn onto the satellite
 image. The clusters are color coded and denoted as a circle at the center of the
 bounding box, while the classification label is written to the right of the
 bounding box. The private class in written in red, public in green and parking
-lot in white as seen below in Figure 23.
+lot in white as seen below in Figure 24.
 
 \begin{figure}[htbp]
   \centering
@@ -712,7 +720,7 @@ Another point worth noting is that smaller parking lots with less than 18 spots
 are not detected though that is intentional and by design in order to focus on
 larger parking lots and avoid misclassifications.
 
-A few images from the test set are shown below in Figure 28.
+A few images from the test set are shown below in Figure 29.
 The predicted public spots are drawn in green while the true labels are in dark
 green. The predicted private spots are highlighted in red while the true labels
 are in light pink. The predicted parking lot spots are shown in blue while the
@@ -738,7 +746,7 @@ name and tariff were defined before being exported as a geojson.
 
 Dublin City Council defines different parking zones by color, based on their
 high to moderate demand which changes the price per zone as seen below in Figure
-24.
+30.
 
 \begin{figure}[htbp]
   \centering

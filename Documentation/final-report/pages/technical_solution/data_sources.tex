@@ -70,17 +70,21 @@ longitude = place["Longitude"]
 get_images(name, latitude, longitude)
     \end{minted}
 \end{listing}
+
+\newpage{}
+
 Following successful model training and tuning, a further 19,536 satellite
 images were downloaded spanning Dublin City area illustrated in the figure
 below. The machine learning model was then applied to those images to detect the
 cars.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.6\textwidth]{images/dublin-img-area.jpg}
     \caption{Dublin Area Delimitation for Parking data}
 \end{figure}
 
-\textbf{1.2 Machine learning models - Parking detection}
+\textbf{1.2 Machine learning models - Parking detection} \\
 An additional 19,536 map-view images corresponding to the satellite images used
 for car detection were downloaded using the MapBox API to create the custom mask
 used for detecting parked cars. Our project has two main Python scripts,

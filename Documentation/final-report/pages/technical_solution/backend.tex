@@ -7,6 +7,8 @@
   \label{fig:arcgis}
 \end{figure}
 
+\newpage{}
+
 \subsubsection{Backend Technologies}
 \textbf{Go}\\
 At the start of the project, a portion of the team deliberated about which
@@ -297,6 +299,8 @@ in Figure \ref{fig:database_workflow_diagram}.
   \label{fig:database_workflow_diagram}
 \end{figure}
 
+\newpage{}
+
 \textbf{bcrypt}\\
 To store the users credentials securely, \textbf{bcrypt} was chosen to hash them
 before they are inserted into the database. The resulting hashes (see Figure
@@ -352,6 +356,8 @@ track of active sessions, significantly reducing complexity. This and the
 familiarity the team had with working with JWTs were ultimately chosen as the
 authentication solution for Magpie.
 
+\newpage{}
+
 JSON Web Tokens do however come with their own caveats. For example, if any
 malicious actor stole such a token from a user, they could pretend to be that
 user without the system noticing. JWTs do not have a built-in way to revoke
@@ -398,6 +404,8 @@ private backend and once in the public backend.
 After careful consideration and discussions with the team, the decision was made
 to revert the change that split the backend. The desired result of two distinct
 backends would have to be achieved in a different way.
+
+\newpage{}
 
 To accomplish this, a feature of the Go programming language called
 \textbf{build-tags} was utilised. Usage examples of this feature showcase it by
@@ -455,6 +463,8 @@ registered on the database connection instance. Figuring out how to do that
 acted as a blocker for further backend development. It was still possible to add
 new datasets, but the decision to store the point type in an enum should be
 re-evaluated for future projects.
+
+\newpage{}
 
 The \texttt{Schema\_Migrations} table seen in both the initial database schema
 as well as in the final database schema is automatically created by
@@ -741,6 +751,9 @@ for authentication of the user.
         \textbf{Returns:} JSON object containing additional details about the
         user.\\
       }
+
+      \newpage{}
+
       \item {
         \textbf{Name:} Update user details\\
         \textbf{Method + Route:} \texttt{PUT /v1/public/auth/User/\{id\}}\\
@@ -793,6 +806,8 @@ rights, as the private backend as a whole is guaranteed restricted access by the
 CoreDNS routing of the Kubernetes cluster. This allows the data stack to skip
 the authentication step, decreasing development overhead while maintaining high
 application security.
+
+\newpage{}
 
 \begin{itemize}
   \item {
@@ -855,6 +870,8 @@ application security.
     \end{itemize}
   }
 \end{itemize}
+
+\newpage{}
 
 \subsubsection{Middlewares}\label{backend_middlewares}
 \phantomsection\label{middleware_route_authorisation}\textbf{Authorisation}\\
@@ -924,8 +941,6 @@ While these checks cannot guarantee that the inserted data is actually correct,
 they do improve data integrity. During development, the sanity checks have
 proven to be instrumental in catching errors early when implementing a new
 function that sends data to the API.
-
-\newpage{}
 
 \begin{listing}[htbp]
   \centering{}
