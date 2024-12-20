@@ -1,10 +1,10 @@
-Early on, car parking was considered an amenity that had to be included on
-Magpie's interface. Through searching for publicly available datasets, 
-no information on public, on the street or private parking
-spaces in Ireland was found.
+Early in the Project planning, car parking was considered an amenity that had to
+be included on Magpie's interface. Through searching for publicly available
+datasets, no information on public, on the street, or private parking spaces in
+Ireland was found.
 
 Thus, creating our own dataset of car parking spots in Dublin
-using a novel machine learning approach was settled upon.
+using a novel machine learning approach was agreed.
 This approach is divided into 3 main steps:
 \begin{enumerate}
   \item Car detection on satellite images
@@ -21,7 +21,7 @@ The YOLO model was introduced to us on Label Studio, an image labelling software
 image recognition \& detection tasks. There is an extension called ML Backend on
 the platform which can be used to automate the labelling process using an
 integration of the YOLOv5 model. However, this extension was not working as
-intended which caused us to pivot towards Ultralytics, the company behind the
+intended, which caused us to pivot towards Ultralytics, the company behind the
 YOLO models.
 
 Several papers focusing on object detection cited YOLO over other popular models
@@ -80,14 +80,14 @@ iteratively experimented up the version chain.
 The object detection modelling training ended with the YOLOv8 - Oriented
 Bounding Boxes (OBB).
 Oriented bounding boxes are a newer type of bounding box where the bounding box
-capture the orientation of the object providing a more accurate fit of the
+captures the orientation of the object providing a more accurate fit of the
 object. They are defined by 5 parameters (center xy, width, height and rotation
 angle) and capture the object's spatial orientation more precisely, reducing
 overlap and improving the robustness of the object detection model
 (\cite{obblit}).
 
 \newpage{}
-Below you can see the difference in bounding boxes between the labelled image
+Below the difference is displayed in bounding boxes between the labelled image
 used for the non-OBB YOLOv5 \& YOLOv8 iterations versus the OBB YOLOv8.
 
 %obb vs non obb bounding boxes
@@ -147,8 +147,8 @@ to the original binary mask through bitwise operations.
 
 To refine the mask, and reduce misclassification errors, additional annotations
 contained on the Mapbox Streets images such as street names and white dotted
-lines which denote a multitude of things (foot paths, planter boxes, pedestrian
-crosswalks, football fields delimitations, etc. ) were removed through
+lines which denote a multitude of things (footpaths, planter boxes, pedestrian
+crosswalks, football fields delimitations, etc.) were removed through
 morphological operations, leaving only a plain white line for each road. A
 number of different kernel sizes, different contour thresholds and other
 parameters were tested to achieve the optimal removal of the street names and
@@ -163,7 +163,7 @@ to the Mapbox Streets road width not correctly reflecting all the lanes of the
 road and therefore classifying on the road cars as parked. This issue was most
 prominent for motorways and national roads and was resolved by enlarging those
 roads using a dilation technique. Multiple different kernel sizes, different
-number of iterations and kernels of different sizes applied consecutively were
+number of iterations and kernels of different sizes applied consecutively, were
 tested to find the optimal solution.
 
 \newpage{}
@@ -194,7 +194,7 @@ the second image of Figure 22.
   \includegraphics[width=0.30\textwidth]{images/road_mask_classification2.png}
   \hfill
   \includegraphics[width=0.30\textwidth]{images/road_mask_classification3.png}
-  \caption{Classification of cars as on the road or parked: (left) Initial Classification, (center) Intermediate Stage, (right) Final Classification.}
+  \caption{Classification of cars as on the road or parked}
   \label{fig:road_mask_classification}
 \end{figure}
 
@@ -202,26 +202,26 @@ A bounding box for each of the model's predictions is computed from the center
 pixel coordinates, the width and the height returned from the model. The overlap
 between the bounding box and the road pixels is calculated, and if the overlap
 is higher than the threshold of 0.5, the prediction is discarded, keeping only
-the parked cars. Different thresholds were tested as well, however overall a
-harsher threshold works better given that these detections are used later on for
-the empty parking detection.
+the parked cars. Different thresholds were tested as well, While different
+thresholds were tested as well, overall, a harsher threshold works better given
+that these detections are used later on for the empty parking detection.
 
 For each of the model's predictions for parked cars, the center pixels
 coordinates are mapped to geographic coordinates (longitude and latitude), and
-the width, height, rotation and orientation based on the angle are saved. The
+the width, height, rotation and orientation based on the angle, are saved. The
 horizontal orientation is assigned for spots that have a rotational angle in
 degrees ranging between -45 and 45 or between 135 and 225, while the vertical
 orientation is assigned to the remaining spots that do not fit the criteria.
 
 For testing and debugging purposes, all the bounding boxes of the cars found by
-the model are drawn onto the satellite image, on the road cars are drawn in blue
+the model are drawn onto the satellite image- on the road cars are drawn in blue
 while parked cars are drawn in \textbf{red} as seen above in Figure 22.
 
 \newpage{}
 
 \textbf{Step 2: Detecting unoccupied parking spots}
 
-Occupied parking spots were indentified, therefore it is necessary to
+Occupied parking spots were identified, therefore it is necessary to
 identify unoccupied ones to offer a more comprehensive view of car parking in
 Dublin city.
 
@@ -233,8 +233,8 @@ however only the final version will be explained below.
 
 Average parking spot width and length in pixels are calculated for each image,
 to draw the empty spots more uniformly. Average parking spot width and length in
-meters are set to 3.05 as found to be the optimal value through testing
-accounting for the variations in size.
+meters are set to 3.05 as found to be the optimal value through testing,
+accounting, for the variations in size.
 
 Setting this value avoids misclassifications, as previously the average width and
 length in meters were calculated dynamically, however in cases where the
@@ -369,7 +369,7 @@ computed. These were the scores below:
   \caption{YOLOv8-OBB model results}
 \end{table}
 
-The model obtains near perfect precision and recall on the validation data set
+The model obtains near perfect precision and recall on the validation dataset,
 meaning it is very good at correctly identifying the majority of true positives
 and preventing false positives. However, the lower f1 score of 91\% highlights
 the slight imbalance between precision and recall. Additionally, the confidence
@@ -528,10 +528,10 @@ it possible to distort the mask to cover more surface.
 
 Another problem inherent to Mapbox Streets images is the Dublin Tunnel being
 marked as above ground even though it is underground, leading to certain
-misclassiifcations in that specific area.
+misclassifcations in that specific area.
 
 Some images from the test set can be seen below in
-Figure . The predicted parked cars are drawn in red while
+Figure 26. The predicted parked cars are drawn in red while
 the true labels are drawn in light pink. The predicted on the road cars are
 drawn in blue while the true labels are drawn in cyan.
 
@@ -604,7 +604,7 @@ overall average metrics on the entire test set.
 
 \newpage{}
 
-Likewise a test set of 50 images was carefully selected and consistently
+Likewise, a test set of 50 images was carefully selected and consistently
 labelled in Label Studio, without rotation to ensure the maximum overlap. The
 pixel coordinates, width and height of the annotated bounding boxes are
 exported. The orientation of each bounding box, is calculated automatically in
@@ -674,7 +674,7 @@ only applies to parked cars. This is illustrated in the figure below.
 
 \textbf{Evaluation of classification of spots into private, public \& parking lot}
 The classification of the spots detected into private, public and parking lot is
-evaluated in the \texttt{evaluate\_classification\_of\_spots.py} Python script.
+evaluated in the \textit{evaluate\_classification\_of\_spots.py} Python script.
 The classification is evaluated on the following metrics as defined previously:
 Average IoU, Balanced Accuracy and Precision, Recall, F1 Score, Accuracy,
 Specificity per class. These metrics are saved in a csv file for each test image
@@ -711,7 +711,7 @@ clustered together creates more unpredictability adding more additional spots.
 The results presented above are in line with other articles performing car
 detection on satellite imagery such as \cite{similarresults}.
 
-The main outstanding problem for this section is residential areas which are
+The main outstanding problem for this section is residential areas, which are
 very rarely misclassified as parking lots. Additionally, in cases where public
 spots are quite far from the nearest road, the spots are misclassified as
 private, which is not a major issue.
@@ -773,7 +773,7 @@ backend server using the \texttt{send\_points.py} script.
 Throughout the implementation of our technical solution, there have been many
 major challenges and changes throughout the project timeline.
 
-\textbf{Week 1-4}
+\textbf{Week 1-4} \\
 This iteration focused on the startup of the project, exploratory work, machine
 learning model tryouts and setting up Magpie's environment.
 
@@ -787,16 +787,16 @@ The next challenge concerned to training the YOLO model to identify cars on the
 satellite images. An object detection model remains a deep neural network model,
 which is computationally intensive the more complex it becomes.
 
-Due to limitations in available computational resources training of the model was difficult. 
+Due to limitations in available computational resources, training of the model was difficult. 
 Tuning for 35 iterations would last several hours, and
 training above a certain number of epochs would not yield better results.
 Training the model was both computationally expensive and very time consuming.
 
-Another challenge referred to the low resolution of the satellite images,
-heavily contributing to the high misclassification rate in the early beginnings of
-model training. This was stabilised through proper model choosing and
-tuning however, the biggest factor contributing to the remaining false positive
-rate is the low number of training data.
+A further major challenge referred to the low resolution of the satellite
+images, heavily contributing to the high misclassification rate in the early
+beginnings of model training. This was stabilised through proper model choosing
+and tuning however, the biggest factor contributing to the remaining false
+positive rate is the low number of training data.
 
 \textbf{Week 5-8}
 
@@ -821,6 +821,8 @@ separation into horizontal and vertical cases in a more consistent manner.
 Many additional improvement were made that week, such as the removal of
 overlapping spots and filtering out the empty spots detected on the road.
 
+\newpage{}
+
 In week 12, the unoccupied parking detection was completely finalized, resolving the
 majority of the outstanding issues.
 Originally 4 cases were considered, cars parked horizontally in a row or in a
@@ -828,16 +830,15 @@ column, cars parked vertically in a column and cars parked vertically side by
 side. However, horizontally parked in a column and vertically parked side by side
 were removed as they led to too many misclassifications.
 
-Another major issue was the selection and accurate labelling of the test sets to
-evaluate each subpart of our model.
-Week 11 marked the beginning of the unoccupied parking detection evaluation. 
-Labelling the test set accurately was a significant challenge, multiple different 
-phases of relabelling and improvements occurred, to ensure the maximum overlap 
-between the true labels and the model's predictions.
-During Week 12, the two other evaluation scripts were finalized. 
-Similarly, multiple phases of labelling and relabelling occurred. For
-the classification of spots evaluation, additional images containing private class instances
-were added to the test set, as the initial lack of enough instances was making
-that class perform poorly in comparison to the other classes.
+A final critical issue was the selection and accurate labelling of the test sets
+to evaluate each subpart of our model. Week 11 marked the beginning of the
+unoccupied parking detection evaluation. Labelling the test set accurately was a
+significant challenge, multiple different phases of relabelling and improvements
+occurred, to ensure the maximum overlap between the true labels and the model's
+predictions. During Week 12, the two other evaluation scripts were finalized.
+Similarly, multiple phases of labelling and relabelling occurred. For the
+classification of spots evaluation, additional images containing private class
+instances were added to the test set, as the initial lack of enough instances
+was making that class perform poorly in comparison to the other classes.
 
 \newpage{}
